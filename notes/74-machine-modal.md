@@ -20,7 +20,9 @@ cœur contre Rings) et `tools/emu/test_modal.py` (la machine dans l'OS). Plan de
 - **Un sample comme excitateur**, choisi dans le menu des presets, depuis le 25/10/2026 (§8,
   [80](80-sample-excitateur-modal.md)) ; sans sample, l'excitateur interne.
 - Lourd : de 9 400 à 42 000 instructions par bloc selon le modèle et la polyphonie, après trois passes
-  d'allègement (§5.1 à §5.3) ; de 10 600 à 69 200 au départ.
+  d'allègement (§5.1 à §5.3) ; de 10 600 à 69 200 au départ. **Depuis le 27/10/2026 (§5.6, [81](81-budget-de-13-pourcent.md)
+  §8)** : calculée à 24 kHz et allégée selon le choix de Maxime, sous 13 % du processeur dans tous les cas (6,0 à
+  12,8 %) ; 3 voix au plus (2 pour les cordes), 3 cordes sur une voix des modèles sympathiques.
 - `[FAIT en émulation]` (§6.3). Pas encore testé sur la machine (§7).
 
 ## 1. Ce que Maxime a choisi (20/10/2026)
@@ -369,6 +371,15 @@ en % d'un bloc à 250 MHz) :
   ou la boucle par échantillon de la corde (SHAPE 2) en assembleur, qui ne sert qu'aux STRUCTURE très basses ou très
   hautes et aux réglages qui bougent.
 
+### 5.6 Le budget de 13 % (26 et 27/10/2026)
+
+Demande de Maxime (26/10/2026) : aucune machine ajoutée au-dessus de 13 % du processeur. Tout est dans la note
+[81](81-budget-de-13-pourcent.md) §8 : Rings calculé à 24 kHz (R1), les allègements qui ne changent pas le son, puis le
+choix de Maxime, « le plus léger » (27/10/2026) : lecture linéaire des cordes, cordes sympathiques sans peigne,
+3 voix au plus (2 pour les modèles à cordes), 3 cordes sur une voix des modèles sympathiques et une seule par voix
+sur deux voix, potards repris un bloc sur 16 quand ils bougent sans trig. Charge au pire : 41,3 % → 12,8 %. Ce qui
+précède dans cette note (tailles, polyphonie 1, 2 ou 4, 32 trames par bloc) décrit MODAL avant ce changement.
+
 ## 6. Preuves `[FAIT en émulation]`
 
 ### 6.1 Le cœur contre Rings (`tools/emu/test_modal_dsp.py`)
@@ -498,3 +509,5 @@ interne.
   sans calcul quand rien ne bouge (§5.5).
 - 25/10/2026 : le sample comme excitateur ([80](80-sample-excitateur-modal.md)).
 - 25/10/2026 : premier retour sur la machine : MODAL marche, environ 30 % en 4 voix (§7.1).
+- 26 et 27/10/2026 : le budget de 13 % : Rings à 24 kHz, allègements, choix de Maxime « le plus léger » (§5.6,
+  [81](81-budget-de-13-pourcent.md) §8).

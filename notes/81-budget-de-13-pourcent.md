@@ -6,7 +6,9 @@ CPU ». Plan accepté le même jour : une mesure permanente (`tools/emu/test_bud
 mais « Si 4 polyphonie sont impossible, tu peux reduire à 3 », et « N'hésite pas à modifier le code même si ça revient
 à être un peu moins fidèle au rings. le plus important c la stabilité et l'agréabilité du son ».
 
-Cette note couvre la mesure et MACRO (branche `claude/macro-48k`). MODAL suit sur sa propre branche (§8).
+Cette note couvre la mesure et MACRO (branche `claude/macro-48k`, §1 à §7), puis MODAL (branche `claude/modal-24k`,
+§8 ; générateur `tools/gen_modal.py`, sources `tools/machines/modal/`, preuves `tools/emu/test_modal_dsp.py` et
+`test_modal.py`).
 Générateurs `tools/gen_macro.py`, `tools/gen_macro_syntakt.py`, `tools/gen_acid_combos.py` ; sources
 `tools/machines/macro/` (`macro.cc`, `macro_asm.S`, `braids_fast_digital.inc`, `braids_semantic.inc`) ; références
 `tools/emu/braids_ref.cc` et `build/braids_cf/` (banc) ; preuves `tools/emu/test_macro.py`, `test_macro_syntakt.py`,
@@ -18,8 +20,8 @@ les combinaisons `syntakt-…-macro`, `…-acid`, et `31-syntakt-tg-…-modal` d
 - **La mesure** : la charge d'une piste comme la page System de Model-TG l'affiche (sa moyenne), prise par le modèle
   du coût sur la machine (`tools/emu/hwcost.py`, [77](77-cout-sur-la-machine.md)), sur tout l'OS, son tenu (DECAY 110),
   une piste qui joue et cinq muettes. Pour chaque machine : ses réglages par défaut, les extrêmes des potards qui
-  changent le calcul, une note aiguë, BITS au plus fort, un potard qui bouge à chaque bloc ; pour MODAL, 1, 2 et 4 voix
-  qui sonnent toutes. Seuil : 13,0 %.
+  changent le calcul, une note aiguë, BITS au plus fort, un potard qui bouge à chaque bloc ; pour MODAL, 1, 2 et 3 voix
+  qui sonnent toutes, en régime établi. Seuil : 13,0 %.
 - **Avant** : 11 modèles de MACRO au-dessus de 13 % (HARMONICS 18,8 %, WAVE PARAPHONIC 17,3 %, SINE TRIANGLE 16,5 %,
   CYMBAL 16,4 %, TRIPLE SQUARE 15,7 %…), et MODAL de 17 à 41 %. ACID (7,5 %) et les moteurs du Syntakt (10,3 % au pire)
   passaient déjà ; les machines d'origine prennent de 6,8 à 8,6 %.
@@ -30,8 +32,13 @@ les combinaisons `syntakt-…-macro`, `…-acid`, et `31-syntakt-tg-…-modal` d
   SINE TRIANGLE rejoint les modèles allégés : même spectre à moins de 1 dB par tiers d'octave en médiane. Sur les
   notes très aiguës, les 14 modèles allégés restent à 48 kHz au lieu de repasser à 96 kHz : WAVE PARAPHONIC et
   WAVE MAP se replient un peu au-dessus de la note 104.
-- **À tester sur la machine** : la charge de quelques modèles (HARMONICS, CYMBAL, STRUCK DRUM, FLUTED, MORPH) sur la
-  page System, et l'oreille sur les modèles qui changent (§4).
+- **Après, MODAL** : ses 60 cas sous 13 %, de 6,0 % à **12,8 %** au pire (la corde sur 2 voix, COLOR, CONTOUR et SWEEP
+  en haut) `[FAIT en émulation]` ; avant, 17 à 41 %. Calculée à 24 kHz, elle a d'abord été allégée sans rien changer
+  au son (§8.2), puis selon le choix de Maxime, « le plus léger » (§8.3) : lecture linéaire des cordes, cordes
+  sympathiques sans peigne, 3 voix au plus (2 pour les cordes), 3 cordes sur une voix des modèles sympathiques et une
+  par voix sur deux voix, potards repris un bloc sur 16 quand ils bougent sans trig.
+- **À tester sur la machine** : la charge de quelques modèles de MACRO (HARMONICS, CYMBAL, STRUCK DRUM, FLUTED, MORPH)
+  et de MODAL sur la page System, et l'oreille sur ce qui change (§4, §8.3).
 
 ## 1. La mesure : `tools/emu/test_budget.py` `[FAIT en émulation]`
 
@@ -190,10 +197,124 @@ ACID et les moteurs du Syntakt ne changent pas (ACID 7,5 %, le pire moteur SY SW
   l'ordinateur (sauf WAVE LINE au maximum, §3) ; FLUTED et MORPH aussi sur 5 et 7 notes, 120 à 200 blocs.
 - `test_budget.py` : §6.
 
-## 8. MODAL : à suivre
+## 8. MODAL `[FAIT en émulation]`
 
-À 24 kHz (R1), MODAL ne descend que de 25 à 36 % : 13 % au plus pour le modèle modal, mais 18 à 25 % pour les cordes.
-Le travail continue sur la branche `claude/modal-24k`, dans cette note.
+Avant (MODAL à 48 kHz, réglages par défaut, toutes les voix qui sonnent) :
+
+| SHAPE | 1 voix | 2 voix | 4 voix |
+|---|---|---|---|
+| 0 modal | 17,8 % | 18,5 % | 18,7 % |
+| 1 cordes sympathiques | 25,8 % | 27,8 % | 31,8 % |
+| 2 corde | 17,4 % | 25,9 % | 41,3 % |
+| 3 cordes en accord | 24,6 % | 27,9 % | 31,8 % |
+
+### 8.1 Rings à 24 kHz (R1)
+
+- Le cœur calcule Rings à 24 kHz, par blocs de 16 trames (`modal_cfg.h` : `MB`, `DLINE` 1 024, `SLINE` 512, `HBN`,
+  partagés par le C et l'assembleur). Ce qui compte en échantillons est recalé pour garder ses durées en secondes et
+  ses fréquences en hertz (la liste `SR24` de `test_modal_dsp.py`, appliquée à la référence) : coupures des filtres
+  d'excitation et du pincement (tangente exacte, Q qui tend vers 0,707 près de la moitié de la fréquence
+  d'échantillonnage), Q des modes × cos(πf), peigne et bruit du pincement, FIR et passe-bas d'amortissement des
+  cordes, temps du limiteur.
+- La passerelle remonte la sortie à 48 kHz par un demi-bande de 27 coefficients (Kaiser β 5 : à 0,01 dB près
+  jusqu'à 8 kHz, −0,5 dB à 10 kHz, −54 dB dès 15 kHz ; 12 trames de retard), `modal_up` en assembleur, et descend le
+  sample excitateur à 24 kHz par le même filtre.
+- Limites, communes à Rings à 24 kHz et à MODAL : le résonateur sonne jusqu'à la note 126 ; les cordes suivent la
+  hauteur jusqu'à 6 kHz environ et se taisent au-dessus de la note 118.
+- Gain : 25 à 36 % seulement (le modèle modal à 13 %, les cordes de 18 à 26 %). Le reste du temps n'était pas dans les
+  boucles par échantillon mais dans le code relu à chaque bloc : près de 500 lignes de 16 octets, plus que le cache
+  d'instructions (8 Ko), et le code de liaison autour des noyaux.
+
+### 8.2 Allègements sans changer le son
+
+Mêmes octets que le C du cœur sur l'ordinateur (`test_modal.py`), et contre Rings la même mesure qu'avant
+(`test_modal_dsp.py`), sauf la glissade des cordes sympathiques (dernier point), à 65 dB ou plus :
+
+- la dispersion : son bruit, l'anti-continu et le chevalet courbe ne sont calculés que lorsqu'ils servent (`na`, `ac`) ;
+  le générateur aléatoire, partagé avec le pincement, saute ses 16 tirages d'un coup (`M_LCG16A`, `M_LCG16C`) ;
+- une corde au repos (rien ne bouge que sa position et, sans dispersion, son retard) prend un chemin court
+  (`str_fast`, préparé par `str_plan`) : une boucle en assembleur pour la lecture, l'amortissement et l'écriture
+  (`modal_str_run`), le peigne à part (`modal_str_comb`, avec l'ancien contenu de la place que l'échantillon suivant
+  écrit quand il la lit), par morceaux du retard le plus court pour les cordes aiguës ; les lectures à retard modulé
+  (`modal_str_read_nz` : le bruit de dispersion ; `modal_str_read_cb` : le chevalet courbe) suivies de
+  `modal_str_dw` ;
+- les modèles à cordes, quand rien n'a changé depuis le bloc précédent (`ps.same`, posé par la passerelle) :
+  `modal_fast`, sans refaire ce qui ne bouge pas ;
+- le limiteur de Rings et la différence de la passerelle en une passe en assembleur (`modal_lim`) ; son gain repart du
+  1 / m précédent au relâchement, sans division ; le filtre de note reporte ses pas tant que la note ne bouge pas ;
+- le code rare (initialisations, calculs par bloc quand un réglage change, le chemin complet des cordes) marqué
+  froid et rangé à part (`MODAL_COLD`, `unlikely`, `-freorder-blocks-and-partition`) : le code relu à chaque bloc
+  tient dans moins de lignes du cache ;
+- `iabs` sans comportement indéfini à −2³¹ ; le facteur du retard de la dispersion borné à 1/2 (`disp_fm`), un plancher
+  que le son n'atteint pas, sur lequel compte l'assembleur (aussi dans la référence) ;
+- la glissade des cordes sympathiques ne refait que leur retard tant qu'elle reste à moins de 1/32 de la fréquence du
+  dernier calcul complet (`str_delay`).
+
+Écarté : `-Os` (le code passe de 38 à 29 Ko, mais les lignes relues à chaque bloc ne baissent presque pas) ; les lignes
+des cordes en 16 bits (R2) : les défauts de données ne pèsent que 1 à 3 points, et la charge est passée sous 13 %
+sans elles.
+
+Après ces allègements, potards fixes : 12,1 % (modal, 3 voix), 15,5 % (cordes sympathiques, 2 voix), 14,1 % (corde,
+3 voix), 15,4 % (accord, 2 voix) ; avec COLOR qui bouge à chaque bloc, 25 à 34 %.
+
+### 8.3 Le choix de Maxime : le plus léger (27/10/2026)
+
+Quatre fichiers d'écoute (`build/ecoute-choix`, hors dépôt) : le son du moment, la lecture linéaire des cordes, les
+cordes sympathiques sans peigne, les deux. Maxime : « j'ai ecouter tout les ecoute choix et en vrai tout me va, avec un
+leger penchant pour le sans peigne, mais dans tout les cas je veux surtout le plus légé ». D'où, définis dans la
+référence (`LITE` de `test_modal_dsp.py`) et dans MODAL :
+
+- la lecture des lignes des cordes linéaire (`Read` de stmlib) au lieu de l'interpolation d'Hermite de Rings, le
+  produit arrondi pour que la boucle ne dérive pas ;
+- les cordes sympathiques (excitées par la première) sans peigne : leur sortie `aux`, la seule où joue leur position,
+  n'est pas calculée, ni les LFO de Rings qui la font bouger ; leur entrée × √2, car sans peigne elles perdent en
+  moyenne la moitié de leur puissance ;
+- les modèles sympathiques : 3 cordes sur une voix (la jouée et deux sympathiques), une seule par voix sur deux voix
+  (Rings : 8 cordes ; éco : 4, 2, 1). Sur deux voix, ils n'ont donc plus de cordes sympathiques : chaque voix est une
+  corde sans dispersion, à la note jouée (une octave plus bas pour le dernier accord, la 1re note de la table de Rings
+  pour 2 cordes par voix) ; ils sonnent alors comme la corde (SHAPE 2) sans sa dispersion. Deux cordes par voix y
+  coûtaient 13,9 % ;
+- 3 voix au plus (FUNC + SHAPE : 1, 2, 3 ; `0x6000` donne 3 au lieu de 4), et 2 pour les modèles à cordes (la
+  passerelle ; la fenêtre affiche toujours 3) ;
+- les potards et la modulation de hauteur qui bougent sans trig sont repris un bloc sur 16 (10,7 ms) (`HOLD`, la
+  passerelle) ; un trig les reprend tout de suite ;
+- la chaîne d'excitation de la voix active s'arrête aussi quand elle est restée sous −108 dB pendant 8 blocs, jusqu'à
+  la note suivante.
+
+Ce que `LITE` change au son, contre Rings à 24 kHz sans lui (`lite_spectrum`, par tiers d'octave, bandes à moins de
+50 dB du maximum) :
+
+| Cas | Écart médian | Au plus | Niveau |
+|---|---|---|---|
+| cordes sympathiques, 1 voix | 2,8 dB | 7,6 dB | −1,0 dB |
+| cordes sympathiques, 1 voix, brillantes | 2,2 dB | 8,0 dB | −0,2 dB |
+| cordes en accord, 1 voix | 1,2 dB | 5,9 dB | −2,9 dB |
+| corde, 1 voix, grave et brillante | 0,3 dB | 2,4 dB | −0,9 dB |
+| corde, 2 voix, aiguë | 1,2 dB | 7,9 dB | −3,7 dB |
+
+### 8.4 Charge après
+
+`test_budget.py --engines modal` (60 cas, en régime établi : un trig, puis cinq notes une fois les lignes des cordes
+écrites, la moyenne après la cinquième), `TOUT OK`, le pire cas de chaque modèle :
+
+| SHAPE | Pire cas | Réglage |
+|---|---|---|
+| 0 modal | 12,3 % | 2 ou 3 voix, COLOR qui bouge à chaque bloc |
+| 1 cordes sympathiques | 11,4 % | 1 voix, notes aiguës |
+| 2 corde | 12,8 % | 2 voix, COLOR, CONTOUR et SWEEP à 127 |
+| 3 cordes en accord | 11,8 % | 1 voix, COLOR, CONTOUR et SWEEP à 0 |
+
+Le moins cher : 6,0 % (modal, 1 voix, brillant ou aigu). Le pire bloc, quand un potard qui bouge est repris : 26 %
+environ (le PEAK de la page System).
+
+### 8.5 Preuves
+
+- `test_modal_dsp.py` : 61 cas contre Rings à 24 kHz avec `LITE`, médiane 88,0 dB, le plus faible 34,4 dB (SHAPE 0,
+  sample en entrée, les 4 potards qui bougent, l'écart connu de la note 74 §5.1) ; et le contrôle `LITE` ci-dessus :
+  `TOUT OK`.
+- `test_modal.py` : le code de MODAL dans l'OS, identique octet pour octet au même C compilé pour l'ordinateur ; cas
+  ajoutés : cordes aiguës, corde à STRUCTURE 0 et 127, COLOR qui bouge à chaque bloc, 3 voix : 107 contrôles,
+  `TOUT OK`.
 
 ## 9. Reste à vérifier
 
@@ -203,3 +324,6 @@ Le travail continue sur la branche `claude/modal-24k`, dans cette note.
   ±0,3 point d'une compilation à l'autre.
 - `[À FAIRE]` L'oreille : VOWEL FOF, PLUCKED, BOWED, STRUCK BELL, STRUCK DRUM, SNARE, TWIN PEAKS NOISE, PARTICLE NOISE,
   HARMONICS, SINE TRIANGLE (doivent sonner comme avant) ; WAVE PARAPHONIC et WAVE MAP sur les notes très aiguës.
+- `[À FAIRE]` MODAL sur la machine : la charge d'une piste (page System) sur les quatre modèles, 1 à 3 voix, avec un
+  LFO sur COLOR ; l'oreille sur les cordes (plus douces dans l'aigu), les modèles sympathiques sur 1 et 2 voix, un
+  potard tourné pendant une note (par pas d'environ 11 ms).
