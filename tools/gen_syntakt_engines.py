@@ -1547,4 +1547,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # gov_asm.add_to importe ce module : qu'il retrouve cette instance, pas une seconde dont l'import refait
+    # set_base(PAY_ALONE) sur gx (DST_CODE…) au milieu d'une génération --tg
+    sys.modules.setdefault("gen_syntakt_engines", sys.modules[__name__])
     main()
