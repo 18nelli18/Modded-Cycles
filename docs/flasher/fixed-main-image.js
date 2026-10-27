@@ -4,7 +4,7 @@
   "use strict";
   const meta=Object.freeze({"mainOsSha": "4ad9b5bcc8cddd00db1a55bc52e0a46a175abcce89c3ee3f06a7a097530e3f85", "syxSha256": "c37e8a1a97a6849ff094a095caac5de54b39d9cc03ca0e88396b629d17bba05b", "file": "Supermodel_2.55_c37e8a1a97a6.syx"});
   const sources=[new URL(meta.file,window.location.href).href,
-    "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/main/docs/flasher/Supermodel_2.55_c37e8a1a97a6.syx"];
+    "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/4598084e301b3a170b4e8730cdab3d7d8ea3f55b/docs/flasher/Supermodel_2.55_c37e8a1a97a6.syx"];
   let pending;
   async function load(){
     let failure;

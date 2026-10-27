@@ -545,7 +545,7 @@
   "page_length_native_pattern_storage": true,
   "estus_advanced_native_plocks": true,
   "samples_bootstrap_layout_guard": true,
-  "delivery_source_commit": "main",
+  "delivery_source_commit": "4598084e301b3a170b4e8730cdab3d7d8ea3f55b",
   "v199_release_approved": true,
   "page_warp": true,
   "page_warp_default": false,
