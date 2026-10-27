@@ -10,7 +10,8 @@ compilée pour l'ordinateur (rings_ref.cc) depuis une copie de ses sources où n
     (notes/81) : ce qui compte en échantillons est recalé pour garder ses durées et ses fréquences en secondes et en
     hertz (SR24) ;
   - les allègements du budget de 13 % (notes/81) : la lecture linéaire de la ligne des cordes (Read au lieu de
-    ReadHermite), et les cordes sympathiques sans peigne (sans leur sortie aux, la seule où joue leur position) (LITE).
+    ReadHermite), et les cordes sympathiques sans peigne (sans leur sortie aux, la seule où joue leur position), leur
+    entrée x racine 2 ; et un plancher de 1/2 au facteur du retard de la dispersion (LITE).
 C'est la définition du son de MODAL. Un contrôle à part compare cette définition à Rings sans LITE, par tiers
 d'octave.
 Le cœur en virgule fixe est compilé pour l'ordinateur (modal_host.c) avec la même arithmétique que sur le Cycles
@@ -115,6 +116,10 @@ LITE = (  # le budget de 13 % (notes/81) : après SR24 ; (fichier, avant, après
      "    } else {\n"
      "      s.Process(input, out_buffer_, aux_buffer_, size);\n"
      "    }", 1),
+    # le facteur du retard de la dispersion au moins 1/2 (disp_fm de modal_dsp.h : un plancher que le son n'atteint
+    # pas, sur lequel compte le chemin en assembleur)
+    ("rings/dsp/string.cc", "delay_fm -= curved_bridge_ * bridge_curving;",
+     "delay_fm -= curved_bridge_ * bridge_curving;\n        if (delay_fm < 0.5f) delay_fm = 0.5f;", 1),
     # sans peigne, une corde sympathique perd en moyenne la moitié de sa puissance (out - aux) : son entrée x racine 2
     ("rings/dsp/part.cc", "float gain = 0.2f / static_cast<float>(num_strings);",
      "float gain = 0.2f * 1.41421356f / static_cast<float>(num_strings);", 1),

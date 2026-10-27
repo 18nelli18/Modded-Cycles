@@ -262,6 +262,23 @@ def cases(quick):
         ("BRIGHTNESS 0, POSITION 0, STRUCTURE 0", dict(KW, shape=3, color=0, sweep=0, contour=0), dict(blocks=80)),
         ("BRIGHTNESS 127, POSITION 127, STRUCTURE 127", dict(KW, shape=2, color=127, sweep=127, contour=127),
          dict(blocks=80)),
+        # notes/81 : les cordes aiguës (retard plus court qu'un bloc : str_fast par morceaux), les potards qui bougent
+        # à chaque bloc (repris un bloc sur 8)
+        ("cordes sympathiques aiguës, 2 voix : notes 84, 91, 96", dict(KW, shape=1, finetune=POLY_FINE[2], note=84),
+         dict(trigs=(1, 40, 80), blocks=160, changes={40: dict(note=91), 80: dict(note=96)})),
+        ("corde aiguë, STRUCTURE 64, 3 voix : notes 96, 103, 108", dict(KW, shape=2, finetune=POLY_FINE[3], note=96,
+                                                                       contour=64),
+         dict(trigs=(1, 40, 80), blocks=160, changes={40: dict(note=103), 80: dict(note=108)})),
+        ("cordes en accord aiguës, STRUCTURE 127, 1 voix : note 90", dict(KW, shape=3, contour=127, note=90),
+         dict(trigs=(1,), blocks=120)),
+        ("corde, STRUCTURE 0 (le chevalet courbe), 2 voix : notes 36, 43, 48", dict(KW, shape=2, finetune=POLY_FINE[2],
+                                                                                   note=36, contour=0, color=100),
+         dict(trigs=(1, 40, 80), blocks=160, changes={40: dict(note=43), 80: dict(note=48)})),
+        ("corde, STRUCTURE 127 (le bruit de dispersion), 3 voix : notes 40, 52, 60",
+         dict(KW, shape=2, finetune=POLY_FINE[3], note=40, contour=127, color=110, sweep=90),
+         dict(trigs=(1, 40, 80), blocks=160, changes={40: dict(note=52), 80: dict(note=60)})),
+        ("COLOR qui bouge à chaque bloc (cordes sympathiques, 2 voix)", dict(KW, shape=1, finetune=POLY_FINE[2]),
+         dict(trigs=(1, 60), blocks=160, changes={b: dict(color=b * 7 % 128) for b in range(10, 160)})),
     ]
     if not quick:
         out.append(("machine locks : SNARE, MODAL, ACID, MODAL, KICK", dict(KW, shape=0, machine=1),

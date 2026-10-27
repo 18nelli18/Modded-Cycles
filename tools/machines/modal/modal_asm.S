@@ -247,23 +247,13 @@ modal_str_read:
 	lea	28(%sp), %sp
 	rts
 
-/* void modal_str_damp(s32 *hb, s32 *dk)
+/* void modal_str_damp(s32 *hb, s32 *dk, int n)
  * Corde, passe 2 du chemin rapide, reglages fixes : DampingFilter (fir_damp) puis le passe-bas d'amortissement
- * (svf), en place sur les MB echantillons de hb. dk : fx1, fx2, h0, h1 (fir_h0, fir_h1), ib (-b), a2, a3, ic1, ic2 ;
- * fx1, fx2, ic1, ic2 rendus a la fin.
+ * (svf), en place sur les n echantillons de hb (n % 4 un par un d'abord, puis 4 a la fois). dk : fx1, fx2, h0, h1
+ * (fir_h0, fir_h1), ib (-b), a2, a3, ic1, ic2 ; fx1, fx2, ic1, ic2 rendus a la fin.
  *   y = h0 fx1 + h1 (x + fx2) ; fx2 = fx1 ; fx1 = x ; v3 = y - ic2 ; t1 = ib ic1 + a2 v3 ; t2 = a2 ic1 + a3 v3 ;
  *   x = ic2 + t2 ; ic1 += 2 t1 ; ic2 = x + t2   (produits arrondis : qmac2r) */
-	.globl	modal_str_damp
-modal_str_damp:
-	lea	-44(%sp), %sp
-	movem.l	%d2-%d7/%a2-%a6, (%sp)
-	movea.l	48(%sp), %a0		/* hb */
-	movea.l	52(%sp), %a1		/* dk */
-	movem.l	(%a1), %d4-%d7/%a2-%a6	/* fx1, fx2, h0, h1, ib, a2, a3, ic1, ic2 */
-	movea.l	#0x8000, %a1		/* l'arrondi */
-	pea	4*MB(%a0)		/* fin de hb, sur la pile */
-1:
-	.rept	4
+	.macro	DAMP1
 	move.l	(%a0), %d0		/* x */
 	move.l	%d0, %d1
 	add.l	%d5, %d1		/* x + fx2 */
@@ -286,10 +276,33 @@ modal_str_damp:
 	move.l	%a6, (%a0)+		/* x = ic2 + t2 */
 	adda.l	%d3, %a6		/* ic2 = x + t2 */
 	lea	(%a5, %d2.l*2), %a5	/* ic1 += 2 t1 */
-	.endr
-	cmpa.l	(%sp), %a0
-	bne.w	1b
-	addq.l	#4, %sp
+	.endm
+	.globl	modal_str_damp
+modal_str_damp:
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	movea.l	48(%sp), %a0		/* hb */
+	movea.l	52(%sp), %a1		/* dk */
+	move.l	56(%sp), %d0		/* n */
+	lea	(%a0, %d0.l*4), %a2
+	move.l	%a2, -(%sp)		/* fin de hb */
+	andi.l	#3, %d0
+	lea	(%a0, %d0.l*4), %a2
+	move.l	%a2, -(%sp)		/* fin des echantillons un par un */
+	movem.l	(%a1), %d4-%d7/%a2-%a6	/* fx1, fx2, h0, h1, ib, a2, a3, ic1, ic2 */
+	movea.l	#0x8000, %a1		/* l'arrondi */
+2:	cmpa.l	(%sp), %a0
+	beq.s	1f
+	DAMP1
+	bra.s	2b
+1:	cmpa.l	4(%sp), %a0
+	beq.w	3f
+	DAMP1
+	DAMP1
+	DAMP1
+	DAMP1
+	bra.w	1b
+3:	addq.l	#8, %sp
 	movea.l	52(%sp), %a1
 	movem.l	%d4-%d5, (%a1)		/* fx1, fx2 */
 	move.l	%a5, 28(%a1)		/* ic1 */
@@ -1009,4 +1022,199 @@ modal_lim:
 	move.l	4(%sp), 8(%a3)		/* ln */
 	movem.l	8(%sp), %d2-%d7/%a2-%a6
 	lea	52(%sp), %sp
+	rts
+
+/* La lecture lineaire d'une corde avec dispersion a un retard v (Q11.20) qui change a chaque echantillon : comme
+ * la boucle de str_process, idx = wpk + (v >> 20), moins DLINE au-dela de 2 DLINE - 3 ; f = (v << 11) & 0x7fffffff ;
+ * t3 = x0 + qmulr(x1 - x0, f). wpk en 32(%a3), la ligne en %a0, l'arrondi en %a6 ; v, t1, t2 detruits. */
+	.macro	RDLIN v, t1, t2, t3
+	move.l	\v, \t1
+	moveq	#20, \t2
+	asr.l	\t2, \t1		/* v >> 20 */
+	add.l	32(%a3), \t1		/* idx */
+	cmpi.l	#2*DLINE-3, \t1
+	ble.s	.Lrd\@
+	subi.l	#DLINE, \t1
+.Lrd\@:
+	lsl.l	#8, \v
+	lsl.l	#3, \v
+	bclr	#31, \v			/* f */
+	move.l	(%a0, \t1\().l*4), \t2	/* x0 */
+	move.l	4(%a0, \t1\().l*4), \t3	/* x1 */
+	sub.l	\t2, \t3
+	mac.l	\t3, \v, %acc1
+	mac.l	%a6, %a6, %acc1
+	movclr.l %acc1, \t3
+	add.l	\t2, \t3
+	.endm
+
+/* void modal_str_read_nz(s32 *line, s32 *hb, const s32 *in, int n, s32 *k)
+ * Corde avec dispersion au-dela de 0,75 (STRUCTURE haute : le bruit de dispersion module le retard), reglages
+ * fixes : passe 1 de str_process, n echantillons, les memes calculs que sa boucle (modal_dsp.h, notes/81) :
+ *   rs = rs 1664525 + 1013904223 ; dn += qmul(nfilt, qmul((rs ^ 2^31) >> 4, nk) - dn) ;
+ *   d = shl(qmul(d0, 2^30 + shl(qmul(dn, na), 6)), 1) ; apd = qmul(d, sp) ; md = d - apd ;
+ *   apd et md >= 4 : sv = la lecture a md, puis le passe-tout de l'etirement (j = apd >> 20) ; sinon a d ;
+ *   hb[k] = sv + in[k] ; wpk--.
+ * k : 0 d0, 4 sp, 8 apg, 12 na, 16 nfilt, 20 nk, 24 dn, 28 rs, 32 wpk, 36 swp, 40 1664525, 44 la ligne de
+ * l'etirement ; dn, rs, wpk, swp rendus. Le retard lu ne descend pas sous le nombre d'echantillons du bloc (str_process
+ * le verifie) : rien de ce qu'on lit n'est ecrit par ce bloc. */
+	.globl	modal_str_read_nz
+modal_str_read_nz:
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	movea.l	48(%sp), %a0		/* line */
+	movea.l	52(%sp), %a1		/* hb */
+	movea.l	56(%sp), %a2		/* in */
+	move.l	60(%sp), %d0		/* n */
+	beq.w	9f
+	movea.l	64(%sp), %a3		/* k */
+	lea	(%a1, %d0.l*4), %a5	/* fin de hb */
+	movea.l	44(%a3), %a4		/* la ligne de l'etirement */
+	movea.l	#0x8000, %a6		/* l'arrondi */
+	move.l	24(%a3), %d6		/* dn */
+	move.l	28(%a3), %d7		/* rs */
+1:	muls.l	40(%a3), %d7
+	addi.l	#1013904223, %d7	/* rs */
+	move.l	%d7, %d0
+	bchg	#31, %d0
+	asr.l	#4, %d0
+	move.l	20(%a3), %d1		/* nk */
+	mac.l	%d0, %d1, %acc0
+	movclr.l %acc0, %d0		/* noise */
+	sub.l	%d6, %d0
+	move.l	16(%a3), %d1		/* nfilt */
+	mac.l	%d1, %d0, %acc0
+	movclr.l %acc0, %d0
+	add.l	%d0, %d6		/* dn */
+	move.l	12(%a3), %d1		/* na */
+	mac.l	%d6, %d1, %acc0
+	movclr.l %acc0, %d0
+	lsl.l	#6, %d0
+	addi.l	#0x40000000, %d0	/* fm */
+	move.l	(%a3), %d1		/* d0 */
+	mac.l	%d1, %d0, %acc0
+	movclr.l %acc0, %d0
+	add.l	%d0, %d0		/* d */
+	move.l	4(%a3), %d1		/* sp */
+	mac.l	%d0, %d1, %acc0
+	movclr.l %acc0, %d1		/* apd */
+	move.l	%d0, %d2
+	sub.l	%d1, %d2		/* md */
+	cmpi.l	#0x400000, %d1
+	blt.w	5f
+	cmpi.l	#0x400000, %d2
+	blt.w	5f
+	RDLIN	%d2, %d0, %d3, %d4	/* la lecture a md : d4 */
+	moveq	#20, %d2
+	asr.l	%d2, %d1		/* j = apd >> 20 */
+	move.l	36(%a3), %d0		/* swp */
+	add.l	%d0, %d1
+	andi.l	#SLINE-1, %d1
+	move.l	(%a4, %d1.l*4), %d1	/* rd */
+	move.l	8(%a3), %d2		/* apg */
+	mac.l	%d2, %d1, %acc0
+	mac.l	%a6, %a6, %acc0
+	movclr.l %acc0, %d3
+	add.l	%d4, %d3		/* wr = sv + qmulr(apg, rd) */
+	move.l	%d3, (%a4, %d0.l*4)	/* st[swp] */
+	subq.l	#1, %d0
+	andi.l	#SLINE-1, %d0
+	move.l	%d0, 36(%a3)		/* swp */
+	mac.l	%d3, %d2, %acc0
+	mac.l	%a6, %a6, %acc0
+	movclr.l %acc0, %d3
+	sub.l	%d3, %d1		/* sv = rd - qmulr(wr, apg) */
+	bra.s	6f
+5:	RDLIN	%d0, %d2, %d3, %d1	/* la lecture a d */
+6:	add.l	(%a2)+, %d1
+	move.l	%d1, (%a1)+		/* hb[k] = sv + in[k] */
+	subq.l	#1, 32(%a3)		/* wpk-- */
+	cmpa.l	%a5, %a1
+	bne.w	1b
+	move.l	%d6, 24(%a3)		/* dn */
+	move.l	%d7, 28(%a3)		/* rs */
+9:	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	44(%sp), %sp
+	rts
+
+/* void modal_str_read_cb(s32 *line, s32 *hb, const s32 *in, int n, s32 *k)
+ * Corde avec dispersion negative (STRUCTURE basse : le chevalet courbe module le retard, l'anti-continu est melange),
+ * reglages fixes : passe 1 de str_process, n echantillons, les memes calculs que sa boucle (modal_dsp.h, notes/81) :
+ *   d = shl(qmul(d0, max(2^30 - shl(qmul(cb, bc), 6), 2^29)), 1) ; sv = la lecture a d ;
+ *   sac = dc_one(sv) ; sv += qmul(ac, sac - sv) ; value = |sv| - 0,025 ;
+ *   cb = value > 0 ? (sv > 0 ? 2 value : -3 value) : 0 ; hb[k] = sv + in[k] ; wpk--.
+ * k : 0 d0, 4 bc, 8 ac, 12 cb, 16 x, 20 y, 24 pole, 28 f (dc_one), 32 wpk, 36 0,025 (UNIT) ; cb, x, y, f, wpk rendus.
+ * Le retard lu ne descend pas sous la moitie de d0 (le plancher du facteur) : str_process ne prend ce chemin que si
+ * cette moitie depasse le bloc. */
+	.globl	modal_str_read_cb
+modal_str_read_cb:
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	movea.l	48(%sp), %a0		/* line */
+	movea.l	52(%sp), %a1		/* hb */
+	movea.l	56(%sp), %a2		/* in */
+	move.l	60(%sp), %d0		/* n */
+	beq.w	9f
+	movea.l	64(%sp), %a3		/* k */
+	lea	(%a1, %d0.l*4), %a5	/* fin de hb */
+	movea.l	24(%a3), %a4		/* pole */
+	movea.l	#0x8000, %a6		/* l'arrondi */
+	movem.l	12(%a3), %d5-%d7	/* cb, x, y */
+	move.l	28(%a3), %d4		/* f */
+1:	move.l	4(%a3), %d1		/* bc */
+	mac.l	%d5, %d1, %acc0
+	movclr.l %acc0, %d0
+	lsl.l	#6, %d0
+	move.l	#0x40000000, %d1
+	sub.l	%d0, %d1		/* le facteur du retard */
+	cmpi.l	#0x20000000, %d1
+	bge.s	2f
+	move.l	#0x20000000, %d1	/* au moins 1/2 */
+2:	move.l	(%a3), %d0		/* d0 */
+	mac.l	%d0, %d1, %acc0
+	movclr.l %acc0, %d0
+	add.l	%d0, %d0		/* d */
+	RDLIN	%d0, %d1, %d2, %d3	/* sv : d3 */
+	mac.l	%a4, %d7, %acc2		/* dc_one : qmul(y, pole) */
+	move.l	%d7, %d0
+	move.l	%a4, %d1
+	muls.l	%d1, %d0		/* les 32 bits bas de y pole */
+	andi.l	#0x7fffffff, %d0
+	add.l	%d0, %d4		/* f += */
+	move.l	%d3, %d1
+	sub.l	%d6, %d1		/* sv - x */
+	move.l	%d3, %d6		/* x = sv */
+	movclr.l %acc2, %d7
+	add.l	%d4, %d4		/* X = f >> 31 */
+	addx.l	%d1, %d7		/* y = sac */
+	lsr.l	#1, %d4			/* f &= 0x7fffffff */
+	move.l	%d7, %d0
+	sub.l	%d3, %d0
+	move.l	8(%a3), %d1		/* ac */
+	mac.l	%d1, %d0, %acc0
+	movclr.l %acc0, %d0
+	add.l	%d0, %d3		/* sv += qmul(ac, sac - sv) */
+	move.l	%d3, %d0
+	bpl.s	3f
+	neg.l	%d0
+3:	sub.l	36(%a3), %d0		/* value = |sv| - 0,025 */
+	tst.l	%d0
+	ble.s	4f
+	move.l	%d0, %d5
+	add.l	%d5, %d5		/* 2 value */
+	tst.l	%d3
+	bgt.s	5f
+	add.l	%d0, %d5
+	neg.l	%d5			/* -3 value */
+	bra.s	5f
+4:	moveq	#0, %d5
+5:	add.l	(%a2)+, %d3
+	move.l	%d3, (%a1)+		/* hb[k] = sv + in[k] */
+	subq.l	#1, 32(%a3)		/* wpk-- */
+	cmpa.l	%a5, %a1
+	bne.w	1b
+	movem.l	%d5-%d7, 12(%a3)	/* cb, x, y */
+	move.l	%d4, 28(%a3)		/* f */
+9:	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	44(%sp), %sp
 	rts
