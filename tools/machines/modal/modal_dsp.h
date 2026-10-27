@@ -1752,7 +1752,7 @@ struct note_filter {
 	s32 prev[4], note, stable;                       /* demi-tons << 16 */
 	s32 coef, stable_coef;                           /* Q31 */
 	s32 line[16], wp;
-	s32 in, quiet;                                   /* l'entree du dernier appel ; appels sans changement d'affilee */
+	s32 pend;                                        /* pas de coef et stable_coef en retard (nf_process) */
 };
 
 static void nf_init(struct note_filter *n)
@@ -1767,23 +1767,17 @@ static void nf_init(struct note_filter *n)
 	for (i = 0; i < 16; i++)
 		n->line[i] = 0;
 	n->wp = 0;
-	n->in = n->note;
-	n->quiet = 0;
+	n->pend = 0;
 }
 
 static void nf_process(struct note_filter *n, s32 note, int strum)
 {
-	/* 16 appels de suite sans rien changer, la meme entree et pas de strum : le suivant ne changerait que wp (la
-	 * ligne est pleine de la meme valeur) ; notes/81 */
-	if (!strum && note == n->in && n->quiet >= 16) {
-		n->wp = (n->wp - 1) & 15;
-		return;
-	}
 	if (iabs(note - n->note) > M_NF_JUMP || strum) {
 		int i;
 		n->stable = n->note = note;
 		n->coef = M_NF_FAST;
 		n->stable_coef = M_NF_SLOW;
+		n->pend = 0;
 		for (i = 0; i < 4; i++)
 			n->prev[i] = note;
 	} else {
@@ -1794,6 +1788,14 @@ static void nf_process(struct note_filter *n, s32 note, int strum)
 		n->prev[2] = n->prev[3];
 		n->prev[3] = note;
 		if (n->prev[0] == note && n->prev[1] == note && n->prev[2] == note) {
+			if (n->note == note && n->stable == note) {
+				/* la note et sa version stable ne bougent pas : seuls coef et stable_coef avancent, et ils ne
+				 * servent qu'au prochain changement de note. Leurs pas sont faits a ce moment-la (notes/81). */
+				n->pend++;
+				n->line[n->wp] = note;
+				n->wp = (n->wp - 1) & 15;
+				return;
+			}
 			med = note;                      /* quatre valeurs egales : la mediane sans le tri */
 		} else {
 			for (i = 0; i < 4; i++)
@@ -1806,25 +1808,23 @@ static void nf_process(struct note_filter *n, s32 note, int strum)
 				}
 			med = (s[1] + s[2]) >> 1;
 		}
-		{
-			s32 n0 = n->note, s0 = n->stable, c0 = n->coef, sc0 = n->stable_coef;
-			n->note += qmul(n->coef, med - n->note);
-			n->stable += qmul(n->stable_coef, n->note - n->stable);
-			n->coef += qmul(M_NF_LAG, M_NF_SLOW - n->coef);
-			n->stable_coef += qmul(M_NF_LAG, M_NF_LAG - n->stable_coef);
-			if (note == n->in && n->prev[0] == note && n->prev[1] == note && n->prev[2] == note
-			    && n0 == n->note && s0 == n->stable && c0 == n->coef && sc0 == n->stable_coef)
-				n->quiet++;
-			else
-				n->quiet = 0;
+		for (; n->pend > 0; n->pend--) {         /* les pas en retard ; arrives au point fixe, ils n'y changent rien */
+			s32 c = n->coef + qmul(M_NF_LAG, M_NF_SLOW - n->coef);
+			s32 sc = n->stable_coef + qmul(M_NF_LAG, M_NF_LAG - n->stable_coef);
+			if (c == n->coef && sc == n->stable_coef) {
+				n->pend = 0;
+				break;
+			}
+			n->coef = c;
+			n->stable_coef = sc;
 		}
+		n->note += qmul(n->coef, med - n->note);
+		n->stable += qmul(n->stable_coef, n->note - n->stable);
+		n->coef += qmul(M_NF_LAG, M_NF_SLOW - n->coef);
+		n->stable_coef += qmul(M_NF_LAG, M_NF_LAG - n->stable_coef);
 		n->line[n->wp] = n->stable;
 		n->wp = (n->wp - 1) & 15;
-		n->in = note;
-		return;
 	}
-	n->quiet = 0;
-	n->in = note;
 }
 
 static inline s32 nf_stable(const struct note_filter *n)
