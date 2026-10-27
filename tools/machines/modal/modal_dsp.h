@@ -737,17 +737,10 @@ static inline s32 fir_damp(s32 fdmp, s32 fbr, s32 x1, s32 x0x2)
 /* ReadHermite : t = wp + partie entiere du retard (sans masque : t + 2 < 2 DLINE) */
 static inline s32 hermite(const s32 *p, s32 f)
 {
+#ifdef MODAL_LIN                                     /* essai d'ecoute (notes/81) : lecture lineaire */
+	return p[0] + qmul(p[1] - p[0], f);
+#endif
 	s32 xm1 = p[-1], x0 = p[0], x1 = p[1], x2 = p[2];
-	s32 c = (x1 - xm1) >> 1, v = x0 - x1, w = c + v;
-	s32 a = w + v + ((x2 - x0) >> 1), bn = w + a;
-	return qmulr(qmulr(qmulr(a, f) - bn, f) + c, f) + x0;
-}
-
-static inline s32 rd_hermite(const s32 *line, s32 wp, s32 delay)  /* avec masque */
-{
-	s32 t = wp + (delay >> 20) + DLINE, f = shl(delay, 11) & Q31ONE;
-	s32 xm1 = line[(t - 1) & (DLINE - 1)], x0 = line[t & (DLINE - 1)];
-	s32 x1 = line[(t + 1) & (DLINE - 1)], x2 = line[(t + 2) & (DLINE - 1)];
 	s32 c = (x1 - xm1) >> 1, v = x0 - x1, w = c + v;
 	s32 a = w + v + ((x2 - x0) >> 1), bn = w + a;
 	return qmulr(qmulr(qmulr(a, f) - bn, f) + c, f) + x0;
@@ -759,6 +752,20 @@ static inline s32 rd_linear(const s32 *line, s32 mask, s32 wp, s32 delay)
 	s32 a = line[i & mask], b = line[(i + 1) & mask];
 	return a + qmul(b - a, f);
 }
+
+static inline s32 rd_hermite(const s32 *line, s32 wp, s32 delay)  /* avec masque */
+{
+#ifdef MODAL_LIN
+	return rd_linear(line, DLINE - 1, wp, delay);
+#endif
+	s32 t = wp + (delay >> 20) + DLINE, f = shl(delay, 11) & Q31ONE;
+	s32 xm1 = line[(t - 1) & (DLINE - 1)], x0 = line[t & (DLINE - 1)];
+	s32 x1 = line[(t + 1) & (DLINE - 1)], x2 = line[(t + 2) & (DLINE - 1)];
+	s32 c = (x1 - xm1) >> 1, v = x0 - x1, w = c + v;
+	s32 a = w + v + ((x2 - x0) >> 1), bn = w + a;
+	return qmulr(qmulr(qmulr(a, f) - bn, f) + c, f) + x0;
+}
+
 
 /* les termes de la dispersion (par echantillon dans Rings, ici seulement quand elle change) */
 struct dispk {
@@ -2138,6 +2145,17 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 		s->brightness = brightness;
 		s->position = position;
 		s->damping = damping + qmul(sidx, Q31(0.95) - damping);
+#ifdef MODAL_SYMNOCOMB                                       /* essai d'ecoute (notes/81) : sans leur peigne */
+		if (i > 0 && ps->internal_exciter) {
+			static s32 to[2 * MB];
+			int k;
+			for (k = 0; k < 2 * MB; k++)
+				to[k] = 0;
+			str_process(s, input, to, to + MB, &p->rng);
+			for (k = 0; k < MB; k++)
+				ob[k] += to[k];
+		} else
+#endif
 		str_process(s, input, ob, ab, &p->rng);
 		if (i == 0 && ns > 1) {                  /* l'entree des autres cordes de la voix */
 			s32 g = M_SYMG[ns];
@@ -2240,6 +2258,16 @@ static void modal_fast(struct modal_part *p, const struct modal_patch *pa, s32 *
 					s->frequency += qmul(p->glide, vc->freqs[i] - s->frequency);
 				input = p->sym;
 			}
+#ifdef MODAL_SYMNOCOMB
+			if (i > 0) {
+				static s32 to[2 * MB];
+				for (k = 0; k < 2 * MB; k++)
+					to[k] = 0;
+				str_process(s, input, to, to + MB, &p->rng);
+				for (k = 0; k < MB; k++)
+					ob[k] += to[k];
+			} else
+#endif
 			str_process(s, input, ob, ab, &p->rng);
 			if (i == 0 && ns > 1)
 				for (k = 0; k < MB; k++)
