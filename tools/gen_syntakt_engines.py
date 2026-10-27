@@ -425,6 +425,7 @@ MAP = g7.ENGINE_MAP          # table machine -> entrée des tables update/render
 # s'éteint par un fondu (bridge_engines.c). Vaut pour les 6 machines d'origine comme pour les machines ajoutées.
 DISPATCH = (0x400a7dfe, 0x400a7e24)
 TG_AFTER = (0x400a7e24, 0x400a7e2a)    # avec Model-TG : fin commune de la piste (3 instructions, 6 o)
+KEY_MACHINES = 5             # touche MACHINES, code logique de 0x4007faf4 (KEY_PRESET mesuré par Model-TG, notes/31 §6)
 TG_FIRST = 7                 # avec Model-TG : index de la 1re machine ajoutée (6 est son Sampler)
 AMP_ROW = 0x4005a31a         # avec Model-TG : rangée d'un Amp Decay propre à une machine (constructeur 0x4005a274)
 AUDIO_CALL = 0x40059382      # jsr 0x4005979e : fonction audio, appelée par l'interruption à chaque bloc
@@ -604,7 +605,15 @@ def detours_asm(n, images, firsts, tg=None, lofi=None):
         # L'OS applique un tour de potard avec FUNC par la fonction de l'objet d'interface du descripteur (+0x50) :
         # pour FINE, elle rend le défaut (0x4000) ; son texte (+0x20) dit -64..63 ; et la fenêtre de valeur
         # (0x4001d818) le dessine en jauge (+0x30, un sprite) au lieu du texte. Les nôtres à la place.
-        ins(f"moveq #{first + lofi}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 2f"); ins("tst.b %d5"); ins("beq.s 2f")
+        ins(f"moveq #{first + lofi}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 2f")
+        # MACHINES tenu ? (touche 5, 0x4007faf4, comme atk_watch de Model-TG et tf_knob, notes/47 §3.2 ; FUNC +
+        # PITCH redevient le PITCH de l'OS). 0x4007faf4 est une feuille (deux lectures, aucun verrou) qui garde d2
+        # et écrase d0, d1, a0 : l'appelant relit d0 (la machine, index du vecteur a1) et appelle a0 (0x4004df5c)
+        # après notre retour (0x4001e8f4..0x4001e906), on les garde donc.
+        ins("move.l %a0, -(%sp)"); ins("move.l %d0, -(%sp)")
+        ins(f"pea ({KEY_MACHINES}).w"); ins("jsr 0x4007faf4"); ins("addq.l #4, %sp")
+        ins("move.l %d0, %d1"); ins("move.l (%sp)+, %d0"); ins("movea.l (%sp)+, %a0")
+        ins("tst.b %d1"); ins("beq.s 2f")
         ins("moveq #2, %d1"); ins("cmp.l %d1, %d2"); ins("bne.s 2f"); ins("moveq #16, %d3")
         ins("move.l #lofi_step, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x50:#x}")
         ins("move.l #lofi_fmt, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x20:#x}")
@@ -1547,4 +1556,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # gov_asm.add_to importe ce module : qu'il retrouve cette instance, pas une seconde dont l'import refait
+    # set_base(PAY_ALONE) sur gx (DST_CODE…) au milieu d'une génération --tg
+    sys.modules.setdefault("gen_syntakt_engines", sys.modules[__name__])
     main()
