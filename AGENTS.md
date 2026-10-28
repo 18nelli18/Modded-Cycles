@@ -380,3 +380,8 @@ The Full edition blurb is exactly "All added machines and quality of life featur
 ## Lite216 publication (2026-10-27)
 
 User explicitly requests making216 the live Lite version. Publish exact approved SHA `0a6e67c552c3a799cb4090357ebe8018503efdebaae9ad3aaa3e68b5f3bd4e0e` under its immutable filename, preserving Full215 and release/title2.56. Lite216 carries full LFO2 pattern storage, playable LFO menus and clipboard164 on the stock-six Lite211 base. Publication approval does not imply exhaustive hardware verification. Protected fixed-features block unchanged. Machine Optional work follows.
+
+
+## Machine Optional publication (2026-10-27)
+
+User explicitly requests linking the separate Machine Optional flasher from main, with a hardware-testing/own-risk warning and brief machine descriptions. Authorizes docs/flasher-optional/ and one link outside the protected main blurb. Full215 and Lite216 firmware bytes, checksums, release and main behavior stay unchanged. No new firmware images are committed. The optional edition is experimental: fixed runtime layout, excluded DSP dormant, none exact Lite216 and all exact Full215; mixed selections are not all hardware-tested. Per-track FX investigation remains separate private work.
