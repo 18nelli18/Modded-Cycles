@@ -338,7 +338,9 @@ def locks(fw, ref, label):
     inits = [r["block"] for r in pr.recs if r["init"]]
     mark = struct.unpack(">I", e.uc.mem_read(E.VOICE0 + 0x2c, 4))[0]
     want = ref.simulate(pr.recs)
-    check(all(p > 1e6 for p in parts) and not e.unmapped and mark != MARK and inits == [0, 80, 160, 240]
+    check(all(p > 1e6 for p in parts) and not e.unmapped and mark != MARK and len(inits) == len(seq) // 2
+          # le déclenchement est au bloc 40k+1, le premier calcul 40k+2 : on tolère la latence d'un bloc
+          and all(40 * k + 1 <= i <= 40 * k + 3 for k, i in enumerate(inits))
           and np.array_equal(want, pr.got()),
           f"{label}: machine locks {' -> '.join(n for n, _ in seq)} on one track: all play (peaks "
           f"{[f'{p:.2g}' for p in parts]}), RETROSYN reset on each entry (blocks {inits}), identical to the reference "
