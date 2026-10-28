@@ -143,3 +143,9 @@ ajoutées.
   DECAY/GATE, retrigs, 6 pistes ensemble, l'écran MACHINES à 15 repères).
 - Licence **MIT** (`LICENSE-Punch.txt` du dépôt amont, vérifié le 28/10/2026 ; le dépôt s'appelle désormais AveyCole/Supermodel, l'ancien nom redirige).
 - Section du guide (`docs/guide/`) : pas encore écrite, d'où l'absence de `guide` dans `os.json`.
+
+## Rapport d'un utilisateur (28/10/2026, sa propre machine)
+
+Image de test `os-all.syx` (les cinq correctifs déjà éprouvés + RETROSYN, 9 machines) : « тестед » — l'utilisateur
+confirme que l'image fonctionne sur sa machine. Détail de ce qu'il a essayé non consigné ici ; à compléter s'il le
+précise. Rien n'est marqué `tested` : c'est le mot du mainteneur, pas le nôtre.
