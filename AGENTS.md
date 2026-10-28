@@ -375,3 +375,8 @@ User explicitly adds two bullets: "4 Filter Types: Choose between Low Pass, High
 User requests "Okay, push215 as main full build" and "include those fixes in the lite build, make sure to let me test first". Publish exact Full215 SHA `c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6`, MAIN `a82d10eaccea90141951015a1e4b38ad732fdd2b32b17a4b45e37d3bfbad137e`, immutable `Supermodel_2.56_c00942b054d0.syx` and the established Full alias. This explicitly authorizes these firmware files through the existing delivery path. Keep release/title2.56 to deliver the exact approved bytes. Public Lite remains exact211 until the user approves a separate Lite test. Do not infer exhaustive hardware testing from publication approval.
 
 The Full edition blurb is exactly "All added machines and quality of life features." with matching French. Do not re-add implementation history, filter defaults or other technical details there. The separate protected fixed-features block keeps SHA `b6ab6a510ac726ddad5f5f53afea3e915ffa14c5813bc6ab8c5712b23e00fa7d` unchanged.
+
+
+## Lite216 publication (2026-10-27)
+
+User explicitly requests making216 the live Lite version. Publish exact approved SHA `0a6e67c552c3a799cb4090357ebe8018503efdebaae9ad3aaa3e68b5f3bd4e0e` under its immutable filename, preserving Full215 and release/title2.56. Lite216 carries full LFO2 pattern storage, playable LFO menus and clipboard164 on the stock-six Lite211 base. Publication approval does not imply exhaustive hardware verification. Protected fixed-features block unchanged. Machine Optional work follows.

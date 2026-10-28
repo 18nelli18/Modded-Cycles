@@ -7,7 +7,7 @@ def apply(root,build,prefix,tail,meta,patch):
  from capstone import Cs,CS_ARCH_M68K,CS_MODE_BIG_ENDIAN,CS_MODE_M68K_040
  cs=Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_040)
  mx=meta['four_lfos']['symbols'];fx=meta['fx_project']['symbols'];aliases={};writes=[];tramp='.text\n'
- assert meta['tiny_sustain']['symbols']['tn_code_end']<=CODE
+ assert meta.get('tiny_sustain',{}).get('symbols',{}).get('tn_code_end',CODE)<=CODE
  hooks=[('wf_old_key',mx['mx_key'],'wf_key'),('wf_old_encoder',mx['mx_pol_encoder'],'wf_encoder'),('wf_old_new',fx['fxs_project_new'],'wf_new'),('wf_old_decode_end',fx['fxs_project_decode_end'],'wf_decode_end')]
  for name,at,target in hooks:
   arr,base=(prefix,BASE) if at<TAIL else(tail,TAIL);raw=bytes(arr[at-base:at-base+32]);n=0
