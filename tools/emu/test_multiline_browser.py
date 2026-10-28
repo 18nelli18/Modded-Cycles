@@ -153,13 +153,19 @@ class Browser:
         uc.mem_write(self.VT, bytes(uc.mem_read(VTABLE, VT_LEN)))
         self.w32(self.VT + 12, self.fake(0, lambda a: len(self.names)))
 
-        def entry(a):
-            self.w32(a0(), self.ITEMS + a[1])
+        def entry(a):                                 # comme le getter de la racine de +Drive, 0x400a4184
+            n, i = len(self.names), a[1]
+            if self.special and self.u32(t + 16) == n - 1:
+                i = n - 1                             # 0x400a4132 : la SÉLECTION est l'entrée spéciale -> son nom
+            elif self.special and i == n - 1:
+                i = n                                 # l'entrée spéciale par le chemin ordinaire : pas de nom
+            self.w32(a0(), self.ITEMS + i)
             self.w32(a0() + 4, 0)
         self.w32(self.VT + 16, self.fake(1, entry))
 
         def name_of(a):                               # 0x40073236 : le nom de l'entrée
-            self.w32(a0(), self.cow(self.names[a[0] - self.ITEMS]))
+            k = a[0] - self.ITEMS
+            self.w32(a0(), self.cow(self.names[k] if k < len(self.names) else ""))
 
         def shown(a):                                 # 0x400a425e : le nom affiché (ici le même)
             self.w32(a0(), self.cow(bytes(uc.mem_read(self.u32(a[1]), 64)).split(b"\0")[0].decode()))
@@ -434,6 +440,21 @@ def marks(img):
           "entrée spéciale (fin de liste, à la racine) : carré creux de 7 px, nom en x 18")
 
 
+def locks(img):
+    """La racine de +Drive : 14 dossiers puis l'entrée spéciale LOCKS, le curseur en fin de liste (notes/40 §LOCKS)."""
+    names = [f"DIR {k:02d}" for k in range(14)] + ["LOCKS"]
+    for sel, top in ((14, 12), (13, 12), (12, 12), (14, 13), (11, 10)):
+        b = Browser(img, names=names, folders=set(range(14)), special=True)
+        b.select(sel, top)
+        b.w32(b.THIS + 24, sel - top)                 # l'écart, que vt[36] tient à jour
+        before = b.state()
+        b.draw()
+        rows = [s for x, y, s in sorted(b.texts(), key=lambda t: -t[1]) if x >= 9]
+        want = names[top:top + 3]
+        check(rows == want and b.state() == before and b.regs_ok and not b.bad,
+              f"racine de +Drive, curseur {sel}, 1re ligne {top} : {rows} (attendu {want}), sélection inchangée")
+
+
 # --- 5. dossier vide ------------------------------------------------------------------------------------------------
 def empty(img):
     b = Browser(img, names=["X"]).draw()
@@ -492,6 +513,7 @@ def main():
     subfolder(base, img)
     print("son chargé, dossiers, entrée spéciale")
     marks(img)
+    locks(img)
     print("dossier vide")
     empty(img)
     print("noms longs" + (" (défilement de browser-scroll / Model-TG)" if has_scroll else ""))

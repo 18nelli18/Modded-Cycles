@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 283 tweaks, 31 778 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 54 pris (18 384 o) et **110 libres (17 576 o)**.
-- Crochets sur l'OS : 102 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- 283 tweaks, 31 781 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 55 pris (18 576 o) et **109 libres (17 384 o)**.
+- Crochets sur l'OS : 103 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 58 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
 
@@ -42,11 +42,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 7 pris, 35 libres (6 720 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 8 pris, 34 libres (6 528 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x40152d38` | `0x400b9726` | libre | |
+| `0x40152d38` | `0x400b9726` | pris (36/192 o) | multiline-browser (36 o) |
 | `0x401592bc` | `0x400b7404` | libre | |
 | `0x4015943c` | `0x400b73e4` | libre | |
 | `0x4015f38c` | `0x400b504a` | libre | |
@@ -639,6 +639,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x400a55a4` | `4fef001c226e` | jmp | masque `0x401904b4` +0x5e `ml_after` | multiline-browser | notes/40 |
 | `0x400a5612` | `20522f0a20680040` | jsr | masque `0x401904b4` +0x10 `ml_bound` | multiline-browser | notes/40 |
 | `0x400a576e` | `4eb940071da4` | jsr | masque `0x401904b4` +0x102 `ml_icon` | multiline-browser | notes/40 |
+| `0x400a578c` | `2d40ffe020454e91` | jsr | masque `0x40152d38` +0x0 `ml_name` | multiline-browser | notes/40 |
 | `0x400a6426` | `4eb9400a3052` | jsr | masque `0x40185c58` +0x0 `pv_parse` | sample-preview, sample-preview-st | notes/46 |
 | `0x400a6816` | `206800504e90` | jsr | charge utile (image) +0x116ac | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400a7da8` | `2d41003c4a936730` | jmp | charge utile (image) +0x1f2a | model-tg, model-tg-st | notes/31, notes/36 |
@@ -770,7 +771,7 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | trig-hold | 5 | 0 | 3 | 0 | 1 | 1 | 0 |  | notes/33 |
 | tempo-max | 12 | 12 | 0 | 0 | 0 | 0 | 0 |  | notes/38 |
 | boot-anim | 1 | 0 | 1 | 0 | 0 | 0 | 0 |  | notes/39 |
-| multiline-browser | 16 | 10 | 4 | 0 | 1 | 1 | 0 |  | notes/40 |
+| multiline-browser | 19 | 10 | 5 | 0 | 2 | 2 | 0 |  | notes/40 |
 | step-rec | 24 | 0 | 6 | 0 | 9 | 9 | 0 |  | notes/73 |
 | level-pan-values | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/44 |
 | trigless-dim | 8 | 1 | 3 | 0 | 2 | 2 | 0 |  | notes/45 |
