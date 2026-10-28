@@ -132,7 +132,7 @@ def build_macro_acid(img, repo, tg=None):
         mblob, msyms, mend = gm.compile_machine(tmp, repo, pay)
         if mend > acid["at"]:
             raise SystemExit(f"!! MACRO jusqu'à {mend:#x} : ACID commence à {acid['at']:#x}")
-        macro = dict(gm.MACHINE, label="MACRO", update=msyms["macro_update"], render=msyms["macro_render"])
+        macro = dict(gm.machine(msyms), label="MACRO")
         writes, append = gm.added_machine(img, tg, [macro, acid["machine"]], tmp,
                                           [(pay, mblob), (acid["at"], acid["blob"])], acid["end"])
     if tg and acid["end"] > pay + gms.TG_ROOM:
