@@ -39,6 +39,7 @@ import gen_sdvintage_exact as gx   # noqa: E402
 import gen_syntakt_engines as gs   # noqa: E402
 import usb_steady                  # noqa: E402
 import voice_loop                  # noqa: E402
+import popup_view                  # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -119,6 +120,16 @@ vq_nop:
     movel   %d2,%sp@-             | the mixer's gains for this track
 '''
 MC_PATCHES = (
+    ("src/model_tg.s",
+     'wp_stock:\n    jmp     0x4001d818\n',
+     f'wp_stock:\n    jmp     {popup_view.MASK:#x}            | Modded-Cycles: popup_view (tools/popup_view.py)\n',
+     "fenêtre de valeur : Attack, Filtre et Résonance passent par tools/popup_view.py (grand nombre, points, courbe), "
+     "même taille, notes/82"),
+    ("src/model_tg.s",
+     'str_greso:     .asciz "Resonance"\n',
+     'str_greso:     .asciz "Res"\n    .byte 0,0,0,0,0,0     | padding: same length as "Resonance"\n',
+     "noms : le Resonance de la piste ne tient pas sur la plaque du popup ; Res tient, et l'entree du "
+     "sampler garde son nom long (son popup est plus large)"),
     ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
      "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
      "mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente"),
@@ -215,6 +226,7 @@ def adapt_st(tw, stock, syms):
             *[f"  - {f} : {why}" for f, _, _, why in MC_PATCHES + ST_PATCHES],
             "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
+            popup_view.NOTE,
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
@@ -240,12 +252,13 @@ def adapt(tw, stock, syms):
     # Envoi à l'USB à heure fixe (notes/35) : la charge de Model-TG varie beaucoup (pistes au repos, mutes, effets
     # éteints) et l'OS envoie chaque bloc à l'USB juste après l'avoir calculé. Mêmes écritures que 6ch-usbup.
     # Et la division des pistes par 2 plus courte de la boucle des voix (notes/36), comme 6ch-usbup.
-    steady = usb_steady.writes() + voice_loop.writes()
+    steady = usb_steady.writes() + voice_loop.writes() + popup_view.writes(stock)
     taken = [(w["off"], w["off"] + len(w["new"]) // 2) for w in tw["writes"]]
     for w in steady:
         a, b = w["off"], w["off"] + len(w["new"]) // 2
         if any(a < y and x < b for x, y in taken):
-            raise SystemExit(f"!! envoi à heure fixe, boucle des voix : 0x{a + BASE:08x} déjà écrit par Model-TG")
+            raise SystemExit(f"!! envoi à heure fixe, boucle des voix, popup_view : 0x{a + BASE:08x} déjà écrit par "
+                             "Model-TG")
     writes = sorted(tw["writes"] + steady, key=lambda w: w["off"])
     return {
         "id": "model-tg",
@@ -262,6 +275,7 @@ def adapt(tw, stock, syms):
             "écoute d'un pas, défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
             "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
+            popup_view.NOTE,
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],
