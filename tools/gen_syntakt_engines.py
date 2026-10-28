@@ -425,6 +425,10 @@ MAP = g7.ENGINE_MAP          # table machine -> entrée des tables update/render
 # s'éteint par un fondu (bridge_engines.c). Vaut pour les 6 machines d'origine comme pour les machines ajoutées.
 DISPATCH = (0x400a7dfe, 0x400a7e24)
 TG_AFTER = (0x400a7e24, 0x400a7e2a)    # avec Model-TG : fin commune de la piste (3 instructions, 6 o)
+PARAM_TABLE = 0x4010dce0   # tables des paramètres de l'OS : 56 o par identifiant, +0x2c = nom long
+KEY_MACHINES = 5             # touche MACHINES, code logique de 0x4007faf4 (KEY_PRESET mesuré par Model-TG, notes/31 §6)
+KEY_BITS = 0x40f95744        # état des touches que lit 0x4007faf4 : bit 0x4010ae5c[code], numéroté depuis le bit 0
+KEY_MACHINES_BIT = 0         # 0x4010ae5c[5] (lofi_ui.py relit la table de l'image : un autre bit y échouerait)
 TG_FIRST = 7                 # avec Model-TG : index de la 1re machine ajoutée (6 est son Sampler)
 AMP_ROW = 0x4005a31a         # avec Model-TG : rangée d'un Amp Decay propre à une machine (constructeur 0x4005a274)
 AUDIO_CALL = 0x40059382      # jsr 0x4005979e : fonction audio, appelée par l'interruption à chaque bloc
@@ -492,8 +496,10 @@ def marks_asm(a, ins, lab, nm):
 def detours_asm(n, images, firsts, tg=None, lofi=None):
     """Détours pour n machines ajoutées (index 6..5+n), descripteurs firsts[i]..firsts[i]+4 (5 par machine).
     Avec Model-TG (tg : ses symboles), les machines ajoutées vont de 7 à 6+n (6 est son Sampler) et nos détours
-    passent la main aux siens pour le reste (notes/31). lofi : rang de MACRO parmi les machines ajoutées (None
-    sans MACRO) ; FUNC + PITCH y règle FINE, son lo-fi (lofi_asm, notes/55 §8)."""
+    passent la main aux siens pour le reste (notes/31). lofi : (rang de MACRO parmi les machines ajoutées, adresses
+    de lofi_asm), None sans MACRO (lofi_of) ; MACHINES + PITCH y règle FINE, son lo-fi (lofi_asm, notes/55 §8).
+    lofi_asm est lié avec MACRO (gen_macro.compile_machine), pas ici : les détours n'en gardent que l'aiguillage
+    vers lofi_knob (12 o), leur place (STUBS..DATA) reste presque la même avec ou sans le lo-fi."""
     last = 76 + 5 * n                                    # 1er descripteur après ceux des machines ajoutées
     first = TG_FIRST if tg else 6                        # index de la 1re machine ajoutée
     top = first + n - 1                                  # plus grand index de machine
@@ -586,6 +592,7 @@ def detours_asm(n, images, firsts, tg=None, lofi=None):
     ins("move.l (%sp)+, %d2")
     lab("9")
     if lofi is not None:                                 # MACRO : son entrée 16 (jamais lue par l'OS) = FINE
+        lofi, lofi_at = lofi
         ins(f"cmpa.l #{RECS + 0x60 * lofi:#x}, %a0"); ins("bne.s 8f"); ins(f"moveq #{FTUN}, %d1")
         ins("move.l %d1, 72(%a0)")
         lab("8")
@@ -599,19 +606,10 @@ def detours_asm(n, images, firsts, tg=None, lofi=None):
     lab("1"); ins(f"moveq #{first}, %d1"); ins("cmp.l %d1, %d0")
     ins("blt.s 2f"); ins(f"lea {DATA + 12 * (first + n):#x}, %a1")
     if lofi is not None:
-        # MACRO, FUNC tenu, potard PITCH (d5 : FUNC, d2 : potard, d3 = potard - 2 : l'entrée lue) : l'entrée 16 de
-        # son enregistrement, FINE (0x4001e8e2 : avec FUNC, seuls les potards 14 et 15 lisent une autre entrée).
-        # L'OS applique un tour de potard avec FUNC par la fonction de l'objet d'interface du descripteur (+0x50) :
-        # pour FINE, elle rend le défaut (0x4000) ; son texte (+0x20) dit -64..63 ; et la fenêtre de valeur
-        # (0x4001d818) le dessine en jauge (+0x30, un sprite) au lieu du texte. Les nôtres à la place.
-        ins(f"moveq #{first + lofi}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 2f"); ins("tst.b %d5"); ins("beq.s 2f")
-        ins("moveq #2, %d1"); ins("cmp.l %d1, %d2"); ins("bne.s 2f"); ins("moveq #16, %d3")
-        ins("move.l #lofi_step, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x50:#x}")
-        ins("move.l #lofi_fmt, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x20:#x}")
-        ins("move.l #lofi_draw, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x30:#x}")
+        # MACRO : la suite (MACHINES tenu, potard PITCH -> FINE) est lofi_knob, liée avec MACRO (lofi_asm), qui rend
+        # la main à l'appelant de knob_vec
+        ins(f"moveq #{first + lofi}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 2f"); ins(f"jmp {lofi_at['lofi_knob']:#x}")
     lab("2"); ins("rts")
-    if lofi is not None:
-        a.append(lofi_asm())
     # machine d'un descripteur (applicabilité) et rangée du constructeur : descripteurs ajoutés -> leur machine
     a.append("\t.globl\tdesc_machine"); lab("desc_machine")
     ins("move.l 4(%sp), %d0")
@@ -660,7 +658,9 @@ def lofi_khz(r):
 
 
 def lofi_asm():
-    """FINE de MACRO sous FUNC + PITCH (notes/55 §8) : le pas d'un tour de potard et le texte de la valeur.
+    """FINE de MACRO sous MACHINES + PITCH (notes/55 §8) : le pas d'un tour de potard et le texte de la valeur.
+    Assemblé et lié avec le code de MACRO (gen_macro.compile_machine), à sa place dans toutes les charges utiles :
+    seule, avec Model-TG, avec les moteurs du Syntakt, avec ACID. Les détours (detours_asm) n'y font que sauter.
     lofi_step(fonction, valeur, delta, min, max, défaut) : la valeur arrondie à un pas (0x100), plus delta arrondi
     vers le haut à des pas entiers (un cran = un pas au moins, l'accélération de l'OS conservée), bornée.
     lofi_fmt(fonction, valeur, tampon) : « OFF » au centre, la fréquence à gauche (« 46K » .. « 4K », RATE), les
@@ -668,10 +668,39 @@ def lofi_asm():
     la grande police de la fenêtre de valeur n'ayant pas de minuscules (sauf m).
     lofi_draw(fonction, valeur, bitmap, x, y, drapeau) : le dessin de la valeur dans la fenêtre de valeur
     (0x4001d818 par 0x4000a66a ; en (0x60, 0x22)) : ce texte, dessiné comme l'OS y dessine le texte des paramètres
-    sans dessin (0x40071a04, grande police 0x401429ec, alignement 2, « %s »), à la place de la jauge de FINE."""
+    sans dessin (0x40071a04, grande police 0x401429ec, alignement 2, « %s »), à la place de la jauge de FINE.
+    lofi_knob : la fin de knob_vec (detours_asm) pour un potard de MACRO, d0 (machine), a0, a1 (vecteur) gardés.
+    MACHINES tenu et potard PITCH (d2 : potard, d3 = potard - 2 : l'entrée lue) : l'entrée 16 de son
+    enregistrement, FINE (0x4001e8e2 : avec FUNC, seuls les potards 14 et 15 lisent une autre entrée). L'OS applique
+    un tour de potard avec FUNC par la fonction de l'objet d'interface du descripteur (+0x50) : pour FINE, elle rend
+    le défaut (0x4000) ; son texte (+0x20) dit -64..63 ; et la fenêtre de valeur (0x4001d818) le dessine en jauge
+    (+0x30, un sprite) au lieu du texte. Les nôtres à la place. MACHINES : l'état que lit 0x4007faf4(5) (comme
+    atk_watch de Model-TG et tf_knob, notes/47 §3.2), lu sans l'appeler : 0x4007faf4 écrase d0, d1, a0, et
+    l'appelant relit d0 (la machine) et appelle a0 (0x4004df5c) après notre retour (0x4001e8f4..0x4001e906) ; une
+    lecture d'octet ne touche que d1. FUNC + PITCH reste le PITCH de l'OS."""
     khz = ", ".join(str(lofi_khz(r)) for r in range(1, 65))
+    ui = UI_REC + 100 * FTUN
     return f"""
-	.globl	lofi_step, lofi_fmt, lofi_draw
+	.globl	lofi_step, lofi_fmt, lofi_draw, lofi_name, lofi_knob
+lofi_knob:
+	/* nom de la plaque : param_table[FTUN] +0x2c -> "Lo-Fi" (l'id 43 n'est sous aucun potard dans
+	   l'OS, seul notre lo-fi l'utilise : le renommer ne change rien d'autre) */
+	move.l	#lofi_name, %d1
+	move.l	%d1, {PARAM_TABLE + 56 * FTUN + 0x2c:#x}
+	move.b	{KEY_BITS + (KEY_MACHINES_BIT >> 3):#x}, %d1
+	btst	#{KEY_MACHINES_BIT & 7}, %d1
+	beq.s	9f
+	moveq	#2, %d1
+	cmp.l	%d1, %d2
+	bne.s	9f
+	moveq	#16, %d3
+	move.l	#lofi_step, %d1
+	move.l	%d1, {ui + 0x50:#x}
+	move.l	#lofi_fmt, %d1
+	move.l	%d1, {ui + 0x20:#x}
+	move.l	#lofi_draw, %d1
+	move.l	%d1, {ui + 0x30:#x}
+9:	rts
 lofi_step:
 	move.l	8(%sp), %d0
 	addi.l	#0x80, %d0
@@ -761,6 +790,7 @@ lofi_draw:
 lofi_s_k:	.asciz	"%dK"
 lofi_s_b:	.asciz	"%dB"
 lofi_khz:	.byte	{khz}
+lofi_name:	.asciz	"Lo-Fi"
 	.balign	2
 """
 
@@ -1077,7 +1107,7 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
             raise SystemExit(f"!! passerelle : données initialisées ({f[1]}), non recopiées dans la charge utile")
     src, o, e, b = tmp / "det.S", tmp / "det.o", tmp / "det.elf", tmp / "det.bin"
     src.write_text(detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
-                        lofi=lofi_index(machines))
+                        lofi=lofi_of(machines))
                    + probe_asm(syms, prof_sites(tg) if PROFILE and tg and meter else None)
                    + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
     gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
@@ -1085,8 +1115,9 @@ def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, ru
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(e), str(b)])
     ssyms = {p[-1]: int(p[0], 16) for p in (l.split() for l in gx.run([gx.CROSS + "nm", str(e)]).splitlines()) if len(p) == 3}
     stubs = b.read_bytes()
+    import sys as _s; print(f'@@STUBS {STUBS:#x} len {len(stubs)} DATA {DATA:#x} free {DATA-STUBS-len(stubs)}', file=_s.stderr)
     if STUBS + len(stubs) > DATA:
-        raise SystemExit("!! détours trop grands")
+        raise SystemExit(f"!! détours trop grands : STUBS {STUBS:#x} + {len(stubs)} = {STUBS + len(stubs):#x} > DATA {DATA:#x} (дефицит {STUBS + len(stubs) - DATA} о)")
     blobs["hot"] = [(stage, blobs[f".sram{k}"], fns) for k, (stage, _, fns) in enumerate(hot)]
     return blobs, syms, stubs, ssyms
 
@@ -1124,18 +1155,21 @@ def own_code(tmp, machines, rnd_at, lay, tg, own):
     return blobs, br["syms"], stubs, ssyms
 
 
-def lofi_index(machines):
-    """Rang de MACRO (lofi) parmi les machines ajoutées, pour detours_asm ; None sans elle (ACID peut la suivre)."""
-    lofi = [i for i, m in enumerate(machines) if m.get("lofi")]
+def lofi_of(machines):
+    """(rang de MACRO parmi les machines ajoutées, ses symboles lofi_*), pour detours_asm ; None sans elle (ACID
+    peut la suivre). machines[i]["lofi"] : les adresses de lofi_asm liées avec MACRO (gen_macro.machine)."""
+    lofi = [(i, m["lofi"]) for i, m in enumerate(machines) if m.get("lofi")]
     if len(lofi) > 1:
         raise SystemExit("!! une seule machine lo-fi")
+    if lofi and not isinstance(lofi[0][1], dict):
+        raise SystemExit("!! MACRO : adresses de lofi_asm inconnues (gen_macro.machine)")
     return lofi[0] if lofi else None
 
 
 def detours_text(machines, syms, rnd_at, tg):
     """Texte des détours (à STUBS) pour ces machines ajoutées, comme compile_code."""
     return (detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
-                        lofi=lofi_index(machines))
+                        lofi=lofi_of(machines))
             + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
 
 
@@ -1148,8 +1182,9 @@ def assemble_detours(tmp, machines, syms, rnd_at, tg, text=None):
     gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".text", str(e), str(b)])
     ssyms = {p[-1]: int(p[0], 16) for p in (l.split() for l in gx.run([gx.CROSS + "nm", str(e)]).splitlines()) if len(p) == 3}
     stubs = b.read_bytes()
+    import sys as _s; print(f'@@STUBS {STUBS:#x} len {len(stubs)} DATA {DATA:#x} free {DATA-STUBS-len(stubs)}', file=_s.stderr)
     if STUBS + len(stubs) > DATA:
-        raise SystemExit("!! détours trop grands")
+        raise SystemExit(f"!! détours trop grands : STUBS {STUBS:#x} + {len(stubs)} = {STUBS + len(stubs):#x} > DATA {DATA:#x} (дефицит {STUBS + len(stubs) - DATA} о)")
     return stubs, ssyms
 
 
@@ -1547,4 +1582,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # gov_asm.add_to importe ce module : qu'il retrouve cette instance, pas une seconde dont l'import refait
+    # set_base(PAY_ALONE) sur gx (DST_CODE…) au milieu d'une génération --tg
+    sys.modules.setdefault("gen_syntakt_engines", sys.modules[__name__])
     main()
