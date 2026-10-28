@@ -4,29 +4,34 @@
  * Reecriture de la Part de Rings (Emilie Gillet, Mutable Instruments, 2015, licence MIT : LICENSE-Rings) et de
  * ce qu'elle utilise de stmlib : resonateur modal (filtres passe-bande), cordes (Karplus-Strong, dispersion,
  * cordes sympathiques, accords), voix FM, excitateurs internes (impulsion filtree, bruit pince), reverbe, filtre
- * de note, limiteur. Memes calculs, dans le meme ordre, au meme rythme ; bloc de 32 trames (le Cycles) au lieu
- * de 24 ; reglages « eco » (notes/74) : la moitie des modes de Rings, 4 cordes au lieu de 8. Le synthe cache de
- * Rings (StringSynthPart, « easter egg ») n'y est pas.
+ * de note, limiteur. Memes calculs, dans le meme ordre, au meme rythme ; reglages « eco » (notes/74) : la moitie
+ * des modes de Rings, 4 cordes au lieu de 8. Le synthe cache de Rings (StringSynthPart, « easter egg ») n'y est pas.
+ * Calcule a 24 kHz, par blocs de 16 trames (notes/81, modal_cfg.h) : ce qui compte en echantillons est recale pour
+ * garder ses durees en secondes et ses frequences en hertz (tools/emu/test_modal_dsp.py, SR24), et la passerelle
+ * (modal.c) remonte la sortie a 48 kHz.
  *
  * Ce fichier sert deux fois : compile pour le Cycles (modal.c, -mcpu=54418, l'EMAC) et pour l'ordinateur
  * (tools/emu/modal_host.c) avec la meme arithmetique a l'octet pres (modal_fix.h) ; la preuve
  * (tools/emu/test_modal_dsp.py) compare a Rings en flottant (tools/emu/rings_ref.cc).
  *
  * Formats : signaux 1,0 = 2^24 (UNIT) ; potards Q31 (0..1) ; hauteurs en demi-tons << 16 ; frequences
- * normalisees (f / 48 kHz) en Q31 ou en xf ; retards en echantillons, Q11.20.
+ * normalisees (f / 24 kHz) en Q31 ou en xf ; retards en echantillons, Q11.20.
  */
 #ifndef MODAL_DSP_H
 #define MODAL_DSP_H
 
 #include "modal_fix.h"
+#include "modal_cfg.h"                               /* MB, DLINE, SLINE (avec modal_asm.S) */
 
-#define MB          32                               /* trames par bloc */
 #define UNIT        (1 << 24)
+/* Le code rare (calculs par bloc quand un reglage change, initialisations) a part, et les branches rares hors du
+ * chemin : le code relu a chaque bloc tient dans moins de lignes du cache (notes/81) */
+#define MODAL_COLD  __attribute__((cold, noinline))
+#define likely(x)   __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)
 #define MAXPOLY     4
 #define NSTRINGS    4                                /* eco : 4 cordes au lieu de 8 */
 #define MAXMODES    32                               /* eco : 30 modes au plus ((64 / polyphonie - 4) / 2) ; modal_asm.S */
-#define DLINE       2048                             /* kDelayLineSize */
-#define SLINE       1024
 
 /* les numeros de Rings (ResonatorModel) ; ni la voix FM (3) ni la corde et reverbe (5) : choix de Maxime (22/10/2026) */
 enum { MODEL_MODAL = 0, MODEL_SYMPATHETIC = 1, MODEL_STRING = 2, MODEL_SYMPATHETIC_Q = 4 };
@@ -44,7 +49,7 @@ static s32 m_ready;                                  /* entrees des tables deja 
 
 /* un morceau des tables (128 sinus ou 48 points du limiteur, moins de 10 000 instructions) : rend 1 quand tout est
  * pret. Calculees d'un coup a la premiere note, elles prendraient tout un bloc (le son craquerait). */
-static int modal_init_step(void)
+static MODAL_COLD int modal_init_step(void)
 {
 	int i, end;
 
@@ -89,11 +94,20 @@ static __attribute__((unused)) void modal_init_tables(void)    /* d'un coup (l'o
 		;
 }
 
-static __attribute__((noinline)) s32 softlimit_big(s32 a)  /* |x| >= 4 */
+static MODAL_COLD s32 softlimit_big(s32 a)  /* |x| >= 4 */
 {
 	xf v = xfrom(a, 24), v2 = xmul(v, v);
 	return xto(xmul(xmul(v, xadd(XC(M_27), v2)), xrecip(xadd(XC(M_27), xmul(XC(M_9), v2)))), 24);
 }
+
+#ifdef MODAL_ASM
+s32 modal_softbig(s32 a);                            /* pour modal_lim (modal_asm.S) */
+s32 modal_softbig(s32 a)
+{
+	return softlimit_big(a);
+}
+void modal_lim(const s32 *oa, s32 *w, s32 *peak, const s32 *k);   /* modal_asm.S */
+#endif
 
 static inline s32 softlimit(s32 x)                    /* x en UNIT */
 {
@@ -110,6 +124,11 @@ static inline s32 softlimit(s32 x)                    /* x en UNIT */
 
 /* ---- petits elements ---------------------------------------------------------------------------------------- */
 
+/* MB tirages d'un coup : s <- A s + C, A = 1664525^16, C = 1013904223 (1664525^15 + ... + 1), modulo 2^32 */
+#define M_LCG16A    0x77520441u
+#define M_LCG16C    0x83c6b450u
+typedef char modal_lcg16[MB == 16 ? 1 : -1];
+
 static u32 rng_next(u32 *s)                          /* stmlib Random::GetWord */
 {
 	*s = *s * 1664525u + 1013904223u;
@@ -119,36 +138,6 @@ static u32 rng_next(u32 *s)                          /* stmlib Random::GetWord *
 static inline s32 rng_q31(u32 *s)                     /* 2 GetFloat() - 1, en Q31 */
 {
 	return (s32)(rng_next(s) ^ 0x80000000u);
-}
-
-/* oscillateur de cosinus lent (CosineOscillator des LFO de Rings), par accumulateur de phase : Next() rend
- * 0,5 + 0,5 cos(n theta), n = 0, 1, 2... ; value() le dernier rendu */
-struct lfo {
-	u32 ph, inc;
-	s32 val;                                         /* Q31 */
-};
-
-static s32 cos_q31(u32 ph)                           /* 0,5 + 0,5 cos, Q31 */
-{
-	u32 p = ph + 0x40000000u;                        /* cos = sin(+ 1/4 de tour) */
-	s32 i = p >> 20, f = (s32)((p << 11) & 0x7fffffffu);
-	s32 a = m_sine[i], b = m_sine[i + 1];
-	s32 s = shl(a, 16) + qmul(shl(b - a, 16), f);  /* Q31 */
-	return (s >> 1) + 0x40000000;
-}
-
-static void lfo_init(struct lfo *l, u32 inc)
-{
-	l->ph = 0;
-	l->inc = inc;
-	l->val = cos_q31(0u - inc);
-}
-
-static s32 lfo_next(struct lfo *l)
-{
-	l->val = cos_q31(l->ph);
-	l->ph += l->inc;
-	return l->val;
 }
 
 /* filtre a variable d'etat (stmlib Svf), forme de Simper : v1 = bp, v2 = lp ; b = 1 - a1 */
@@ -191,6 +180,63 @@ static __attribute__((noinline)) xf tan_accurate(s32 f)
 	p = M_TA_A21 + qmul(t, p);
 	p = (M_PI27 >> 6) + qmul(t, p);
 	return xmul(xfrom(f, 31), xfrom(p, 21));
+}
+
+/* tanf(pi f) de stmlib (OnePole::tan<FREQUENCY_EXACT>, f borne a 0,497), f en Q31 (notes/81 : a 24 kHz, les modes
+ * et les filtres montent jusqu'a 0,49, ou les approximations de Rings, faites pour 48 kHz, ne tiennent plus).
+ * sin(x) / cos(x) par leurs series jusqu'a x^11 sur [0, pi/4] (x = pi f), et tan(pi f) = 1 / tan(pi (1/2 - f))
+ * au-dela : environ 1e-9 d'ecart. */
+static __attribute__((noinline)) xf tan_exact(s32 f)
+{
+	s32 z, z2, ps, pc, sn, cs;
+	int inv;
+
+	if (f > M_0497Q)
+		f = M_0497Q;
+	inv = f > 0x20000000;
+	if (inv)
+		f = 0x40000000 - f;
+	z = shl(qmul(f, Q31(3.14159265358979 / 4)), 1);   /* x / 2, Q31 (<= pi / 8) */
+	z2 = qmul(z, z);                                   /* x^2 / 4 */
+	/* sin(x) / x = 1 - x^2/6 (1 - x^2/20 (1 - x^2/42 (1 - x^2/72 (1 - x^2/110)))) */
+	ps = Q31ONE - qmul(z2, Q31(4.0 / 110));
+	ps = Q31ONE - qmul(qmul(z2, Q31(4.0 / 72)), ps);
+	ps = Q31ONE - qmul(qmul(z2, Q31(4.0 / 42)), ps);
+	ps = Q31ONE - qmul(qmul(z2, Q31(4.0 / 20)), ps);
+	ps = Q31ONE - qmul(qmul(z2, Q31(4.0 / 6)), ps);
+	sn = qmul(z, ps);                                  /* sin(x) / 2, Q31 */
+	/* cos(x) = 1 - x^2/2 (1 - x^2/12 (1 - x^2/30 (1 - x^2/56 (1 - x^2/90)))) */
+	pc = Q31ONE - qmul(z2, Q31(4.0 / 90));
+	pc = Q31ONE - qmul(qmul(z2, Q31(4.0 / 56)), pc);
+	pc = Q31ONE - qmul(qmul(z2, Q31(4.0 / 30)), pc);
+	pc = Q31ONE - qmul(qmul(z2, Q31(4.0 / 12)), pc);
+	cs = Q31ONE - shl(qmul(z2, pc), 1);                /* cos(x), Q31 */
+	if (!sn)
+		return xfrom(0, 0);
+	return inv ? xmul(xfrom(cs, 31), xrecip(xfrom(sn, 30)))
+		   : xmul(xfrom(sn, 30), xrecip(xfrom(cs, 31)));
+}
+
+/* cos(pi f), Q31, f dans [0, 1/2] (Q31) : la table des sinus (sin(2 pi (f / 2 + 1/4))) */
+static s32 cospi_q31(s32 f)
+{
+	s32 i = 1024 + (f >> 20), fr = shl(f, 11) & Q31ONE;
+	s32 a = m_sine[i], b = m_sine[i + 1];
+	return shl(a, 16) + qmul(shl(b - a, 16), fr);
+}
+
+/* le facteur de qualite des filtres d'excitation et du pincement (notes/81) : q0 jusqu'a la coupure 0,6, puis vers
+ * 0,7071 a 0,998 (q0 + d t, d = 0,7071 - q0, t = (f - 0,6) / 0,398 borne a [0, 1]) ; rend 1 / q */
+static __attribute__((noinline)) xf q_fade_r(s32 fq, xf q0, xf d, xf r0)
+{
+	s32 t;
+
+	if (fq <= M_06Q)
+		return r0;
+	t = shl(qmul(fq - M_06Q, M_R0398), 2);           /* (f - 0,6) / 0,398, M_R0398 en Q29 */
+	if (t < 0 || t > Q31ONE)
+		t = Q31ONE;
+	return xrecip(xadd(q0, xmul(d, xfrom(t, 31))));
 }
 
 static void svf_reset(struct svf *f)
@@ -294,7 +340,7 @@ static s32 b2mb(s32 b)                               /* b (2 - b), Q31, b dans [
  * calculs a la fois : l'interruption n'est pas reentrante. */
 static struct {
 	s32 x[MB + 1], ck[MB], y0[MB], y1[MB];           /* x : modal_asm.S (+1 : lu, inutilise, par modal_modes) */
-	s32 zero[MB];                                    /* entree nulle (modal_str_read) */
+	s32 nc[MB];                                      /* le peigne d'une corde sans peigne, jamais lu (str_process) */
 	s32 so[MB + 1], sa[MB + 1];                      /* modal_modes : sommes des amp ic1 / 2, modes pairs, impairs */
 	s32 amp[2 * MAXMODES];                           /* position qui bouge : amplitude au debut, pas (modal_modes_lin) */
 } sc;
@@ -317,14 +363,20 @@ struct plucker;
 void modal_modes(struct mode *md, int n, const s32 *x, s32 *so, s32 *sa, const s32 *amp, int quiet);
 void modal_modes_lin(struct mode *md, int n, const s32 *x, s32 *ob, s32 *ab, const s32 *amp);
 typedef char modal_maxmodes_32[MAXMODES == 32 ? 1 : -1];  /* modal_modes_lin lit le pas a amp + 32 mots */
+typedef char modal_mb_shift[(1 << MB_SHIFT) == MB ? 1 : -1];
 void modal_str_read(const s32 *ph, s32 f, const s32 *in, s32 *hb, int n);
-void modal_str_damp(s32 *hb, s32 *dk);
+void modal_str_damp(s32 *hb, s32 *dk, int n);
 void modal_str_write(const s32 *hb, s32 *pw, s32 *out, const s32 *dpp, int n);
 void modal_str_read_ap(const s32 *ph, s32 f, s32 *hb, int n, s32 *ap);
 void modal_str_read_mv(const s32 *pw, s32 *st, const s32 *in, s32 *hb, int n);
+void modal_str_read_nz(s32 *line, s32 *hb, const s32 *in, int n, s32 *k);
+void modal_str_run(s32 *pw, const s32 *pr, const s32 *in, s32 *out, int n, s32 *k);
+void modal_str_comb(const s32 *pb, s32 *aux, int n, s32 *cp);
+void modal_str_combn(const s32 *pb, s32 *out, int n, s32 *cp);
+void modal_str_dw(const s32 *hb, s32 *pw, s32 *out, int n, s32 *k);
+void modal_str_read_cb(s32 *line, s32 *hb, const s32 *in, int n, s32 *k);
 void modal_str_damp_mv(s32 *hb, s32 *dk);
 void modal_str_write_mv(const s32 *hb, s32 *pw, s32 *out, s32 *dpp, int n);
-void modal_dc_in(struct dcblock *d, s32 *hb, const s32 *in);
 #endif
 
 struct resonator {
@@ -333,7 +385,7 @@ struct resonator {
 	 * changent pas : BRIGHTNESS et DAMPING ne refont que les facteurs de qualite */
 	s32 kv1, ks, knum, kfresh;
 	xf kf;
-	s32 kpq[MAXMODES], kpfm[MAXMODES], kpfe[MAXMODES], kgm[MAXMODES], kge[MAXMODES];
+	s32 kpq[MAXMODES], kpfm[MAXMODES], kpfe[MAXMODES], kgm[MAXMODES], kge[MAXMODES], kcos[MAXMODES];
 	s32 amp[MAXMODES];                               /* amplitudes (position fixe), Q31 */
 	s32 resolution, nmodes;
 	xf frequency;
@@ -343,7 +395,7 @@ struct resonator {
 	s32 cs, cb, cd, valid, amp_pos;
 };
 
-static void reso_init(struct resonator *r, int resolution)
+static MODAL_COLD void reso_init(struct resonator *r, int resolution)
 {
 	int i;
 
@@ -392,15 +444,6 @@ static void reso_amps(s32 *amp, s32 pos, int n)
 	}
 }
 
-/* tan_fast de stmlib (OnePole::tan<FREQUENCY_FAST>), f en Q31 (<= 0,5) -> g, en valeurs positives */
-static inline __attribute__((always_inline)) xf tan_fast(s32 f)
-{
-	s32 t = qmul(f, f);
-	s32 in = M_TF_A26 + shl(qmul(t, M_TF_B25), 1);  /* Q26 */
-	s32 p = M_PI27 + shl(qmul(t, in), 1);           /* Q27 */
-	return xmulp(xfromp(f, 31), xfromp(p, 27));
-}
-
 /* svf_set en ligne pour un mode (g, r = 1 / resonance), en valeurs positives ; b = e / (1 + e) = 1 - a1 (un produit
  * de moins, 2 LSB au plus d'ecart avec e a1) */
 static inline __attribute__((always_inline)) void mode_set(struct mode *m, xf g, xf rq)
@@ -415,7 +458,9 @@ static inline __attribute__((always_inline)) void mode_set(struct mode *m, xf g,
 
 /* ComputeFilters de Rings, refait quand ses entrees changent. 1re passe (frequence ou structure changee) : les
  * frequences des partiels, leur nombre sous 0,49 (num) ; 2e : les facteurs de qualite et les coefficients des seuls
- * modes calcules (reso_process en fait (num + 1) & ~1). Les memes valeurs pour ceux-la que la boucle unique de Rings. */
+ * modes calcules (reso_process en fait (num + 1) & ~1). Les memes valeurs pour ceux-la que la boucle unique de Rings.
+ * A 24 kHz (notes/81) : tangente exacte, et le facteur de qualite multiplie par cos(pi f), pour que chaque mode
+ * garde sa duree en secondes jusqu'a la moitie de la frequence d'echantillonnage. */
 static int reso_compute(struct resonator *r)
 {
 	s32 q_loss, rate, ba, br, i, n, num;
@@ -439,6 +484,7 @@ static int reso_compute(struct resonator *r)
 			}
 			r->kpfm[i] = pf.m;
 			r->kpfe[i] = pf.e;
+			r->kcos[i] = cospi_q31(r->kpq[i]);
 			stretch += stiffness >> 5;
 			stiffness = qmul(stiffness, stiffness < 0 ? Q31(0.93) : Q31(0.98));
 			harmonic = xaddp(harmonic, r->frequency);
@@ -453,7 +499,7 @@ static int reso_compute(struct resonator *r)
 	n = (num + 1) & ~1;
 	if (n > r->resolution)
 		n = r->resolution;
-	q = xmul(XC(M_500), xfrom(interp(M_DEC4, r->damping, 8), 17));
+	q = xmul(XC(M_QMODE), xfrom(interp(M_DEC4, r->damping, 8), 17));
 	ba = Q31ONE - r->structure;
 	ba = qmul(ba, ba);
 	ba = qmul(ba, ba);
@@ -464,13 +510,14 @@ static int reso_compute(struct resonator *r)
 	for (i = 0; i < n; i++) {
 		xf g;
 		if (r->kfresh) {
-			g = tan_fast(r->kpq[i]);
+			g = tan_exact(r->kpq[i]);
 			r->kgm[i] = g.m;
 			r->kge[i] = g.e;
 		} else {
 			g = xmk(r->kgm[i], r->kge[i]);
 		}
-		mode_set(&r->md[i], g, xrecipp(xaddp(xmk(1 << 30, 0), xmulp(xmk(r->kpfm[i], r->kpfe[i]), q))));
+		mode_set(&r->md[i], g, xrecipp(xmulp(xaddp(xmk(1 << 30, 0), xmulp(xmk(r->kpfm[i], r->kpfe[i]), q)),
+						     xfromp(r->kcos[i], 31))));
 		q_loss += qmul(rate, Q31ONE - q_loss);
 		q = xmulp(q, xfromp(q_loss, 31));
 	}
@@ -559,7 +606,7 @@ static __attribute__((noinline)) void reso_process(struct resonator *r, const s3
 		reso_amps(a0, pstart, n);                    /* amplitudes au debut et a la fin du bloc */
 		reso_amps(da, r->prev_position, n);
 		for (i = 0; i < n; i++)
-			da[i] = (da[i] - a0[i]) >> 5;
+			da[i] = (da[i] - a0[i]) >> MB_SHIFT;
 		r->amp_pos = -1;
 #ifdef MODAL_ASM
 		modal_modes_lin(r->md, n, x, out, aux, a0);  /* modal_asm.S */
@@ -613,11 +660,15 @@ struct mstring {
 	s32 kf, kd, kb, kvalid;
 	s32 kdisp_valid, kdisp, ksp, kna, kbc, kac, kapg;  /* disp_coefs, gardes tant que la dispersion ne change pas */
 	s32 k_delay, k_unit, k_ratio, k_dcoef, k_bright, k_nfilt, k_dcomp, k_nk;
+	/* le chemin court (str_fast, notes/81) : rien ne bouge que la position et le retard ; ce qu'il lit, prepare par
+	 * str_plan. kver : compte les str_block ; kf_full : la frequence du dernier ; lite : glissade (str_delay) */
+	s32 fast, fdisp, fdi, ff, fh0, fh1, fap, fapj, fver, fmode, fd0;
+	s32 kver, kf_full, lite;
 	s32 line[2 * DLINE];
 	s32 stretch[SLINE];
 };
 
-static void str_init(struct mstring *s, int dispersion)
+static MODAL_COLD void str_init(struct mstring *s, int dispersion)
 {
 	s->enable_dispersion = dispersion;
 	s->wp = s->swp = 0;
@@ -640,6 +691,10 @@ static void str_init(struct mstring *s, int dispersion)
 	s->src_phase = 0;
 	s->kvalid = 0;
 	s->kdisp_valid = 0;
+	s->fast = 0;
+	s->kver = 0;
+	s->kf_full = 0;
+	s->lite = 0;
 	dc_init(&s->dc, M_POLE20);
 }
 
@@ -661,23 +716,12 @@ static inline s32 fir_damp(s32 fdmp, s32 fbr, s32 x1, s32 x0x2)
 	return qmac2r(fir_h0(fdmp, fbr), x1, fir_h1(fdmp, fbr), x0x2);
 }
 
-/* ReadHermite : t = wp + partie entiere du retard (sans masque : t + 2 < 2 DLINE) */
-static inline s32 hermite(const s32 *p, s32 f)
+/* La lecture de la ligne d'une corde : lineaire (Read de stmlib, a la place du ReadHermite de Rings : le choix du
+ * budget de 13 %, notes/81), le produit arrondi (la boucle ne doit pas deriver vers le bas). p = &line[wp + partie
+ * entiere du retard], sans masque (p + 1 < line + 2 DLINE) ; f : la partie fractionnaire, Q31. */
+static inline s32 rd_lin(const s32 *p, s32 f)
 {
-	s32 xm1 = p[-1], x0 = p[0], x1 = p[1], x2 = p[2];
-	s32 c = (x1 - xm1) >> 1, v = x0 - x1, w = c + v;
-	s32 a = w + v + ((x2 - x0) >> 1), bn = w + a;
-	return qmulr(qmulr(qmulr(a, f) - bn, f) + c, f) + x0;
-}
-
-static inline s32 rd_hermite(const s32 *line, s32 wp, s32 delay)  /* avec masque */
-{
-	s32 t = wp + (delay >> 20) + DLINE, f = shl(delay, 11) & Q31ONE;
-	s32 xm1 = line[(t - 1) & (DLINE - 1)], x0 = line[t & (DLINE - 1)];
-	s32 x1 = line[(t + 1) & (DLINE - 1)], x2 = line[(t + 2) & (DLINE - 1)];
-	s32 c = (x1 - xm1) >> 1, v = x0 - x1, w = c + v;
-	s32 a = w + v + ((x2 - x0) >> 1), bn = w + a;
-	return qmulr(qmulr(qmulr(a, f) - bn, f) + c, f) + x0;
+	return p[0] + qmulr(p[1] - p[0], f);
 }
 
 static inline s32 rd_linear(const s32 *line, s32 mask, s32 wp, s32 delay)
@@ -685,6 +729,21 @@ static inline s32 rd_linear(const s32 *line, s32 mask, s32 wp, s32 delay)
 	s32 i = wp + (delay >> 20), f = shl(delay, 11) & Q31ONE;
 	s32 a = line[i & mask], b = line[(i + 1) & mask];
 	return a + qmul(b - a, f);
+}
+
+static inline s32 rd_linm(const s32 *line, s32 wp, s32 delay)  /* rd_lin avec masque */
+{
+	s32 t = wp + (delay >> 20), f = shl(delay, 11) & Q31ONE;
+	s32 x0 = line[t & (DLINE - 1)], x1 = line[(t + 1) & (DLINE - 1)];
+	return x0 + qmulr(x1 - x0, f);
+}
+
+
+/* le facteur du retard de la dispersion (Q30), au moins 1/2 : le chevalet courbe ne peut pas raccourcir la corde
+ * de plus de moitie (un plancher que le son n'atteint pas ; le chemin en assembleur s'y fie, notes/81) */
+static inline s32 disp_fm(s32 m)
+{
+	return m < (1 << 29) ? 1 << 29 : m;
 }
 
 /* les termes de la dispersion (par echantillon dans Rings, ici seulement quand elle change) */
@@ -712,7 +771,7 @@ static s32 disp_apg(s32 disp)
 	return disp > 0 ? -r : r;
 }
 
-static __attribute__((noinline)) void disp_coefs(struct dispk *k, s32 disp)    /* disp en Q30 */
+static MODAL_COLD void disp_coefs(struct dispk *k, s32 disp)    /* disp en Q30 */
 {
 	s32 na, bc;
 
@@ -727,7 +786,7 @@ static __attribute__((noinline)) void disp_coefs(struct dispk *k, s32 disp)    /
 }
 
 /* les calculs par bloc de String::ProcessInternal */
-static __attribute__((noinline)) void str_block(struct mstring *s)
+static MODAL_COLD void str_block(struct mstring *s)
 {
 	s32 delay, src_ratio, lf, dcoef, bright, nfilt, dcut, df, b16;
 	xf fx = xfrom(s->frequency, 31), dx, rt60, base;
@@ -759,10 +818,11 @@ static __attribute__((noinline)) void str_block(struct mstring *s)
 	dcoef = xto(xs2r(b16), 31);
 	bright = qmul(s->brightness, s->brightness);
 	nfilt = xto(xs2r(qmul(s->brightness - Q31ONE, 48 << 16)), 31);
+	nfilt = b2mb(nfilt);                             /* 24 kHz : deux pas de 48 kHz par pas (notes/81) */
 	dcut = (24 << 16) + qmul(qmul(s->damping, s->damping), 48 << 16) + qmul(bright, 24 << 16);
 	if (dcut > (84 << 16))
 		dcut = 84 << 16;
-	df = xto(xmin(xmul(fx, xs2r(dcut)), XC(M_0499)), 31);
+	df = xto(xmin(xscale(xmul(fx, xs2r(dcut)), -1), XC(M_0499)), 31);   /* la coupure de 48 kHz (notes/81) */
 	if (s->damping >= M_095) {
 		s32 dd = s->damping - M_095;
 		s32 ti = dd >= Q31ONE / 20 ? Q31ONE : dd * 20;   /* 20 (d - 0,95) : 1,0 au plus, sans deborder */
@@ -771,33 +831,444 @@ static __attribute__((noinline)) void str_block(struct mstring *s)
 		df += qmul(ti, M_04999 - df);
 		dcut += qmul(ti, (128 << 16) - dcut);
 	}
-	svf_set(&s->iir, tan_accurate(df), xmk(1 << 30, 1), 0, 0);
+	svf_set(&s->iir, xscale(tan_accurate(df), 1), xmk(1 << 30, 1), 0, 0);   /* son prototype de 48 kHz : 2 g48 */
 	s->k_dcomp = Q31ONE - interp(M_SVFSHIFT, dcut, 15);
 	s->k_nk = xto(xrecip(xadd(XC(M_02), xfrom(nfilt, 31))), 28);   /* 1 / (0,2 + nf), Q28 */
 	s->k_delay = delay;
 	s->k_unit = unit;
 	s->k_ratio = src_ratio;
 	s->k_dcoef = dcoef;
-	s->k_bright = bright;
+	s->k_bright = 0x60000000 + (bright >> 2);       /* 3/4 + b/4 : la courbe du FIR de 48 kHz (notes/81) */
 	s->k_nfilt = nfilt;
 	s->kf = s->frequency;
 	s->kd = s->damping;
 	s->kb = s->brightness;
 	s->kvalid = 1;
+	s->kf_full = s->frequency;
+	s->kver++;
 }
 
-/* s->frequency etc. deja poses ; ajoute la corde a out / aux */
-static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u32 *rng)
+/* La glissade des cordes sympathiques (notes/81) : tant que la frequence glisse, seul le retard la suit (Rings
+ * refait tout a chaque bloc ; les autres coefficients changent a peine sur ces quelques dizaines de millisecondes),
+ * et str_block refait tout des qu'elle s'arrete. Rend 0 hors de ce que couvre le chemin simple (retard borne,
+ * surechantillonnage) : alors str_block. */
+static int str_delay(struct mstring *s)
+{
+	s32 delay = xto(xrecip(xfrom(s->frequency, 31)), 20);
+
+	if (delay < (4 << 20) || delay >= ((DLINE - 4) << 20) || s->k_ratio != (1 << 29))
+		return 0;
+	s->k_delay = delay;
+	s->kf = s->frequency;
+	return 1;
+}
+
+/* la glissade ne refait que le retard tant qu'elle reste a moins de 1 / 2^LITE_SHIFT de la frequence du dernier
+ * str_block */
+#ifndef LITE_SHIFT
+#define LITE_SHIFT  5
+#endif
+
+/* les calculs par bloc de String::ProcessInternal, quand leurs entrees changent */
+static void str_params(struct mstring *s)
+{
+	if (!s->kvalid || s->kd != s->damping || s->kb != s->brightness)
+		str_block(s);
+	else if (s->kf != s->frequency) {
+		if (!s->lite || iabs(s->frequency - s->kf_full) > (s->kf_full >> LITE_SHIFT) || !str_delay(s))
+			str_block(s);
+	} else if (s->kf_full != s->kf) {
+		str_block(s);                            /* la glissade s'est arretee */
+	}
+}
+
+/* La passe 3 d'une corde sans peigne (les cordes sympathiques, notes/81) : la ligne et out seulement, n echantillons */
+static void str_wout(const s32 *hb, s32 *line, s32 wp, s32 *out, int n)
+{
+	int k;
+
+	for (k = 0; k < n; k++) {
+		line[wp] = line[wp + DLINE] = hb[k];
+		wp = (wp - 1) & (DLINE - 1);
+		out[k] += hb[k];
+	}
+}
+
+#ifdef MODAL_ASM
+/* Le chemin court d'une corde (notes/81) : quand plus rien ne bouge (frequence, amortissement, brillance, dispersion
+ * et les rampes de str_process arrivees au bout ; ligne et etirement effaces jusqu'au bout ; ni surechantillonnage,
+ * ni modulation du retard, ni anti-continu), str_process ferait exactement ceci : ses passes en assembleur, avec ce
+ * que str_plan a prepare. Seuls la position (le peigne de aux) et, sans dispersion, le retard (la glissade des cordes
+ * sympathiques) peuvent bouger. Les passes vont par morceaux de c echantillons, c la partie entiere du retard la
+ * plus courte du bloc (MB au plus) : rien de ce qu'un morceau lit n'est ecrit par lui (les notes aigues). */
+/* comb : 0 sans peigne ; 1 le peigne ajoute a aux = out + MB ; 2 (COMB_NEG) le peigne retire de out (la sortie d'une
+ * voix en polyphonie, out - aux, ecrite directement : notes/81) */
+#define COMB_NEG    2
+
+static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in, s32 *out, s32 p_inc, s32 d_inc,
+						u32 *rng, int comb)
+{
+	s32 *hb = sc.x, *line = s->line, *aux = out + MB, wp = s->wp;
+	s32 a30 = 0, a31 = 0, dk[9], dpp[4], st[4], di = s->fdi, ff = s->ff;
+	int k0, c, cs, common;
+
+	if (s->enable_dispersion) {
+		cs = di;
+	} else {
+		s32 d = qmul(s->delay, s->prev_damp_comp) - (1 << 20);
+		s32 d1 = qmul(s->delay + MB * d_inc, s->prev_damp_comp) - (1 << 20);
+		di = d >> 20;
+		ff = shl(d, 11) & Q31ONE;
+		cs = (d < d1 ? d : d1) >> 20;
+	}
+	cs = cs > MB ? MB : (cs < 1 ? 1 : cs);         /* 1 : lu avant d'etre ecrit, comme dans la boucle de str_process */
+	/* modal_str_run lit, amortit et ecrit echantillon par echantillon, dans l'ordre de la boucle de str_process : il
+	 * vaut pour tout retard, les cordes aigues comprises ; seules les lectures a part (passe-tout, retard module,
+	 * glissade) demandent que le retard depasse le bloc (sinon : par morceaux, plus bas) */
+	common = cs == MB || !(s->fap || s->fmode || d_inc);
+	if (unlikely(comb == COMB_NEG && !common)) {     /* par morceaux : dans out et aux a part, puis out - aux */
+		s32 t[2 * MB];
+		int k;
+		for (k = 0; k < 2 * MB; k++)
+			t[k] = 0;
+		str_fast(s, in, t, p_inc, d_inc, rng, 1);
+		for (k = 0; k < MB; k++)
+			out[k] += t[k] - t[MB + k];
+		return;
+	}
+	if (comb == 1) {
+		a30 = aux[MB - 2];
+		a31 = aux[MB - 1];
+	}
+	if (s->enable_dispersion && s->fmode != 2)       /* le bruit de dispersion ne sert pas : ses tirages d'un coup */
+		*rng = *rng * M_LCG16A + M_LCG16C;
+	if (likely(common)) {
+		/* le cas courant, en deux ou trois boucles : la lecture a part s'il le faut (passe-tout de l'etirement,
+		 * retard module par le bruit ou le chevalet courbe), puis une boucle (modal_str_run, ou modal_str_dw apres
+		 * cette lecture), puis le peigne a part (modal_str_comb) ; quand la lecture du peigne tombe sur la place que
+		 * l'echantillon suivant va ecrire (comb >> 20 nul : POSITION a un bout, une corde aigue), l'ancien contenu de
+		 * cette place, garde avant la boucle */
+		s32 pv0 = s->clamped_position, kk[13], old[MB + 1];
+		int n1 = wp + 1 < MB ? wp + 1 : MB, n3 = wp < MB ? wp : MB, k, rd = s->fap || s->fmode || d_inc;
+		int whole = !comb || (qmul(s->delay + d_inc, pv0 + p_inc) >= (1 << 20)
+				      && qmul(s->delay + MB * d_inc, pv0 + MB * p_inc) >= (1 << 20));
+		if (s->fmode == 2) {
+			kk[0] = s->fd0;
+			kk[1] = s->ksp;
+			kk[2] = s->kapg;
+			kk[3] = s->kna;
+			kk[4] = s->k_nfilt;
+			kk[5] = s->k_nk;
+			kk[6] = s->dispersion_noise;
+			kk[7] = (s32)*rng;
+			kk[8] = wp;
+			kk[9] = s->swp;
+			kk[10] = 1664525;
+			kk[11] = (s32)(unsigned long)s->stretch;
+			modal_str_read_nz(line, hb, in, n1, kk);
+			if (n1 < MB) {
+				kk[8] = DLINE - 1;
+				modal_str_read_nz(line, hb + n1, in + n1, MB - n1, kk);
+			}
+			s->dispersion_noise = kk[6];
+			*rng = (u32)kk[7];
+			s->swp = kk[9];
+		} else if (s->fmode == 3) {
+			kk[0] = s->fd0;
+			kk[1] = s->kbc;
+			kk[2] = s->kac;
+			kk[3] = s->curved_bridge;
+			kk[4] = s->dc.x;
+			kk[5] = s->dc.y;
+			kk[6] = s->dc.pole;
+			kk[7] = (s32)s->dc.f;
+			kk[8] = wp;
+			kk[9] = M_0025U;
+			modal_str_read_cb(line, hb, in, n1, kk);
+			if (n1 < MB) {
+				kk[8] = DLINE - 1;
+				modal_str_read_cb(line, hb + n1, in + n1, MB - n1, kk);
+			}
+			s->curved_bridge = kk[3];
+			s->dc.x = kk[4];
+			s->dc.y = kk[5];
+			s->dc.f = (u32)kk[7];
+		} else if (s->fap) {
+			kk[0] = (s32)(unsigned long)s->stretch;
+			kk[1] = s->swp;
+			kk[2] = s->fapj;
+			kk[3] = s->kapg;
+			modal_str_read_ap(&line[wp + di], ff, hb, n1, kk);
+			if (n1 < MB)
+				modal_str_read_ap(&line[DLINE - 1 + di], ff, hb + n1, MB - n1, kk);
+			s->swp = kk[1];
+			for (k = 0; k < MB; k++)
+				hb[k] += in[k];
+		} else if (d_inc) {                      /* la glissade : le retard bouge (sans dispersion) */
+			kk[0] = s->delay;
+			kk[1] = s->prev_damp_comp;
+			kk[2] = d_inc;
+			kk[3] = 0;
+			modal_str_read_mv(&line[wp], kk, in, hb, n1);
+			if (n1 < MB)
+				modal_str_read_mv(&line[DLINE - 1], kk, in + n1, hb + n1, MB - n1);
+		}
+		if (unlikely(!whole))                    /* les places que le bloc ecrit, et celle du suivant */
+			for (k = 1; k <= MB; k++)
+				old[k] = line[(wp - k) & (DLINE - 1)];
+		kk[0] = ff;
+		kk[1] = s->fh0;
+		kk[2] = s->fh1;
+		kk[3] = -s->iir.b;
+		kk[4] = s->iir.a2;
+		kk[5] = s->iir.a3;
+		kk[6] = s->fx1;
+		kk[7] = s->fx2;
+		kk[8] = s->iir.ic1;
+		kk[9] = s->iir.ic2;
+		if (rd) {
+			modal_str_dw(hb, &line[wp], out, n1, kk);
+			if (n1 < MB)
+				modal_str_dw(hb + n1, &line[DLINE - 1], out + n1, MB - n1, kk);
+		} else {
+			modal_str_run(&line[wp], &line[wp + di], in, out, n1, kk);
+			if (n1 < MB)
+				modal_str_run(&line[DLINE - 1], &line[DLINE - 1 + di], in + n1, out + n1, MB - n1, kk);
+		}
+		s->fx1 = kk[6];
+		s->fx2 = kk[7];
+		s->iir.ic1 = kk[8];
+		s->iir.ic2 = kk[9];
+		if (comb == COMB_NEG) {
+			a30 = out[MB - 2];
+			a31 = out[MB - 1];
+		}
+		if (comb) {
+			s32 *ca = comb == COMB_NEG ? out : aux;
+			void (*cf)(const s32 *, s32 *, int, s32 *) = comb == COMB_NEG ? modal_str_combn : modal_str_comb;
+			kk[0] = s->delay;
+			kk[1] = pv0;
+			kk[2] = p_inc;
+			kk[3] = (s32)(unsigned long)&old[1];
+			kk[4] = d_inc;
+			if (n3)
+				cf(&line[wp - 1], ca, n3, kk);
+			if (n3 < MB)
+				cf(&line[DLINE - 1], ca + n3, MB - n3, kk);
+		}
+		if (comb == COMB_NEG) {
+			s->aux1 = a30 - out[MB - 2];
+			s->aux0 = a31 - out[MB - 1];
+		} else if (comb) {
+			s->aux1 = aux[MB - 2] - a30;
+			s->aux0 = aux[MB - 1] - a31;
+		} else {
+			s->aux1 = s->aux0 = 0;
+		}
+		s->clamped_position = pv0 + MB * p_inc;
+		s->delay += MB * d_inc;
+		wp = (wp - MB) & (DLINE - 1);
+		s->wp = wp;
+		s->out1 = line[(wp + 2) & (DLINE - 1)];
+		s->out0 = line[(wp + 1) & (DLINE - 1)];
+		return;
+	}
+	dk[0] = s->fx1;
+	dk[1] = s->fx2;
+	dk[2] = s->fh0;
+	dk[3] = s->fh1;
+	dk[4] = -s->iir.b;
+	dk[5] = s->iir.a2;
+	dk[6] = s->iir.a3;
+	dk[7] = s->iir.ic1;
+	dk[8] = s->iir.ic2;
+	dpp[0] = st[0] = s->delay;
+	dpp[1] = s->clamped_position;
+	dpp[2] = p_inc;
+	dpp[3] = st[2] = d_inc;
+	st[1] = s->prev_damp_comp;
+	st[3] = 0;
+	for (k0 = 0; k0 < MB; k0 += c) {
+		int n1, n3;
+		c = MB - k0 < cs ? MB - k0 : cs;
+		n1 = wp + 1 < c ? wp + 1 : c;            /* w de wp a 0, puis de DLINE - 1 vers le bas */
+		n3 = wp < c ? wp : c;
+		if (s->fmode == 2) {                     /* 1 : la lecture ; le bruit module le retard (str_process) */
+			s32 kk[13];
+			kk[0] = s->fd0;
+			kk[1] = s->ksp;
+			kk[2] = s->kapg;
+			kk[3] = s->kna;
+			kk[4] = s->k_nfilt;
+			kk[5] = s->k_nk;
+			kk[6] = s->dispersion_noise;
+			kk[7] = (s32)*rng;
+			kk[8] = wp;
+			kk[9] = s->swp;
+			kk[10] = 1664525;
+			kk[11] = (s32)(unsigned long)s->stretch;
+			modal_str_read_nz(line, hb + k0, in + k0, n1, kk);
+			kk[8] = DLINE - 1;
+			modal_str_read_nz(line, hb + k0 + n1, in + k0 + n1, c - n1, kk);
+			s->dispersion_noise = kk[6];
+			*rng = (u32)kk[7];
+			s->swp = kk[9];
+		} else if (s->fmode == 3) {              /* le chevalet courbe module le retard (str_process) */
+			s32 kk[10];
+			kk[0] = s->fd0;
+			kk[1] = s->kbc;
+			kk[2] = s->kac;
+			kk[3] = s->curved_bridge;
+			kk[4] = s->dc.x;
+			kk[5] = s->dc.y;
+			kk[6] = s->dc.pole;
+			kk[7] = (s32)s->dc.f;
+			kk[8] = wp;
+			kk[9] = M_0025U;
+			modal_str_read_cb(line, hb + k0, in + k0, n1, kk);
+			kk[8] = DLINE - 1;
+			modal_str_read_cb(line, hb + k0 + n1, in + k0 + n1, c - n1, kk);
+			s->curved_bridge = kk[3];
+			s->dc.x = kk[4];
+			s->dc.y = kk[5];
+			s->dc.f = (u32)kk[7];
+		} else if (s->fap) {
+			s32 ap[4], k;
+			ap[0] = (s32)(unsigned long)s->stretch;
+			ap[1] = s->swp;
+			ap[2] = s->fapj;
+			ap[3] = s->kapg;
+			modal_str_read_ap(&line[wp + di], ff, hb + k0, n1, ap);
+			modal_str_read_ap(&line[DLINE - 1 + di], ff, hb + k0 + n1, c - n1, ap);
+			s->swp = ap[1];
+			for (k = k0; k < k0 + c; k++)
+				hb[k] += in[k];
+		} else if (!d_inc) {
+			modal_str_read(&line[wp + di], ff, in + k0, hb + k0, n1);
+			modal_str_read(&line[DLINE - 1 + di], ff, in + k0 + n1, hb + k0 + n1, c - n1);
+		} else {
+			modal_str_read_mv(&line[wp], st, in + k0, hb + k0, n1);
+			modal_str_read_mv(&line[DLINE - 1], st, in + k0 + n1, hb + k0 + n1, c - n1);
+		}
+		modal_str_damp(hb + k0, dk, c);          /* 2 */
+		if (!comb) {                             /* 3 : sans peigne, ni aux ni position */
+			str_wout(hb + k0, line, wp, out + k0, c);
+		} else if (!d_inc) {
+			modal_str_write(hb + k0, &line[wp], out + k0, dpp, n3);
+			dpp[1] += n3 * p_inc;
+			if (n3 < c) {                    /* l'echantillon qui ecrit en 0 : la lecture repart de DLINE - 1 */
+				s32 cb, i, j = k0 + n3;
+				dpp[1] += p_inc;
+				cb = qmul(dpp[0], dpp[1]);
+				line[0] = line[DLINE] = hb[j];
+				i = DLINE - 1 + (cb >> 20);
+				out[j] += hb[j];
+				aux[j] += line[i] + qmul(line[i + 1] - line[i], shl(cb, 11) & Q31ONE);
+				modal_str_write(hb + j + 1, &line[DLINE - 1], out + j + 1, dpp, c - n3 - 1);
+				dpp[1] += (c - n3 - 1) * p_inc;
+			}
+		} else {
+			modal_str_write_mv(hb + k0, &line[wp], out + k0, dpp, n3);
+			if (n3 < c) {
+				s32 cb, i, j = k0 + n3;
+				dpp[0] += d_inc;
+				dpp[1] += p_inc;
+				cb = qmul(dpp[0], dpp[1]);
+				line[0] = line[DLINE] = hb[j];
+				i = DLINE - 1 + (cb >> 20);
+				out[j] += hb[j];
+				aux[j] += line[i] + qmul(line[i + 1] - line[i], shl(cb, 11) & Q31ONE);
+				modal_str_write_mv(hb + j + 1, &line[DLINE - 1], out + j + 1, dpp, c - n3 - 1);
+			}
+		}
+		wp = (wp - c) & (DLINE - 1);
+	}
+	s->fx1 = dk[0];
+	s->fx2 = dk[1];
+	s->iir.ic1 = dk[7];
+	s->iir.ic2 = dk[8];
+	s->delay += MB * d_inc;
+	s->clamped_position += MB * p_inc;
+	s->wp = wp;
+	s->out1 = hb[MB - 2];
+	s->out0 = hb[MB - 1];
+	if (comb) {
+		s->aux1 = aux[MB - 2] - a30;
+		s->aux0 = aux[MB - 1] - a31;
+	} else {
+		s->aux1 = s->aux0 = 0;
+	}
+}
+
+/* a la fin du chemin complet : le bloc suivant peut-il prendre str_fast (s'il garde frequence, amortissement,
+ * brillance et dispersion) ? Les memes conditions que les chemins en assembleur de str_process. */
+static void str_plan(struct mstring *s)
+{
+	s32 d0, D;
+
+	s->fast = 0;
+	if (s->k_ratio != (1 << 29) || s->fill < DLINE || (s->k_dcomp - s->prev_damp_comp) / MB
+	    || (s->k_dcoef - s->fdmp) / MB || (s->k_bright - s->fbr) / MB)
+		return;
+	d0 = qmul(s->delay, s->prev_damp_comp) - (1 << 20);
+	D = d0;
+	s->fap = 0;
+	s->fmode = 0;
+	s->fd0 = d0;
+	if (s->enable_dispersion) {
+		s32 apd, md;
+		if ((s->k_delay - s->delay) / MB || (s->dispersion - s->prev_dispersion) / MB || !s->kdisp_valid
+		    || s->kdisp != s->prev_dispersion)
+			return;
+		if (s->kna | s->kbc | s->kac) {          /* le retard module, a chaque echantillon : les lectures de */
+			if (s->kna && !s->kbc && !s->kac && d0 >= ((MB * 9 / 4) << 20) && s->sfill >= SLINE)
+				s->fmode = 2;            /* str_process (modal_str_read_nz, _cb), les memes conditions */
+			else if (s->kac && s->kbc && !s->kna && !s->ksp && d0 >= ((2 * MB) << 20))
+				s->fmode = 3;
+			else
+				return;
+			s->fdi = MB;                     /* des morceaux de MB : le retard lu depasse toujours le bloc */
+			goto plan;
+		}
+		apd = qmul(d0, s->ksp);
+		md = d0 - apd;
+		if (apd >= (4 << 20) && md >= (4 << 20)) {
+			if (s->sfill < SLINE)                /* l'etirement avance : son effacement aussi */
+				return;
+			s->fap = 1;
+			s->fapj = apd >> 20;
+			D = md;
+		} else {                                 /* sans passe-tout, l'etirement ne bouge pas : rien a effacer */
+			int need = ((s->k_delay > s->delay ? s->k_delay : s->delay) >> 20) * 5 / 8 + 8 + MB;
+			if (need > SLINE - MB - 8)
+				need = SLINE;
+			if (s->sfill < need)
+				return;
+		}
+	}
+	s->fdi = D >> 20;
+	s->ff = shl(D, 11) & Q31ONE;
+plan:
+	s->fh0 = fir_h0(s->fdmp, s->fbr);
+	s->fh1 = fir_h1(s->fdmp, s->fbr);
+	s->fdisp = s->dispersion;
+	s->fver = s->kver;
+	s->fast = 1;
+}
+#endif
+
+/* str_process, le chemin complet (str_params deja fait) */
+static MODAL_COLD void str_process_full(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u32 *rng)
 {
 	s32 delay, clamped, nfilt, nk, src_ratio, swp0;
 	s32 d_inc, p_inc, disp_inc, dc_inc, dmp_inc, br_inc;
 	s32 dv, pv, dispv, dcv, fx1, fx2, fbr, fdmp, wp, out0, aux0, out1, aux1;
 	s32 ib, ia2, ia3, ic1, ic2;
 	s32 *line = s->line;
-	int k;
+	int k, plain, wcomb = aux != 0;
 
-	if (!s->kvalid || s->kf != s->frequency || s->kd != s->damping || s->kb != s->brightness)
-		str_block(s);
+	if (!wcomb)
+		aux = sc.nc;                             /* les C qui suivent y ecrivent un peigne que personne ne lit */
 	delay = s->k_delay;
 	src_ratio = s->k_ratio;
 	nfilt = s->k_nfilt;
@@ -860,11 +1331,34 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 	ia3 = s->iir.a3;
 	ic1 = s->iir.ic1;
 	ic2 = s->iir.ic2;
-	if (src_ratio == (1 << 29) && !s->enable_dispersion && delay >= ((MB + 8) << 20) && s->delay >= ((MB + 8) << 20)) {
+	plain = !s->enable_dispersion;
+	if (!plain && src_ratio == (1 << 29) && !disp_inc) {
+		/* une corde avec dispersion qui n'en fait rien sur ce bloc (ni modulation du retard, ni anti-continu, ni
+		 * passe-tout de l'etirement) : le chemin sans dispersion, ses MB tirages aleatoires d'un coup (notes/81) */
+		if (!s->kdisp_valid || s->kdisp != dispv) {
+			struct dispk dk0;
+			disp_coefs(&dk0, dispv);
+			s->kdisp = dispv;
+			s->ksp = dk0.sp;
+			s->kna = dk0.na;
+			s->kbc = dk0.bc;
+			s->kac = dk0.ac;
+			s->kapg = dk0.apg;
+			s->kdisp_valid = 1;
+		}
+		if (!(s->kna | s->kbc | s->kac)) {
+			s32 d0 = qmul(dv + d_inc, dcv + dc_inc) - (1 << 20), d1 = qmul(dv + MB * d_inc, dcv + MB * dc_inc) - (1 << 20);
+			if (qmul(d0 > d1 ? d0 : d1, s->ksp) < (4 << 20))
+				plain = 2;
+		}
+	}
+	if (src_ratio == (1 << 29) && plain && delay >= ((MB + 8) << 20) && s->delay >= ((MB + 8) << 20)) {
 		/* le cas courant (pas de dispersion ni de surechantillonnage, retard de plus d'un bloc : rien de ce
 		 * qu'on lit n'est ecrit dans ce bloc), en trois passes legeres : lectures, filtres, ecritures */
 		s32 *hb = sc.x;
 		s32 dvk = dv, dck = dcv, w = wp;
+		if (plain == 2)
+			*rng = *rng * M_LCG16A + M_LCG16C;
 #ifdef MODAL_ASM
 		if (!d_inc && !dc_inc) {                     /* passe 1, retard fixe : modal_asm.S */
 			s32 d = qmul(dv, dcv) - (1 << 20), f = shl(d, 11) & Q31ONE;
@@ -883,12 +1377,12 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 		}
 		if (0)
 #endif
-		for (k = 0; k < MB; k++) {                   /* passe 1 : ReadHermite */
+		for (k = 0; k < MB; k++) {                   /* passe 1 : la lecture */
 			s32 d;
 			dvk += d_inc;
 			dck += dc_inc;
 			d = qmul(dvk, dck) - (1 << 20);
-			hb[k] = hermite(&line[w + (d >> 20)], shl(d, 11) & Q31ONE) + in[k];
+			hb[k] = rd_lin(&line[w + (d >> 20)], shl(d, 11) & Q31ONE) + in[k];
 			w = (w - 1) & (DLINE - 1);
 		}
 #ifdef MODAL_ASM
@@ -903,7 +1397,7 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 			dk[6] = ia3;
 			dk[7] = ic1;
 			dk[8] = ic2;
-			modal_str_damp(hb, dk);
+			modal_str_damp(hb, dk, MB);
 			fx1 = dk[0];
 			fx2 = dk[1];
 			ic1 = dk[7];
@@ -949,6 +1443,16 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 		aux1 = s->aux0;
 		out0 = out1;
 		aux0 = aux1;
+		if (!wcomb) {                                /* passe 3 sans peigne */
+			str_wout(hb, line, wp, out, MB);
+			dv += MB * d_inc;
+			pv += MB * p_inc;
+			dcv += MB * dc_inc;
+			wp = (wp - MB) & (DLINE - 1);
+			out1 = hb[MB - 2];
+			out0 = hb[MB - 1];
+			aux1 = aux0 = 0;
+		} else
 #ifdef MODAL_ASM
 		if (!d_inc && aux == out + MB) {             /* passe 3, retard fixe : modal_asm.S */
 			s32 dpp[3], a30 = aux[MB - 2], a31 = aux[MB - 1], pv0 = pv;
@@ -1051,22 +1555,30 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 		bc = s->kbc;
 		fm = na | bc;
 #ifdef MODAL_ASM
-		/* sans modulation du retard (fm nul) ni melange de l'anti-continu (ac nul), le retard est fixe sur le bloc :
-		 * les memes calculs en passes (modal_asm.S) : le bruit de dispersion et l'anti-continu avancent a part (leur
-		 * etat seul sert, aux blocs suivants), la lecture (et le passe-tout de l'etirement), puis les passes 2 et 3
-		 * de la corde sans dispersion. Le retard lu doit depasser le bloc : rien de ce qu'on lit n'y est ecrit. */
-		if (!fm && !ac && aux == out + MB) {
-			s32 apd = qmul(d0, sp), md = d0 - apd, D = d0, f, *hb = sc.x, ap[4];
-			int allpass = apd >= (4 << 20) && md >= (4 << 20), n1 = wp + 1 < MB ? wp + 1 : MB;
-			if (allpass)
-				D = md;
-			if (D >= ((MB + 8) << 20)) {
-				for (k = 0; k < MB; k++) {
-					rs = rs * 1664525u + 1013904223u;
-					dn += qmul(nfilt, qmul((s32)(rs ^ 0x80000000u) >> 4, nk) - dn);
-				}
-				f = shl(D, 11) & Q31ONE;
-				if (allpass) {
+		/* En passes (modal_asm.S), quand rien de ce qu'on lit n'est ecrit par ce bloc (le retard lu le plus court
+		 * depasse le bloc) : la lecture, puis les passes 2 et 3 de la corde sans dispersion. La lecture :
+		 * - sans modulation du retard (fm nul) ni anti-continu (ac nul) : le retard est fixe sur le bloc, le bruit de
+		 *   dispersion ne sert pas (ses MB tirages d'un coup) : modal_str_read (ou _ap, le passe-tout de l'etirement) ;
+		 * - dispersion au-dela de 0,75 (na) : le bruit module le retard, a chaque echantillon : modal_str_read_nz
+		 *   (le retard reste au-dessus de 0,875 d0, la lecture principale de 0,46 d0) ;
+		 * - dispersion negative (ac, bc) : le chevalet courbe module le retard, a chaque echantillon :
+		 *   modal_str_read_cb (le retard reste au-dessus de d0 / 2, disp_fm). */
+		if (aux == out + MB) {
+			s32 apd = qmul(d0, sp), md = d0 - apd, D = d0, *hb = sc.x;
+			int mode = 0, n1 = wp + 1 < MB ? wp + 1 : MB;
+			if (!fm && !ac) {
+				if (apd >= (4 << 20) && md >= (4 << 20))
+					D = md;
+				mode = D >= (MB << 20);
+			} else if (na && !bc && !ac) {
+				mode = d0 >= ((MB * 9 / 4) << 20) ? 2 : 0;
+			} else if (ac && bc && !na && !sp) {
+				mode = d0 >= ((2 * MB) << 20) ? 3 : 0;
+			}
+			if (mode == 1) {
+				s32 f = shl(D, 11) & Q31ONE, ap[4];
+				rs = rs * M_LCG16A + M_LCG16C;       /* MB tirages d'un coup (le pincement les partage) */
+				if (D != d0) {
 					ap[0] = (s32)(unsigned long)st;
 					ap[1] = swp;
 					ap[2] = apd >> 20;
@@ -1074,50 +1586,87 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 					modal_str_read_ap(&line[wp + (D >> 20)], f, hb, n1, ap);
 					modal_str_read_ap(&line[DLINE - 1 + (D >> 20)], f, hb + n1, MB - n1, ap);
 					swp = ap[1];
+					for (k = 0; k < MB; k++)
+						hb[k] += in[k];
 				} else {
-					modal_str_read(&line[wp + (D >> 20)], f, sc.zero, hb, n1);
-					modal_str_read(&line[DLINE - 1 + (D >> 20)], f, sc.zero, hb + n1, MB - n1);
+					modal_str_read(&line[wp + (D >> 20)], f, in, hb, n1);
+					modal_str_read(&line[DLINE - 1 + (D >> 20)], f, in + n1, hb + n1, MB - n1);
 				}
-				{
-					s32 value = iabs(hb[MB - 1]) - M_0025U;
-					cb = value > 0 ? (hb[MB - 1] > 0 ? 2 * value : -3 * value) : 0;
-				}
-				modal_dc_in(&s->dc, hb, in);
-				{
-					s32 dk2[9], dpp[3], pv0 = pv;
-					int n3 = wp < MB ? wp : MB;
-					dk2[0] = fx1;
-					dk2[1] = fx2;
-					dk2[2] = h0;
-					dk2[3] = h1;
-					dk2[4] = ib;
-					dk2[5] = ia2;
-					dk2[6] = ia3;
-					dk2[7] = ic1;
-					dk2[8] = ic2;
-					modal_str_damp(hb, dk2);
-					fx1 = dk2[0];
-					fx2 = dk2[1];
-					ic1 = dk2[7];
-					ic2 = dk2[8];
-					dpp[0] = dv;
+			} else if (mode == 2) {
+				s32 kk[13];
+				kk[0] = d0;
+				kk[1] = sp;
+				kk[2] = apg;
+				kk[3] = na;
+				kk[4] = nfilt;
+				kk[5] = nk;
+				kk[6] = dn;
+				kk[7] = (s32)rs;
+				kk[8] = wp;
+				kk[9] = swp;
+				kk[10] = 1664525;
+				kk[11] = (s32)(unsigned long)st;
+				modal_str_read_nz(line, hb, in, n1, kk);
+				kk[8] = DLINE - 1;
+				modal_str_read_nz(line, hb + n1, in + n1, MB - n1, kk);
+				dn = kk[6];
+				rs = (u32)kk[7];
+				swp = kk[9];
+			} else if (mode == 3) {
+				s32 kk[10];
+				rs = rs * M_LCG16A + M_LCG16C;       /* sans na, le bruit ne sert pas */
+				kk[0] = d0;
+				kk[1] = bc;
+				kk[2] = ac;
+				kk[3] = cb;
+				kk[4] = s->dc.x;
+				kk[5] = s->dc.y;
+				kk[6] = s->dc.pole;
+				kk[7] = (s32)s->dc.f;
+				kk[8] = wp;
+				kk[9] = M_0025U;
+				modal_str_read_cb(line, hb, in, n1, kk);
+				kk[8] = DLINE - 1;
+				modal_str_read_cb(line, hb + n1, in + n1, MB - n1, kk);
+				cb = kk[3];
+				s->dc.x = kk[4];
+				s->dc.y = kk[5];
+				s->dc.f = (u32)kk[7];
+			}
+			if (mode) {
+				s32 dk2[9], dpp[3], pv0 = pv;
+				int n3 = wp < MB ? wp : MB;
+				dk2[0] = fx1;
+				dk2[1] = fx2;
+				dk2[2] = h0;
+				dk2[3] = h1;
+				dk2[4] = ib;
+				dk2[5] = ia2;
+				dk2[6] = ia3;
+				dk2[7] = ic1;
+				dk2[8] = ic2;
+				modal_str_damp(hb, dk2, MB);
+				fx1 = dk2[0];
+				fx2 = dk2[1];
+				ic1 = dk2[7];
+				ic2 = dk2[8];
+				dpp[0] = dv;
+				dpp[1] = pv;
+				dpp[2] = p_inc;
+				modal_str_write(hb, &line[wp], out, dpp, n3);
+				if (n3 < MB) {                       /* l'echantillon qui ecrit en 0 : la lecture repart de DLINE - 1 */
+					s32 comb, i;
+					pv = (s32)((u32)pv0 + (u32)p_inc * (u32)(n3 + 1));
+					comb = qmul(dv, pv);
+					line[0] = line[DLINE] = hb[n3];
+					i = DLINE - 1 + (comb >> 20);
+					out[n3] += hb[n3];
+					aux[n3] += line[i] + qmul(line[i + 1] - line[i], shl(comb, 11) & Q31ONE);
 					dpp[1] = pv;
-					dpp[2] = p_inc;
-					modal_str_write(hb, &line[wp], out, dpp, n3);
-					if (n3 < MB) {               /* l'echantillon qui ecrit en 0 : la lecture repart de DLINE - 1 */
-						s32 comb, i;
-						pv = (s32)((u32)pv0 + (u32)p_inc * (u32)(n3 + 1));
-						comb = qmul(dv, pv);
-						line[0] = line[DLINE] = hb[n3];
-						i = DLINE - 1 + (comb >> 20);
-						out[n3] += hb[n3];
-						aux[n3] += line[i] + qmul(line[i + 1] - line[i], shl(comb, 11) & Q31ONE);
-						dpp[1] = pv;
-						modal_str_write(hb + n3 + 1, &line[DLINE - 1], out + n3 + 1, dpp, MB - n3 - 1);
-					}
-					pv = (s32)((u32)pv0 + (u32)p_inc * MB);
-					wp = (wp - MB) & (DLINE - 1);
+					modal_str_write(hb + n3 + 1, &line[DLINE - 1], out + n3 + 1, dpp, MB - n3 - 1);
 				}
+				pv = (s32)((u32)pv0 + (u32)p_inc * MB);
+				wp = (wp - MB) & (DLINE - 1);
 				goto disp_done;
 			}
 		}
@@ -1126,18 +1675,20 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 			s32 d, sv, v3, t1, t2, apd, md, value, noise, *p;
 			pv += p_inc;
 			rs = rs * 1664525u + 1013904223u;
-			noise = qmul((s32)(rs ^ 0x80000000u) >> 4, nk);   /* Q27 x Q28 -> UNIT */
-			dn += qmul(nfilt, noise - dn);
+			if (na) {                                /* le bruit de dispersion ne sert qu'avec na (notes/81) */
+				noise = qmul((s32)(rs ^ 0x80000000u) >> 4, nk);   /* Q27 x Q28 -> UNIT */
+				dn += qmul(nfilt, noise - dn);
+			}
 			d = d0;
 			if (fm)
-				d = shl(qmul(d, (1 << 30) + shl(qmul(dn, na), 6) - shl(qmul(cb, bc), 6)), 1);
+				d = shl(qmul(d, disp_fm((1 << 30) + shl(qmul(dn, na), 6) - shl(qmul(cb, bc), 6))), 1);
 			apd = qmul(d, sp);
 			md = d - apd;
 			if (apd >= (4 << 20) && md >= (4 << 20)) {
 				s32 rd, wr, i = wp + (md >> 20);
 				if (i > 2 * DLINE - 3)
 					i -= DLINE;
-				sv = hermite(&line[i], shl(md, 11) & Q31ONE);
+				sv = rd_lin(&line[i], shl(md, 11) & Q31ONE);
 				rd = st[(swp + (apd >> 20)) & (SLINE - 1)];
 				wr = sv + qmulr(apg, rd);
 				st[swp] = wr;
@@ -1147,15 +1698,14 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 				s32 i = wp + (d >> 20);
 				if (i > 2 * DLINE - 3)
 					i -= DLINE;
-				sv = hermite(&line[i], shl(d, 11) & Q31ONE);
+				sv = rd_lin(&line[i], shl(d, 11) & Q31ONE);
 			}
-			{
+			if (ac) {                                /* l'anti-continu et le chevalet courbe : avec ac seulement */
 				s32 sac = dc_one(&s->dc, sv);          /* DCBlocker */
-				if (ac)
-					sv += qmul(ac, sac - sv);
+				sv += qmul(ac, sac - sv);
+				value = iabs(sv) - M_0025U;
+				cb = value > 0 ? (sv > 0 ? 2 * value : -3 * value) : 0;
 			}
-			value = iabs(sv) - M_0025U;
-			cb = value > 0 ? (sv > 0 ? 2 * value : -3 * value) : 0;
 			sv += in[k];
 			{
 				s32 y = qmac2r(h0, fx1, h1, sv + fx2);
@@ -1207,34 +1757,37 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 			comb = qmul(dv, pv);
 			d = qmul(dv, dcv) - (1 << 20);
 			rs = rs * 1664525u + 1013904223u;
-			noise = qmul((s32)(rs ^ 0x80000000u) >> 4, nk);   /* Q27 x Q28 -> UNIT */
-			dn += qmul(nfilt, noise - dn);
 			if (disp_inc) {
 				dispv += disp_inc;
 				disp_coefs(&dk, dispv);
 			}
+			if (dk.na) {
+				noise = qmul((s32)(rs ^ 0x80000000u) >> 4, nk);   /* Q27 x Q28 -> UNIT */
+				dn += qmul(nfilt, noise - dn);
+			}
 			if (dk.na | dk.bc)
-				d = shl(qmul(d, (1 << 30) + shl(qmul(dn, dk.na), 6) - shl(qmul(cb, dk.bc), 6)), 1);
+				d = shl(qmul(d, disp_fm((1 << 30) + shl(qmul(dn, dk.na), 6) - shl(qmul(cb, dk.bc), 6))), 1);
 			apd = qmul(d, dk.sp);
 			md = d - apd;
 			if (apd >= (4 << 20) && md >= (4 << 20)) {
 				s32 rd, wr;
-				sv = (md >> 20) < DLINE - 4 ? hermite(&line[wp + (md >> 20)], shl(md, 11) & Q31ONE)
-					: rd_hermite(line, wp, md);
+				sv = (md >> 20) < DLINE - 4 ? rd_lin(&line[wp + (md >> 20)], shl(md, 11) & Q31ONE)
+					: rd_linm(line, wp, md);
 				rd = st[(swp + (apd >> 20)) & (SLINE - 1)];
 				wr = sv + qmulr(dk.apg, rd);
 				st[swp] = wr;
 				swp = (swp - 1) & (SLINE - 1);
 				sv = rd - qmulr(wr, dk.apg);
 			} else {
-				sv = (d >> 20) < DLINE - 4 ? hermite(&line[wp + (d >> 20)], shl(d, 11) & Q31ONE)
-					: rd_hermite(line, wp, d);
+				sv = (d >> 20) < DLINE - 4 ? rd_lin(&line[wp + (d >> 20)], shl(d, 11) & Q31ONE)
+					: rd_linm(line, wp, d);
 			}
-			sac = dc_one(&s->dc, sv);                          /* DCBlocker */
-			if (dk.ac)
+			if (dk.ac) {
+				sac = dc_one(&s->dc, sv);                  /* DCBlocker */
 				sv += qmul(dk.ac, sac - sv);
-			value = iabs(sv) - M_0025U;
-			cb = value > 0 ? (sv > 0 ? 2 * value : -3 * value) : 0;
+				value = iabs(sv) - M_0025U;
+				cb = value > 0 ? (sv > 0 ? 2 * value : -3 * value) : 0;
+			}
 			sv += in[k];
 			y = fir_damp(fdmp, fbr, fx1, sv + fx2);
 			fx2 = fx1;
@@ -1277,7 +1830,7 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 			dcv += dc_inc;
 			comb = qmul(dv, pv);
 			d = qmul(dv, dcv) - (1 << 20);
-			sv = hermite(&line[wp + (d >> 20)], shl(d, 11) & Q31ONE) + in[k];
+			sv = rd_lin(&line[wp + (d >> 20)], shl(d, 11) & Q31ONE) + in[k];
 			y = fir_damp(fdmp, fbr, fx1, sv + fx2);
 			fx2 = fx1;
 			fx1 = sv;
@@ -1294,7 +1847,7 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 			out1 = out0;
 			aux1 = aux0;
 			out0 = sv;
-			{
+			if (aux != sc.nc) {
 				const s32 *p = &line[wp + (comb >> 20)];
 				aux0 = p[0] + qmul(p[1] - p[0], shl(comb, 11) & Q31ONE);
 			}
@@ -1324,32 +1877,35 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 				if (s->enable_dispersion) {
 					s32 noise, fm, apd, md, sac, value;
 					noise = qmul(rng_q31(rng) >> 4, nk);         /* Q27 x Q28 -> UNIT */
-					s->dispersion_noise += qmul(nfilt, noise - s->dispersion_noise);
 					dispv += disp_inc;
 					if (disp_inc || dispv != dk.disp)
 						disp_coefs(&dk, dispv);
-					fm = (1 << 30) + shl(qmul(s->dispersion_noise, dk.na), 6)
-						- shl(qmul(s->curved_bridge, dk.bc), 6);
+					if (dk.na)                           /* avec na seulement (notes/81) */
+						s->dispersion_noise += qmul(nfilt, noise - s->dispersion_noise);
+					fm = disp_fm((1 << 30) + shl(qmul(s->dispersion_noise, dk.na), 6)
+						     - shl(qmul(s->curved_bridge, dk.bc), 6));
 					d = shl(qmul(d, fm), 1);
 					apd = qmul(d, dk.sp);
 					md = d - apd;
 					if (apd >= (4 << 20) && md >= (4 << 20)) {
 						s32 rd, wr, j = apd >> 20;
-						sv = rd_hermite(line, wp, md);
+						sv = rd_linm(line, wp, md);
 						rd = s->stretch[(s->swp + j) & (SLINE - 1)];
 						wr = sv + qmulr(dk.apg, rd);
 						s->stretch[s->swp] = wr;
 						s->swp = (s->swp - 1) & (SLINE - 1);
 						sv = rd - qmulr(wr, dk.apg);
 					} else {
-						sv = rd_hermite(line, wp, d);
+						sv = rd_linm(line, wp, d);
 					}
-					sac = dc_one(&s->dc, sv);
-					sv += qmul(dk.ac, sac - sv);
-					value = iabs(sv) - M_0025U;
-					s->curved_bridge = value > 0 ? (sv > 0 ? 2 * value : -3 * value) : 0;
+					if (dk.ac) {
+						sac = dc_one(&s->dc, sv);
+						sv += qmul(dk.ac, sac - sv);
+						value = iabs(sv) - M_0025U;
+						s->curved_bridge = value > 0 ? (sv > 0 ? 2 * value : -3 * value) : 0;
+					}
 				} else {
-					sv = rd_hermite(line, wp, d);
+					sv = rd_linm(line, wp, d);
 				}
 				sv += in[k];
 				{
@@ -1406,6 +1962,40 @@ static void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u3
 		if (s->sfill > SLINE)
 			s->sfill = SLINE;
 	}
+#ifdef MODAL_ASM
+	str_plan(s);
+#endif
+}
+
+/* s->frequency etc. deja poses ; ajoute la corde a out / aux. aux nul : sans peigne (les cordes sympathiques, notes/81) :
+ * la sortie aux de la corde, la seule qui depende de sa position, n'est pas calculee. Le chemin court (str_fast) sans
+ * entrer dans le complet : moins de code relu a chaque bloc. */
+#define NEG_AUX     ((s32 *)1)                       /* str_process : la sortie out - aux, dans out (notes/81) */
+
+static __attribute__((noinline)) void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u32 *rng)
+{
+	str_params(s);
+#ifdef MODAL_ASM
+	if (likely(s->fast && s->fver == s->kver && s->fdisp == s->dispersion
+		   && (aux == out + MB || !aux || aux == NEG_AUX))) {
+		s32 clamped = 0x40000000 - qmul(Q31(0.98), iabs(s->position - 0x40000000));
+		str_fast(s, in, out, (clamped - s->clamped_position) / MB,
+			 s->enable_dispersion ? 0 : (s->k_delay - s->delay) / MB, rng,
+			 aux == NEG_AUX ? COMB_NEG : aux != 0);
+		return;
+	}
+#endif
+	if (aux == NEG_AUX) {                            /* dans out et aux a part, puis out - aux */
+		s32 t[2 * MB];
+		int k;
+		for (k = 0; k < 2 * MB; k++)
+			t[k] = 0;
+		str_process_full(s, in, t, t + MB, rng);
+		for (k = 0; k < MB; k++)
+			out[k] += t[k] - t[MB + k];
+		return;
+	}
+	str_process_full(s, in, out, aux, rng);
 }
 
 /* ---- pincement (rings/dsp/plucker.h) ----------------------------------------------------------------------- */
@@ -1431,17 +2021,20 @@ static void pl_init(struct plucker *p)
 	p->level = Q31ONE;
 }
 
-static void pl_trigger(struct plucker *p, xf frequency, xf cutoff, s32 position, s32 level)
+static MODAL_COLD void pl_trigger(struct plucker *p, xf frequency, xf cutoff, s32 position, s32 level)
 {
 	p->level = level;
 	s32 ratio = qmul(position, Q31(0.9)) + Q31(0.05);
 	xf period = xmul(xrecip(frequency), xfrom(ratio, 31));
 	p->remaining = xto(period, 0);
-	while (xcmp(period, XC(M_255)) >= 0)
+	while (xcmp(period, XC(M_PLCAP)) >= 0)
 		period = xscale(period, -1);
 	p->period = xto(period, 20);
 	p->gain = qmul(Q31ONE - position, Q31(0.8));
-	svf_set(&p->svf, tan_dirty(xto(xmin(cutoff, XC(M_0499)), 31)), xmk(1 << 30, 0), 0, 0);
+	{
+		s32 cq = xto(xmin(cutoff, XC(M_0998)), 31);
+		svf_set(&p->svf, tan_exact(cq), q_fade_r(cq, xmk(1 << 30, 0), XC(M_QD100), xmk(1 << 30, 0)), 0, 0);
+	}
 }
 
 #ifdef MODAL_ASM
@@ -1457,7 +2050,7 @@ static void pl_process(struct plucker *p, s32 *out, u32 *rng)
 	for (k = 0; k < MB; k++) {
 		s32 in = 0;
 		if (p->remaining) {
-			in = rng_q31(rng) >> 7;
+			in = qmul(rng_q31(rng) >> 7, Q31(0.70710678));   /* la meme densite par hertz (notes/81) */
 			if (p->level != Q31ONE)
 				in = qmul(in, p->level);
 			p->remaining--;
@@ -1475,9 +2068,10 @@ struct note_filter {
 	s32 prev[4], note, stable;                       /* demi-tons << 16 */
 	s32 coef, stable_coef;                           /* Q31 */
 	s32 line[16], wp;
+	s32 pend;                                        /* pas de coef et stable_coef en retard (nf_process) */
 };
 
-static void nf_init(struct note_filter *n)
+static MODAL_COLD void nf_init(struct note_filter *n)
 {
 	int i;
 
@@ -1489,6 +2083,7 @@ static void nf_init(struct note_filter *n)
 	for (i = 0; i < 16; i++)
 		n->line[i] = 0;
 	n->wp = 0;
+	n->pend = 0;
 }
 
 static void nf_process(struct note_filter *n, s32 note, int strum)
@@ -1498,6 +2093,7 @@ static void nf_process(struct note_filter *n, s32 note, int strum)
 		n->stable = n->note = note;
 		n->coef = M_NF_FAST;
 		n->stable_coef = M_NF_SLOW;
+		n->pend = 0;
 		for (i = 0; i < 4; i++)
 			n->prev[i] = note;
 	} else {
@@ -1507,15 +2103,37 @@ static void nf_process(struct note_filter *n, s32 note, int strum)
 		n->prev[1] = n->prev[2];
 		n->prev[2] = n->prev[3];
 		n->prev[3] = note;
-		for (i = 0; i < 4; i++)
-			s[i] = n->prev[i];
-		for (i = 1; i < 4; i++)
-			for (j = i; j > 0 && s[j - 1] > s[j]; j--) {
-				t = s[j];
-				s[j] = s[j - 1];
-				s[j - 1] = t;
+		if (n->prev[0] == note && n->prev[1] == note && n->prev[2] == note) {
+			if (n->note == note && n->stable == note) {
+				/* la note et sa version stable ne bougent pas : seuls coef et stable_coef avancent, et ils ne
+				 * servent qu'au prochain changement de note. Leurs pas sont faits a ce moment-la (notes/81). */
+				n->pend++;
+				n->line[n->wp] = note;
+				n->wp = (n->wp - 1) & 15;
+				return;
 			}
-		med = (s[1] + s[2]) >> 1;
+			med = note;                      /* quatre valeurs egales : la mediane sans le tri */
+		} else {
+			for (i = 0; i < 4; i++)
+				s[i] = n->prev[i];
+			for (i = 1; i < 4; i++)
+				for (j = i; j > 0 && s[j - 1] > s[j]; j--) {
+					t = s[j];
+					s[j] = s[j - 1];
+					s[j - 1] = t;
+				}
+			med = (s[1] + s[2]) >> 1;
+		}
+		for (; n->pend > 0; n->pend--) {         /* les pas en retard ; arrives au point fixe, ils n'y changent rien */
+			s32 c = n->coef + qmul(M_NF_LAG, M_NF_SLOW - n->coef);
+			s32 sc = n->stable_coef + qmul(M_NF_LAG, M_NF_LAG - n->stable_coef);
+			if (c == n->coef && sc == n->stable_coef) {
+				n->pend = 0;
+				break;
+			}
+			n->coef = c;
+			n->stable_coef = sc;
+		}
 		n->note += qmul(n->coef, med - n->note);
 		n->stable += qmul(n->stable_coef, n->note - n->stable);
 		n->coef += qmul(M_NF_LAG, M_NF_SLOW - n->coef);
@@ -1536,6 +2154,7 @@ struct modal_perf {
 	s32 strum, internal_exciter, chord;
 	s32 note, tonic, fm;                             /* demi-tons << 16 */
 	s32 level;                                       /* force de la frappe (la velocite), Q31 ; Q31ONE : Rings */
+	s32 same;                                        /* 1 : perf et patch tels qu'au bloc precedent (la passerelle) */
 };
 
 struct modal_patch {
@@ -1556,7 +2175,6 @@ struct modal_part {
 	s32 model, poly, dirty, active;
 	struct vcache vc[MAXPOLY];
 	s32 gvalid, gbright, glide;                      /* render_string : la glissade des cordes sympathiques */
-	u32 step;
 	s32 note[MAXPOLY];
 	u32 rng;
 	struct note_filter nf;
@@ -1564,20 +2182,21 @@ struct modal_part {
 	struct dcblock dcb[MAXPOLY];
 	struct plucker pl[MAXPOLY];
 	struct resonator reso[MAXPOLY];
-	struct lfo slfo[NSTRINGS];
-	s32 peak;                                        /* limiteur, UNIT */
+	s32 peak, lz, ln;                                /* limiteur : peak (UNIT), 1 / m (Q30) et n de lim_gain ; cet ordre */
 	s32 rin_zero;                                    /* rin nul a l'entree de la voix (pas d'entree) */
 	s32 exc_idle[MAXPOLY];                           /* blocs d'excitation muette d'une voix inactive (exc_quiet) */
+	s32 lp_idle[MAXPOLY];                            /* blocs de pincement et de filtre d'excitation muets (lp_quiet) */
 	s32 rin[MB], sym[MB], ob[MB], ab[MB], nb[MB];
+	/* le bloc court des cordes (modal_fast, notes/81) : ce que le dernier bloc complet a vu */
+	s32 fk_valid, fk_active, fk_note;
 	struct mstring str[NSTRINGS];
 };
 
-static const s32 PING[8] = { 1, 0, 2, 1, 0, 2, 1, 0 };
 /* modal_pluck lit nb a 4 MB mots de rin */
 typedef char modal_nb_at_rin[(__builtin_offsetof(struct modal_part, nb) - __builtin_offsetof(struct modal_part, rin)
 			      == 4 * MB * sizeof(s32)) ? 1 : -1];
 
-static void modal_part_init(struct modal_part *p)
+static MODAL_COLD void modal_part_init(struct modal_part *p)
 {
 	int i;
 
@@ -1585,13 +2204,13 @@ static void modal_part_init(struct modal_part *p)
 	for (i = 0; i < MAXPOLY; i++) {
 		p->note[i] = 0;
 		p->exc_idle[i] = 0;
+		p->lp_idle[i] = 0;
 		p->vc[i].valid = p->vc[i].svalid = 0;
 	}
 	p->gvalid = 0;
 	p->poly = 1;
 	p->model = MODEL_MODAL;
 	p->dirty = 1;
-	p->step = 0;
 	p->rng = 0x21;
 	for (i = 0; i < MAXPOLY; i++) {
 		svf_set(&p->exc[i], tan_dirty(M_001), XC(M_R100), 0, 0);
@@ -1600,6 +2219,8 @@ static void modal_part_init(struct modal_part *p)
 		dc_init(&p->dcb[i], M_POLE10);
 	}
 	p->peak = UNIT >> 1;
+	p->ln = -1;
+	p->fk_valid = 0;
 	nf_init(&p->nf);
 }
 
@@ -1623,12 +2244,10 @@ static void modal_set_model(struct modal_part *p, int m)
 	}
 }
 
-static void configure(struct modal_part *p)
+static MODAL_COLD void configure_now(struct modal_part *p)
 {
 	int i;
 
-	if (!p->dirty)
-		return;
 	switch (p->model) {
 	case MODEL_MODAL:
 		for (i = 0; i < p->poly; i++)
@@ -1637,10 +2256,8 @@ static void configure(struct modal_part *p)
 	case MODEL_SYMPATHETIC:
 	case MODEL_STRING:
 	case MODEL_SYMPATHETIC_Q:
-		for (i = 0; i < NSTRINGS; i++) {
+		for (i = 0; i < NSTRINGS; i++)
 			str_init(&p->str[i], p->model == MODEL_STRING);
-			lfo_init(&p->slfo[i], M_SLFO[i]);
-		}
 		for (i = 0; i < p->poly; i++)
 			pl_init(&p->pl[i]);
 		break;
@@ -1648,8 +2265,14 @@ static void configure(struct modal_part *p)
 	if (p->active >= p->poly)
 		p->active = 0;
 	for (i = 0; i < MAXPOLY; i++)
-		p->exc_idle[i] = 0;
+		p->exc_idle[i] = p->lp_idle[i] = 0;
 	p->dirty = 0;
+}
+
+static inline void configure(struct modal_part *p)
+{
+	if (unlikely(p->dirty))
+		configure_now(p);
 }
 
 static s32 squash(s32 x)                             /* Q31, x dans [0, 1) */
@@ -1673,7 +2296,7 @@ static s32 squash(s32 x)                             /* Q31, x dans [0, 1) */
 	return Q31ONE - (y >> 1);
 }
 
-static void sym_notes(struct modal_part *p, s32 tonic, s32 note, s32 parameter, int chord, s32 *dest, int ns)
+static MODAL_COLD void sym_notes(struct modal_part *p, s32 tonic, s32 note, s32 parameter, int chord, s32 *dest, int ns)
 {
 	s32 notes[9];
 	int nd, first, i;
@@ -1715,18 +2338,18 @@ static void sym_notes(struct modal_part *p, s32 tonic, s32 note, s32 parameter, 
 	}
 }
 
-/* La chaine d'excitation d'une voix inactive (son entree est nulle : filtre d'excitation, pincement, filtre
- * anti-continu) qui est restee sous -108 dB pendant EXC_IDLE blocs n'est plus calculee, jusqu'a ce que la voix
- * redevienne active : elle ne sort plus que des restes sous 2^-18 (l'arrondi par defaut du peigne du pincement la
- * laisse osciller sur un LSB au lieu de s'eteindre). Rings la calcule ; la corde ou le resonateur de la voix,
- * eux, continuent de resonner. */
+/* La chaine d'excitation d'une voix sans entree (filtre d'excitation, pincement, filtre anti-continu) qui est
+ * restee sous -108 dB pendant EXC_IDLE blocs n'est plus calculee, jusqu'a sa prochaine note (ou une entree) : elle ne
+ * sort plus que des restes sous 2^-18 (l'arrondi par defaut du peigne du pincement la laisse osciller sur un LSB au
+ * lieu de s'eteindre). Rings la calcule ; la corde ou le resonateur de la voix, eux, continuent de resonner. Depuis
+ * notes/81, la voix active aussi, entre deux notes. */
 #define EXC_IDLE 8
 
 static int exc_quiet(struct modal_part *p, int v, const s32 *x)
 {
 	int k;
 
-	if (v == p->active) {
+	if (!p->rin_zero) {                              /* une entree : jamais muette */
 		p->exc_idle[v] = 0;
 		return 0;
 	}
@@ -1740,13 +2363,57 @@ static int exc_quiet(struct modal_part *p, int v, const s32 *x)
 	return 1;
 }
 
-static inline int exc_skip(const struct modal_part *p, int v)
+static inline int exc_skip(const struct modal_part *p, int v, int strum)
 {
-	return v != p->active && p->exc_idle[v] >= EXC_IDLE;
+	return p->exc_idle[v] >= EXC_IDLE && p->rin_zero && !(strum && v == p->active);
 }
 
-static void render_string(struct modal_part *p, int voice, const struct modal_perf *ps,
-			  const struct modal_patch *pa, xf frequency, xf fc)
+/* Les cordes (notes/81) : quand le pincement (sa bouffee finie, son passe-bas) et le filtre d'excitation sont restes
+ * sous -108 dB pendant EXC_IDLE blocs, sans entree, il ne reste a la sortie de la chaine que la traine de son filtre
+ * anti-continu : une constante qui decroit (100 ms par facteur e) mais reste au-dessus de -108 dB pendant 0,7 s
+ * apres chaque note, et avec elle toute la chaine tournait. Elle est alors calculee seule (dc_tail), l'entree de
+ * l'anti-continu mise a zero. Le pincement : sous -72 dB (LP_EPS), sa traine (son peigne, qui perd 5 dB par periode)
+ * n'apporte plus a la corde qu'une energie negligeable. pl : le pincement sert (l'excitateur interne). */
+#ifndef LP_EPS
+#define LP_EPS      (1 << 12)                        /* 2^-12 : -72 dB */
+#endif
+
+static inline void lp_quiet(struct modal_part *p, int v, int pl)
+{
+	const struct plucker *q = &p->pl[v];
+	const struct svf *e = &p->exc[v];
+
+	if (!p->rin_zero || (pl && (q->remaining || iabs(q->svf.ic1) >= LP_EPS || iabs(q->svf.ic2) >= LP_EPS))
+	    || iabs(e->ic1) >= MODE_EPS || iabs(e->ic2) >= MODE_EPS)
+		p->lp_idle[v] = 0;
+	else if (p->lp_idle[v] < EXC_IDLE)
+		p->lp_idle[v]++;
+}
+
+static inline int lp_skip(const struct modal_part *p, int v, int strum)
+{
+	return p->lp_idle[v] >= EXC_IDLE && p->rin_zero && !(strum && v == p->active);
+}
+
+static void dc_tail(struct dcblock *d, s32 *x)       /* l'anti-continu sur une entree nulle */
+{
+	int k;
+
+	for (k = 0; k < MB; k++)
+		x[k] = dc_one(d, 0);
+}
+
+/* les cordes d'une voix des modeles sympathiques : 3 pour une voix (la corde jouee et deux cordes sympathiques),
+ * 1 pour plusieurs (Rings : 8, 4, 2 pour 1, 2, 4 voix ; eco, notes/74 : 4, 2, 1 ; le budget de 13 %, notes/81 :
+ * une corde sympathique coute presque 2 % du processeur) */
+static inline int sym_strings(const struct modal_part *p)
+{
+	return p->poly == 1 ? 3 : 1;
+}
+
+/* ob, ab : les deux sorties de la voix (ab = ob + MB : str_fast) */
+static MODAL_COLD void render_string(struct modal_part *p, int voice, const struct modal_perf *ps,
+			  const struct modal_patch *pa, xf frequency, xf fc, s32 *ob, s32 *ab)
 {
 	s32 freqs[NSTRINGS], dispersion, st = pa->structure;
 	int ns = 1, i;
@@ -1755,7 +2422,7 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 		struct vcache *vc = &p->vc[voice];
 		s32 tonic = ps->tonic + ps->fm, note = ps->tonic + p->note[voice] + ps->fm;
 		int chord = p->model == MODEL_SYMPATHETIC ? -1 : ps->chord;
-		ns = MAXPOLY / p->poly;                      /* eco : 4, 2, 1 cordes par voix (Rings : 8, 4, 2) */
+		ns = sym_strings(p);
 		if (!vc->svalid || vc->stonic != tonic || vc->snote != note || vc->sst != st || vc->schord != chord
 		    || vc->sns != ns) {
 			s32 notes[NSTRINGS];
@@ -1774,7 +2441,10 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 	} else {
 		freqs[0] = xto(frequency, 31);
 	}
-	if (!exc_skip(p, voice)) {                       /* sinon : rin reste a zero (exc_quiet) */
+	if (!exc_skip(p, voice, ps->strum) && lp_skip(p, voice, ps->strum)) {
+		dc_tail(&p->dcb[voice], p->rin);         /* la traine de l'anti-continu seule (lp_quiet) */
+		exc_quiet(p, voice, p->rin);
+	} else if (!exc_skip(p, voice, ps->strum)) {     /* sinon : rin reste a zero (exc_quiet) */
 		struct svf *e = &p->exc[voice];
 		if (voice == p->active && !p->rin_zero) {
 			s32 g = M_SQRTG[ns];
@@ -1801,26 +2471,26 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 #ifdef MODAL_ASM
 	done:
 #endif
+		lp_quiet(p, voice, ps->internal_exciter);
 		exc_quiet(p, voice, p->rin);
 	}
 	for (i = 0; i < MB; i++)
-		p->ob[i] = p->ab[i] = 0;
+		ob[i] = ab[i] = 0;
 	dispersion = st < Q31(0.24) ? shl(qmul(st - Q31(0.24), Q31(4.166 / 8)), 2)
 		: (st > Q31(0.26) ? qmul(st - Q31(0.26), Q31(1.35135 / 2)) : 0);       /* Q30 */
 	for (i = 0; i < ns; i++) {
 		int idx = voice + i * p->poly;
 		struct mstring *s = &p->str[idx];
-		s32 lfo = lfo_next(&p->slfo[idx]);
-		s32 brightness = pa->brightness, damping = pa->damping, position = pa->position;
+		s32 brightness = pa->brightness, damping = pa->damping;
 		s32 glide = Q31ONE, sidx = i * (Q31ONE / ns);
 		const s32 *input = p->rin;
-		if (i > 0 && ps->internal_exciter) {
-			s32 amount;
+		int sym = i > 0 && ps->internal_exciter;
+		/* Les cordes sympathiques (excitees par la 1re) n'ont pas de peigne (notes/81) : leur position, et le LFO de
+		 * Rings qui la fait bouger, ne servent plus a rien. */
+		if (sym) {
 			brightness = b2mb(brightness);
 			brightness = b2mb(brightness);
 			damping = Q31(0.7) + qmul(pa->damping, Q31(0.27));
-			amount = qmul(0x40000000 - iabs(0x40000000 - pa->position), Q31(0.9));
-			position = pa->position + qmul(lfo, amount);
 			if (!p->gvalid || p->gbright != pa->brightness) {
 				p->glide = xto(xs2r(qmul(brightness - Q31ONE, 36 << 16)), 31);
 				p->gbright = pa->brightness;
@@ -1830,35 +2500,138 @@ static void render_string(struct modal_part *p, int voice, const struct modal_pe
 			input = p->sym;
 		}
 		s->dispersion = dispersion;
+		s->lite = glide != Q31ONE;
 		if (glide == Q31ONE)
 			s->frequency = freqs[i];
 		else
 			s->frequency += qmul(glide, freqs[i] - s->frequency);
 		s->brightness = brightness;
-		s->position = position;
+		s->position = pa->position;
 		s->damping = damping + qmul(sidx, Q31(0.95) - damping);
-		str_process(s, input, p->ob, p->ab, &p->rng);
-		if (i == 0) {
+		str_process(s, input, ob, sym ? (s32 *)0 : ab, &p->rng);
+		if (i == 0 && ns > 1) {                  /* l'entree des autres cordes de la voix */
 			s32 g = M_SYMG[ns];
 			int k;
 			for (k = 0; k < MB; k++)
-				p->sym[k] = qmul(g, p->ob[k] - p->ab[k]);
+				p->sym[k] = qmul(g, ob[k] - ab[k]);
 		}
 	}
 }
 
-/* le gain du limiteur au-dessus de 1,0 : 0,8 / peak (peak en UNIT, > UNIT), en Q31. L'inverse de xrecip (une
- * division 32/32 puis une iteration de Newton, ~30 bits justes), sans le flottant maison : il change a chaque
- * echantillon. */
-static inline s32 lim_gain(s32 peak)
+/* le gain du limiteur au-dessus de 1,0 : 0,8 / peak (peak en UNIT, > UNIT), en Q31. peak = m 2^-n (m dans
+ * [2^30, 2^31), Q30) ; 1 / m par une division 32/32 puis une iteration de Newton (~30 bits justes), sans le flottant
+ * maison : il change a chaque echantillon. Quand peak descend (relachement, err <= 0 : de 4e-5 par echantillon au
+ * plus) et garde son n, l'iteration repart du 1 / m de l'echantillon d'avant, sans la division (notes/81) : l'ecart
+ * relatif de depart est sous 4e-5, son carre sous 2e-9. lz, ln : ce 1 / m (Q30) et son n (-1 : a refaire). */
+static inline s32 lim_gain(s32 peak, s32 *lz, s32 *ln, int rel)
 {
 	int n = __builtin_clz((u32)peak) - 1;            /* 1..6 : peak dans (2^24, 2^31) */
 	s32 m = shl(peak, n), z, t;                      /* [2^30, 2^31) : m / 2^30 dans [1, 2) */
 
-	z = (s32)((0xffffffffu / (u32)(m >> 15)) << 13); /* 1 / m en Q30, 16 bits justes */
+	if (rel && n == *ln)
+		z = *lz;
+	else
+		z = (s32)((0xffffffffu / (u32)(m >> 15)) << 13); /* 1 / m en Q30, 16 bits justes */
 	t = (s32)(0x80000000u - (u32)shl(qmul(m, z), 1));
-	z = qmul(shl(qmul(z, t), 1), Q31(0.8));         /* 0,8 / m, Q30 */
+	z = shl(qmul(z, t), 1);                          /* 1 / m, Q30 */
+	*lz = z;
+	*ln = n;
+	z = qmul(z, Q31(0.8));                           /* 0,8 / m, Q30 */
 	return n >= 5 ? shl(z, n - 5) : z >> (5 - n);    /* 0,8 / peak = (0,8 / m) 2^(n - 6) */
+}
+
+/* le limiteur de Rings, sur les deux sorties (UNIT), en place ; pg : le gain du modele ; lim : peak, lz, ln */
+static __attribute__((unused)) void modal_limiter(s32 *out, s32 *aux, s32 *lim, s32 pg)
+{
+	s32 peak = lim[0], g;
+	int k;
+
+	for (k = 0; k < MB; k++) {
+		s32 l = shl(qmul(out[k], pg), 1), r = shl(qmul(aux[k], pg), 1);
+		s32 pk = iabs(l), t = iabs(r), err;
+		if (t > pk)
+			pk = t;
+		t = iabs(r - l);
+		if (t > pk)
+			pk = t;
+		err = pk - peak;
+		peak += qmul(err > 0 ? M_LIM_ATK : M_LIM_DEC, err);
+		if (peak <= UNIT) {
+			g = Q31(0.8);
+			lim[2] = -1;
+		} else {
+			g = lim_gain(peak, &lim[1], &lim[2], err <= 0);
+		}
+		out[k] = softlimit(qmul(l, g));
+		aux[k] = softlimit(qmul(r, g));
+	}
+	lim[0] = peak;
+}
+
+/* Les modeles a cordes quand rien n'a change depuis le bloc complet precedent (potards, notes : ps->same, voix
+ * active, ni strum, ni entree, l'excitateur interne) : les memes calculs que modal_process et render_string pour ce
+ * cas, sans refaire ce qui ne bouge pas (notes/81). Seules les glissades des cordes sympathiques avancent. */
+static __attribute__((noinline)) void modal_fast(struct modal_part *p, s32 *out, s32 *aux)
+{
+	int v, i, k, ns = p->model == MODEL_STRING ? 1 : sym_strings(p);
+
+	for (v = 0; v < p->poly; v++) {
+		s32 *ob = p->poly == 1 ? out : p->ob, *ab = p->poly == 1 ? aux : p->ab;
+		const struct vcache *vc = &p->vc[v];
+		p->rin_zero = 1;
+		if (exc_skip(p, v, 0)) {
+			for (k = 0; k < MB; k++)
+				p->rin[k] = 0;
+		} else if (lp_skip(p, v, 0)) {
+			dc_tail(&p->dcb[v], p->rin);     /* (rin entierement ecrit) */
+			exc_quiet(p, v, p->rin);
+		} else {
+			struct svf *e = &p->exc[v];
+			for (k = 0; k < MB; k++)
+				p->rin[k] = 0;
+			if (e->ic1 || e->ic2)
+				svf_lp_block(e, p->rin, MB, 0, 0);
+#ifdef MODAL_ASM
+			if (!p->pl[v].remaining)
+				modal_pluck(&p->pl[v], p->rin, &p->dcb[v]);
+			else
+#endif
+			{
+				pl_process(&p->pl[v], p->nb, &p->rng);
+				for (k = 0; k < MB; k++)
+					p->rin[k] = dc_one(&p->dcb[v], p->rin[k] + p->nb[k]);
+			}
+			lp_quiet(p, v, 1);
+			exc_quiet(p, v, p->rin);
+		}
+		if (p->poly > 1) {
+			/* une corde par voix : out - aux de la voix, ajoute a la sortie de son cote (une voix sur deux), sans
+			 * passer par ob et ab (la meme somme, l'ordre des additions modulo 2^32 n'y change rien) */
+			s32 *d = (v & 1) ? aux : out;
+			if (v < 2)
+				for (k = 0; k < MB; k++)
+					d[k] = 0;
+			str_process(&p->str[v], p->rin, d, NEG_AUX, &p->rng);
+			continue;
+		}
+		for (k = 0; k < MB; k++)
+			ob[k] = ab[k] = 0;
+		for (i = 0; i < ns; i++) {
+			struct mstring *s = &p->str[v + i * p->poly];
+			const s32 *input = p->rin;
+			if (i > 0) {                             /* sympathique : sans peigne */
+				if (p->glide == Q31ONE)
+					s->frequency = vc->freqs[i];
+				else
+					s->frequency += qmul(p->glide, vc->freqs[i] - s->frequency);
+				input = p->sym;
+			}
+			str_process(s, input, ob, i > 0 ? (s32 *)0 : ab, &p->rng);
+			if (i == 0 && ns > 1)
+				for (k = 0; k < MB; k++)
+					p->sym[k] = qmul(M_SYMG[ns], ob[k] - ab[k]);
+		}
+	}
 }
 
 /* in : l'entree (UNIT), ou NULL sans entree ; out, aux : les deux sorties de Rings, apres le limiteur (UNIT) */
@@ -1876,16 +2649,17 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 	nf_process(&p->nf, ps->note, ps->strum);
 	if (ps->strum) {
 		p->note[p->active] = nf_stable(&p->nf);
-		if (p->poly > 1 && (p->poly & 1)) {
-			p->active = PING[p->step & 7];
-			p->step = (p->step + 1) & 7;
-		} else {
-			p->active = (p->active + 1) % p->poly;
-		}
+		/* les voix tour a tour, 3 voix comprises : Rings, en 3 voix, suit un motif de 8 pas (kPingPattern : 1, 0, 2,
+		 * 1, 0, 2, 1, 0) qui, au bout du motif, reprend une voix apres deux notes et coupe une note qui sonne ; sur
+		 * une seule sortie, il n'apporte rien (notes/81) */
+		p->active = (p->active + 1) % p->poly;
 	}
 	p->note[p->active] = p->nf.note;
-	for (k = 0; k < MB; k++)
-		out[k] = aux[k] = 0;
+	if (likely(ps->same && p->fk_valid && !ps->strum && !in && ps->internal_exciter && !p->dirty
+		   && p->fk_active == p->active && p->fk_note == p->nf.note)) {
+		modal_fast(p, out, aux);
+		goto limit;
+	}
 	cutoff = b2mb(pa->brightness);
 	for (v = 0; v < p->poly; v++) {
 		s32 note = p->note[v] + ps->tonic + ps->fm, fcq;
@@ -1894,16 +2668,25 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 		int act = v == p->active;
 		if (!vc->valid || vc->note != note || vc->cut != cutoff || vc->act != act
 		    || vc->ie != ps->internal_exciter) {
-			frequency = xmul(xs2r(note - (69 << 16)), XC(M_A3));
-			if (ps->internal_exciter)
-				fc = xmul(frequency, xs2r(qmul(cutoff - 0x40000000, 96 << 16)));
-			else
-				fc = xmul(XC(M_04), xs2r(qmul(cutoff - Q31ONE, 108 << 16)));
+			/* la hauteur ne depend que de la note ; le filtre d'excitation, que de sa coupure (celle d'une voix
+			 * inactive est fixe) : refaits seulement s'ils changent (notes/81) */
+			frequency = vc->valid && vc->note == note ? vc->frequency : xmul(xs2r(note - (69 << 16)), XC(M_A3));
 			if (!act)
 				fc = XC(M_FCIDLE);
-			fc = xmin(fc, XC(M_0499));
+			else if (ps->internal_exciter)
+				fc = xmul(frequency, xs2r(qmul(cutoff - 0x40000000, 96 << 16)));
+			else
+				fc = xmul(XC(M_EXTFC), xs2r(qmul(cutoff - Q31ONE, 108 << 16)));
+			fc = xmin(fc, XC(M_0998));
 			fcq = xto(fc, 31);
-			svf_set(&p->exc[v], tan_dirty(fcq), ps->internal_exciter ? XC(M_R150) : XC(M_R080), &a2x, &a3x);
+			if (vc->valid && fcq == vc->fcq && vc->ie == ps->internal_exciter) {
+				a2x = vc->a2x;
+				a3x = vc->a3x;
+			} else {
+				svf_set(&p->exc[v], tan_exact(fcq), ps->internal_exciter
+					? q_fade_r(fcq, XC(M_Q150), XC(M_QD150), XC(M_R150))
+					: q_fade_r(fcq, XC(M_Q080), XC(M_QD080), XC(M_R080)), &a2x, &a3x);
+			}
 			vc->valid = 1;
 			vc->note = note;
 			vc->cut = cutoff;
@@ -1941,7 +2724,7 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 				p2 = xto(xmul(a2x, pulse), 24);
 				p3 = xto(xmul(a3x, pulse), 24);
 			}
-			if (!exc_skip(p, v)) {
+			if (!exc_skip(p, v, ps->strum)) {
 				svf_lp_block(&p->exc[v], p->rin, MB, p2, p3);
 				exc_quiet(p, v, p->rin);
 			}
@@ -1950,41 +2733,31 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 			r->brightness = qmul(pa->brightness, pa->brightness);
 			r->position = pa->position;
 			r->damping = pa->damping;
-			reso_process(r, p->rin, p->ob, p->ab);
+			reso_process(r, p->rin, p->poly == 1 ? out : p->ob, p->poly == 1 ? aux : p->ab);
 		} else {
-			render_string(p, v, ps, pa, frequency, fc);
+			render_string(p, v, ps, pa, frequency, fc, p->poly == 1 ? out : p->ob, p->poly == 1 ? aux : p->ab);
 		}
-		if (p->poly == 1) {
-			for (k = 0; k < MB; k++) {
-				out[k] += p->ob[k];
-				aux[k] += p->ab[k];
-			}
-		} else {
+		if (p->poly > 1) {                       /* une voix sur deux de chaque cote : les deux 1res posent */
 			s32 *d = (v & 1) ? aux : out;
 			const s32 *ob = p->ob, *ab = p->ab;
-			for (k = 0; k < MB; k++)
-				d[k] += ob[k] - ab[k];
+			if (v < 2)
+				for (k = 0; k < MB; k++)
+					d[k] = ob[k] - ab[k];
+			else
+				for (k = 0; k < MB; k++)
+					d[k] += ob[k] - ab[k];
 		}
 	}
-	/* limiteur */
-	{
-		s32 pg = M_GAINS[p->model], peak = p->peak, g = Q31(0.8);
-		for (k = 0; k < MB; k++) {
-			s32 l = shl(qmul(out[k], pg), 1), r = shl(qmul(aux[k], pg), 1);
-			s32 pk = iabs(l), t = iabs(r), err;
-			if (t > pk)
-				pk = t;
-			t = iabs(r - l);
-			if (t > pk)
-				pk = t;
-			err = pk - peak;
-			peak += qmul(err > 0 ? Q31(0.05) : M_LIM_DEC, err);
-			g = peak <= UNIT ? Q31(0.8) : lim_gain(peak);
-			out[k] = softlimit(qmul(l, g));
-			aux[k] = softlimit(qmul(r, g));
-		}
-		p->peak = peak;
-	}
+	/* ce que le bloc court reprendra (modal_fast) */
+	p->fk_valid = p->model != MODEL_MODAL && !in && ps->internal_exciter;
+	p->fk_active = p->active;
+	p->fk_note = p->nf.note;
+limit:
+	/* le limiteur ; sur le ColdFire, la passerelle le fait avec sa difference (modal_lim, modal_asm.S) */
+#ifndef MODAL_ASM
+	modal_limiter(out, aux, &p->peak, M_GAINS[p->model]);
+#endif
+	return;
 }
 
 #endif

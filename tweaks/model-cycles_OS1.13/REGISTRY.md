@@ -472,7 +472,7 @@ Code trop gros pour un masque, ajouté à la fin de l'image (`at`) et copié au 
 | syntakt-tg-sd-cp-toy-bits-swarm-acid | 31 | `0x401bf8c0` | 147 726 | `0x401e39ce` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 373 | `0x401f74d5` | `0x46700000` | 481 168 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 233 012 | `0x401f86f4` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 31 | `0x401bf8c0` | 256 479 | `0x401fe29f` | `0x46700000` | 561 340 | model-tg-st |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 31 | `0x401bf8c0` | 260 638 | `0x401ff2de` | `0x46700000` | 562 300 | model-tg-st |
 | syntakt-tg-sd-cp-toy-macro | 31 | `0x401bf8c0` | 219 136 | `0x401f50c0` | `0x46700000` | 481 168 | model-tg-st |
 | syntakt-tg-sd-cp-toy-macro-acid | 31 | `0x401bf8c0` | 223 765 | `0x401f62d5` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-swarm | 31 | `0x401bf8c0` | 242 492 | `0x401fabfc` | `0x46700000` | 269 056 | model-tg-st |
@@ -528,7 +528,7 @@ Code trop gros pour un masque, ajouté à la fin de l'image (`at`) et copié au 
 | syntakt-tg-meter | 91 | `0x401bf8c0` | 243 472 | `0x401fafd0` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-profile | 92 | `0x401bf8c0` | 243 904 | `0x401fb180` | `0x46700000` | 269 056 | model-tg-st |
 
-Fin la plus haute : `0x401fe29f`, soit 7 521 o avant la limite (une charge posée sur une autre, comme les moteurs du Syntakt sur Model-TG, est déjà comptée à sa place dans la chaîne).
+Fin la plus haute : `0x401ff2de`, soit 3 362 o avant la limite (une charge posée sur une autre, comme les moteurs du Syntakt sur Model-TG, est déjà comptée à sa place dans la chaîne).
 
 ## 4. Points d'accroche (crochets) sur l'OS
 
@@ -770,7 +770,7 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | syntakt-tg-*-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 138 176–147 726 o | notes/36 |
 | syntakt-tg-*-macro (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 218 802–228 373 o | notes/36 |
 | syntakt-tg-*-macro-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 223 445–233 012 o | notes/36 |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 256 479 o | notes/36 |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 260 638 o | notes/36 |
 | macro-acid-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 116 804 o | notes/54 |
 | macro-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 110 276 o | notes/43 |
 | sample-preview | 11 | 0 | 3 | 0 | 4 | 4 | 0 |  | notes/46 |

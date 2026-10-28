@@ -40,8 +40,8 @@ LICENSE_OUT = DEV / "LICENSE-Rings"
 TWEAK_ID = "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal"
 FIVE = ("sd", "cp", "toy", "bits", "swarm")
 
-FS = 48000.0
-BLOCK = 32                      # le bloc du Cycles (Rings : 24)
+FS = 24000.0                    # le cœur calcule Rings à 24 kHz (notes/81) ; la passerelle remonte à 48 kHz
+BLOCK = 16                      # un bloc du Cycles (32 trames à 48 kHz) : 16 trames du cœur (Rings : 24 à 48 kHz)
 
 # Place de MODAL dans la charge utile (décalages depuis son début) : après ACID et ses variables (gen_acid_combos :
 # ACID_AT 0x76000, ACID_BSS 0x78000, jusqu'à 0x78300), le code et les tables (52 Ko au plus), puis ses variables.
@@ -64,10 +64,10 @@ SHAPE_KNOB = 5                  # numéro de potard de SHAPE pour l'OS (PITCH = 
 
 CFLAGS = ["-mcpu=54418", "-O2", "-malign-int", "-U_FORTIFY_SOURCE", "-ffreestanding", "-fno-builtin",
           "-fno-tree-loop-distribute-patterns", "-nostdlib", "-fno-pic", "-fno-common", "-ffunction-sections",
-          "-fdata-sections", "-fomit-frame-pointer", "-Wall", "-Wextra", "-Werror"]
+          "-fdata-sections", "-fomit-frame-pointer", "-freorder-blocks-and-partition", "-Wall", "-Wextra", "-Werror"]
 LINK = """SECTIONS
 {{
-  .text {code:#x} : {{ *(.text.modal_update) *(.text.modal_render) *(.text*) }}
+  .text {code:#x} : {{ *(.text.modal_update) *(.text.modal_render) *(.text.[!u]*) *(.text) *(.text.unlikely*) }}
   .rodata ALIGN(4) : {{ *(.rodata*) }}
   .data ALIGN(4) : {{ *(.data*) }}
   .bss {bss:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }}
@@ -156,30 +156,20 @@ def xf(x):
     return m, e
 
 
-def lfo_inc(f):
-    """Incrément de phase (2^32 = un tour) du CosineOscillator<APPROXIMATE>(f) de stmlib, par sa constante c
-    calculée en float32 : 0,5 + 0,5 cos(n theta), cos(theta) = c / 2."""
-    f = f32(f32(f) - 0.25)
-    sign = 16.0
-    if f < 0:
-        f = -f
-    elif f > 0.5:
-        f = f32(f - 0.5)
-    else:
-        sign = -16.0
-    c = f32(f32(sign * f) * f32(1.0 - f32(2.0 * f)))
-    return int(round(math.acos(max(-1.0, min(1.0, c / 2))) / (2 * math.pi) * 2 ** 32)) & 0xffffffff
-
-
 def constants():
     """Constantes de modal_tables.h, d'après les valeurs float32 de Rings et de stmlib."""
     pi = math.pi
     pif = f32(pi)
     a3 = f32(440.0 / FS)
     srb = f32(FS / BLOCK)                                 # cadence des blocs (note_filter)
+    q707 = f32(0.7071)
     xfs = {                                               # flottants maison
-        "M_02": 0.2, "M_04": 0.4, "M_049": f32(0.49), "M_0499": f32(0.499),
-        "M_255": 255.0, "M_27": 27.0, "M_9": 9.0, "M_500": 500.0, "M_A3": a3,
+        "M_02": 0.2, "M_049": f32(0.49), "M_0499": f32(0.499), "M_0998": f32(0.998),
+        "M_27": 27.0, "M_9": 9.0, "M_A3": a3,
+        # Rings à 24 kHz (notes/81, test_modal_dsp.SR24) : en hertz et en secondes comme à 48 kHz
+        "M_EXTFC": f32(0.4 * 48000.0 / FS), "M_QMODE": f32(500.0 * FS / 48000.0), "M_PLCAP": f32(255.0 * FS / 48000.0),
+        "M_Q150": 1.5, "M_QD150": f32(q707 - f32(1.5)), "M_Q080": f32(0.8), "M_QD080": f32(q707 - f32(0.8)),
+        "M_QD100": f32(q707 - f32(1.0)),
         "M_F220": f32(220.0 / FS), "M_FCIDLE": f32(10.0 / FS),
         "M_M120": -120.0, "M_R080": f32(1.0 / f32(0.8)), "M_R100": f32(1.0 / 100.0),
         "M_R150": f32(1.0 / 1.5), "M_RT60S": f32(f32(0.07) * FS),
@@ -191,14 +181,14 @@ def constants():
     k.update({
         "M_001": q31(f32(0.01)), "M_049Q": q31(f32(0.49)), "M_04999": q31(f32(0.4999)),
         "M_095": q31(f32(0.95)), "M_0999": q31(f32(0.999)), "M_F220Q": q31(f32(220.0 / FS)),
-        "M_LIM_DEC": q31(f32(0.00002)),
+        "M_LIM_DEC": q31(f32(0.00004)), "M_LIM_ATK": q31(f32(0.0975)),   # 1 - (1 - a)^2 : deux pas de 48 kHz
+        "M_0497Q": q31(f32(0.497)), "M_06Q": q31(f32(0.6)), "M_R0398": q(f32(1.0 / f32(0.398)), 29),
         "M_NF_FAST": q31(f32(1.0 / f32(f32(0.001) * srb))), "M_NF_SLOW": q31(f32(1.0 / f32(f32(0.010) * srb))),
         "M_NF_LAG": q31(f32(1.0 / f32(f32(0.050) * srb))), "M_NF_DELAY": min(15, int(f32(f32(0.004) * srb))),
         "M_NF_JUMP": 26214, "M_POLE10": q31(f32(1.0 - 10.0 / FS)), "M_POLE20": q31(f32(1.0 - 20.0 / FS)),
         "M_0025U": q(0.025, 24), "M_005": q(0.05, 16), "M_09999Q30": q(f32(0.9999), 30),
         "M_D220": q(1.0 / f32(220.0 / FS), 20), "M_FIFTH": q(7.01955, 16),
         "M_PI27": q(pif, 27), "M_TD_A27": q(f32(f32(0.3736) * pi ** 3), 27),
-        "M_TF_A26": q(f32(f32(0.326) * pi ** 3), 26), "M_TF_B25": q(f32(f32(0.1823) * pi ** 5), 25),
         "M_TA_A21": q(f32(f32(3.333314036e-01) * pi ** 3), 21), "M_TA_B21": q(f32(f32(1.333923995e-01) * pi ** 5), 21),
         "M_TA_C21": q(f32(f32(5.33740603e-02) * pi ** 7), 21), "M_TA_D21": q(f32(f32(2.900525e-03) * pi ** 9), 21),
         "M_TA_E19": q(f32(f32(9.5168091e-03) * pi ** 11), 19),
@@ -206,12 +196,33 @@ def constants():
     arrays = {
         "M_DETUNE": ("s32", [q(f32(x), 16) for x in (0.013, 0.011, 0.007, 0.017)]),
         "M_GAINS": ("s32", [q31(f32(g) / 2) for g in (1.4, 1.0, 1.4, 0.7, 1.0, 1.4)]),
-        "M_SLFO": ("u32", [lfo_inc(f32(f32(BLOCK / FS) * f32(f))) for f in (0.5, 0.4, 0.35, 0.23, 0.211, 0.2,
-                                                                         0.171, 0.0)]),
         "M_SQRTG": ("s32", [0] + [q31(f32(1.0 / math.sqrt(n * 2.0))) for n in range(1, 9)]),
-        "M_SYMG": ("s32", [0] + [q31(f32(0.2 / n)) for n in range(1, 9)]),
+        # l'entrée des cordes sympathiques, x racine 2 : sans peigne, elles perdent en moyenne la moitié de leur
+        # puissance (notes/81, LITE de tools/emu/test_modal_dsp.py)
+        "M_SYMG": ("s32", [0] + [q31(f32(f32(f32(0.2) * f32(1.41421356)) / n)) for n in range(1, 9)]),
     }
     return k, arrays
+
+
+def halfband(n=27, beta=5.0):
+    """Le filtre demi-bande de la passerelle (notes/81), 24 <-> 48 kHz : n coefficients (Kaiser beta), somme 1 ; à
+    0,01 dB près jusqu'à 8 kHz, -0,5 dB à 10 kHz, -54 dB dès 15 kHz. Rend h (h[(n - 1) / 2] au centre, nuls aux
+    décalages pairs)."""
+    def i0(x):                                            # fonction de Bessel modifiée, par sa série
+        t, k, s = 1.0, 1, 1.0
+        while t > 1e-17 * s:
+            t *= (x / (2 * k)) ** 2
+            s += t
+            k += 1
+        return s
+    c = (n - 1) // 2
+    h = []
+    for i in range(n):
+        k = i - c
+        sinc = 1.0 if k == 0 else math.sin(math.pi * k / 2) / (math.pi * k / 2)
+        h.append(sinc / 2 * i0(beta * math.sqrt(1 - (2 * i / (n - 1) - 1) ** 2)) / i0(beta))
+    t = sum(h)
+    return [v / t for v in h]
 
 
 def tables():
@@ -230,6 +241,12 @@ def tables():
     }
     k, arrays = constants()
     t.update(arrays)
+    h = halfband()
+    c = (len(h) - 1) // 2
+    # passerelle (modal.c) : remonter la sortie à 48 kHz, descendre le sample excitateur à 24 kHz (notes/81)
+    t["M_HBI"] = ("s32", [q(2 * h[2 * j], 31) for j in range(c // 2 + 1)])   # interpolation : paires, gain 2
+    t["M_HBD"] = ("s32", [q(h[2 * j], 31) for j in range(c // 2 + 1)])       # décimation : paires
+    k["M_HBC"] = q(h[c], 31)                                                   # décimation : le centre
     return t, k
 
 
@@ -280,7 +297,7 @@ def compile_machine(tmp, pay, tables_h):
     import gen_sdvintage_exact as gx                       # noqa: E402
     at, bss_at = pay + MODAL_AT, pay + MODAL_BSS
     (tmp / "modal_tables.h").write_text(tables_h)          # les tables de ce générateur, pas celles du dépôt
-    for f in ("modal.c", "modal_dsp.h", "modal_fix.h", "modal_asm.S"):
+    for f in ("modal.c", "modal_dsp.h", "modal_fix.h", "modal_cfg.h", "modal_asm.S"):
         (tmp / f).write_bytes((SRC / f).read_bytes())
     o, oa = tmp / "modal.o", tmp / "modal_asm.o"
     gx.run([gx.CROSS + "gcc", *CFLAGS, "-DMODAL_ASM", f"-DMODAL_RAM={MODAL_RAM:#x}", *tg_defines(), f"-I{tmp}", "-c",

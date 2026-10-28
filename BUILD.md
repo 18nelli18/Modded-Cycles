@@ -24,11 +24,12 @@ section (aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the 
 must be:
 
 ```
-92ad392437c9dab4349b0e247a0d4b5f8a72ab4746242f2cca475eed7ffa13c9
+0750fa3bb7734061178a4b2c12c29c68f25ad87cfa7de254b0375171bd75798d
 ```
 
-(2.1 before MACRO was brought under 13 % of the processor (notes/81) was `84455c19…afd0`; before MODAL took a sample
-as its exciter (notes/80), `9f9a3f4c…c4b5`; before the MIDI-out fix (notes/79),
+(2.1 before MODAL's voices were taken in turn (notes/81 §8.6) was `9a160518…fc7b`; before MODAL was brought under
+13 % of the processor (notes/81 §8), `92ad3924…13c9`; before MACRO was,
+`84455c19…afd0`; before MODAL took a sample as its exciter (notes/80), `9f9a3f4c…c4b5`; before the MIDI-out fix (notes/79),
 `6c327f45…97d7`; before the lighter output stage (notes/78),
 `64d162a4…9b30`; before MODAL's strings were rescheduled
 (notes/74 §5.5), `e5a333c9…cf77`; 2.0.1, without MODAL, was `2a77d029…0041`; 2.0, the same with its machine payload packed less tightly,

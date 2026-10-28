@@ -70,7 +70,7 @@ check = t7.check
 load = ta.load
 FIVE = list(gmo.FIVE)
 KW = dict(note=48, pitch=64, color=64, shape=0, sweep=40, contour=36, punch=0, gate=0, finetune=64, decay=64)
-POLY_FINE = {1: 64, 2: 80, 4: 96}            # FINE (0..127) -> 0x4000, 0x5000, 0x6000 : 1, 2, 4 voix
+POLY_FINE = {1: 64, 2: 80, 3: 96}            # FINE (0..127) -> 0x4000, 0x5000, 0x6000 : 1, 2, 3 voix (notes/81)
 RAM = (gmo.MODAL_RAM, gmo.MODAL_RAM + 6 * gmo.TRACK_SIZE)
 gs.CATALOG.setdefault("modal", dict(gmo.MACHINE, label="MODAL"))
 # les cases de samples de Model-TG (ses symboles), que MODAL lit pour son excitateur (notes/80) ; les samples de la
@@ -232,7 +232,7 @@ def cases(quick):
     for shape in range(len(gmo.MODELS)):
         out.append((f"SHAPE {shape} ({gmo.MODELS[shape]}), 1 voix", dict(KW, shape=shape),
                     dict(trigs=(1, 150), blocks=260, changes={150: dict(note=55)})))
-    polys = ((0, 2), (0, 4), (1, 2), (1, 4), (2, 2), (2, 4), (3, 2), (3, 4)) if not quick else ((0, 4), (3, 2))
+    polys = ((0, 2), (0, 3), (1, 2), (1, 3), (2, 2), (2, 3), (3, 2), (3, 3)) if not quick else ((0, 3), (3, 2))
     for shape, poly in polys:
         notes = {1: dict(note=48), 30: dict(note=52), 60: dict(note=55), 90: dict(note=60)}
         out.append((f"SHAPE {shape}, {poly} voix, 4 notes", dict(KW, shape=shape, finetune=POLY_FINE[poly]),
@@ -251,16 +251,34 @@ def cases(quick):
         ("modèle verrouillé par pas : 0, 2, 3, 1", dict(KW, shape=0),
          dict(trigs=(1, 40, 80, 120), blocks=180, changes={40: dict(shape=2), 80: dict(shape=3), 120: dict(shape=1)})),
         ("SHAPE au-delà de 3 (un son d'avant) : borné à 3", dict(KW, shape=5), dict(blocks=60)),
-        ("polyphonie changée pendant le jeu : 1, 4, 2", dict(KW, shape=1),
+        ("polyphonie changée pendant le jeu : 1, 3, 2", dict(KW, shape=1),
          dict(trigs=(1, 40, 80), blocks=140, changes={40: dict(finetune=96), 80: dict(finetune=80)})),
         ("vélocité : gain 127 puis 30", dict(KW, shape=0),
          dict(trigs=(1, 80), blocks=160, gains={0: 127, 79: 30})),
         ("note 0, PITCH 0 : borné en bas", dict(KW, shape=2, note=0, pitch=0), dict(blocks=60)),
-        ("note 127, PITCH 127 : borné en haut", dict(KW, shape=0, note=127, pitch=127), dict(blocks=60)),
+        # à 24 kHz (notes/81), le résonateur sonne jusqu'à la note 126 (11,8 kHz) : 127 et au-delà se taisent
+        ("note 120 : la plus aiguë qui sonne", dict(KW, shape=0, note=120, pitch=64), dict(blocks=60)),
         ("DAMPING au maximum (cordes : résonance infinie)", dict(KW, shape=1, decay=127), dict(blocks=200)),
         ("BRIGHTNESS 0, POSITION 0, STRUCTURE 0", dict(KW, shape=3, color=0, sweep=0, contour=0), dict(blocks=80)),
         ("BRIGHTNESS 127, POSITION 127, STRUCTURE 127", dict(KW, shape=2, color=127, sweep=127, contour=127),
          dict(blocks=80)),
+        # notes/81 : les cordes aiguës (retard plus court qu'un bloc : str_fast par morceaux), les potards qui bougent
+        # à chaque bloc (repris un bloc sur 8)
+        ("cordes sympathiques aiguës, 2 voix : notes 84, 91, 96", dict(KW, shape=1, finetune=POLY_FINE[2], note=84),
+         dict(trigs=(1, 40, 80), blocks=160, changes={40: dict(note=91), 80: dict(note=96)})),
+        ("corde aiguë, STRUCTURE 64, 3 voix : notes 96, 103, 108", dict(KW, shape=2, finetune=POLY_FINE[3], note=96,
+                                                                       contour=64),
+         dict(trigs=(1, 40, 80), blocks=160, changes={40: dict(note=103), 80: dict(note=108)})),
+        ("cordes en accord aiguës, STRUCTURE 127, 1 voix : note 90", dict(KW, shape=3, contour=127, note=90),
+         dict(trigs=(1,), blocks=120)),
+        ("corde, STRUCTURE 0 (le chevalet courbe), 2 voix : notes 36, 43, 48", dict(KW, shape=2, finetune=POLY_FINE[2],
+                                                                                   note=36, contour=0, color=100),
+         dict(trigs=(1, 40, 80), blocks=160, changes={40: dict(note=43), 80: dict(note=48)})),
+        ("corde, STRUCTURE 127 (le bruit de dispersion), 3 voix : notes 40, 52, 60",
+         dict(KW, shape=2, finetune=POLY_FINE[3], note=40, contour=127, color=110, sweep=90),
+         dict(trigs=(1, 40, 80), blocks=160, changes={40: dict(note=52), 80: dict(note=60)})),
+        ("COLOR qui bouge à chaque bloc (cordes sympathiques, 2 voix)", dict(KW, shape=1, finetune=POLY_FINE[2]),
+         dict(trigs=(1, 60), blocks=160, changes={b: dict(color=b * 7 % 128) for b in range(10, 160)})),
     ]
     if not quick:
         out.append(("machine locks : SNARE, MODAL, ACID, MODAL, KICK", dict(KW, shape=0, machine=1),
@@ -311,8 +329,8 @@ def sample_cases():
         out.append((f"SHAPE {shape}, sample « frappe » (2 400 échantillons), 1 voix", dict(KW, shape=shape),
                     dict(trigs=(1, 150), blocks=260, tg=dict(slots=[(5, HASH5, fr)], slot=5)), None))
     out += [
-        ("SHAPE 2, sample « sinus » (9 000 échantillons, relancé avant sa fin), 4 voix",
-         dict(KW, shape=2, finetune=POLY_FINE[4]), dict(trigs=(1, 30, 60, 90), blocks=200,
+        ("SHAPE 2, sample « sinus » (9 000 échantillons, relancé avant sa fin), 3 voix",
+         dict(KW, shape=2, finetune=POLY_FINE[3]), dict(trigs=(1, 30, 60, 90), blocks=200,
                                                        tg=dict(slots=[(5, HASH5, si)], slot=5)), None),
         ("SHAPE 0, sample de 20 échantillons (moins d'un bloc)", dict(KW, shape=0),
          dict(trigs=(1, 40), blocks=120, tg=dict(slots=[(5, HASH5, co)], slot=5)), None),
@@ -493,16 +511,16 @@ def poly_ui(base, fw, label):
     want = lambda c, d: 0x4000 + 0x1000 * max(0, min(2, (2 if c >= 0x5800 else 1 if c >= 0x4800 else 0)
                                                        + (1 if d > 0 else -1 if d < 0 else 0)))
     bad = [(hex(c), hex(d), hex(v)) for (c, d), v in steps.items() if v != want(c, d)]
-    check(not bad, f"{label} : FUNC + un tour de SHAPE (vrai 0x4000b7d6) : un cran par tour, 1, 2, 4 voix "
+    check(not bad, f"{label} : FUNC + un tour de SHAPE (vrai 0x4000b7d6) : un cran par tour, 1, 2, 3 voix "
                    f"(0x4000, 0x5000, 0x6000), bornés {bad[:3]}")
     shown = {v: b.text(lofi_ui.FTUN, v) for v in (0x4000, 0x5000, 0x6000)}
-    check(list(shown.values()) == ["1", "2", "4"], f"{label} : texte de la valeur (vrai sprintf de l'OS) : {shown}")
+    check(list(shown.values()) == ["1", "2", "3"], f"{label} : texte de la valeur (vrai sprintf de l'OS) : {shown}")
     shots = {v: (b.popup(lofi_ui.FTUN, v), b.popup(lofi_ui.FTUN, v, text_path=True)) for v in (0x4000, 0x5000, 0x6000)}
     bad = [hex(v) for v, (x, y) in shots.items() if x is None or y is None or x != y or x[1]]
-    check(not bad, f"{label} : fenêtre de valeur (vrai 0x4001d818) : 1, 2, 4, pixel pour pixel le texte que l'OS "
+    check(not bad, f"{label} : fenêtre de valeur (vrai 0x4001d818) : 1, 2, 3, pixel pour pixel le texte que l'OS "
                    f"dessine par son chemin texte, pas de jauge {bad}")
     if not bad:
-        print("      fenêtre de valeur, FUNC + SHAPE sur 4 voix :")
+        print("      fenêtre de valeur, FUNC + SHAPE sur 3 voix :")
         print(lofi_ui.ascii_popup(shots[0x6000][0][0]))
 
 
@@ -530,7 +548,7 @@ def memory(fw, label):
             foreign.append((hex(pc), hex(addr)))
     e.uc.hook_add(UC_HOOK_MEM_WRITE, wr)
     for t in range(6):
-        e.set(t, **dict(KW, machine=m.index, shape=t % 4, finetune=POLY_FINE[(1, 2, 4)[t % 3]], note=40 + 4 * t))
+        e.set(t, **dict(KW, machine=m.index, shape=t % 4, finetune=POLY_FINE[(1, 2, 3)[t % 3]], note=40 + 4 * t))
     for b in range(120):
         e.block(0x3f if b in (1, 60) else 0)
     check(not stray and not foreign and not e.unmapped,
@@ -545,7 +563,7 @@ def cost(fw, label):
     res, smp = [], {}
     si = sample_pcm("sinus", 9000)
     for shape in range(len(gmo.MODELS)):
-        for poly, tg in ((1, None), (2, None), (4, None), (1, dict(slots=[(5, HASH5, si)], slot=5))):
+        for poly, tg in ((1, None), (2, None), (3, None), (1, dict(slots=[(5, HASH5, si)], slot=5))):
             e = fw.engine(solo=0)
             e.set(0, **dict(KW, machine=m.index, shape=shape, finetune=POLY_FINE[poly], decay=100))
             if tg:

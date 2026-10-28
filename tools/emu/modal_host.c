@@ -1,6 +1,6 @@
 /*
  * Le coeur de MODAL (tools/machines/modal/modal_dsp.h) compile pour l'ordinateur, pilote comme rings_ref.cc :
- * memes enregistrements en entree (46 int32 par bloc), memes sorties (out[32] puis aux[32] en float32).
+ * memes enregistrements en entree (14 + MB int32 par bloc), memes sorties (out[MB] puis aux[MB] en float32).
  * Option -i : sortie en int32 (UNIT = 2^24), pour comparer a l'octet pres avec le Cycles.
  */
 #include <stdio.h>
@@ -17,7 +17,7 @@ static s32 knob(s32 v)                               /* 0..65536 -> Q31 */
 
 int main(int argc, char **argv)
 {
-	s32 r[46], out[MB], aux[MB];
+	s32 r[14 + MB], out[MB], aux[MB];
 	int ints = argc > 1 && !strcmp(argv[1], "-i"), k;
 
 	modal_init_tables();
@@ -36,6 +36,7 @@ int main(int argc, char **argv)
 		ps.tonic = r[6];
 		ps.fm = r[7];
 		ps.level = Q31ONE;
+		ps.same = 0;
 		pa.structure = knob(r[8]);
 		pa.brightness = knob(r[9]);
 		pa.damping = knob(r[10]);

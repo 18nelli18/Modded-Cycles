@@ -87,7 +87,7 @@ retrig page, menus) are listed with that page as context.
 | **FUNC** + **PAGE** | Scale menu, as stock, with two added items **Scl** and **Key** (Scale Lock) | Model-TG Scale Lock | Stock menu, extended |
 | **FUNC** + **PITCH** (turn) | Lo-fi: OFF in the middle, sample rate on the left (46K down to 4K), bit depth on the right (12B down to 2B) | MACRO | **MACRO tracks only.** Stock, changed: on every other machine FUNC + PITCH still moves the note by semitones |
 | **FUNC** + **MACHINES** on a MODAL track, then pick a sample | The sample becomes MODAL's exciter: each trig plays it from the start into the resonator (*Sample loaded to track N*) | MODAL | MODAL tracks. Loading a MODAL preset goes back to MODAL's own exciter |
-| **FUNC** + **SHAPE** (turn) | Polyphony: 1, 2 or 4 voices | MODAL | **MODAL tracks only.** On every other machine, FUNC + SHAPE does what it does on the stock OS |
+| **FUNC** + **SHAPE** (turn) | Polyphony: 1, 2 or 3 voices (2 at most on the string, SHAPE 2) | MODAL | **MODAL tracks only.** On every other machine, FUNC + SHAPE does what it does on the stock OS |
 | **FUNC** + **RETRIG** | Retrig Setup menu, now with two more rows under Rte, Len, A.On: **Arp** (direction) and **Oct** (octaves) | Arpeggiator | Stock menu, extended |
 | **FUNC** + trig key on an empty step | Places a trigless trig (stock); the key now lights dimmed | Dimmed trigless trigs | Grid mode |
 | **FUNC** + trig key (on a step with a trig) | Stock change applied on release; now decided within 0.5 s instead of 0.2 s | Easier trig removal | Grid mode |
@@ -383,7 +383,7 @@ egg). The code is Rings' own DSP (the `Part` of
 | SWEEP | Position (POS) | POSITION | where it is struck |
 | CONTOUR | Struct (STRC) | STRUCTURE | the ratios between the partials (harmonic in a notch in the first quarter); model 1: the intervals of the strings; model 3: one of 11 chords |
 | DECAY | — | DAMPING | how long it rings, from a short knock to about ten seconds; at the top the strings ring almost forever |
-| **FUNC** + SHAPE | 1, 2 or 4 | the polyphony button | 1, 2 or 4 voices: each new note rings on the next voice while the others keep ringing |
+| **FUNC** + SHAPE | 1, 2 or 3 | the polyphony button | 1, 2 or 3 voices (the string, SHAPE 2: 2 at most, 3 plays as 2): each new note takes the voice that has rung the longest, so on 3 voices the fourth note cuts the first |
 
 4. Velocity sets how hard the resonator is struck (the exciter's level), not the track volume: the notes still
    ringing keep their level.
@@ -395,8 +395,18 @@ egg). The code is Rings' own DSP (the `Part` of
 
 **Limits and interactions.**
 
-- "Éco" settings, chosen by Maxime for the processor: half of Rings' modes (30, 2 × 14, 4 × 6 instead of 60,
-  2 × 28, 4 × 12) and 4 strings instead of 8 (with Rings' chord table for that number of strings).
+- "Éco" settings, chosen by Maxime for the processor: half of Rings' modes (30, 2 × 14, 3 × 8 instead of 60,
+  2 × 28, 4 × 12). Since 27/10/2026 (notes/81, the 13 % budget, Maxime's choice of the lightest option): Rings is
+  computed at 24 kHz and brought up to 48 kHz (flat to about 10 kHz); 3 voices at most, 2 on the string (SHAPE 2),
+  taken in turn (not Rings' 8-step pattern for 3 voices, which sometimes cut a ringing note); the sympathetic models
+  ring 3 strings on one voice (the played one and two sympathetic) and 1 string per voice on two or three voices
+  (Rings: 8 strings); the sympathetic strings have no comb (their position does nothing), the strings read
+  their delay lines linearly instead of Rings' Hermite interpolation; knobs and pitch modulation that move without a
+  trig are taken every 16 blocks (10.7 ms; 32 blocks, 21 ms, on 3 voices). Since 28/10/2026 the plucker stops at
+  -72 dB (its DC blocker's tail is then computed alone). Against Rings without these changes: 2.8 dB median per
+  third octave at most, the level within 3.7 dB (`tools/emu/test_modal_dsp.py`, LITE).
+- The strings follow the note up to about 6 kHz and fall silent above note 118; the modal model plays up to note 126
+  (24 kHz).
 - One output: odd minus even, as Rings mixes them when only one jack is plugged.
 - No live audio input: Rings' internal exciter (a filtered click or a burst of noise), or a sample.
 - The sample: one per track (samples on single steps are a Sampler feature); no preview in the preset menu on a MODAL
@@ -404,18 +414,19 @@ egg). The code is Rings' own DSP (the `Part` of
   a Sampler track; the internal exciter plays while it loads. Model-TG still says *Select sample machine first!* when
   the project has neither a Sampler nor a MODAL track. To make this work, three of Model-TG's "machine = Sampler"
   tests also accept MODAL (`tools/gen_model_tg.py`, notes/80). A sample costs about the same as the internal exciter.
-- Heavy: on a Model:Cycles a MODAL track takes about 16 % of the processor (modal model, string on 1 voice), 25 %
-  (sympathetic strings, chords), 33 % (string on 4 voices), from the cost model calibrated on a measurement on the
-  machine (notes/77; Maxime measured 30 % for one track). The hottest loops are in ColdFire assembly. A knob that moves
-  all the time (an LFO on COLOR, CONTOUR or DECAY) costs more. One or two MODAL tracks with the rest. The load governor
-  looks after MODAL too.
+- Every model and number of voices stays under 13 % of the processor on its track (average): 6.0 % to 12.8 % (the
+  chords on 3 voices with COLOR moving at every block), knobs moving included (`tools/emu/test_budget.py`, 60 cases;
+  the cost model of notes/77, which matched Maxime's readings). On the block where a moving knob is taken up, up to
+  about 31 % (PEAK). Before 27/10/2026: 16 to 33 % (notes/81). The hottest loops are in ColdFire assembly.
+  The load governor looks after MODAL too.
 - The very first MODAL note after power-on starts about 13 ms late (tables computed over 20 blocks).
 - GATE, PUNCH and FINE do nothing (FINE holds the polyphony). The note is limited to MIDI 0..127, as on Rings.
 - Set MODAL tracks back to an original machine before flashing anything else.
 
 **Origin and license.** Rings by Émilie Gillet, MIT (`LICENSE-Rings`), rewritten in fixed point (the DSP, not the
-UI or the easter egg). Proven against Rings' own code compiled for a computer (`tools/emu/test_modal_dsp.py`: 57 cases,
-with and without a sample as the input, median 78 dB of signal to difference) and on the OS's own code in the
+UI or the easter egg). Proven against Rings' own code compiled for a computer, with the changes above
+(`tools/emu/test_modal_dsp.py`: 61 cases, with and without a sample as the input, median 76 dB of signal to
+difference; and a check that on 3 voices the third note does not cut the first) and on the OS's own code in the
 emulator (`tools/emu/test_modal.py`, the sample as the exciter included).
 
 **Status.** Experimental: not yet tested on a Model:Cycles.
