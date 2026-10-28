@@ -505,6 +505,15 @@ def poly_ui(base, fw, label):
     names = [b.cstr(b.u32(gs.DESCN + (first + i) * 0x38 + 0x2c)) for i in range(4)]
     check(all(len(w) <= gs.NAME_WORD for n_ in names for w in n_.split(" ")),
           f"{label} : noms des potards {names} : {gs.NAME_WORD} lettres au plus par mot (la fenetre du potard)")
+    fine_prof = lofi_ui.UI_REC + 100 * lofi_ui.FTUN + 0x10
+    profs = []
+    for mach, k_, f_ in ((m, gmo.SHAPE_KNOB, True), (fw.views["macro"].index, 2, True), (m, gmo.SHAPE_KNOB, True)):
+        b.lookup(mach, k_, f_)
+        profs.append(b.u32(fine_prof))
+    check(profs == [gs.PROFILE_PICKER, gs.PROFILE_DEFAULT, gs.PROFILE_PICKER] and a.u32(fine_prof) == gs.PROFILE_DEFAULT
+          and b.u32(lofi_ui.UI_REC + 100 * 33 + 0x10) == gs.PROFILE_PICKER,
+          f"{label} : profil d'encodeur de FINE (+0x10) : MODAL FUNC + SHAPE {profs[0]:#x} (celui de WAVE du LFO), "
+          f"MACRO FUNC + PITCH {profs[1]:#x} (le sien, comme sans MODAL), puis MODAL {profs[2]:#x}")
     b.lookup(m, gmo.SHAPE_KNOB, True)           # nos fonctions sur l'objet d'interface de FINE
     steps = {(c, d): b.edit_func(lofi_ui.FTUN, c, d) for c in (0x4000, 0x5000, 0x6000, 0x4080, 0x0, 0x7f00)
              for d in (0x100, -0x100, 0x300, -0x300, 1, -1)}
@@ -515,13 +524,175 @@ def poly_ui(base, fw, label):
                    f"(0x4000, 0x5000, 0x6000), bornés {bad[:3]}")
     shown = {v: b.text(lofi_ui.FTUN, v) for v in (0x4000, 0x5000, 0x6000)}
     check(list(shown.values()) == ["1", "2", "3"], f"{label} : texte de la valeur (vrai sprintf de l'OS) : {shown}")
+    # la vitesse : des crans un par un, par l'accumulateur de l'OS avec le profil de FINE, puis notre pas (0x4000b7d6)
+    # quand il rend un delta (le gestionnaire des potards ne fait rien d'un delta nul, 0x4001f7f8)
+    def voices(u, prof, start, s, ticks):
+        v, out = 0x4000 + 0x1000 * (start - 1), []
+        for d in u.encoder(prof, [s] * 20, ticks=ticks):
+            v = u.edit_func(lofi_ui.FTUN, v, d) if d else v
+            out.append(1 + (v - 0x4000) // 0x1000)
+        return out
+    res = {(t, st): (voices(b, b.u32(fine_prof), st, s, t), voices(b, gs.PROFILE_DEFAULT, st, s, t))
+           for t in (0, 1) for st, s in ((1, 1), (3, -1))}
+    ok = all(g[-1] == 4 - st and min(detent_gaps(g, st)) >= 4 and detent_gaps(o, st)[1:] == [1]
+             for (t, st), (g, o) in res.items())
+    check(ok, f"{label} : FUNC + SHAPE, crans un par un (vrai 0x4006f96a, son minuteur à 10 Hz) : 1 -> 3 voix et 3 -> 1 "
+              f"après {[detent_gaps(g, st) for (t, st), (g, _) in res.items() if t == 0]} crans en tournant vite, "
+              f"{[detent_gaps(g, st) for (t, st), (g, _) in res.items() if t == 1]} à un cran par dixième de seconde ; "
+              f"avec le profil d'avant {[detent_gaps(o, st) for (t, st), (_, o) in res.items() if t == 0]}")
     shots = {v: (b.popup(lofi_ui.FTUN, v), b.popup(lofi_ui.FTUN, v, text_path=True)) for v in (0x4000, 0x5000, 0x6000)}
-    bad = [hex(v) for v, (x, y) in shots.items() if x is None or y is None or x != y or x[1]]
+    bad = [hex(v) for v, (x, y) in shots.items() if x is None or y is None or above(x[0]) != above(y[0]) or x[1]
+           or window_dots(x[0]) != want_dots(3, (v - 0x4000) // 0x1000)]
+    olds = [window_dots(shots[v][1][0]) for v in (0x4000, 0x5000, 0x6000)] if not bad else []
     check(not bad, f"{label} : fenêtre de valeur (vrai 0x4001d818) : 1, 2, 3, pixel pour pixel le texte que l'OS "
-                   f"dessine par son chemin texte, pas de jauge {bad}")
+                   f"dessine par son chemin texte, pas de jauge ; dessous, 3 points, celui de la valeur plein (l'OS : "
+                   f"5 points, le 4e plein pour 2 comme pour 3 voix : "
+                   f"{[next(i for i, d in enumerate(o) if d[2]) for o in olds]}) {bad}")
     if not bad:
         print("      fenêtre de valeur, FUNC + SHAPE sur 3 voix :")
-        print(lofi_ui.ascii_popup(shots[0x6000][0][0]))
+        print(lofi_ui.ascii_popup(shots[0x6000][0][0], y0=20))
+
+
+DOT_ROWS = range(0x17, 0x1c)          # les points de position de la fenêtre de valeur (0x4001d950)
+MODEL_LINES = {0: ("Modal",), 1: ("Sympath.", "strings"), 2: ("String",), 3: ("Chord", "strings")}
+
+
+def window_dots(fb):
+    """Les points sous la valeur : [(x de gauche, largeur, plein)] de gauche à droite (plein : le centre allumé)."""
+    runs = []
+    for x in range(128):
+        if any(lofi_ui.pix(fb, x, y) for y in DOT_ROWS):
+            if runs and x == runs[-1][0] + runs[-1][1]:
+                runs[-1][1] += 1
+            else:
+                runs.append([x, 1])
+    return [(x, w, bool(lofi_ui.pix(fb, x + 2, 0x19))) for x, w in runs]
+
+
+def want_dots(n, cur):
+    """n points de 5 × 5 au pas de 9 (comme ceux de l'OS), centrés sous la valeur (x = 0x60), le cur-ième plein."""
+    x0 = 0x60 - (9 * n - 3) // 2
+    return [(x0 + 9 * i, 5, i == cur) for i in range(n)]
+
+
+def above(fb, y0=0x1c):
+    """Les pixels de l'écran au-dessus des points (la valeur)."""
+    return [lofi_ui.pix(fb, x, y) for x in range(128) for y in range(y0, 64)]
+
+
+def bbox(fb, y0=0x1c):
+    pts = [(x, y) for x in range(128) for y in range(y0, 64) if lofi_ui.pix(fb, x, y)]
+    return (min(p[0] for p in pts), max(p[0] for p in pts), min(p[1] for p in pts), max(p[1] for p in pts)) \
+        if pts else None
+
+
+def detent_gaps(seq, start):
+    """Le nombre de crans entre deux changements de la valeur (seq : la valeur après chaque cran)."""
+    out, prev, n = [], start, 0
+    for v in seq:
+        n += 1
+        if v != prev:
+            out.append(n)
+            prev, n = v, 0
+    return out
+
+
+def model_lines(m):
+    """Ce que modal_model_draw doit écrire pour ce modèle : [(texte, police, x, y)]."""
+    ls = MODEL_LINES[m]
+    if len(ls) == 2:
+        return [(ls[0], lofi_ui.SMALL_FONT, 0x60, 0x2e), (ls[1], lofi_ui.SMALL_FONT, 0x60, 0x23)]
+    return [(ls[0], lofi_ui.SMALL_FONT, 0x60, 0x28)]
+
+
+def model_ui(base, fw, label):
+    """SHAPE seul sur une piste MODAL (notes/74 §9) : son propre objet d'interface (state_at, 0x4004df40), avec le
+    profil d'encodeur des sélecteurs de l'OS (celui de WAVE du LFO) et notre dessin (le nom du modèle, 4 points) ;
+    l'objet du 2e potard de SNARE, partagé par les 2es potards des autres machines ajoutées, inchangé."""
+    mv = fw.views["modal"]
+    m = mv.index
+    a = lofi_ui.UI(base.img, base.payload, end=base.blob_end)
+    b = lofi_ui.UI(fw.img, fw.payload, end=fw.blob_end)
+    first = 76 + 5 * 7
+    shared = lofi_ui.UI_REC + 100 * 52
+    # 1. l'objet : la copie attend que l'OS ait construit l'objet partagé (0x400de244) ; a0 et a1 gardés
+    step = b.u32(shared + 0x50)
+    b.uc.mem_write(shared + 0x50, bytes(4))
+    early = b.call(lofi_ui.STATE_AT, first + 1)
+    b.uc.mem_write(shared + 0x50, struct.pack(">I", step))
+    desc = b.lookup(m, gmo.SHAPE_KNOB, False)
+    b.uc.reg_write(mk.UC_M68K_REG_A0, 0xa0a0a0a0)
+    b.uc.reg_write(mk.UC_M68K_REG_A1, 0xa1a1a1a1)
+    obj = b.call(lofi_ui.STATE_AT, desc)
+    kept = (b.uc.reg_read(mk.UC_M68K_REG_A0), b.uc.reg_read(mk.UC_M68K_REG_A1)) == (0xa0a0a0a0, 0xa1a1a1a1) and b.sp_ok
+    again = b.call(lofi_ui.STATE_AT, desc)
+    words = lambda u, at: struct.unpack(">25I", bytes(u.uc.mem_read(at, 100)))
+    mine, theirs = words(b, obj), words(b, shared)
+    diff = [4 * i for i in range(25) if mine[i] != theirs[i]]
+    wave = b.u32(lofi_ui.UI_REC + 100 * 33 + 0x10)
+    check(early == shared and desc == first + 1 and fw.dest + gmo.MODAL_BSS <= obj < fw.dest + gmo.MODAL_BSS + 0x4000
+          and again == obj and kept and diff == [0x10, 0x2c, 0x30] and mine[4] == gs.PROFILE_PICKER == wave
+          and mv.pay <= mine[12] < mv.code_end and mine[11],
+          f"{label} : potard Model (descripteur {desc}) : state_at rend {obj:#x} (variables de MODAL), copie de l'objet "
+          f"partagé {shared:#x} sauf +0x10 (profil {mine[4]:#x}, celui de WAVE du LFO), +0x2c, +0x30 (dessin "
+          f"{mine[12]:#x}) ; l'objet partagé tant que l'OS ne l'a pas construit ; a0 et a1 gardés")
+    others = {d: b.call(lofi_ui.STATE_AT, d) for d in range(76, 76 + 5 * 8)}
+    want = {d: lofi_ui.UI_REC + 100 * (51 + (d - 76) % 5) for d in others if d != first + 1}
+    objs = [d for d in range(77) if bytes(b.uc.mem_read(lofi_ui.UI_REC + 100 * d, 100))
+            != bytes(a.uc.mem_read(lofi_ui.UI_REC + 100 * d, 100))]
+    check(all(others[d] == w for d, w in want.items()) and not objs,
+          f"{label} : les 39 autres descripteurs ajoutés : l'objet de SNARE comme avant ; les objets d'interface des 77 "
+          f"descripteurs de l'OS comme sans MODAL {objs}")
+    # 2. la vitesse : des crans un par un, par l'accumulateur de l'OS avec ce profil, la valeur bornée à 0..3
+    # (0x4000b274), en tournant vite ou à un cran par dixième de seconde (son minuteur à 10 Hz entre les crans)
+    def turns(u, prof, start, s, ticks):
+        v, out = start << 8, []
+        for d in u.encoder(prof, [s] * 20, ticks=ticks):
+            v = min(max(v + d, 0), 0x300)
+            out.append(v >> 8)
+        return out
+    res = {(t, st): (turns(b, mine[4], st, s, t), turns(b, wave, st, s, t), turns(a, a.u32(shared + 0x10), st, s, t))
+           for t in (0, 1) for st, s in ((0, 1), (3, -1))}
+    ok = all(g == r and g[-1] == 3 - st and min(detent_gaps(g, st)) >= 4 and detent_gaps(o, st)[1:] == [1, 1]
+             for (t, st), (g, r, o) in res.items())
+    check(ok, f"{label} : SHAPE, crans un par un (vrai 0x4006f96a, son minuteur à 10 Hz) : comme WAVE du LFO, 0 -> 3 et "
+              f"3 -> 0 après {[detent_gaps(g, st) for (t, st), (g, _, _) in res.items() if t == 0]} crans en tournant "
+              f"vite, {[detent_gaps(g, st) for (t, st), (g, _, _) in res.items() if t == 1]} à un cran par dixième de "
+              f"seconde ; avant (l'objet partagé) {[detent_gaps(o, st) for (t, st), (_, _, o) in res.items() if t == 0]}")
+    # 3. la fenêtre de valeur : le nom, 4 points ; tout dans le cadre d'une valeur verrouillée
+    fx0, fy0, fx1, fy1 = lofi_ui.LOCK_FRAME
+    bad, boxes = [], []
+    for v in range(4):
+        shot, lock = b.popup(desc, v << 8), b.popup(desc, v << 8, locked=True)
+        if shot is None or lock is None:
+            bad.append(v)
+            continue
+        box = bbox(shot[0])
+        boxes.append(box)
+        if (above(shot[0]) != above(b.texts(model_lines(v))) or window_dots(shot[0]) != want_dots(4, v)
+                or shot[1] != b.popup(102, v << 8)[1] or bbox(lock[0]) != (fx0, fx1, fy0, fy1)
+                or not (fx0 + 2 <= box[0] and box[1] <= fx1 - 2 and fy0 + 2 <= box[2] and box[3] <= fy1 - 2)):
+            bad.append(v)
+    check(not bad, f"{label} : fenêtre de valeur de Model (vrai 0x4001d818) : {', '.join(' '.join(l) for l in MODEL_LINES.values())}, "
+                   f"pixel pour pixel ces mots dans la petite police de l'OS ; 4 points, celui du modèle plein ; "
+                   f"texte dans x {min(b_[0] for b_ in boxes)}..{max(b_[1] for b_ in boxes)}, y "
+                   f"{min(b_[2] for b_ in boxes)}..{max(b_[3] for b_ in boxes)}, à 2 points au moins du cadre d'une "
+                   f"valeur verrouillée ({fx0}..{fx1}, {fy0}..{fy1}), qui l'entoure tout entier {bad}")
+    elsewhere = []
+    for v in range(4):
+        bmp, fb = b.canvas()
+        b.call(mine[12], obj + 0x24, v << 8, bmp, 0x30, 0x10, 0)
+        got_ = b.shot(fb)
+        elsewhere.append(got_ == b.texts([(str(v), lofi_ui.BIG_FONT, 0x30, 0x10)]))
+    check(all(elsewhere), f"{label} : le dessin de Model ailleurs qu'en (0x60, 0x22) : le chiffre seul, dans la grande "
+                          f"police, comme avant {elsewhere}")
+    same = [(v, b.popup(102, v << 8) == a.popup(102, v << 8)) for v in (0, 5, 46)]
+    check(all(s for _, s in same), f"{label} : la fenêtre du potard Model de MACRO (descripteur 102, l'objet "
+                                   f"partagé) : pixel pour pixel comme sans MODAL {same}")
+    if not bad:
+        for v, lk in ((1, False), (1, True), (2, False)):
+            print(f"      fenêtre de valeur, SHAPE = {v}{' (verrouillée sur un pas)' if lk else ''} :")
+            print(lofi_ui.ascii_popup(b.popup(desc, v << 8, locked=lk)[0], y0=20))
 
 
 # --- 7. mémoire -----------------------------------------------------------------------------------------------------
@@ -633,6 +804,8 @@ def main():
         tg_machine_tests(tg_tw, f"MODAL dans {label}")
         print("FUNC + SHAPE")
         poly_ui(without, fw, f"MODAL dans {label}")
+        print("SHAPE : le potard Model")
+        model_ui(without, fw, f"MODAL dans {label}")
         lofi_ui.check_lofi(ref_eng.img, fw.img, fw.payload, fw.views["macro"].index, f"MACRO dans {label}", check,
                            end=fw.blob_end, base_end=ref_eng.blob_end, base_payload=ref_eng.payload,
                            base="les mêmes mods sans MACRO, ACID ni MODAL", after=1)

@@ -30,6 +30,14 @@ BITMAP = 0x40070172                  # Bitmap(this, largeur, hauteur, image, mas
 DRAW_TEXT = 0x40071a04               # (bitmap, police, x, y, alignement, format, ...)
 DRAW_SPRITE = 0x40071da4             # (bitmap, sprite, x, y, mode)
 BIG_FONT, FMT_S = 0x401429ec, 0x40124b58     # grande police de la fenêtre de valeur ; « %s »
+SMALL_FONT = 0x40140ab0              # la plus petite police de l'OS
+FONT_INIT, FONT_DONE = 0x40072260, 0x40072080
+STATE_AT = 0x4004df40                # (descripteur) -> son objet d'interface (détourné par les machines ajoutées)
+ENC_ACC = 0x4006f96a                 # (état, encodeur, delta, profil, rapide) : pas rendus par un tour, 8.8
+PROFILES_INIT = 0x400e7aa8           # constructeur statique des 6 profils d'encodeur (0x40ea1424..0x40ea14cb)
+ENC_RESET = 0x4006f7c8               # (objet) : l'état des 17 encodeurs au départ (zone morte +16 à 48)
+ENC_TICK = 0x4006f8b0                # (objet, 0) : minuteur à 10 Hz (0x4006f7f8 : 0x4009109e(objet, 10, ...))
+LOCK_FRAME = (0x46, 0x20, 0x79, 0x39)            # le cadre inversé d'une valeur verrouillée (0x4001d9b2)
 
 
 class UI:
@@ -107,11 +115,12 @@ class UI:
         puts = [c for c in self.calls if c[0] == "put"]
         return puts[0][1][2] if len(puts) == 1 and self.sp_ok and not self.bad else None
 
-    def popup(self, desc, v, text_path=False):
+    def popup(self, desc, v, text_path=False, locked=False):
         """La fenêtre de valeur de ce descripteur à cette valeur : le vrai 0x4001d818 (par le slot 144, comme l'OS),
         dans un écran 128 × 64 neuf ; rend ses pixels (colonne par colonne). La vue rend (vt[128]) un objet des
         paramètres d'une piste (vtable 0x400fd134). text_path : le chemin texte de l'OS pour ce descripteur (sans
-        dessin, comme les paramètres sans jauge) : référence de ce que l'OS y écrit."""
+        dessin, comme les paramètres sans jauge) : référence de ce que l'OS y écrit. locked : le drapeau d'une
+        valeur verrouillée sur un pas (l'OS inverse alors le cadre LOCK_FRAME)."""
         S = SCRATCH + 0x2000
         bmp, fb, view, pvt, stub, obj, ovt, ok = S, S + 0x100, S + 0x800, S + 0xa00, S + 0xe00, S + 0xe10, S + 0xf00, \
             S + 0xff0
@@ -131,7 +140,7 @@ class UI:
             self.hooks[ok] = ("valid", 1)
         self.hooks[DRAW_SPRITE] = ("sprite", 0)          # les jauges : des sprites construits au démarrage, notés
         self.calls.clear()
-        self.call(self.u32(POPUP_SLOT), view, bmp, desc, v, 0, 1)
+        self.call(self.u32(POPUP_SLOT), view, bmp, desc, v, 1 if locked else 0, 1)
         self.uc.mem_write(r + 0x2c, saved)
         del self.hooks[DRAW_SPRITE]
         good = self.sp_ok and not self.bad
@@ -148,6 +157,50 @@ class UI:
         self.uc.mem_write(s, ch.encode() + b"\0")
         self.call(DRAW_TEXT, bmp, font, 0x60, 0x22, 2, FMT_S, s)
         return sum(bin(x).count("1") for x in self.uc.mem_read(fb, 0x400))
+
+    def canvas(self):
+        """Un écran 128 × 64 neuf (Bitmap de l'OS) : (bitmap, image)."""
+        S = SCRATCH + 0x7000
+        self.uc.mem_write(S + 0x100, bytes(0x400))
+        self.call(BITMAP, S, 128, 64, S + 0x100, 0)
+        return S, S + 0x100
+
+    def shot(self, fb):
+        return bytes(self.uc.mem_read(fb, 0x400))
+
+    def texts(self, items):
+        """Ces textes [(texte, police, x, y)], centrés en x (alignement 2, « %s »), dessinés par l'OS dans un écran
+        neuf : la référence de ce qu'une fonction de dessin doit montrer."""
+        bmp, fb = self.canvas()
+        font, s = SCRATCH + 0x7600, SCRATCH + 0x7700
+        for t, f, x, y in items:
+            self.call(FONT_INIT, font, f)
+            self.uc.mem_write(s, t.encode() + b"\0")
+            self.call(DRAW_TEXT, bmp, font, x, y, 2, FMT_S, s)
+            self.call(FONT_DONE, font)
+        return self.shot(fb)
+
+    def encoder(self, profile, steps, knob=5, ticks=0):
+        """Des événements d'un potard, un pas d'encodeur chacun (steps : +1 / -1 par événement), par le vrai
+        accumulateur de l'OS (0x4006f96a) avec ce profil d'encodeur, comme le gestionnaire des potards de la page
+        (0x4001f78c : le pas de l'événement × 4 par 0x4006f73a, puis 0x4006f96a avec le profil lu en +0x10 de l'objet
+        d'interface du descripteur, recopié sur la pile). L'état des encodeurs part de celui de l'OS (0x4006f7c8) ;
+        ticks : passages de son minuteur à 10 Hz entre deux événements (0 : on tourne vite, 1 : un cran par dixième
+        de seconde). Rend les deltas (8.8) qu'il donne à la valeur, 0 = rien."""
+        obj, prof = SCRATCH + 0x7800, SCRATCH + 0x7c00
+        if not getattr(self, "profiles_ok", False):    # au démarrage de l'OS, avec les autres objets statiques
+            self.call(PROFILES_INIT)
+            self.profiles_ok = not self.bad and self.sp_ok
+        self.uc.mem_write(obj, bytes(0x200))
+        self.call(ENC_RESET, obj)
+        self.uc.mem_write(prof, bytes(self.uc.mem_read(profile, 28)))
+        out = []
+        for s in steps:
+            for _ in range(ticks):
+                self.call(ENC_TICK, obj, 0)
+            d = self.call(ENC_ACC, obj, knob, 4 * s, prof, 0)          # les états : objet + 32 + 20 × potard
+            out.append(d - (1 << 32) if d & 0x80000000 else d)
+        return out
 
     def text(self, desc, v):
         r = UI_REC + 100 * desc

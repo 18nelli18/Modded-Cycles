@@ -13,7 +13,7 @@
  * DECAY = DAMPING ; COLOR = BRIGHTNESS ; SHAPE = MODEL (descripteur 0..3 : modal, cordes sympathiques, corde,
  * cordes en accord ; ni la voix FM ni la corde et reverbe de Rings, choix de Maxime) ; SWEEP = POSITION ; CONTOUR =
  * STRUCTURE (et l'accord des cordes quantifiees, avec l'hysteresis de Rings, rings/cv_scaler.cc) ; FUNC + SHAPE =
- * polyphonie 1, 2 ou 4, rangee dans FINE (aucun potard ne regle FINE sur le Cycles ; les detours de l'interface
+ * polyphonie 1, 2 ou 3, rangee dans FINE (aucun potard ne regle FINE sur le Cycles ; les detours de l'interface
  * la mettent sous FUNC + SHAPE). Pas d'enveloppe d'ampli : la resonance s'eteint d'elle-meme (DAMPING), comme sur
  * le module ; PUNCH et GATE ne servent pas.
  *
@@ -337,11 +337,57 @@ void modal_render(s32 *out, char *v)
 		c->uh[i] = c->uh[MB + i];
 }
 
+/* ---- les fenetres de valeur de SHAPE (le modele) et de FUNC + SHAPE (la polyphonie), notes/74 §3.3 et §9 ------ *
+ * L'OS dessine la fenetre de valeur (0x4001d818) : le nom du potard a gauche, 5 points de position (0x40070efc plein,
+ * 0x40070c4e creux, de (76, 0x17) a (116, 0x1b)), puis la valeur, par la fonction de dessin de l'objet d'interface
+ * du descripteur s'il en a une (+0x2c gestionnaire, +0x30 invocateur : valeur, bitmap, x, y, drapeau), en
+ * (0x60, 0x22). Sur 4 modeles, les 5 points tombaient mal (le 3e jamais allume), sur 3 voix aussi (2 et 3 voix au
+ * meme point) : nos fonctions de dessin les effacent et dessinent les leurs, un par valeur. Ailleurs qu'en
+ * (0x60, 0x22) (d'autres vues de l'OS appellent la meme fonction), le chiffre seul, comme avant. */
+#ifdef __mcoldfire__
+#define POP_X 0x60
+#define POP_Y 0x22
+#define FONT_INIT 0x40072260                     /* (objet police, donnees de la police) */
+#define FONT_DONE 0x40072080
+#define DRAW_TEXT 0x40071a04                     /* (bitmap, police, x, y, alignement, format, ...) */
+#define FILL_RECT 0x40070dea                     /* (bitmap, x0, y0, x1, y1, couleur), bornes comprises ; 0 : eteint */
+#define DOT_ON 0x40070efc                        /* (bitmap, x0, y0, x1, y1, 1) */
+#define DOT_OFF 0x40070c4e
+#define BIG_FONT 0x401429ec                      /* la grande police de la valeur */
+#define SMALL_FONT 0x40140ab0                    /* la plus petite de l'OS */
+#define FMT_S 0x40124b58                         /* "%s" */
+
+typedef void (*rect_fn)(void *, s32, s32, s32, s32, s32);
+
+/* un texte centre en x, comme l'OS dessine la valeur d'un parametre (alignement 2, "%s") */
+static void pop_text(void *bitmap, u32 font, s32 x, s32 y, const char *s)
+{
+	u32 f[2];
+
+	((void (*)(void *, u32))FONT_INIT)(f, font);
+	((void (*)(void *, void *, s32, s32, s32, const char *, const char *))DRAW_TEXT)(bitmap, f, x, y, 2,
+											   (const char *)FMT_S, s);
+	((void (*)(void *))FONT_DONE)(f);
+}
+
+/* a la place des 5 points de l'OS : n points, le cur-ieme plein, au meme pas (9) et centres comme le texte */
+static void pop_dots(void *bitmap, s32 x, s32 y, int n, int cur)
+{
+	s32 x0 = x - (9 * n - 3) / 2;
+	int i;
+
+	((rect_fn)FILL_RECT)(bitmap, x - 20, y - 11, x + 20, y - 7, 0);
+	for (i = 0; i < n; i++, x0 += 9)
+		((rect_fn)(i == cur ? DOT_ON : DOT_OFF))(bitmap, x0, y - 11, x0 + 4, y - 7, 1);
+}
+#endif
+
 /* ---- FUNC + SHAPE : la polyphonie, rangee dans FINE (detours de l'interface, notes/74 §3) ------------------- *
  * Memes contrats que lofi_step, lofi_fmt et lofi_draw de MACRO (tools/gen_syntakt_engines.py, notes/55 §8) :
  * l'OS les appelle par les std::function de l'objet d'interface de FINE (+0x50, +0x20, +0x30), que les detours
  * remplacent sur une piste MODAL quand FUNC est tenu et que le potard est SHAPE. Trois crans : 0x4000 (1 voix, le
- * defaut de FINE), 0x5000 (2), 0x6000 (3 : 4 jusqu'au budget de 13 %, notes/81). */
+ * defaut de FINE), 0x5000 (2), 0x6000 (3). Les detours y mettent aussi le profil d'encodeur des selecteurs de
+ * l'OS (+0x10, comme SHAPE seul, plus bas). */
 s32 modal_poly_step(void *fn, s32 value, s32 delta, s32 min, s32 max, s32 dflt)
 {
 	int i = value >= 0x5800 ? 2 : (value >= 0x4800 ? 1 : 0);
@@ -364,20 +410,90 @@ void modal_poly_fmt(void *fn, s32 value, char *buf)
 
 #ifdef __mcoldfire__
 /* la valeur dans la fenetre de valeur (0x4001d818), dessinee comme l'OS dessine le texte d'un parametre :
- * grande police (0x401429ec), alignement 2, "%s" (0x40124b58) */
+ * grande police, alignement 2, "%s" ; dessous, 3 points (1, 2, 3 voix) */
 void modal_poly_draw(void *fn, s32 value, void *bitmap, s32 x, s32 y, s32 flag)
 {
-	struct {
-		char text[16];
-		u32 font[2];
-	} l;
+	char text[4];
 
 	(void)fn;
 	(void)flag;
-	modal_poly_fmt(0, value, l.text);
-	((void (*)(void *, const void *))0x40072260)(l.font, (const void *)0x401429ec);
-	((void (*)(void *, void *, s32, s32, s32, const char *, const char *))0x40071a04)(bitmap, l.font, x, y, 2,
-											  (const char *)0x40124b58, l.text);
-	((void (*)(void *))0x40072080)(l.font);
+	modal_poly_fmt(0, value, text);
+	pop_text(bitmap, BIG_FONT, x, y, text);
+	if (x == POP_X && y == POP_Y)
+		pop_dots(bitmap, x, y, 3, text[0] - '1');
+}
+
+/* ---- SHAPE : le modele -------------------------------------------------------------------------------------- *
+ * Les detours donnent aux 2es potards de toutes les machines ajoutees l'objet d'interface du 2e potard de SNARE
+ * (descripteur 52 : 0x4004df40, state_at), partage : sa vitesse (le profil d'encodeur de +0x10, celui de la
+ * plupart des parametres de l'OS : un pas par cran, plus vite si l'on tourne vite) faisait sauter un modele a
+ * chaque cran (Maxime, 28/10/2026). Pour le descripteur Model de MODAL, state_at rend ici une copie de cet objet a
+ * nous, avec le profil des selecteurs de l'OS (0x40ea1478 : WAVE, MULT et MODE du LFO, conditions de trig ; sans
+ * acceleration, une zone morte apres chaque changement, 0x4006f96a : 4 crans pour le premier, puis 6) et notre
+ * fonction de dessin : le nom du modele, sur deux lignes au plus, dans la petite police, et 4 points. Tout tient
+ * dans le cadre que l'OS inverse autour d'une valeur verrouillee sur un pas, (0x46, 0x20)..(0x79, 0x39) : x de 75 a
+ * 117, y de 35 a 54. L'objet partage ne change pas. */
+#define UI_REC 0x40a71754                        /* objets d'interface des descripteurs, 100 o chacun */
+#define UI_SHARED (UI_REC + 100 * 52)
+#define PICKER 0x40ea1478
+
+static const char *const model_name[4][2] = {
+	{ "Modal", 0 }, { "Sympath.", "strings" }, { "String", 0 }, { "Chord", "strings" },
+};
+
+void modal_model_draw(void *fn, s32 value, void *bitmap, s32 x, s32 y, s32 flag)
+{
+	int m = (value + 0x80) >> 8;             /* comme modal_update : 0..3 */
+	char text[2];
+
+	(void)fn;
+	(void)flag;
+	m = m < 0 ? 0 : (m > 3 ? 3 : m);
+	if (x != POP_X || y != POP_Y) {
+		text[0] = (char)('0' + m);
+		text[1] = 0;
+		pop_text(bitmap, BIG_FONT, x, y, text);
+		return;
+	}
+	if (model_name[m][1]) {
+		pop_text(bitmap, SMALL_FONT, x, y + 12, model_name[m][0]);
+		pop_text(bitmap, SMALL_FONT, x, y + 1, model_name[m][1]);
+	} else {
+		pop_text(bitmap, SMALL_FONT, x, y + 6, model_name[m][0]);
+	}
+	pop_dots(bitmap, x, y, 4, m);
+}
+
+/* gestionnaire de la std::function de dessin : rien a copier ni a detruire (l'objet n'est ni copie ni detruit) */
+static s32 pop_manager(void *dst, const void *src, s32 op)
+{
+	(void)dst;
+	(void)src;
+	(void)op;
+	return 0;
+}
+
+static u32 model_ui[25];
+static unsigned char model_ui_ok;
+
+/* appele par state_at pour le descripteur Model de MODAL (les detours gardent a0 et a1) : notre objet, copie de
+ * l'objet partage la premiere fois qu'il sert, une fois celui-ci construit par l'OS (0x400de244) */
+u32 modal_model_ui(void)
+{
+	const u32 *o = (const u32 *)UI_SHARED;
+	int i;
+
+	if (!model_ui_ok) {
+		if (!o[0x50 / 4])
+			return UI_SHARED;
+		for (i = 0; i < 25; i++)
+			model_ui[i] = o[i];
+		model_ui[0x10 / 4] = PICKER;
+		model_ui[0x2c / 4] = (u32)pop_manager;
+		model_ui[0x30 / 4] = (u32)modal_model_draw;
+		__asm__ volatile("" ::: "memory");
+		model_ui_ok = 1;
+	}
+	return (u32)model_ui;
 }
 #endif
