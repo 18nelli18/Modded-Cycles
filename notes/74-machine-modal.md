@@ -22,7 +22,7 @@ cœur contre Rings) et `tools/emu/test_modal.py` (la machine dans l'OS). Plan de
 - Lourd : de 9 400 à 42 000 instructions par bloc selon le modèle et la polyphonie, après trois passes
   d'allègement (§5.1 à §5.3) ; de 10 600 à 69 200 au départ. **Depuis le 27/10/2026 (§5.6, [81](81-budget-de-13-pourcent.md)
   §8)** : calculée à 24 kHz et allégée selon le choix de Maxime, sous 13 % du processeur dans tous les cas (6,0 à
-  12,8 %) ; 3 voix au plus (2 pour les cordes), 3 cordes sur une voix des modèles sympathiques.
+  12,8 %) ; 3 voix au plus (2 pour la corde, SHAPE 2), 3 cordes sur une voix des modèles sympathiques.
 - `[FAIT en émulation]` (§6.3). Pas encore testé sur la machine (§7).
 
 ## 1. Ce que Maxime a choisi (20/10/2026)
@@ -376,8 +376,9 @@ en % d'un bloc à 250 MHz) :
 Demande de Maxime (26/10/2026) : aucune machine ajoutée au-dessus de 13 % du processeur. Tout est dans la note
 [81](81-budget-de-13-pourcent.md) §8 : Rings calculé à 24 kHz (R1), les allègements qui ne changent pas le son, puis le
 choix de Maxime, « le plus léger » (27/10/2026) : lecture linéaire des cordes, cordes sympathiques sans peigne,
-3 voix au plus (2 pour les modèles à cordes), 3 cordes sur une voix des modèles sympathiques et une seule par voix
-sur deux voix, potards repris un bloc sur 16 quand ils bougent sans trig. Charge au pire : 41,3 % → 12,8 %. Ce qui
+3 voix au plus (2 pour la corde, SHAPE 2, depuis le 28/10 ; pour tous les modèles à cordes le 27/10), 3 cordes sur
+une voix des modèles sympathiques et une seule par voix au-delà, potards repris un bloc sur 16 (32 en 3 voix) quand
+ils bougent sans trig, les voix tour à tour (81 §8.6). Charge au pire : 41,3 % → 12,8 %. Ce qui
 précède dans cette note (tailles, polyphonie 1, 2 ou 4, 32 trames par bloc) décrit MODAL avant ce changement.
 
 ## 6. Preuves `[FAIT en émulation]`
@@ -511,3 +512,5 @@ interne.
 - 25/10/2026 : premier retour sur la machine : MODAL marche, environ 30 % en 4 voix (§7.1).
 - 26 et 27/10/2026 : le budget de 13 % : Rings à 24 kHz, allègements, choix de Maxime « le plus léger » (§5.6,
   [81](81-budget-de-13-pourcent.md) §8).
+- 28/10/2026 : retour de Maxime (aucune différence entre 2 et 3 voix, la 1re note coupée par la 3e) : les voix tour à
+  tour au lieu du motif de Rings, 3 voix pour les modèles sympathiques ([81](81-budget-de-13-pourcent.md) §8.6).

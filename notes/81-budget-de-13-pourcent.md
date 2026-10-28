@@ -32,11 +32,12 @@ les combinaisons `syntakt-…-macro`, `…-acid`, et `31-syntakt-tg-…-modal` d
   SINE TRIANGLE rejoint les modèles allégés : même spectre à moins de 1 dB par tiers d'octave en médiane. Sur les
   notes très aiguës, les 14 modèles allégés restent à 48 kHz au lieu de repasser à 96 kHz : WAVE PARAPHONIC et
   WAVE MAP se replient un peu au-dessus de la note 104.
-- **Après, MODAL** : ses 60 cas sous 13 %, de 6,0 % à **12,8 %** au pire (la corde sur 2 voix, COLOR, CONTOUR et SWEEP
-  en haut) `[FAIT en émulation]` ; avant, 17 à 41 %. Calculée à 24 kHz, elle a d'abord été allégée sans rien changer
+- **Après, MODAL** : ses 60 cas sous 13 %, de 6,0 % à **12,8 %** au pire (l'accord sur 3 voix, COLOR qui bouge à chaque
+  bloc) `[FAIT en émulation]` ; avant, 17 à 41 %. Calculée à 24 kHz, elle a d'abord été allégée sans rien changer
   au son (§8.2), puis selon le choix de Maxime, « le plus léger » (§8.3) : lecture linéaire des cordes, cordes
-  sympathiques sans peigne, 3 voix au plus (2 pour les cordes), 3 cordes sur une voix des modèles sympathiques et une
-  par voix sur deux voix, potards repris un bloc sur 16 quand ils bougent sans trig.
+  sympathiques sans peigne, 3 voix au plus (2 pour la corde, SHAPE 2), 3 cordes sur une voix des modèles
+  sympathiques et une par voix au-delà, potards repris un bloc sur 16 (32 en 3 voix) quand ils bougent sans trig ;
+  les voix tour à tour (§8.6, après le retour de Maxime du 28/10).
 - **À tester sur la machine** : la charge de quelques modèles de MACRO (HARMONICS, CYMBAL, STRUCK DRUM, FLUTED, MORPH)
   et de MODAL sur la page System, et l'oreille sur ce qui change (§4, §8.3).
 
@@ -295,7 +296,8 @@ Ce que `LITE` change au son, contre Rings à 24 kHz sans lui (`lite_spectrum`, p
 ### 8.4 Charge après
 
 `test_budget.py --engines modal` (60 cas, en régime établi : un trig, puis cinq notes une fois les lignes des cordes
-écrites, la moyenne après la cinquième), `TOUT OK`, le pire cas de chaque modèle :
+écrites, la moyenne après la cinquième), `TOUT OK`, le pire cas de chaque modèle, au 27/10/2026 (pour la version
+du 28/10, §8.6) :
 
 | SHAPE | Pire cas | Réglage |
 |---|---|---|
@@ -309,12 +311,70 @@ environ (le PEAK de la page System).
 
 ### 8.5 Preuves
 
-- `test_modal_dsp.py` : 61 cas contre Rings à 24 kHz avec `LITE`, médiane 88,0 dB, le plus faible 34,4 dB (SHAPE 0,
+- `test_modal_dsp.py` (27/10/2026) : 61 cas contre Rings à 24 kHz avec `LITE`, médiane 88,0 dB, le plus faible 34,4 dB (SHAPE 0,
   sample en entrée, les 4 potards qui bougent, l'écart connu de la note 74 §5.1) ; et le contrôle `LITE` ci-dessus :
   `TOUT OK`.
 - `test_modal.py` : le code de MODAL dans l'OS, identique octet pour octet au même C compilé pour l'ordinateur ; cas
   ajoutés : cordes aiguës, corde à STRUCTURE 0 et 127, COLOR qui bouge à chaque bloc, 3 voix : 107 contrôles,
   `TOUT OK`.
+
+### 8.6 Retour de Maxime : les voix (28/10/2026)
+
+Maxime, sur la version du 27/10 : « niveau charge on est bon. Par contre je vois aucune diff entre le mode 3 voix et 2
+voix. Dans tout les cas j'ai limpression que la premier note se coupe quand j'en joue une troisieme ».
+
+Deux causes `[FAIT en émulation]` :
+
+- sur les modèles à cordes, « 3 » jouait comme 2 (le plafond du §8.3) : la 3e note y reprend la voix de la 1re ;
+- sur le modèle modal, les voix suivaient le motif de Rings pour une polyphonie impaire (`kPingPattern`,
+  `rings/dsp/part.cc` : 1, 0, 2, 1, 0, 2, 1, 0, sur un compteur de 8) : au bout du motif, la voix 1 revient après
+  deux notes seulement (…, 1, 0, 1, …) et coupe une note qui sonne. Sur les deux sorties de Rings, le motif répartit
+  les voix ; sur la sortie unique de MODAL, il n'apporte rien.
+
+Corrigé :
+
+- les voix tour à tour (0, 1, 2), en 3 voix aussi : sur 3 voix, la 4e note coupe la 1re, jamais la 3e (aussi dans la
+  référence, `LITE`) ;
+- 3 vraies voix pour les modèles sympathiques et en accord (SHAPE 1 et 3, une corde par voix) ; seule la corde
+  (SHAPE 2, avec sa dispersion) reste à 2 voix : à 3 voix, elle coûtait 15 à 16,3 % aux deux bouts de CONTOUR.
+
+Pour tenir ces 3 voix sous 13 % :
+
+- le pincement : sa chaîne (peigne, passe-bas, anti-continu) tournait environ 0,7 s après chaque note, le temps que
+  la traîne de l'anti-continu (une constante qui décroît, 100 ms par facteur e) passe sous −108 dB. Maintenant, dès
+  que le pincement est sous −72 dB et le filtre d'excitation sous −108 dB pendant 8 blocs, la traîne seule est
+  calculée (`dc_tail`, son entrée à zéro), puis plus rien. Ce qui est coupé du peigne du pincement (−5 dB par période)
+  n'apporte plus à la corde qu'une énergie négligeable ; contre Rings, la médiane des 61 cas passe de 88 à 76 dB ;
+- la hauteur d'une voix n'est recalculée que si sa note change, son filtre d'excitation que si sa coupure change
+  (celle d'une voix inactive est fixe) ;
+- `modal_str_run` sert aussi aux cordes aiguës (son ordre est celui de la boucle C, valable pour tout retard) ;
+- en polyphonie, la corde d'une voix écrit directement `out − aux` dans la sortie (`modal_str_combn`), sans les
+  tampons `ob` et `ab` (la même somme modulo 2³²) ;
+- en 3 voix, les potards qui bougent sont repris un bloc sur 32 (21 ms ; 16, 11 ms, sinon).
+
+`test_modal_dsp.py` contrôle maintenant les voix : 4 notes de hauteurs différentes, le niveau de la 1re (sa
+fondamentale) après chaque note suivante :
+
+| | Après la 3e note | Après la 4e note |
+|---|---|---|
+| modal, 2 voix | −26 dB (coupée) | −39 dB |
+| modal, 3 voix | −2 dB (elle sonne) | −28 dB (coupée) |
+| sympathiques ou accord, 2 voix | −29 dB (coupée) | −21 dB |
+| sympathiques ou accord, 3 voix | −1 dB (elle sonne) | −29 dB (coupée) |
+
+Charge (`test_budget.py --engines modal`, 60 cas, `TOUT OK`), le pire cas de chaque modèle :
+
+| SHAPE | Pire cas | Réglage |
+|---|---|---|
+| 0 modal | 12,3 % | 2 voix, COLOR qui bouge à chaque bloc |
+| 1 cordes sympathiques | 12,7 % | 3 voix, COLOR qui bouge à chaque bloc |
+| 2 corde | 12,5 % | 2 voix, COLOR, CONTOUR et SWEEP à 127 |
+| 3 cordes en accord | 12,8 % | 3 voix, COLOR qui bouge à chaque bloc |
+
+Le moins cher : 6,0 %. Le pire bloc, quand un potard qui bouge est repris en 3 voix : 31 % environ (le PEAK).
+
+Preuves : `test_modal_dsp.py` 61 cas, le contrôle `LITE` et celui des voix, `TOUT OK` (médiane 76,3 dB) ;
+`test_modal.py` : 107 contrôles, `TOUT OK`.
 
 ## 9. Reste à vérifier
 
@@ -325,5 +385,5 @@ environ (le PEAK de la page System).
 - `[À FAIRE]` L'oreille : VOWEL FOF, PLUCKED, BOWED, STRUCK BELL, STRUCK DRUM, SNARE, TWIN PEAKS NOISE, PARTICLE NOISE,
   HARMONICS, SINE TRIANGLE (doivent sonner comme avant) ; WAVE PARAPHONIC et WAVE MAP sur les notes très aiguës.
 - `[À FAIRE]` MODAL sur la machine : la charge d'une piste (page System) sur les quatre modèles, 1 à 3 voix, avec un
-  LFO sur COLOR ; l'oreille sur les cordes (plus douces dans l'aigu), les modèles sympathiques sur 1 et 2 voix, un
+  LFO sur COLOR ; en 3 voix (SHAPE 0, 1, 3), la 3e note ne coupe plus la 1re, la 4e oui ; l'oreille sur les cordes (plus douces dans l'aigu), les modèles sympathiques sur 1 et 2 voix, un
   potard tourné pendant une note (par pas d'environ 11 ms).
