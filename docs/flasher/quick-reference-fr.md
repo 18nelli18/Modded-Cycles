@@ -6,11 +6,8 @@ Principal2.51. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 ## Fonctions incluses
 
-**Machines et son:** Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN, PUNCH et MIDI Out. Elder est inspiré de Junior de Fors. PUNCH est un moteur de percussions FM de100demons (MIT).
 
-**Performance et séquenceur:** Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute et solo verrouillés ou quantifiés. Sidechain déclenché par les notes et listes Scramble par pattern.
 
-**Filtres et effets:** Filtre résonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, Ping Pong, Phaser et deux Crushers.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
 
@@ -32,16 +29,12 @@ Principal2.51. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Verrou beat repeat | Maintenir TRACK + double RETRIG | Relâchez les deux ; maintenez un TRIG pour répéter, relâchez-le pour arrêter. BACK quitte. PLAY/STOP et sauvegarde/rechargement temporaires FUNC + SETTINGS/PATTERN disponibles. |
 | Filtre collectif | TRACK + MACHINES + SWEEP / CONTOUR | Coupure / résonance des pistes incluses. Sans TRACK : piste sélectionnée. Passe-bas deux pôles inspiré du Polivoks. |
 | Attaque synthé | MACHINES + DECAY | Règle l’attaque ajoutée sur les machines compatibles. |
-| Arpège / réglages ChordKeys | FUNC + RETRIG | Ouvre les réglages actifs. Octave 0 de l’arpège parcourt uniquement les notes tenues. |
-| ChordKeys | Sur Chord : jouer TRIG 1–16 | Voicings en gamme. TRACK + pad de piste est nécessaire pour quitter une piste ChordKeys. |
-| Locks d’harmonie ChordKeys | Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie | Enregistre une harmonie sur le pas. Rappuyez sur le même pad d’harmonie avec le pas tenu pour retrouver son harmonie de base. |
 | Scale Lock | FUNC + PAGE > Lock / Scl / Key | Off desactive ; ORGN suit les degres ; BRDS choisit la note de gamme la plus proche (egalite vers le bas). 19 gammes par demi-tons. Sauvegarde globale a l arret. |
 
 ## Effets
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
 | Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
 | Reverb standard | REVERB SEND / SIZE / FUNC + SIZE | Send par piste / Size, INF au maximum / Tone de -64 à 0 à +63. |
 | Reverb GATED | REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE | Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time : environ 40 ms–6,7 s après le signal. Pre-delay : 0–568 ms. Essayez Gate Time 16–32 et Pre-delay 25–40 ms sur une caisse claire. |
@@ -52,7 +45,6 @@ Principal2.51. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Reverb ROOM | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Room Send par piste / Decay / Tone. Petite ambiance stéréo. ROOM au-dessus de PS1 ; relâchez TRACK pour appliquer. |
 | Reverb PS1 | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | PS1 Send par piste / Decay / Tone. Queue stéréo inspirée de PlayStation, sombre et granuleuse. |
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
-| Vinyl | REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE | Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes. |
 | Delay standard | DELAY SEND / TIME / FUNC + TIME | Delay Send par piste / Time natif / Feedback natif. |
 | Delay DUB | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Delay Send par piste / Time natif / Feedback. Echos stereo fortement filtres, de plus en plus etroits dans la boucle. Une source centree joue sur les deux canaux des le premier echo, meme sans feedback. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties. |
@@ -76,19 +68,14 @@ Principal2.51. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | RETROSYN | MACHINES, juste avant MIDI Out | COLOR, SHAPE (six modèles), SWEEP et CONTOUR. PITCH, DECAY, Gate et Punch disponibles. |
 | Commandes PUNCH | Choisir PUNCH avant MIDI Out | SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR règle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP règle entre les ratios. CONTOUR et DECAY façonnent le son. Moteur de100demons, MIT. Valeurs de depart : Color 64, KIK, ratio 4:1, Contour 40, Decay 50. |
 
-## Machine LEGACY
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| LEGACY / selection | MACHINES : avant RETROSYN et MIDI Out | FM six operateurs Dexed MSFA, 32 algorithmes ; une voix par piste. MIDI Out toujours dernier. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Locks/CC/LFO natifs ; Voice et Velocity sont pris au prochain trigger. |
 | Banque de voix | SHAPE : slots 0-31 | 32 voix incluses, choisies avec SHAPE. La liste complète des voix d’usine indexées suit. Importez une cartouche pour remplacer la banque active. |
 | Velocity / brillance | COLOR / SWEEP | Velocity 0-127 agit sur les operateurs a chaque trigger ; defaut 100. Brightness 64 conserve la voix. Plus bas adoucit la modulation ; plus haut ajoute du mordant. |
 | Duree des enveloppes | CONTOUR / DECAY | EG Time 64 conserve les durees de la voix ; plus bas accelere, plus haut ralentit. DECAY et gate conservent l enveloppe d amplitude native. PITCH/FINETUNE transposent ; operateurs a frequence fixe selon la cartouche. |
-| Importer une banque DX7 | Flasheur > Importateurs WAV / DX7 | Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas. |
-| Charger une banque | LEGACY : FUNC + MACHINES ; DATA ; BACK | Maintenez FUNC et appuyez MACHINES. Tournez DATA pour choisir, appuyez DATA pour charger ; BACK annule. Factory restaure les voix incluses. Une banque active de 32 voix est partagee par toutes les pistes LEGACY. Banques conservees apres redemarrage, hors sauvegarde de projet Elektron. |
 | Credits et charge | Dexed / Google MSFA | Basé sur Dexed/MSFA par Google, Pascal Gauthier et contributeurs. Les voix six opérateurs peuvent demander beaucoup de calcul. |
 
-## Banque de voix LEGACY
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
@@ -129,7 +116,6 @@ Principal2.51. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Choisir SPEAK | MACHINES : apres Shadow, avant LEGACY | Moteur vocal de 128 mots. Commencez vers Vol+Dist 60, Punch coupé. |
 | Voice / Word / Speed / Articulation | COLOR / SHAPE / SWEEP / CONTOUR | Caractère vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche le mot et son index. Mot pris au prochain trig ; autres commandes en direct. |
 | Hauteur et enveloppe | PITCH / notes ; DECAY, Fine, Punch, Gate, Attack | Hauteur indépendante de la vitesse. Commencez à Decay 127 pour entendre les mots complets. Filtres et envois FX disponibles. |
 | Sequences de mots et modulation | Maintenir TRIG + SHAPE, puis locks Pitch et autres commandes | Mot et autres parametres natifs acceptent p-locks et destinations LFO. COLOR/SHAPE/SWEEP/CONTOUR : MIDI CC 16/17/18/19. Espacer les mots ou augmenter Speed. |
@@ -175,7 +161,6 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 |---|---|---|
 | Global / Track | DATA entre ; BACK revient | Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine. |
 | Accès et réglage du son | Appui bref sur SETTINGS + TRACK | Disponible depuis l’écran principal ou la sélection des machines. DATA parcourt Mod Setup ; les commandes du son affichent le paramètre deux secondes puis reviennent à la même position. BACK ferme d’abord la fenêtre puis Mod Setup ; la sélection des machines reste ouverte en dessous. |
-| Pad | Stk / SIL ; défaut Stk | Stk sélectionne et joue. SIL sélectionne silencieusement ; TRACK + pad sélectionne et joue. ChordKeys exige TRACK + pad pour quitter la piste. |
 | USB | 2ch / 6ch ; défaut 2ch | 2ch : mix stéréo avec effets. 6ch : six pistes mono avant panoramique, sans retours delay/crusher/reverb/chorus. Retour ordinateur stéréo dans les deux modes. Arrêtez avant de changer ; le périphérique USB se reconnecte. |
 | Num | Off / On ; défaut Off | On affiche volume et panoramique en chiffres ; Off garde l’affichage natif. |
 | Mute | Stk / LTC ; défaut Stk | LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes. |

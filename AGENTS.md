@@ -402,3 +402,12 @@ build notice outside it. Every docs/flasher-optional file and its shared runtime
 dependencies must remain unchanged. Its recipe still targets Full215/Lite216.
 No hardware result is inferred: the held-step Punch/Gate issue remains
 unreproduced and Chord + Control All filter clicking remains unverified.
+
+
+## Main reference cleanup (2026-10-28)
+
+User explicitly requests removing all main-site references to the retired chord
+keyboard, crackle effect and six-operator machine, and retaining bank import only
+in Machine Optional. This authorizes editing the protected description; its new
+SHA256 is `0427d0a2b828f098b818ebce1507e9ad5076f21e24bd8fcb078602c11fbd00a4`. Firmware bytes remain exact. Optional converter and old
+guide/release dependencies are isolated before cleaning shared main pages.

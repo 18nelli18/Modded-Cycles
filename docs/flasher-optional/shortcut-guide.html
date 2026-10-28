@@ -1,0 +1,405 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Supermodel 2.51 - Features and Shortcuts</title><style>*{box-sizing:border-box}html{color-scheme:light}body{margin:0;background:#f4f2eb;color:#20241f;font:16px/1.55 system-ui,sans-serif}header,main,footer{width:min(100% - 36px,1000px);margin:auto}header{padding:24px 0;border-bottom:3px solid #36563e}nav{display:flex;gap:14px;flex-wrap:wrap;align-items:center}a{color:#36563e}button{padding:8px 12px;border:1px solid #c9cec3;background:white;border-radius:5px;cursor:pointer}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.1}h2{margin-top:35px;border-bottom:1px solid #c9cec3;padding-bottom:7px}.sub,.note{color:#5c625b}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{background:white;border:1px solid #c9cec3;border-radius:8px;padding:15px}table{width:100%;border-collapse:collapse;margin:14px 0 26px;background:white}th,td{text-align:left;vertical-align:top;padding:10px;border-bottom:1px solid #c9cec3}th{background:#e5eadf}td:first-child{font-weight:650;width:23%}td:nth-child(2){width:29%;font-weight:600}footer{padding:25px 0}html[lang=en] [data-l=fr],html[lang=fr] [data-l=en]{display:none}@media(max-width:650px){.grid{grid-template-columns:1fr}table,tbody,tr,td{display:block}thead{display:none}td:first-child,td:nth-child(2){width:auto}td:first-child{padding-bottom:2px}td:nth-child(2){padding-top:2px;color:#36563e}}@media print{body{background:white;font-size:10pt}header,main,footer{width:100%}nav{display:none}h2{break-after:avoid}tr,.card{break-inside:avoid}a{color:inherit}}</style></head><body><header><nav><a href="./">Flasher</a><a href="shortcut-guide.pdf?v=2026-10-26-lfo-braids-memory-main-251">PDF</a><div class="lang"><button data-lang="en">EN</button><button data-lang="fr">FR</button></div><button onclick="window.print()"><span data-l="en">Print</span><span data-l="fr">Imprimer</span></button></nav><h1>Supermodel 2.51</h1><div class="sub"><span data-l="en">Features and shortcut guide</span><span data-l="fr">Guide des fonctions et raccourcis</span></div></header><main><article data-l="en"><p>Main 2.51. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. All listed features are included.</p><h2>Included features</h2><div class="grid">
+<div class="card"><b>Machines and sound</b><br>Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN, PUNCH and MIDI Out. Elder is an original synth inspired by Junior by Fors. PUNCH is an FM percussion engine by100demons (MIT).</div>
+<div class="card"><b>Performance and sequencing</b><br>Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching and quantized mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists.</div>
+<div class="card"><b>Filters and effects</b><br>Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod and two Choruses; DUCK, DUB, Ping Pong, Phaser and two Crushers.</div>
+<div class="card"><b>Routing and workflow</b><br>MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.</div>
+</div>
+<h2>Track, step and performance controls</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Step Recorder</td><td>Playback stopped: press REC twice; PLAY advances; STOP goes back; press REC again to exit</td><td>Enter step recording and play notes to write successive steps. PLAY advances one step; STOP moves back one step; press REC again to leave Step Recorder.</td></tr>
+<tr><td>Latching mute</td><td>TRACK + tap FUNC</td><td>First choose Mute: LTC in Mod Setup. Then latch mute mode with this gesture; tap FUNC again to leave. Mute: Stk keeps stock behavior (default).</td></tr>
+<tr><td>Solo in mute mode</td><td>In latching mute mode, hold FUNC + press T1–T6</td><td>Solo that track. Press the soloed track again to restore the previous mute state; tracks already muted remain muted.</td></tr>
+<tr><td>Silent track selection</td><td>Choose Silent in Mod Setup ; tap T1–T6</td><td>Select a track without triggering its sound. TRACK + pad selects and plays. Stock pad behavior (Stk) is the default; select Silent to enable silent selection.</td></tr>
+<tr><td>Trig preview</td><td>Hold TRIG + PAGE</td><td>Audition the selected step with its note and locks while stopped or paused.</td></tr>
+<tr><td>Slide trig</td><td>SETTINGS + TRIG</td><td>Toggle a parameter slide on the step.</td></tr>
+<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Open the generator for the selected track. Select with DATA; choose Generate or Queue and set Loop/Page timing.</td></tr>
+<tr><td>SCRAMBLE</td><td>Hold SETTINGS + TRACK</td><td>Randomize the checked Pitch, Decay, Color, Shape, Sweep and Contour parameters once per hold. Choose parameters in Mod Setup &gt; Track &gt; SCRM. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Marked steps use the same checklist without changing the base sound. Checklists save per pattern with Save Project. A short tap without held steps opens Mod Setup.</td></tr>
+<tr><td>SCRAMBLE step / delete</td><td>Hold a step + quick SETTINGS + TRACK; delete normally</td><td>Toggle SCRAMBLE on that step. Deleting its trig clears the mark and locks; a replacement trig starts clean. Neighboring steps and tracks keep their settings.</td></tr>
+<tr><td>Control All setup</td><td>TRACK + TRIG 1–6</td><td>Include or exclude audio tracks from Control All changes.</td></tr>
+<tr><td>Audio beat repeat</td><td>Hold TRACK + RETRIG , then hold a TRIG 1–16</td><td>The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop.</td></tr>
+<tr><td>Repeat mode latch</td><td>Hold TRACK + double-tap RETRIG</td><td>Release both; hold a TRIG to repeat, release it to stop. BACK exits. PLAY/STOP and FUNC + SETTINGS/PATTERN temporary save/reload remain available.</td></tr>
+<tr><td>Control All filter</td><td>Hold TRACK + MACHINES ; turn SWEEP / CONTOUR</td><td>Adjust cutoff/resonance across included audio tracks. Without TRACK, adjust the selected track.</td></tr>
+<tr><td>Synth Attack</td><td>MACHINES + DECAY</td><td>Adjust the added attack control on supported machines.</td></tr>
+<tr><td>Arpeggiator / ChordKeys settings</td><td>FUNC + RETRIG</td><td>Open the settings for the active Arpeggiator or ChordKeys feature. Arpeggiator octave 0 cycles only through held notes.</td></tr>
+<tr><td>ChordKeys</td><td>Select the Chord machine, then play TRIG 1–16</td><td>Play scale-based chord voicings from the step keys. To leave a ChordKeys track you must use TRACK + Track Pad.</td></tr>
+<tr><td>ChordKeys harmony locks</td><td>Grid record: hold a step TRIG and press T1-T6 . Live record: play a chord and use the harmony pads.</td><td>Record a harmony on the step. Press the same harmony pad again on a held step to restore its base harmony.</td></tr>
+<tr><td>Scale Lock</td><td>FUNC + PAGE &gt; Lock / Scl / Key</td><td>Off bypasses locking; ORGN maps successive scale degrees; BRDS snaps to the nearest in-scale note (ties lower). 19 whole-semitone scales. Mode/scale/key save globally while stopped.</td></tr>
+</tbody></table>
+<h2>Effects</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Reverb-slot menu</td><td>Hold TRACK + REVERB SIZE</td><td>Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel.</td></tr>
+<tr><td>Delay-slot menu</td><td>Hold TRACK + DELAY TIME</td><td>Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels.</td></tr>
+<tr><td>Standard Reverb</td><td>REVERB SEND / SIZE / FUNC + SIZE</td><td>Per-track Send / Size, including INF at maximum / Tone -64 through 0 to +63.</td></tr>
+<tr><td>GATED reverb</td><td>REVERB SEND / SIZE; FUNC + SIZE; SETTINGS + SIZE</td><td>Gated Send / Gate Time; Pre-delay; Tone. Gate Time: about 40 ms–6.7 s after input falls quiet. Pre-delay: 0–568 ms. Try Gate Time 16–32 and Pre-delay 25–40 ms on a snare.</td></tr>
+<tr><td>HALL reverb</td><td>REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE</td><td>Hall Send per track / Decay / Tone. Wide stereo tail with longer reflections than ROOM; maximum SIZE gives a long damped tail.</td></tr>
+<tr><td>Ring Mod</td><td>REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE</td><td>Ring Send per track / Frequency / Depth. Metallic sine ring modulation replaces the reverb return. Select RING MOD below Chorus 1/2. Frequency and Depth shared by tracks in this pattern; use the native track Send for locks.</td></tr>
+<tr><td>Phaser</td><td>DELAY SEND / TIME / FUNC + TIME; FUNC first, then TRACK + TIME</td><td>Phaser Send per track / Rate / Depth; FUNC then TRACK + TIME is Feedback (also SETTINGS + TIME). Two-stage stereo phaser replaces the delay return. Select PHASER above DUCK. Hold FUNC before TRACK to avoid the mute latch.</td></tr>
+<tr><td>DUCK delay</td><td>DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME; FUNC then TRACK + TIME or DELAY SEND</td><td>Native Delay Send / Time / Feedback. Hold FUNC first, then TRACK: TIME adjusts Amount; DELAY SEND adjusts Release. Strong wet ducking while the send input plays, then a swelling return; feedback remains intact. Try Amount 127, Release 32-64 on sparse notes. Amount 0 is standard Delay.</td></tr>
+<tr><td>ROOM reverb</td><td>REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE</td><td>Room Send per track / Decay / Tone. Compact stereo room ambience. Select ROOM above PS1; release TRACK to apply.</td></tr>
+<tr><td>PS1 reverb</td><td>REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE</td><td>PS1 Send per track / Decay / Tone. PlayStation-inspired stereo tail with a dark, grainy character.</td></tr>
+<tr><td>Chorus 1 / 2</td><td>REVERB SEND / SIZE / FUNC + SIZE</td><td>Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot.</td></tr>
+<tr><td>Vinyl</td><td>REVERB SEND; SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE</td><td>Vinyl Send; Crackle / Warble Amount / Warble Speed. Hold FUNC first, then TRACK for Speed. Send 0 is dry; Crackle 0 switches dust off. Bright independent pops/clicks continue through gaps. Track level, pan and mute apply.</td></tr>
+<tr><td>Standard Delay</td><td>DELAY SEND / TIME / FUNC + TIME</td><td>Per-track Delay Send / native Time / native Feedback.</td></tr>
+<tr><td>DUB delay</td><td>DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME</td><td>Per-track Delay Send / native Time / Feedback. Strongly filtered stereo echoes, progressively narrowing in the feedback loop. Centered input plays on both channels from the first echo, even with zero feedback.</td></tr>
+<tr><td>Ping Pong</td><td>DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME</td><td>Per-track send / Time / Feedback. Stereo echoes alternate left and right; listen through headphones or both outputs.</td></tr>
+<tr><td>Crusher Rate / Bits</td><td>CRUSH 1 or 2: TIME / FUNC + TIME</td><td>Rate 0-127, about 750 Hz-48 kHz / Bits 2-16. Lower Rate or Bits is rougher. CRUSH 1 keeps the direct signal clean; CRUSH 2 blends direct clean/crushed. DELAY SEND is labeled Crush Send; no delay echoes in Crush modes.</td></tr>
+<tr><td>Effect settings and save</td><td>Save Project</td><td>Each pattern remembers its selected FX types, added controls and extra sends. Save the project to keep them after reloading. Blank patterns use standard Delay/Reverb and default added controls. A queued pattern applies its FX when it begins playing. Added FX controls have no p-lock/LFO destinations; native track sends support locks.</td></tr>
+</tbody></table>
+<h2>Machines and sound controls</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Machine browsing</td><td>MACHINES + turn DATA</td><td>Turn DATA to choose a machine. MIDI Out is last. Scrolling through MIDI Out preserves your previous audio settings.</td></tr>
+<tr><td>Added-machine starting points</td><td>Check the named control</td><td>Numeric controls such as TINY Tone/Excite, PUNCH Color/Contour and Elder Wave/Warp/Noise/Motion run from 0 at the minimum to 127 at the maximum; 64 is the midpoint. Starting settings need not be zero. PITCH and FINE are centered: displayed 0 means no pitch offset. SHAPE model selectors and PUNCH ratios use their own scales. A minimum value is not a universal clean-sound setting.</td></tr>
+<tr><td>Elder controls</td><td>Select Elder in MACHINES</td><td>COLOR = Wave; SHAPE = Warp; SWEEP = Noise; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate and Fine remain available. Original synth inspired by Junior by Fors. Starting values: Wave 0, Warp 0, Noise 0, Motion 0, Decay 50.</td></tr>
+<tr><td>TINY controls</td><td>Select TINY in MACHINES</td><td>COLOR: Tone; SHAPE: Model 0–51; SWEEP: Mod; CONTOUR: Excite. Starting values: Tone 64, Model 0, Mod 64, Excite 32, Decay 60.</td></tr>
+<tr><td>Shadow controls</td><td>Select Shadow after TINY in MACHINES</td><td>COLOR: Grain; SHAPE: Density; SWEEP: Spread; CONTOUR: Chaos. PUNCH: distortion plus ratcheting attack. Pitch, Fine, Decay and Gate are available. Pulsar/noise synth inspired by Opal Dust by Fors.</td></tr>
+<tr><td>WAVE starter</td><td>Select WAVE and play</td><td>AV-WAVE-Morph is already loaded: 16 morphable frames, no first import required. COLOR selects position; SHAPE adds envelope movement. Custom tables replace the starter on their track.</td></tr>
+<tr><td>WAVE folder navigation</td><td>BACK in the WAVE browser</td><td>BACK goes up one folder; at /Wavetables it closes the selector.</td></tr>
+<tr><td>ACID filter Decay</td><td>DECAY</td><td>DECAY controls filter envelope decay. Volume holds until note-off, followed by a short release.</td></tr>
+<tr><td>ACID Accent</td><td>Velocity 97-127</td><td>Progressive filter transient and level accent. Velocity 0-96 keeps the normal unaccented response; native velocity volume response is retained.</td></tr>
+<tr><td>SY BITS fine detune</td><td>FUNC + COLOR</td><td>0.01-semitone steps from -24.00 to +24.00. Plain COLOR changes whole semitones; FUNC + COLOR adjusts the fractional part. Supports sound saving and parameter locks.</td></tr>
+<tr><td>RETROSYN</td><td>MACHINES, immediately before MIDI Out</td><td>COLOR, SHAPE (six models), SWEEP and CONTOUR. PITCH, DECAY, Gate and Punch are available.</td></tr>
+<tr><td>PUNCH controls</td><td>Select PUNCH before MIDI Out</td><td>SHAPE selects KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB or ZAP. COLOR controls timbre; SWEEP selects the ratio; FUNC + SWEEP adjusts between ratios. CONTOUR and DECAY shape the sound. Engine by100demons, MIT. Starting values: Color 64, KIK, ratio 4:1, Contour 40, Decay 50.</td></tr>
+</tbody></table>
+<h2>LEGACY machine</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>LEGACY / selection</td><td>MACHINES: before RETROSYN and MIDI Out</td><td>Dexed MSFA six-operator FM with all 32 algorithms; one voice per track. MIDI Out remains last. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Native locks/CC/LFO mappings; Voice and Velocity are captured on the next trigger.</td></tr>
+<tr><td>Voice library</td><td>SHAPE: slots 0-31</td><td>32 bundled voices selected with SHAPE. The complete indexed factory voice library follows. Import a cartridge to replace the active bank.</td></tr>
+<tr><td>Velocity / brightness</td><td>COLOR / SWEEP</td><td>Velocity 0-127 controls the cartridge operators response at each trigger; default 100. Brightness 64 preserves the patch. Lower softens modulation; higher adds bite.</td></tr>
+<tr><td>Envelope time</td><td>CONTOUR / DECAY</td><td>EG Time 64 preserves the patch envelope timing; lower is faster, higher slower. DECAY and gate still set the native amplitude envelope. PITCH and FINETUNE transpose the voice; fixed-frequency operators follow their cartridge settings.</td></tr>
+<tr><td>Import a DX7 bank</td><td>Flasher &gt; WAV / DX7 bank importers</td><td>Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound.</td></tr>
+<tr><td>Load a stored bank</td><td>LEGACY: FUNC + MACHINES; DATA; BACK</td><td>Hold FUNC while pressing MACHINES to open the bank library. Turn DATA to choose; press DATA to load; BACK cancels. Factory restores the included voices. One active 32-voice bank is shared by every LEGACY track. Banks persist after reboot and are separate from Elektron project backups.</td></tr>
+<tr><td>Credits and load</td><td>Dexed / Google MSFA</td><td>Based on Dexed/MSFA by Google, Pascal Gauthier and contributors. Six-operator patches can use substantial CPU.</td></tr>
+</tbody></table>
+<h2>LEGACY voice library</h2>
+<table><thead><tr><th>Slot</th><th>Voice</th><th>Source</th></tr></thead><tbody>
+<tr><td>0</td><td>Tooropulse</td><td>Legowelt Magic cart</td></tr>
+<tr><td>1</td><td>Delicho</td><td>Legowelt Magic cart</td></tr>
+<tr><td>2</td><td>EinstofPia</td><td>Legowelt Magic cart</td></tr>
+<tr><td>3</td><td>Overcast P</td><td>Legowelt Magic cart</td></tr>
+<tr><td>4</td><td>STRINGS 1</td><td>ROM1A</td></tr>
+<tr><td>5</td><td>PWMfuzzy</td><td>Legowelt Magic cart</td></tr>
+<tr><td>6</td><td>Sharpieblo</td><td>Legowelt Magic cart</td></tr>
+<tr><td>7</td><td>RoboticSeq</td><td>Legowelt Magic cart</td></tr>
+<tr><td>8</td><td>SplitStran</td><td>Legowelt Magic cart</td></tr>
+<tr><td>9</td><td>PIANO   1</td><td>ROM1A</td></tr>
+<tr><td>10</td><td>Heimwave</td><td>Legowelt Magic cart</td></tr>
+<tr><td>11</td><td>CLAV    1</td><td>ROM1A</td></tr>
+<tr><td>12</td><td>Synthotape</td><td>Legowelt Magic cart</td></tr>
+<tr><td>13</td><td>Wavesply</td><td>Legowelt Magic cart</td></tr>
+<tr><td>14</td><td>Poldermood</td><td>Legowelt Magic cart</td></tr>
+<tr><td>15</td><td>FelineSaw</td><td>Legowelt Magic cart</td></tr>
+<tr><td>16</td><td>Aguirio</td><td>Legowelt Magic cart</td></tr>
+<tr><td>17</td><td>E.PIANO 1</td><td>ROM1A</td></tr>
+<tr><td>18</td><td>E.ORGAN 1</td><td>ROM1A</td></tr>
+<tr><td>19</td><td>Pinkcookie</td><td>Legowelt Magic cart</td></tr>
+<tr><td>20</td><td>ObieSplash</td><td>Legowelt Magic cart</td></tr>
+<tr><td>21</td><td>MARIMBA</td><td>ROM1A</td></tr>
+<tr><td>22</td><td>Garudaydre</td><td>Legowelt Magic cart</td></tr>
+<tr><td>23</td><td>VillageOrg</td><td>Legowelt Magic cart</td></tr>
+<tr><td>24</td><td>BASS    1</td><td>ROM1A</td></tr>
+<tr><td>25</td><td>Litehouze</td><td>Legowelt Magic cart</td></tr>
+<tr><td>26</td><td>NostroSpli</td><td>Legowelt Magic cart</td></tr>
+<tr><td>27</td><td>Velobleepb</td><td>Legowelt Magic cart</td></tr>
+<tr><td>28</td><td>DimPacific</td><td>Legowelt Magic cart</td></tr>
+<tr><td>29</td><td>SequenceMe</td><td>Legowelt Magic cart</td></tr>
+<tr><td>30</td><td>BRASS   1</td><td>ROM1A</td></tr>
+<tr><td>31</td><td>Swissynth</td><td>Legowelt Magic cart</td></tr>
+</tbody></table>
+<h2>SPEAK voice machine</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Select SPEAK</td><td>MACHINES: after Shadow, before LEGACY</td><td>128-word speech engine. Start around Vol+Dist 60, Punch off.</td></tr>
+<tr><td>Voice / Word / Speed / Articulation</td><td>COLOR / SHAPE / SWEEP / CONTOUR</td><td>Voice/formant character / Word 0-127 / Speed (64 normal, lower slower) / Articulation. SHAPE shows the word and index. Word changes take effect at the next trig; the other three controls remain live.</td></tr>
+<tr><td>Pitch and envelope</td><td>PITCH / notes; DECAY, Fine, Punch, Gate, Attack</td><td>Pitch changes independently of word speed. Begin with Decay 127 to hear complete words. Filters and FX sends are available.</td></tr>
+<tr><td>Word sequences and modulation</td><td>Hold a trig + SHAPE, then lock Pitch and other knobs normally</td><td>Word and other native parameters support p-locks and LFO destinations. COLOR/SHAPE/SWEEP/CONTOUR use MIDI CC 16/17/18/19. Leave space for the word or increase Speed.</td></tr>
+<tr><td>Example sentence</td><td>SHAPE words and note locks on successive trigs</td><td>HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Full indexed word library follows at the end of this guide.</td></tr>
+</tbody></table>
+<h2>LFO and MACRO controls</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Audio LFO pages</td><td>Press LFO repeatedly</td><td>Cycle through enabled LFOs. Mod Setup &gt; Global &gt; LFOs chooses 1/2/3/4 (default2). LFO3/4 match LFO2 controls; hidden settings are retained.</td></tr>
+<tr><td>LFO polarity and mode</td><td>LFO menu &gt; Pol. / Mode</td><td>Bi is bipolar; Uni is unipolar and follows signed depth, including square pulses. Mode: FRE, TRG, HLD (Hold), ONE (One-shot), HLF. LFO1/2 polarity is global per track; sound-copy persistence is pending.</td></tr>
+<tr><td>LFO saving</td><td>Stop playback; Save Project for native sound settings</td><td>LFO2 speed/multiplier/waveform/destination/depth use native sounds (8-bit saved speed/depth); fade/phase/mode reset on sound load. LFO3/4 save separately per project/pattern/track while stopped, outside ordinary Elektron sound exports and native parameter locks.</td></tr>
+<tr><td>LFO quick assignment</td><td>On an LFO page, hold LFO and turn a destination knob</td><td>Assign the corresponding ordinary knob destination. To select the added Attack, Filter or Resonance targets, also hold MACHINES .</td></tr>
+<tr><td>Attack / Filter / Resonance LFO targets</td><td>On an LFO page, hold LFO + MACHINES while turning DECAY , SWEEP or CONTOUR</td><td>Choose Attack, Filter or Resonance with the corresponding knob while holding MACHINES.</td></tr>
+<tr><td>MACRO fine tune</td><td>SETTINGS + turn PITCH</td><td>Adjust fine pitch. Plain PITCH retains its regular control; FUNC + PITCH is MACRO Lo-Fi. Lo-Fi lowers sample rate to the left, bit depth to the right, with OFF at center. Model names and numbers 0–46 are shown.</td></tr>
+</tbody></table>
+<h2>Sample Wizard and saving</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Sample Preview</td><td>FUNC + MACHINES ; highlight a sample, then press its track pad or keyboard trig</td><td>Audition the highlighted sample. Scrolling through the list remains silent.</td></tr>
+<tr><td>Sample lock</td><td>Open the sample selection menu and highlight a sample; then hold a step TRIG + MACHINES</td><td>Lock the highlighted sample to that step on a Sample Wizard track. The sample browser must be open with the desired sample selected.</td></tr>
+<tr><td>Playback modes</td><td>SETTINGS + MACHINES</td><td>One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode.</td></tr>
+<tr><td>Slice editor</td><td>FUNC + step key; FUNC + click DATA</td><td>Play upper slices; remove a slice marker with the DATA click. Marker knobs can snap to zero crossings.</td></tr>
+<tr><td>Permanent quick save</td><td>Hold FUNC + SETTINGS</td><td>Save the project permanently using the stock quick-save action.</td></tr>
+<tr><td>Temporary save / reload</td><td>Short FUNC + SETTINGS / FUNC + PATTERN</td><td>Stock temporary copy save / reload, including while retrig mode is latched.</td></tr>
+</tbody></table>
+<h2>MIDI Out machine</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Select and set up</td><td>MACHINES : MIDI Out; FUNC + TRACK</td><td>Silent MIDI track. Track Setup: Channel, Output, KbT (keyboard transpose), Pad Note. Turn DATA to select; click DATA before editing; BACK exits. Channel: 1-16 / Global. Output: Global / Off / USB / DIN / Both.</td></tr>
+<tr><td>CC assignment and locks MIDI Out machine only</td><td>SETTINGS + gray knob; hold steps + assigned knob for locks</td><td>Assign OFF or CC0-127 to nine knobs. Turn a knob alone to send its value. Each lock keeps the CC number and value. Live recording captures knob changes.</td></tr>
+<tr><td>Two MIDI LFOs</td><td>LFO : LFO 1, LFO 2, track screen; BACK exits</td><td>DATA selects; click to edit. Order: Wav, Mul, Dst, Dep, Speed, Fade, Phase, Mode. LFO Speed adjusts the open LFO. Hold LFO + an assigned CC knob: assign destination, then turn further for depth.</td></tr>
+<tr><td>Notes and save</td><td>Normal note/grid controls; FUNC + PAGE ; FUNC + SETTINGS</td><td>Incoming MIDI notes use the track receive channel or auto channel; live and step recording keep notes, velocity and length. FUNC + PAGE edits pattern length. Project/quick save keeps MIDI settings and locks.</td></tr>
+<tr><td>MIDI OUT + THRU</td><td>CONFIG → MIDI → PORTS → OUT/THRU: THR; then FUNC + click DATA</td><td>Toggle the Cycles’ own outgoing MIDI while retaining incoming MIDI Thru.</td></tr>
+</tbody></table>
+<h2>Mod Setup</h2>
+<p class="mod-setup-intro">Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMBLE once instead; continuing to hold does not repeat it. With a TRIG held, a quick tap toggles its Scramble mark. Choose Global or Track first. DATA selects a row; click to edit, turn, click again to return. Stk = Stock; SIL = Silent; LTC = Latch.</p>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Global / Track</td><td>DATA enters; BACK returns</td><td>Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root.</td></tr>
+<tr><td>Access and sound editing</td><td>Tap SETTINGS + TRACK</td><td>Available from the main screen or machine selection. DATA navigates Mod Setup; sound knobs show the edited parameter for two seconds, then return to the same menu position. BACK closes the popup first, then Mod Setup; machine selection stays open underneath.</td></tr>
+<tr><td>Pad</td><td>Stk / SIL Default: Stk</td><td>Stk keeps the original track-pad behavior: a pad selects and plays its track. Silent selects the track without sounding it; hold TRACK and press a track pad to select and play. ChordKeys tracks still require TRACK + track pad to leave the track.</td></tr>
+<tr><td>USB</td><td>2ch / 6ch Default: 2ch</td><td>2ch sends the stereo mix to the computer. 6ch sends six separate mono tracks, before pan and without the mix delay/crusher/reverb/chorus returns. Stereo audio from the computer to Cycles works in both modes. Stop playback before changing this toggle. Changing modes reconnects the USB audio device; select its new channel layout in your DAW if needed.</td></tr>
+<tr><td>Num</td><td>Off / On Default: Off</td><td>Off keeps the original volume and pan display. On shows numeric volume and pan values when you adjust those controls.</td></tr>
+<tr><td>Mute</td><td>Stk / LTC Default: Stk</td><td>Stk keeps the original momentary mute controls. With LTC selected, hold TRACK and tap FUNC to stay in mute mode, then tap track pads to mute or unmute. Tap FUNC again to leave. In latched mute mode, hold FUNC and press a track pad to solo it; press the soloed pad again, or leave mute mode, to restore the previous mutes.</td></tr>
+<tr><td>Quantized mute/solo</td><td>Tap SETTINGS + TRACK; QntM</td><td>Turn it On or Off and select the time division your mutes and solos are quantized to. Off by default.</td></tr>
+<tr><td>Delay</td><td>Stk / Div Default: Stk</td><td>Stk preserves the original Delay Time display and timing. Div displays musical divisions, including dotted and triplet values, and corrects the matching timing positions to exact divisions of the tempo. Other Delay Time positions retain their original timing; this does not quantize every knob position. Applies while using Delay mode.</td></tr>
+<tr><td>DX</td><td>Off / On Default: Off</td><td>With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Off by default.</td></tr>
+<tr><td>SCRM</td><td>DATA opens; turn and press DATA; BACK returns</td><td>Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Each pattern keeps its own six checklists; Save Project preserves them after reloading. Wizard allows Pitch/Decay; its sample/mode controls stay excluded.</td></tr>
+<tr><td>Sidechain routing</td><td>Select source; tap SETTINGS + TRACK; S.Chn &gt; DATA</td><td>Check the five other tracks, Rev. (reverb-slot return), and/or Del. (delay-slot return). DATA toggles each target. Dpt/Atk/Hld/Rel and Mute apply to all selected targets. Choices save per source and pattern with Save Project. Multiple sources use the deepest duck on each target. DUCK is a separate delay type.</td></tr>
+<tr><td>Dpt / Atk / Hld / Rel</td><td>Scroll below checkboxes; click DATA, turn, click to finish</td><td>Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source.</td></tr>
+<tr><td>Mute (Sidechain)</td><td>Select source; S.Chn &gt; Mute; click DATA</td><td>On: muting the source stops its sidechain action, including when excluded by solo. Off: muted sources keep ducking their targets (default). Each source saves its choice per pattern with Save Project.</td></tr>
+<tr><td>Per-pattern saving</td><td>Save Project after edits</td><td>Sidechain routing and controls, six Scramble checklists, FX types and added FX settings belong to each pattern. Save the project to keep changes after reloading. Blank patterns have Sidechain off and the default Scramble checklist. Queued changes apply when the next pattern starts.</td></tr>
+<tr><td>Groove</td><td>Global &gt; Grv &gt; On / Type</td><td>Off uses stock Swing and remembers Type. On enables Boom Bap, Disco, Reggae, Bongo, Caixixi, Highlife or Kuduro; Swing controls strength. No stock Swing entry in Type.</td></tr>
+<tr><td>CHORD Strum</td><td>Global &gt; Grv &gt; Str</td><td>-80..80 ms between CHORD voices; sign reverses direction,0 plays together. Independent of Groove On/Off. Four voices at80ms span240ms.</td></tr>
+<tr><td>Humanize Apply / Undo</td><td>Track &gt; Human &gt; Trk / Tim / Vel / Apply / Undo</td><td>Set timing/velocity amounts0..100 for a track or All. Stop playback, then Apply writes changes to the pattern; Undo restores the prior values. No randomization during playback.</td></tr>
+<tr><td>Audio LFO count</td><td>Global &gt; LFOs</td><td>1/2/3/4 LFOs per audio track; default2. Saves globally while stopped. Disabled LFOs stop running and retain their settings.</td></tr>
+</tbody></table>
+<p class="mod-setup-save">BACK closes Mod Setup and saves its global preferences. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Sidechain routing/settings, Scramble checklists and FX types/added settings are per pattern: Save Project preserves these after reloading. Closing a submenu alone does not save the project.</p>
+<h2>Sample Wizard display</h2>
+<table><thead><tr><th>Feature</th><th>Controls</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>Waveform and volume</td><td>Sample Wizard home screen</td><td>Sample name at top; wide waveform; selected track, duration and rectangular volume segments below. This displays the track volume setting, not an audio meter. File browser, Pitch/Fine browsing and note entry retain their controls. Start/Position marker where applicable.</td></tr>
+</tbody></table>
+<h2>SPEAK word library</h2><table><thead><tr><th>Index</th><th>Word</th><th>Index</th><th>Word</th><th>Index</th><th>Word</th><th>Index</th><th>Word</th></tr></thead><tbody>
+<tr><td>0</td><td>I</td><td>32</td><td>GOODBYE</td><td>64</td><td>IS</td><td>96</td><td>ONE</td></tr>
+<tr><td>1</td><td>YOU</td><td>33</td><td>GOOD</td><td>65</td><td>WAS</td><td>97</td><td>TWO</td></tr>
+<tr><td>2</td><td>WE</td><td>34</td><td>BAD</td><td>66</td><td>WERE</td><td>98</td><td>THREE</td></tr>
+<tr><td>3</td><td>THEY</td><td>35</td><td>LOVE</td><td>67</td><td>WILL</td><td>99</td><td>FOUR</td></tr>
+<tr><td>4</td><td>HE</td><td>36</td><td>LIKE</td><td>68</td><td>CAN</td><td>100</td><td>FIVE</td></tr>
+<tr><td>5</td><td>SHE</td><td>37</td><td>WANT</td><td>69</td><td>COULD</td><td>101</td><td>SIX</td></tr>
+<tr><td>6</td><td>IT</td><td>38</td><td>NEED</td><td>70</td><td>HAVE</td><td>102</td><td>SEVEN</td></tr>
+<tr><td>7</td><td>ME</td><td>39</td><td>KNOW</td><td>71</td><td>HAS</td><td>103</td><td>EIGHT</td></tr>
+<tr><td>8</td><td>US</td><td>40</td><td>THINK</td><td>72</td><td>HAD</td><td>104</td><td>NINE</td></tr>
+<tr><td>9</td><td>THEM</td><td>41</td><td>FEEL</td><td>73</td><td>BEEN</td><td>105</td><td>ZERO</td></tr>
+<tr><td>10</td><td>MY</td><td>42</td><td>SEE</td><td>74</td><td>IN</td><td>106</td><td>MUSIC</td></tr>
+<tr><td>11</td><td>YOUR</td><td>43</td><td>HEAR</td><td>75</td><td>ON</td><td>107</td><td>SOUND</td></tr>
+<tr><td>12</td><td>OUR</td><td>44</td><td>SAY</td><td>76</td><td>AT</td><td>108</td><td>BEAT</td></tr>
+<tr><td>13</td><td>THIS</td><td>45</td><td>SPEAK</td><td>77</td><td>TO</td><td>109</td><td>RHYTHM</td></tr>
+<tr><td>14</td><td>THAT</td><td>46</td><td>TELL</td><td>78</td><td>FOR</td><td>110</td><td>BASS</td></tr>
+<tr><td>15</td><td>THESE</td><td>47</td><td>ASK</td><td>79</td><td>FROM</td><td>111</td><td>DRUM</td></tr>
+<tr><td>16</td><td>THOSE</td><td>48</td><td>DO</td><td>80</td><td>WITH</td><td>112</td><td>MACHINE</td></tr>
+<tr><td>17</td><td>A</td><td>49</td><td>MAKE</td><td>81</td><td>WITHOUT</td><td>113</td><td>ROBOT</td></tr>
+<tr><td>18</td><td>AN</td><td>50</td><td>PLAY</td><td>82</td><td>OF</td><td>114</td><td>HUMAN</td></tr>
+<tr><td>19</td><td>THE</td><td>51</td><td>STOP</td><td>83</td><td>UP</td><td>115</td><td>TIME</td></tr>
+<tr><td>20</td><td>AND</td><td>52</td><td>START</td><td>84</td><td>DOWN</td><td>116</td><td>NIGHT</td></tr>
+<tr><td>21</td><td>OR</td><td>53</td><td>GO</td><td>85</td><td>HERE</td><td>117</td><td>DAY</td></tr>
+<tr><td>22</td><td>BUT</td><td>54</td><td>COME</td><td>86</td><td>THERE</td><td>118</td><td>WORLD</td></tr>
+<tr><td>23</td><td>IF</td><td>55</td><td>STAY</td><td>87</td><td>NOW</td><td>119</td><td>FRIEND</td></tr>
+<tr><td>24</td><td>SO</td><td>56</td><td>MOVE</td><td>88</td><td>THEN</td><td>120</td><td>HAPPY</td></tr>
+<tr><td>25</td><td>BECAUSE</td><td>57</td><td>TURN</td><td>89</td><td>AGAIN</td><td>121</td><td>SAD</td></tr>
+<tr><td>26</td><td>YES</td><td>58</td><td>TAKE</td><td>90</td><td>ALWAYS</td><td>122</td><td>NEW</td></tr>
+<tr><td>27</td><td>NO</td><td>59</td><td>GIVE</td><td>91</td><td>NEVER</td><td>123</td><td>CAREFUL</td></tr>
+<tr><td>28</td><td>NOT</td><td>60</td><td>GET</td><td>92</td><td>ALL</td><td>124</td><td>CREATURE</td></tr>
+<tr><td>29</td><td>PLEASE</td><td>61</td><td>BE</td><td>93</td><td>SOME</td><td>125</td><td>LOUD</td></tr>
+<tr><td>30</td><td>THANK</td><td>62</td><td>AM</td><td>94</td><td>MORE</td><td>126</td><td>DREAM</td></tr>
+<tr><td>31</td><td>HELLO</td><td>63</td><td>ARE</td><td>95</td><td>LESS</td><td>127</td><td>FUTURE</td></tr>
+</tbody></table>
+<p class="note">Startup defaults: stock pads and mute behavior; USB 2ch; Num Off; DX Off; quantized mute/solo Off. Blank patterns use standard Reverb and Delay with default added FX settings. Six-channel USB excludes the stereo effect returns.</p></article><article data-l="fr"><p>Principal2.51. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Toutes les fonctions ci-dessous sont incluses.</p><h2>Fonctions incluses</h2><div class="grid">
+<div class="card"><b>Machines et son</b><br>Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN, PUNCH et MIDI Out. Elder est inspiré de Junior de Fors. PUNCH est un moteur de percussions FM de100demons (MIT).</div>
+<div class="card"><b>Performance et séquenceur</b><br>Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute et solo verrouillés ou quantifiés. Sidechain déclenché par les notes et listes Scramble par pattern.</div>
+<div class="card"><b>Filtres et effets</b><br>Filtre résonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, Ping Pong, Phaser et deux Crushers.</div>
+<div class="card"><b>Routage et travail</b><br>MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.</div>
+</div>
+<h2>Pistes, pas et performance</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Step Recorder</td><td>Lecture arrêtée : REC deux fois ; PLAY avance ; STOP recule ; REC quitte</td><td>Jouez des notes pour écrire les pas successifs. PLAY avance d’un pas, STOP recule d’un pas.</td></tr>
+<tr><td>Mute verrouillé</td><td>TRACK + appui bref sur FUNC</td><td>Choisissez d’abord Mute: LTC dans Mod Setup. FUNC quitte le mode verrouillé ; Stk conserve le mode natif.</td></tr>
+<tr><td>Solo en mute</td><td>En mode mute verrouillé : FUNC + T1–T6</td><td>Isole la piste. Rappuyez sur son pad, ou quittez le mode mute, pour restaurer les mutes précédents.</td></tr>
+<tr><td>Sélection silencieuse</td><td>Choisir Pad: SIL dans Mod Setup ; T1–T6</td><td>Sélection sans déclenchement. TRACK + pad sélectionne et joue. Stk est le défaut.</td></tr>
+<tr><td>Préécoute de pas</td><td>Maintenir TRIG + PAGE</td><td>Écoutez le pas et ses locks à l’arrêt ou en pause.</td></tr>
+<tr><td>Slide</td><td>SETTINGS + TRIG</td><td>Active ou désactive le glissement de paramètres sur le pas.</td></tr>
+<tr><td>Sequence Genie</td><td>SETTINGS + PAGE</td><td>Générateur de la piste sélectionnée. DATA choisit ; Generate ou Queue, avec frontière Loop/Page.</td></tr>
+<tr><td>SCRAMBLE</td><td>Maintenir SETTINGS + TRACK</td><td>Tire une seule fois par maintien les paramètres cochés : Pitch, Decay, Color, Shape, Sweep, Contour. Choix dans Mod Setup &gt; Track &gt; SCRM. Pitch/Decay désactivés par défaut ; Color/Shape/Sweep/Contour activés. Les pas marqués suivent la même liste, sans changer le son de base. Listes sauvegardées par pattern avec Save Project. Un appui bref sans pas tenu ouvre Mod Setup.</td></tr>
+<tr><td>Pas SCRAMBLE / suppression</td><td>Maintenir un pas + SETTINGS + TRACK bref ; supprimer normalement</td><td>Bascule SCRAMBLE sur ce pas. Supprimer le trig retire marque et locks ; le nouveau trig repart propre. Autres pas et pistes conserves.</td></tr>
+<tr><td>Configuration Control All</td><td>TRACK + TRIG 1–6</td><td>Inclut ou exclut les pistes audio des changements collectifs.</td></tr>
+<tr><td>Beat repeat audio</td><td>Maintenir TRACK + RETRIG, puis un TRIG 1–16</td><td>Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter.</td></tr>
+<tr><td>Verrou beat repeat</td><td>Maintenir TRACK + double RETRIG</td><td>Relâchez les deux ; maintenez un TRIG pour répéter, relâchez-le pour arrêter. BACK quitte. PLAY/STOP et sauvegarde/rechargement temporaires FUNC + SETTINGS/PATTERN disponibles.</td></tr>
+<tr><td>Filtre collectif</td><td>TRACK + MACHINES + SWEEP / CONTOUR</td><td>Coupure / résonance des pistes incluses. Sans TRACK : piste sélectionnée. Passe-bas deux pôles inspiré du Polivoks.</td></tr>
+<tr><td>Attaque synthé</td><td>MACHINES + DECAY</td><td>Règle l’attaque ajoutée sur les machines compatibles.</td></tr>
+<tr><td>Arpège / réglages ChordKeys</td><td>FUNC + RETRIG</td><td>Ouvre les réglages actifs. Octave 0 de l’arpège parcourt uniquement les notes tenues.</td></tr>
+<tr><td>ChordKeys</td><td>Sur Chord : jouer TRIG 1–16</td><td>Voicings en gamme. TRACK + pad de piste est nécessaire pour quitter une piste ChordKeys.</td></tr>
+<tr><td>Locks d’harmonie ChordKeys</td><td>Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie</td><td>Enregistre une harmonie sur le pas. Rappuyez sur le même pad d’harmonie avec le pas tenu pour retrouver son harmonie de base.</td></tr>
+<tr><td>Scale Lock</td><td>FUNC + PAGE &gt; Lock / Scl / Key</td><td>Off desactive ; ORGN suit les degres ; BRDS choisit la note de gamme la plus proche (egalite vers le bas). 19 gammes par demi-tons. Sauvegarde globale a l arret.</td></tr>
+</tbody></table>
+<h2>Effets</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Menu reverb</td><td>Maintenir TRACK + REVERB SIZE</td><td>De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule.</td></tr>
+<tr><td>Menu delay</td><td>Maintenir TRACK + DELAY TIME</td><td>De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule.</td></tr>
+<tr><td>Reverb standard</td><td>REVERB SEND / SIZE / FUNC + SIZE</td><td>Send par piste / Size, INF au maximum / Tone de -64 à 0 à +63.</td></tr>
+<tr><td>Reverb GATED</td><td>REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE</td><td>Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time : environ 40 ms–6,7 s après le signal. Pre-delay : 0–568 ms. Essayez Gate Time 16–32 et Pre-delay 25–40 ms sur une caisse claire.</td></tr>
+<tr><td>Reverb HALL</td><td>REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE</td><td>Hall Send par piste / Decay / Tone. Queue stéréo large, réflexions plus longues que ROOM ; SIZE au maximum donne une longue queue amortie.</td></tr>
+<tr><td>Ring Mod</td><td>REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE</td><td>Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD sous Chorus 1/2. Frequency et Depth partagés par les pistes du pattern ; locks via le Send natif.</td></tr>
+<tr><td>Phaser</td><td>DELAY SEND / TIME / FUNC + TIME ; FUNC puis TRACK + TIME</td><td>Phaser Send par piste / Rate / Depth ; FUNC puis TRACK + TIME : Feedback (aussi SETTINGS + TIME). Phaser stereo deux etages dans le slot delay. PHASER au-dessus de DUCK. Tenir FUNC avant TRACK pour eviter le mute verrouille.</td></tr>
+<tr><td>Delay DUCK</td><td>DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME ; FUNC puis TRACK + TIME ou DELAY SEND</td><td>Delay Send natif / Time / Feedback. Tenir FUNC avant TRACK : TIME regle Amount ; DELAY SEND regle Release. Retour attenue pendant le signal puis remontee progressive ; feedback conserve. Essayer Amount 127, Release 32-64 sur notes espacees. Amount 0 : Delay standard.</td></tr>
+<tr><td>Reverb ROOM</td><td>REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE</td><td>Room Send par piste / Decay / Tone. Petite ambiance stéréo. ROOM au-dessus de PS1 ; relâchez TRACK pour appliquer.</td></tr>
+<tr><td>Reverb PS1</td><td>REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE</td><td>PS1 Send par piste / Decay / Tone. Queue stéréo inspirée de PlayStation, sombre et granuleuse.</td></tr>
+<tr><td>Chorus 1 / 2</td><td>REVERB SEND / SIZE / FUNC + SIZE</td><td>Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot.</td></tr>
+<tr><td>Vinyl</td><td>REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE</td><td>Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes.</td></tr>
+<tr><td>Delay standard</td><td>DELAY SEND / TIME / FUNC + TIME</td><td>Delay Send par piste / Time natif / Feedback natif.</td></tr>
+<tr><td>Delay DUB</td><td>DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME</td><td>Delay Send par piste / Time natif / Feedback. Echos stereo fortement filtres, de plus en plus etroits dans la boucle. Une source centree joue sur les deux canaux des le premier echo, meme sans feedback.</td></tr>
+<tr><td>Ping Pong</td><td>DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME</td><td>Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties.</td></tr>
+<tr><td>Crusher Rate / Bits</td><td>CRUSH 1 ou 2 : TIME / FUNC + TIME</td><td>Rate 0-127, environ 750 Hz-48 kHz / Bits 2-16. Valeurs basses plus rugueuses. CRUSH 1 garde le direct propre ; CRUSH 2 melange direct propre/crushed. DELAY SEND affiche Crush Send ; pas d echo dans ces modes.</td></tr>
+<tr><td>Reglages et sauvegarde FX</td><td>Sauvegarder le projet</td><td>Chaque pattern garde ses types FX, commandes ajoutées et envois supplémentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutées par défaut. Les FX d’un pattern en attente s’appliquent au début de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutées ; locks disponibles sur les envois natifs.</td></tr>
+</tbody></table>
+<h2>Machines et commandes sonores</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Defilement machines</td><td>MACHINES + tourner DATA</td><td>Tournez DATA pour choisir une machine. MIDI Out est en dernier. Le passage par MIDI Out conserve vos réglages audio précédents.</td></tr>
+<tr><td>Points de depart des machines ajoutees</td><td>Verifier la commande nommee</td><td>Les commandes numeriques comme Tone/Excite de TINY, Color/Contour de PUNCH et Wave/Warp/Noise/Motion de Elder vont de 0 au minimum a 127 au maximum ; 64 est le milieu. Les valeurs de depart ne sont pas forcement nulles. PITCH et FINE sont centres : 0 affiche signifie aucune transposition. Les selecteurs de modele SHAPE et les ratios PUNCH ont leurs propres echelles. Le minimum n est pas un reglage universel de son neutre.</td></tr>
+<tr><td>Commandes Elder</td><td>Choisir Elder dans MACHINES</td><td>COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors. Valeurs de depart : Wave 0, Warp 0, Noise 0, Motion 0, Decay 50.</td></tr>
+<tr><td>Commandes TINY</td><td>Choisir TINY dans MACHINES</td><td>COLOR : Tone ; SHAPE : Model 0–51 ; SWEEP : Mod ; CONTOUR : Excite. Valeurs de depart : Tone 64, Model 0, Mod 64, Excite 32, Decay 60.</td></tr>
+<tr><td>Commandes Shadow</td><td>Choisir Shadow apres TINY dans MACHINES</td><td>COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : distorsion et attaque répétée. Pitch, Fine, Decay et Gate disponibles. Synthé pulsar/bruit inspiré de Opal Dust de Fors.</td></tr>
+<tr><td>Table initiale WAVE</td><td>Choisir WAVE et jouer</td><td>AV-WAVE-Morph est deja chargee : 16trames a parcourir, aucun import initial requis. COLOR choisit la position ; SHAPE ajoute le mouvement d enveloppe. Une table importee remplace la table initiale sur sa piste.</td></tr>
+<tr><td>Dossiers WAVE</td><td>BACK dans le navigateur WAVE</td><td>BACK remonte d’un dossier ; à /Wavetables, il ferme le sélecteur.</td></tr>
+<tr><td>DECAY du filtre ACID</td><td>DECAY</td><td>DECAY règle la décroissance de l’enveloppe du filtre. Volume tenu jusqu’au note-off, puis relâchement court.</td></tr>
+<tr><td>Accent ACID</td><td>Velocite97-127</td><td>Accent progressif du transitoire filtre et du niveau. Velocite0-96 conserve la reponse sans accent ; volume natif de velocite conserve.</td></tr>
+<tr><td>Detune fin SY BITS</td><td>FUNC + COLOR</td><td>Pas de 0.01 demi-ton de -24.00 à +24.00. COLOR change les demi-tons entiers ; FUNC + COLOR règle la fraction. Sauvegarde avec les sons et locks disponibles.</td></tr>
+<tr><td>RETROSYN</td><td>MACHINES, juste avant MIDI Out</td><td>COLOR, SHAPE (six modèles), SWEEP et CONTOUR. PITCH, DECAY, Gate et Punch disponibles.</td></tr>
+<tr><td>Commandes PUNCH</td><td>Choisir PUNCH avant MIDI Out</td><td>SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR règle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP règle entre les ratios. CONTOUR et DECAY façonnent le son. Moteur de100demons, MIT. Valeurs de depart : Color 64, KIK, ratio 4:1, Contour 40, Decay 50.</td></tr>
+</tbody></table>
+<h2>Machine LEGACY</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>LEGACY / selection</td><td>MACHINES : avant RETROSYN et MIDI Out</td><td>FM six operateurs Dexed MSFA, 32 algorithmes ; une voix par piste. MIDI Out toujours dernier. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Locks/CC/LFO natifs ; Voice et Velocity sont pris au prochain trigger.</td></tr>
+<tr><td>Banque de voix</td><td>SHAPE : slots 0-31</td><td>32 voix incluses, choisies avec SHAPE. La liste complète des voix d’usine indexées suit. Importez une cartouche pour remplacer la banque active.</td></tr>
+<tr><td>Velocity / brillance</td><td>COLOR / SWEEP</td><td>Velocity 0-127 agit sur les operateurs a chaque trigger ; defaut 100. Brightness 64 conserve la voix. Plus bas adoucit la modulation ; plus haut ajoute du mordant.</td></tr>
+<tr><td>Duree des enveloppes</td><td>CONTOUR / DECAY</td><td>EG Time 64 conserve les durees de la voix ; plus bas accelere, plus haut ralentit. DECAY et gate conservent l enveloppe d amplitude native. PITCH/FINETUNE transposent ; operateurs a frequence fixe selon la cartouche.</td></tr>
+<tr><td>Importer une banque DX7</td><td>Flasheur &gt; Importateurs WAV / DX7</td><td>Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas.</td></tr>
+<tr><td>Charger une banque</td><td>LEGACY : FUNC + MACHINES ; DATA ; BACK</td><td>Maintenez FUNC et appuyez MACHINES. Tournez DATA pour choisir, appuyez DATA pour charger ; BACK annule. Factory restaure les voix incluses. Une banque active de 32 voix est partagee par toutes les pistes LEGACY. Banques conservees apres redemarrage, hors sauvegarde de projet Elektron.</td></tr>
+<tr><td>Credits et charge</td><td>Dexed / Google MSFA</td><td>Basé sur Dexed/MSFA par Google, Pascal Gauthier et contributeurs. Les voix six opérateurs peuvent demander beaucoup de calcul.</td></tr>
+</tbody></table>
+<h2>Banque de voix LEGACY</h2>
+<table><thead><tr><th>Slot</th><th>Voix</th><th>Source</th></tr></thead><tbody>
+<tr><td>0</td><td>Tooropulse</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>1</td><td>Delicho</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>2</td><td>EinstofPia</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>3</td><td>Overcast P</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>4</td><td>STRINGS 1</td><td>ROM1A</td></tr>
+<tr><td>5</td><td>PWMfuzzy</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>6</td><td>Sharpieblo</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>7</td><td>RoboticSeq</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>8</td><td>SplitStran</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>9</td><td>PIANO   1</td><td>ROM1A</td></tr>
+<tr><td>10</td><td>Heimwave</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>11</td><td>CLAV    1</td><td>ROM1A</td></tr>
+<tr><td>12</td><td>Synthotape</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>13</td><td>Wavesply</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>14</td><td>Poldermood</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>15</td><td>FelineSaw</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>16</td><td>Aguirio</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>17</td><td>E.PIANO 1</td><td>ROM1A</td></tr>
+<tr><td>18</td><td>E.ORGAN 1</td><td>ROM1A</td></tr>
+<tr><td>19</td><td>Pinkcookie</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>20</td><td>ObieSplash</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>21</td><td>MARIMBA</td><td>ROM1A</td></tr>
+<tr><td>22</td><td>Garudaydre</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>23</td><td>VillageOrg</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>24</td><td>BASS    1</td><td>ROM1A</td></tr>
+<tr><td>25</td><td>Litehouze</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>26</td><td>NostroSpli</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>27</td><td>Velobleepb</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>28</td><td>DimPacific</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>29</td><td>SequenceMe</td><td>Cartouche Legowelt Magic</td></tr>
+<tr><td>30</td><td>BRASS   1</td><td>ROM1A</td></tr>
+<tr><td>31</td><td>Swissynth</td><td>Cartouche Legowelt Magic</td></tr>
+</tbody></table>
+<h2>Machine vocale SPEAK</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Choisir SPEAK</td><td>MACHINES : apres Shadow, avant LEGACY</td><td>Moteur vocal de 128 mots. Commencez vers Vol+Dist 60, Punch coupé.</td></tr>
+<tr><td>Voice / Word / Speed / Articulation</td><td>COLOR / SHAPE / SWEEP / CONTOUR</td><td>Caractère vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche le mot et son index. Mot pris au prochain trig ; autres commandes en direct.</td></tr>
+<tr><td>Hauteur et enveloppe</td><td>PITCH / notes ; DECAY, Fine, Punch, Gate, Attack</td><td>Hauteur indépendante de la vitesse. Commencez à Decay 127 pour entendre les mots complets. Filtres et envois FX disponibles.</td></tr>
+<tr><td>Sequences de mots et modulation</td><td>Maintenir TRIG + SHAPE, puis locks Pitch et autres commandes</td><td>Mot et autres parametres natifs acceptent p-locks et destinations LFO. COLOR/SHAPE/SWEEP/CONTOUR : MIDI CC 16/17/18/19. Espacer les mots ou augmenter Speed.</td></tr>
+<tr><td>Exemple de phrase</td><td>Mots SHAPE et locks de notes sur des trigs successifs</td><td>HELLO 31, I 0, AM 62, A 17, ROBOT 113, I 0, LOVE 35, MUSIC 106. Lexique complet indexe a la fin du guide.</td></tr>
+</tbody></table>
+<h2>Commandes LFO et MACRO</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Pages LFO audio</td><td>Appuis repetes sur LFO</td><td>Parcourt les LFO actifs. Global &gt; LFOs choisit 1/2/3/4 (2 par defaut). LFO3/4 comme LFO2 ; reglages caches conserves.</td></tr>
+<tr><td>Polarite et mode LFO</td><td>Menu LFO &gt; Pol. / Mode</td><td>Bi bipolaire ; Uni unipolaire, Depth signee et impulsions carrees. Mode : FRE, TRG, HLD, ONE, HLF. Polarite LFO1/2 globale par piste ; copie en cours.</td></tr>
+<tr><td>Sauvegarde LFO</td><td>Arreter ; Save Project pour les sons natifs</td><td>LFO2 : vitesse/multiplicateur/forme/destination/profondeur dans le son (vitesse/profondeur 8 bits) ; fade/phase/mode remis aux defauts. LFO3/4 par projet/pattern/piste, sauvegarde separee a l arret, hors SysEx de sons et locks natifs.</td></tr>
+<tr><td>Assignation rapide LFO</td><td>Dans une page LFO : maintenir LFO et tourner un potard</td><td>Choisit sa destination ordinaire. Pour Attack/Filter/Resonance, maintenir aussi MACHINES.</td></tr>
+<tr><td>Destinations Attack / Filter / Resonance</td><td>Dans LFO : LFO + MACHINES + DECAY / SWEEP / CONTOUR</td><td>Choisissez Attack, Filter ou Resonance avec la commande correspondante en maintenant MACHINES.</td></tr>
+<tr><td>Accord fin MACRO</td><td>SETTINGS + PITCH</td><td>PITCH seul reste natif. FUNC + PITCH est Lo-Fi : fréquence réduite à gauche, bits réduits à droite, centre OFF. Noms et numéros 0–46 des modèles visibles.</td></tr>
+</tbody></table>
+<h2>Sample Wizard et sauvegarde</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Préécoute sample</td><td>FUNC + MACHINES ; surligner un sample ; pad ou TRIG clavier</td><td>Écoute le sample surligné. Le défilement reste silencieux.</td></tr>
+<tr><td>Sample lock</td><td>Navigateur ouvert : surligner le sample, puis TRIG + MACHINES</td><td>Verrouille le sample choisi sur le pas de la piste Wizard. Le navigateur doit être ouvert avec le sample surligné.</td></tr>
+<tr><td>Modes de lecture</td><td>SETTINGS + MACHINES</td><td>One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable. SETTINGS + PUNCH ouvre les options du mode actif.</td></tr>
+<tr><td>Éditeur Slice</td><td>FUNC + TRIG ; FUNC + clic DATA</td><td>FUNC joue les slices 17–32 ; FUNC + clic DATA efface un marqueur. FUNC + potards 1/2 cale les marqueurs au passage zéro.</td></tr>
+<tr><td>Sauvegarde rapide permanente</td><td>Maintenir FUNC + SETTINGS</td><td>Sauvegarde permanente du projet par l’action native.</td></tr>
+<tr><td>Copie temporaire / rappel</td><td>Bref FUNC+SETTINGS / FUNC+PATTERN</td><td>Copie temporaire native / rappel,y compris pendant le verrou retrig.</td></tr>
+</tbody></table>
+<h2>Machine MIDI Out</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Choix et réglages MIDI Out</td><td>MACHINES : MIDI Out ; FUNC + TRACK</td><td>Piste MIDI silencieuse. Track Setup : Channel, Output, KbT et Pad Note. DATA choisit ; clic avant édition ; BACK quitte.</td></tr>
+<tr><td>Assignation CC et locks - MIDI Out seulement</td><td>SETTINGS + potard gris ; pas tenu + potard assigné</td><td>Neuf potards CC. Tourner seul envoie la valeur. Chaque lock garde numéro et valeur ; enregistrement live des locks. Chance/Swing restent natifs.</td></tr>
+<tr><td>Deux LFO MIDI</td><td>LFO : LFO 1, LFO 2, piste ; BACK quitte</td><td>DATA choisit, clic pour éditer : Wav, Mul, Dst, Dep, Speed, Fade, Phase, Mode. LFO Speed règle le LFO ouvert ; LFO + CC choisit destination puis profondeur.</td></tr>
+<tr><td>Notes et sauvegarde</td><td>Notes/grille habituelles ; FUNC + PAGE ; FUNC + SETTINGS</td><td>Entrée MIDI par canal de piste ou auto ; live/step record gardent notes, vélocité et longueur. FUNC + PAGE : longueur. Sauvegarde projet : réglages et locks MIDI.</td></tr>
+<tr><td>MIDI OUT + THRU</td><td>CONFIG → MIDI → PORTS → OUT/THRU : THR ; puis FUNC + clic DATA</td><td>Bascule la sortie MIDI propre du Cycles en conservant le MIDI Thru entrant.</td></tr>
+</tbody></table>
+<h2>Mod Setup</h2>
+<p class="mod-setup-intro">Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. Maintenez la combinaison pour lancer SCRAMBLE une seule fois ; le maintien ne répète pas le tirage. Avec un TRIG tenu, un appui bref bascule sa marque Scramble. Choisissez Global ou Track. DATA choisit une ligne ; clic pour modifier, tourner, puis clic pour revenir. Stk = Stock ; SIL = Silent ; LTC = Latch.</p>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Global / Track</td><td>DATA entre ; BACK revient</td><td>Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine.</td></tr>
+<tr><td>Accès et réglage du son</td><td>Appui bref sur SETTINGS + TRACK</td><td>Disponible depuis l’écran principal ou la sélection des machines. DATA parcourt Mod Setup ; les commandes du son affichent le paramètre deux secondes puis reviennent à la même position. BACK ferme d’abord la fenêtre puis Mod Setup ; la sélection des machines reste ouverte en dessous.</td></tr>
+<tr><td>Pad</td><td>Stk / SIL ; défaut Stk</td><td>Stk sélectionne et joue. SIL sélectionne silencieusement ; TRACK + pad sélectionne et joue. ChordKeys exige TRACK + pad pour quitter la piste.</td></tr>
+<tr><td>USB</td><td>2ch / 6ch ; défaut 2ch</td><td>2ch : mix stéréo avec effets. 6ch : six pistes mono avant panoramique, sans retours delay/crusher/reverb/chorus. Retour ordinateur stéréo dans les deux modes. Arrêtez avant de changer ; le périphérique USB se reconnecte.</td></tr>
+<tr><td>Num</td><td>Off / On ; défaut Off</td><td>On affiche volume et panoramique en chiffres ; Off garde l’affichage natif.</td></tr>
+<tr><td>Mute</td><td>Stk / LTC ; défaut Stk</td><td>LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes.</td></tr>
+<tr><td>Mute/solo quantifiés</td><td>SETTINGS + TRACK bref ; QntM</td><td>Activez ou désactivez-le et choisissez la division temporelle sur laquelle vos mutes et solos sont quantifiés. Désactivé par défaut.</td></tr>
+<tr><td>Delay</td><td>Stk / Div ; défaut Stk</td><td>Stk : Time natif. Div : divisions musicales, pointées et triolets. Positions correspondantes corrigées au tempo ; toutes les positions ne sont pas quantifiées. Utilisé en mode Delay.</td></tr>
+<tr><td>DX</td><td>Off / On ; défaut Off</td><td>DX On : appui bref FUNC, second appui sous 350 ms, maintien au moins 0,5 seconde puis relacher. Toute autre commande annule. Affiche/remet a zero A/P/O/N : charge moyenne/pic, overruns, voix coupees par le gouverneur. Remplace ancien raccourci ; verrou retrig sans diagnostic. Off par defaut.</td></tr>
+<tr><td>SCRM</td><td>DATA ouvre ; tourner et appuyer ; BACK revient</td><td>Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, Color/Shape/Sweep/Contour activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues.</td></tr>
+<tr><td>Routage Sidechain</td><td>Choisir la source ; SETTINGS + TRACK bref ; S.Chn &gt; DATA</td><td>Cochez les cinq autres pistes, Rev. (retour reverb) et/ou Del. (retour delay). DATA bascule chaque cible. Dpt/Atk/Hld/Rel et Mute concernent toutes les cibles choisies. Choix sauvegardes par source et pattern avec Save Project. Plusieurs sources : attenuation la plus forte par cible. DUCK reste un type de delay distinct.</td></tr>
+<tr><td>Dpt / Atk / Hld / Rel</td><td>Sous les cases : clic DATA, tourner, puis clic pour finir</td><td>Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source.</td></tr>
+<tr><td>Mute (Sidechain)</td><td>Choisir la source ; S.Chn &gt; Mute ; clic DATA</td><td>On : le mute de la source coupe son action Sidechain, y compris son exclusion par solo. Off : une source muette continue d’atténuer ses cibles (défaut). Choix propre à chaque source et pattern, conservé avec Save Project.</td></tr>
+<tr><td>Sauvegarde par pattern</td><td>Save Project après modification</td><td>Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern.</td></tr>
+<tr><td>Groove</td><td>Global &gt; Grv &gt; On / Type</td><td>Off conserve Swing natif et memorise Type. On active Boom Bap, Disco, Reggae, Bongo, Caixixi, Highlife ou Kuduro ; Swing dose la force. Pas de Swing natif dans Type.</td></tr>
+<tr><td>CHORD Strum</td><td>Global &gt; Grv &gt; Str</td><td>-80..80 ms entre voix CHORD ; le signe inverse le sens,0 joue ensemble. Independant de Groove On/Off. Quatre voix a80ms etalees sur240ms.</td></tr>
+<tr><td>Humanize Apply / Undo</td><td>Track &gt; Human &gt; Trk / Tim / Vel / Apply / Undo</td><td>Reglez temps/velocite0..100 par piste ou All. A l arret, Apply modifie le pattern et Undo retablit les valeurs. Aucun aleatoire en lecture.</td></tr>
+<tr><td>Nombre de LFO audio</td><td>Global &gt; LFOs</td><td>1/2/3/4 par piste audio ; 2 par defaut. Sauvegarde globale a l arret. LFO inactifs arretes, reglages conserves.</td></tr>
+</tbody></table>
+<p class="mod-setup-save">BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cette sauvegarde attend l’arrêt. Arrêtez et attendez la fin avant extinction. Routage/réglages Sidechain, listes Scramble et types/réglages FX ajoutés propres à chaque pattern : Save Project les conserve au chargement. Fermer un sous-menu ne sauvegarde pas le projet.</p>
+<h2>Affichage Sample Wizard</h2>
+<table><thead><tr><th>Fonction</th><th>Commandes</th><th>Comportement</th></tr></thead><tbody>
+<tr><td>Forme d onde et volume</td><td>Ecran principal Sample Wizard</td><td>Nom en haut ; grande forme d onde ; piste, duree et rectangles de volume en bas. Volume de la piste, pas un vumetre audio. Navigateur, Pitch/Fine et saisie des notes gardent leurs commandes. Marqueur Start/Position si applicable.</td></tr>
+</tbody></table>
+<h2>Lexique SPEAK</h2><table><thead><tr><th>Index</th><th>Word</th><th>Index</th><th>Word</th><th>Index</th><th>Word</th><th>Index</th><th>Word</th></tr></thead><tbody>
+<tr><td>0</td><td>I</td><td>32</td><td>GOODBYE</td><td>64</td><td>IS</td><td>96</td><td>ONE</td></tr>
+<tr><td>1</td><td>YOU</td><td>33</td><td>GOOD</td><td>65</td><td>WAS</td><td>97</td><td>TWO</td></tr>
+<tr><td>2</td><td>WE</td><td>34</td><td>BAD</td><td>66</td><td>WERE</td><td>98</td><td>THREE</td></tr>
+<tr><td>3</td><td>THEY</td><td>35</td><td>LOVE</td><td>67</td><td>WILL</td><td>99</td><td>FOUR</td></tr>
+<tr><td>4</td><td>HE</td><td>36</td><td>LIKE</td><td>68</td><td>CAN</td><td>100</td><td>FIVE</td></tr>
+<tr><td>5</td><td>SHE</td><td>37</td><td>WANT</td><td>69</td><td>COULD</td><td>101</td><td>SIX</td></tr>
+<tr><td>6</td><td>IT</td><td>38</td><td>NEED</td><td>70</td><td>HAVE</td><td>102</td><td>SEVEN</td></tr>
+<tr><td>7</td><td>ME</td><td>39</td><td>KNOW</td><td>71</td><td>HAS</td><td>103</td><td>EIGHT</td></tr>
+<tr><td>8</td><td>US</td><td>40</td><td>THINK</td><td>72</td><td>HAD</td><td>104</td><td>NINE</td></tr>
+<tr><td>9</td><td>THEM</td><td>41</td><td>FEEL</td><td>73</td><td>BEEN</td><td>105</td><td>ZERO</td></tr>
+<tr><td>10</td><td>MY</td><td>42</td><td>SEE</td><td>74</td><td>IN</td><td>106</td><td>MUSIC</td></tr>
+<tr><td>11</td><td>YOUR</td><td>43</td><td>HEAR</td><td>75</td><td>ON</td><td>107</td><td>SOUND</td></tr>
+<tr><td>12</td><td>OUR</td><td>44</td><td>SAY</td><td>76</td><td>AT</td><td>108</td><td>BEAT</td></tr>
+<tr><td>13</td><td>THIS</td><td>45</td><td>SPEAK</td><td>77</td><td>TO</td><td>109</td><td>RHYTHM</td></tr>
+<tr><td>14</td><td>THAT</td><td>46</td><td>TELL</td><td>78</td><td>FOR</td><td>110</td><td>BASS</td></tr>
+<tr><td>15</td><td>THESE</td><td>47</td><td>ASK</td><td>79</td><td>FROM</td><td>111</td><td>DRUM</td></tr>
+<tr><td>16</td><td>THOSE</td><td>48</td><td>DO</td><td>80</td><td>WITH</td><td>112</td><td>MACHINE</td></tr>
+<tr><td>17</td><td>A</td><td>49</td><td>MAKE</td><td>81</td><td>WITHOUT</td><td>113</td><td>ROBOT</td></tr>
+<tr><td>18</td><td>AN</td><td>50</td><td>PLAY</td><td>82</td><td>OF</td><td>114</td><td>HUMAN</td></tr>
+<tr><td>19</td><td>THE</td><td>51</td><td>STOP</td><td>83</td><td>UP</td><td>115</td><td>TIME</td></tr>
+<tr><td>20</td><td>AND</td><td>52</td><td>START</td><td>84</td><td>DOWN</td><td>116</td><td>NIGHT</td></tr>
+<tr><td>21</td><td>OR</td><td>53</td><td>GO</td><td>85</td><td>HERE</td><td>117</td><td>DAY</td></tr>
+<tr><td>22</td><td>BUT</td><td>54</td><td>COME</td><td>86</td><td>THERE</td><td>118</td><td>WORLD</td></tr>
+<tr><td>23</td><td>IF</td><td>55</td><td>STAY</td><td>87</td><td>NOW</td><td>119</td><td>FRIEND</td></tr>
+<tr><td>24</td><td>SO</td><td>56</td><td>MOVE</td><td>88</td><td>THEN</td><td>120</td><td>HAPPY</td></tr>
+<tr><td>25</td><td>BECAUSE</td><td>57</td><td>TURN</td><td>89</td><td>AGAIN</td><td>121</td><td>SAD</td></tr>
+<tr><td>26</td><td>YES</td><td>58</td><td>TAKE</td><td>90</td><td>ALWAYS</td><td>122</td><td>NEW</td></tr>
+<tr><td>27</td><td>NO</td><td>59</td><td>GIVE</td><td>91</td><td>NEVER</td><td>123</td><td>CAREFUL</td></tr>
+<tr><td>28</td><td>NOT</td><td>60</td><td>GET</td><td>92</td><td>ALL</td><td>124</td><td>CREATURE</td></tr>
+<tr><td>29</td><td>PLEASE</td><td>61</td><td>BE</td><td>93</td><td>SOME</td><td>125</td><td>LOUD</td></tr>
+<tr><td>30</td><td>THANK</td><td>62</td><td>AM</td><td>94</td><td>MORE</td><td>126</td><td>DREAM</td></tr>
+<tr><td>31</td><td>HELLO</td><td>63</td><td>ARE</td><td>95</td><td>LESS</td><td>127</td><td>FUTURE</td></tr>
+</tbody></table>
+<p class="note">Défauts : pads et mute stock ; USB 2ch ; Num Off ; DX Off ; mute/solo quantifiés Off. Les patterns vierges utilisent Reverb et Delay standard et les réglages ajoutés par défaut. USB six canaux sans retours stéréo des effets.</p></article></main><footer>Supermodel 2.51 Â· Model:Cycles Â· 26 October 2026</footer><script src="../assets/site.js?v=2026-10-26-lfo-braids-memory-main-251"></script></body></html>

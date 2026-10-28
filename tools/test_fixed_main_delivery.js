@@ -15,8 +15,8 @@ assert.equal(meta.editions.full.syxSha256,meta.fixed_image_sha256);assert.equal(
 const html=fs.readFileSync(path.join(site,'index.html'),'utf8'),loader=fs.readFileSync(path.join(site,'fixed-main-image.js'),'utf8');
 assert(html.includes(`MC_BUILD='${meta.stamp}'`)&&html.includes(meta.release_notes)&&html.includes('builder.js?v='+meta.stamp));
 const blurb=html.slice(html.indexOf('<div class="fixed-features">'),html.indexOf('<div class="super-toolbar">'));
-assert.equal(hash(blurb),'b6ab6a510ac726ddad5f5f53afea3e915ffa14c5813bc6ab8c5712b23e00fa7d');
+assert.equal(hash(blurb),'0427d0a2b828f098b818ebce1507e9ad5076f21e24bd8fcb078602c11fbd00a4');
 for(const m of Object.values(meta.editions))for(const v of [m.file,m.syxSha256,m.mainOsSha])assert(loader.includes(v));
 for(const p of ['docs/assets/release.js','docs/flasher/midi-machine-release.js'])assert(fs.readFileSync(path.join(root,p),'utf8').includes('"version": "2.56"'));
 assert(fs.existsSync(path.join(site,meta.release_notes)));assert(fs.existsSync(path.join(site,'lite.html')));
-console.log('PASS Full/Lite metadata, immutable assets, legacy alias, release stamps and unchanged protected blurb');
+console.log('PASS Full/Lite metadata, immutable assets, legacy alias, release stamps and approved cleaned description');

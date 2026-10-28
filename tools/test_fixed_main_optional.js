@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),cp=r
 const root=path.resolve(__dirname,'..'),site=path.join(root,'docs/flasher'),optional=path.join(root,'docs/flasher-optional');
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const tree=cp.execFileSync('git',['rev-parse','HEAD:docs/flasher-optional'],{cwd:root,encoding:'utf8'}).trim();
-assert.equal(tree,'fba6461e2cb36128ddeeec8bb49af5748eb2a152');
+assert.equal(tree,'7017c6bb22ffe31c31bc2aab31569fea1acbccfd');
 const context={window:{}};
 for(const name of ['editions.js','recipe.js'])vm.runInNewContext(fs.readFileSync(path.join(optional,name),'utf8'),context);
 const editions=context.window.MCOptionalBaseEditions;

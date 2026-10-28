@@ -1,24 +1,25 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head><style>.super-search,.super-toolbar,.super-columns,#select-all-note,.mods-lede,#tab-samples{display:none!important}.fixed-features{max-width:850px;font-feature-settings:"calt" 0}.fixed-features li{margin:.8em 0}.fixed-features p{margin:1em 0;line-height:1.6}.fixed-features .fx-read{padding:.8em 1em;border-left:4px solid currentColor;background:rgba(127,127,127,.12)}</style>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Supermodel — Model:Cycles firmware</title>
-<meta name="description" content="Install mods on the Elektron Model:Cycles or Model:Samples from your browser, over USB in about 30 seconds (Web MIDI).">
-<meta name="theme-color" content="#e3e2de" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#1b1b1b" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-28-main256-playability">
-<link rel="stylesheet" href="style.css?v=2026-10-28-main256-playability">
+<meta content="Install mods on the Elektron Model:Cycles or Model:Samples from your browser, over USB in about 30 seconds (Web MIDI)." name="description"/>
+<meta content="#e3e2de" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="#1b1b1b" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<link href="../assets/icon.svg" rel="icon" type="image/svg+xml"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;display=swap" rel="stylesheet"/>
+<link href="../assets/site.css?v=2026-10-28-main256-clean-references" rel="stylesheet"/>
+<link href="style.css?v=2026-10-28-main256-clean-references" rel="stylesheet"/>
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
-<body data-page="flasher" class="supermodel">
+<body class="supermodel" data-page="flasher">
 <script>
   // Version stamp: an old date means the browser serves a cached copy -> hard reload.
-  window.MC_BUILD='2026-10-28-main256-playability';
+  window.MC_BUILD='2026-10-28-main256-clean-references';
   window.addEventListener("error", function (e) {
     var b = document.getElementById("errbar");
     if (!b) return;
@@ -27,267 +28,254 @@
       (e.filename ? "  [" + e.filename.split("/").pop() + ":" + e.lineno + "]" : "");
   });
 </script>
-
 <header class="wrap top">
-  <a class="brand" href="../">Modded Cycles</a>
-  <nav aria-label="Site" class="site-nav">
-    <a href="./" aria-current="page">Flasher</a>
-    <a href="https://github.com/aveycole/Modded-Cycles" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://discord.gg/hWegtJZcmm" target="_blank" rel="noopener">Discord</a>
-    <a href="https://ko-fi.com/18nelli" target="_blank" rel="noopener">Ko-fi</a>
-  </nav>
-  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button>/<button type="button" data-lang="fr" aria-pressed="false">FR</button></div>
-  <button type="button" class="theme-btn" aria-label="Dark mode"><svg class="moon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7z"/></svg><svg class="sun" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"/></svg></button>
+<a class="brand" href="../">Modded Cycles</a>
+<nav aria-label="Site" class="site-nav">
+<a aria-current="page" href="./">Flasher</a>
+<a href="https://github.com/aveycole/Modded-Cycles" rel="noopener" target="_blank">GitHub</a>
+<a href="https://discord.gg/hWegtJZcmm" rel="noopener" target="_blank">Discord</a>
+<a href="https://ko-fi.com/18nelli" rel="noopener" target="_blank">Ko-fi</a>
+</nav>
+<div aria-label="Language" class="lang" role="group"><button aria-pressed="true" data-lang="en" type="button">EN</button>/<button aria-pressed="false" data-lang="fr" type="button">FR</button></div>
+<button aria-label="Dark mode" class="theme-btn" type="button"><svg aria-hidden="true" class="moon" fill="none" height="18" stroke="currentColor" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 20 20" width="18"><path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7z"></path></svg><svg aria-hidden="true" class="sun" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" viewbox="0 0 20 20" width="18"><circle cx="10" cy="10" r="3.6"></circle><path d="M10 1.8v2M10 16.2v2M1.8 10h2M16.2 10h2M4.2 4.2l1.4 1.4M14.4 14.4l1.4 1.4M4.2 15.8l1.4-1.4M14.4 5.6l1.4-1.4"></path></svg></button>
 </header>
-
-
 <main class="wrap fl">
-  <p class="alert"><span data-l="en"><strong>Looking for the 909 kit?</strong> <a href="../flasher-supermodel-909/">Open Supermodel 909 Edition →</a></span><span data-l="fr"><strong>Vous cherchez le kit 909 ?</strong> <a href="../flasher-supermodel-909/">Ouvrir Supermodel 909 Edition →</a></span></p>
-    <figure class="cheddar"><img src="cheddar-butt.jpg" width="800" height="600" alt="Gray and white cat sitting on a log" loading="eager"><figcaption>Cheddar Butt</figcaption><p class="support-cta"><a class="support-link" href="https://buymeacoffee.com/aveycole" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">☕</span><span data-l="en">Support A.V. on Buy Me a Coffee</span><span data-l="fr">Soutenir A.V. sur Buy Me a Coffee</span></a></p></figure>
-    <p class="edition-eyebrow">A.V.'S SUPERMODEL EDITION</p><h1>Modded Cycles:<br><span>A.V.'s Supermodel Edition.</span></h1>
-    <div>
-      <p class="super-tagline"><span data-l="en">Choose your mods. Build your firmware. Make it your machine.</span><span data-l="fr">Choisissez vos mods. Créez votre firmware. Personnalisez votre machine.</span></p>
-      <p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="release-notes-2.56.html"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a></p>
-    </div>
-  </div>
+<p class="alert"><span data-l="en"><strong>Looking for the 909 kit?</strong> <a href="../flasher-supermodel-909/">Open Supermodel 909 Edition →</a></span><span data-l="fr"><strong>Vous cherchez le kit 909 ?</strong> <a href="../flasher-supermodel-909/">Ouvrir Supermodel 909 Edition →</a></span></p>
+<figure class="cheddar"><img alt="Gray and white cat sitting on a log" height="600" loading="eager" src="cheddar-butt.jpg" width="800"/><figcaption>Cheddar Butt</figcaption><p class="support-cta"><a class="support-link" href="https://buymeacoffee.com/aveycole" rel="noopener noreferrer" target="_blank"><span aria-hidden="true">☕</span><span data-l="en">Support A.V. on Buy Me a Coffee</span><span data-l="fr">Soutenir A.V. sur Buy Me a Coffee</span></a></p></figure>
+<p class="edition-eyebrow">A.V.'S SUPERMODEL EDITION</p><h1>Modded Cycles:<br/><span>A.V.'s Supermodel Edition.</span></h1>
+<div>
+<p class="super-tagline"><span data-l="en">Choose your mods. Build your firmware. Make it your machine.</span><span data-l="fr">Choisissez vos mods. Créez votre firmware. Personnalisez votre machine.</span></p>
+<p class="ver"><span data-l="en">Version</span><span data-l="fr">Version</span> <span data-rel="version">1.0</span> · <a href="release-notes-2.56.html"><span data-l="en">what's new</span><span data-l="fr">nouveautés</span></a></p>
+</div>
 
-  <div class="alert super-save-note"><span data-l="en">A-side LFO 2 saves its first five settings with the sound; fade, start and mode reset on load.</span><span data-l="fr">Le LFO 2 côté A sauve ses cinq premiers réglages avec le son ; fondu, phase et mode reviennent aux défauts au chargement.</span></div>
-
-<p class="quick-reference"><a href="convert.html"><span data-l="en">WAV / DX7 importers</span><span data-l="fr">Importateurs WAV / DX7</span></a></p>
-<p class="quick-reference"><a href="midi-machine-guide.html?v=2026-10-28-main256-playability"><span data-l="en">MIDI Out machine settings and recording manual</span><span data-l="fr">Reglages et manuel d’enregistrement de la machine MIDI Out</span></a></p>
-<p class="quick-reference"><a href="shortcut-guide.html?v=2026-10-28-main256-playability"><span data-l="en">Read the feature and shortcut guide</span><span data-l="fr">Lire le guide des fonctions et raccourcis</span></a></p>
-<p class="quick-reference"><a href="shortcut-guide.pdf?v=2026-10-28-main256-playability"><span data-l="en">Download the feature and shortcut guide (PDF)</span><span data-l="fr">Telecharger le guide des fonctions et raccourcis (PDF)</span></a></p>
+<div class="alert super-save-note"><span data-l="en">A-side LFO 2 saves its first five settings with the sound; fade, start and mode reset on load.</span><span data-l="fr">Le LFO 2 côté A sauve ses cinq premiers réglages avec le son ; fondu, phase et mode reviennent aux défauts au chargement.</span></div>
+<p class="quick-reference"><a href="convert.html"><span data-l="en">WAV wavetable importer</span><span data-l="fr">Importateur de tables WAV</span></a></p>
+<p class="quick-reference"><a href="midi-machine-guide.html?v=2026-10-28-main256-clean-references"><span data-l="en">MIDI Out machine settings and recording manual</span><span data-l="fr">Reglages et manuel d’enregistrement de la machine MIDI Out</span></a></p>
+<p class="quick-reference"><a href="shortcut-guide.html?v=2026-10-28-main256-clean-references"><span data-l="en">Read the feature and shortcut guide</span><span data-l="fr">Lire le guide des fonctions et raccourcis</span></a></p>
+<p class="quick-reference"><a href="shortcut-guide.pdf?v=2026-10-28-main256-clean-references"><span data-l="en">Download the feature and shortcut guide (PDF)</span><span data-l="fr">Telecharger le guide des fonctions et raccourcis (PDF)</span></a></p>
 <p class="quick-reference" id="optional-flasher-link"><a href="../flasher-optional/"><span data-l="en">Machine Optional flasher — choose your added machines (experimental)</span><span data-l="fr">Flasheur Machine Optional — choisissez vos machines supplémentaires (expérimental)</span></a></p>
-<p id="selection-error" class="alert bad" role="alert" hidden></p>
-<div id="errbar" class="alert bad" hidden></div>
-  <div id="compat" class="alert bad" role="alert" hidden></div>
-
-<nav class="build-steps" aria-label="Firmware"><a class="active" href="#step-choose"><b>1</b><span data-l="en">Features</span><span data-l="fr">Fonctions</span></a><a href="#step-file"><b>2</b><span data-l="en">Load OS files</span><span data-l="fr">Charger les OS</span></a><a href="#step-connect"><b>3</b><span data-l="en">Connect MIDI</span><span data-l="fr">Connexion MIDI</span></a><a href="#step-flash"><b>4</b><span data-l="en">Install</span><span data-l="fr">Installer</span></a></nav>
-  <!-- 1. Choose -->
-  <section class="step" id="step-choose" aria-labelledby="h1s">
-    <header><span class="num">1</span><h2 id="h1s"><span data-l="en">Your firmware</span><span data-l="fr">Votre firmware</span></h2></header>
-    <div class="step-body">
-      <div class="seg" role="tablist" aria-label="Mode">
-        <button type="button" role="tab" id="tab-mods" aria-selected="true" aria-controls="panel-mods" data-i18n="tab_mods">Mods</button>
-        <button type="button" role="tab" id="tab-restore" aria-selected="false" aria-controls="panel-restore" data-i18n="tab_restore">Official firmware</button>
-        <button type="button" role="tab" id="tab-samples" aria-selected="false" aria-controls="panel-samples" data-i18n="tab_samples">Samples OS</button>
-      </div>
-      <div id="panel-mods" role="tabpanel" aria-labelledby="tab-mods">
-        <p class="mach-q" id="mach-q" data-i18n="mach_q">Your machine</p>
-        <div class="seg sub" role="radiogroup" aria-labelledby="mach-q">
-          <button type="button" role="radio" id="mach-cyc" aria-checked="true" data-i18n="mach_cyc">Model:Cycles</button>
-          <button type="button" role="radio" id="mach-smp" aria-checked="false" data-i18n="mach_smp">Model:Samples, on its own OS</button>
-          <button type="button" role="radio" id="mach-cos" aria-checked="false" data-i18n="mach_cos">Model:Samples, already on the Cycles OS</button>
-        </div>
-        <div id="mach-pane" class="mach-pane" hidden>
-          <p class="samples-head"><span data-i18n="mach_title">Mods on a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
-          <p class="panel-text" data-i18n="mach_text"></p>
-          <ul class="warn-list">
-            <li id="mach-w-smp" data-i18n="mach_w_smp"></li>
-            <li id="mach-w-cos" data-i18n="mach_w_cos" hidden></li>
-            <li data-i18n="mach_w1"></li>
-            <li data-i18n="mach_w2"></li>
-            <li id="mach-w-only" data-i18n="mach_w4"></li>
-            <li data-i18n="mach_w5"></li>
-            <li data-i18n="xos_reset"></li>
-            <li data-i18n-html="mach_w3"></li>
-          </ul>
-          <p class="note mach-credit" data-i18n="mach_credit"></p>
-          <label class="check"><input id="mach-ack" type="checkbox"><span data-i18n="cos_ack">I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.</span></label>
-        </div>
-        <p class="mods-lede" data-i18n-html="mods_note"></p>
-        <div class="super-search"><div class="find" id="mod-find" hidden>
-          <svg class="mag" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.8"/><path d="M13 13l4.5 4.5"/></svg>
-          <label class="vh" for="mod-q" data-i18n="search_label">Search the mods</label>
-          <input id="mod-q" type="search" autocomplete="off" spellcheck="false">
-          <button type="button" class="clr" id="mod-q-clr" hidden>×</button>
-        </div>
-        <select id="super-category" aria-label="Category"></select></div><p class="found" id="mod-found" aria-live="polite" hidden></p>
-        <ul class="cats" id="cats" hidden></ul>
-        <div class="edition-choice"><label for="firmware-edition"><span data-l="en">Choose your edition</span><span data-l="fr">Choisissez votre édition</span></label><select id="firmware-edition" aria-describedby="full-info lite-info"><option value="full" data-i18n="edition_full">Supermodel Full — all machines</option><option value="lite" data-i18n="edition_lite">Supermodel Lite — six stock machines</option></select><p id="full-info"><span data-l="en">All added machines and quality of life features.</span><span data-l="fr">Toutes les machines supplémentaires et les améliorations de confort.</span></p></div>
-<div id="lite-info" hidden class="edition-info"><h3>Supermodel Lite</h3><p><span data-l="en">The six original machines — Kick, Snare, Metal, Perc, Tone and Chord — with all the shared Supermodel quality-of-life features. Sequence Genie, Scramble, Page Len and Warp in PTN/TRK modes, 1–4 LFOs, scale lock, filters, extra FX, sidechain and more are included. No added machines. Keeps the stock-six startup repair, with open LOW defaults for new/cleared sounds and deferred settings saves during input.</span><span data-l="fr">Les six machines d’origine — Kick, Snare, Metal, Perc, Tone et Chord — avec toutes les améliorations communes de Supermodel. Sequence Genie, Scramble, Page Len et Warp en PTN/TRK, 1–4 LFO, verrouillage de gamme, filtres, effets supplémentaires, sidechain et bien plus sont inclus. Aucune machine supplémentaire. Conserve le correctif de démarrage stock-six, avec filtre LOW ouvert pour les sons neufs/effacés et sauvegardes différées pendant le jeu.</span></p><p><span data-l="en">Lite does not need the Syntakt OS file. Sounds using an added machine will be silent; switch them to a stock machine. Your saved notes and parameter locks remain. </span><span data-l="fr">Lite ne demande pas le fichier OS Syntakt. Les sons utilisant une machine supplémentaire seront silencieux ; choisissez une machine d’origine. Notes et locks sauvegardés sont conservés. </span><a href="lite.html"><span data-l="en">See everything included in Lite</span><span data-l="fr">Voir tout le contenu de Lite</span></a></p></div>
-<p class="current-release-note"><span data-l="en">Current Full/Lite builds remove Legacy, Vinyl and ChordKeys and add a distinct Punch attack to every sound machine. Full has 23 sound machines plus MIDI Out; Lite keeps the six stock machines. Existing Legacy sounds play Tone. Old Vinyl choices become Reverb. The Machine Optional flasher keeps its previous builds and behavior.</span><span data-l="fr">Les versions Full/Lite actuelles retirent Legacy, Vinyl et ChordKeys et ajoutent une attaque Punch propre à chaque machine sonore. Full propose 23 machines sonores plus MIDI Out ; Lite conserve les six machines d’origine. Les anciens sons Legacy utilisent Tone. Les anciens choix Vinyl deviennent Reverb. Le flasheur Machine Optional conserve ses versions et son fonctionnement précédents.</span></p><div class="fixed-features"><h3><span data-l="en">Supermodel edition includes but is not limited to</span><span data-l="fr">L’édition Supermodel comprend, entre autres</span></h3><ul><li><span data-l="en"><b>20+ Machines!</b> Sample Wizard: A multi-purpose sampler, Elder: a GBA inspired retro synthesizer, Legacy: a minimalistic DX7 player, MIDI Out Machine: a cc-assignable/dual-lfo MIDI Sequencer, Tiny,: strange percussive blips and clicks, Speak: a Speak-And-Spell inspired sentence maker, Shadow: dust, noise, whispers in the wind, and more to explore!!!</span><span data-l="fr"><b>Plus de 20 machines !</b> Sample Wizard : sampler polyvalent, Elder : synthé rétro inspiré de la GBA, Legacy : lecteur DX7 minimaliste, MIDI Out : séquenceur MIDI avec CC assignables et double LFO, Tiny : drôles de bips et de clics percussifs, Speak : fabrique de phrases inspirée du Speak &amp; Spell, Shadow : poussière, bruit, murmures dans le vent, et bien d’autres à explorer !</span></li><li><span data-l="en"><b>Multiple new reverb, delay, and other FX types:</b> Room, Hall, PS1, Gated, Bitcrush, Ring Mod, a Juno inspired two-fold Chorus, . Swappable by holding Track and turning either delay time or reverb size.</span><span data-l="fr"><b>Nombreux nouveaux types de reverb, de delay et d’autres effets :</b> Room, Hall, PS1, Gated, Bitcrush, Ring Mod, un chorus double inspiré du Juno. À changer en maintenant TRACK et en tournant DELAY TIME ou REVERB SIZE.</span></li><li><span data-l="en"><b>Per-track Polivoks style resonant two pole filter, Per-Track attack settings.</b> Accessed by pressing Machines and turning Sweep/Contour for filter/resonance, and Machines + Decay for Attack.</span><span data-l="fr"><b>Filtre résonant à deux pôles par piste, style Polivoks, et réglages d’attaque par piste.</b> Accessibles en appuyant sur MACHINES et en tournant SWEEP/CONTOUR pour le filtre/la résonance, et MACHINES + DECAY pour l’attaque.</span></li><li><span data-l="en"><b>4 Filter Types:</b> Choose between Low Pass, High Pass, Bandpass, and Low/High Pass by pressing Settings + Machines and turning Sweep.</span><span data-l="fr"><b>4 types de filtres :</b> Choisissez entre passe-bas, passe-haut, passe-bande et passe-bas/passe-haut en appuyant sur SETTINGS + MACHINES et en tournant SWEEP.</span></li><li><span data-l="en"><b>Per-Page Length Options/Active Step Warp</b></span><span data-l="fr"><b>Options de longueur par page / Warp des pas actifs</b></span></li><li><span data-l="en"><b>Togglable mod settings</b> accessed by long pressing Settings + Track include: Silent track switching, USB 2/6 Channel, Vol/Pan as numbers, Latching mute/solo modes, Diagnostic popup, Delay as time division, and per-track SCRAMBLE settings</span><span data-l="fr"><b>Réglages Mod activables</b> (appui long SETTINGS + TRACK) : changement de piste silencieux, USB 2/6 voies, volume/pan en chiffres, modes mute/solo verrouillés, popup de diagnostic, delay en division de temps et réglages SCRAMBLE par piste.</span></li><li><span data-l="en"><b>SCRAMBLE:</b> Patch randomizer. Use the mod menu to select which parameters you wish to randomize per-track and tap Settings + Track to quickly scramble your sound. P-lockable for a fresh sound every pass. Can not be undone without manually resetting the parameters.</span><span data-l="fr"><b>SCRAMBLE :</b> randomiseur de sons. Choisissez dans le menu Mod les paramètres à randomiser par piste, puis SETTINGS + TRACK pour brouiller rapidement le son. P-lockable : un son neuf à chaque passage. Impossible à annuler sans remettre les paramètres à la main.</span></li><li><span data-l="en"><b>Sidechain:</b> In the Mod Setup menu (Track + Settings) for your source track, select S.Chn and then select your target tracks (or FX sends!), edit the parameters, and Bob's your uncle!</span><span data-l="fr"><b>Sidechain :</b> Dans le menu Mod Setup (Track + Settings) de votre piste source, sélectionnez S.Chn, puis choisissez vos pistes cibles (ou les envois FX !), réglez les paramètres, et le tour est joué !</span></li>
-<li><span data-l="en"><b>Sequence Genie:</b> An in scale sequence generator accessed by pressing Settings + Page. You give it parameters (Such as what to variate, how much to variate it, etc.) and it generates a sequence. Can be queued while playing for the next page or next full playthrough of the pattern. Shazam, Shazam, Shaq don't want none.</span><span data-l="fr"><b>Sequence Genie :</b> générateur de séquences dans la gamme, accessible avec SETTINGS + PAGE. Vous réglez les paramètres (quoi varier, de combien…) et il génère la séquence. Peut être mis en file pendant la lecture, pour la page suivante ou le prochain passage complet du pattern. Shazam, Shazam, Shaq don't want none.</span></li><li><span data-l="en"><b>Arpeggiator:</b> Works as you'd expect, settings accessed in the retrig menu (Function + Retrig). Applies to incoming MIDI as well as notes played live on the step triggers.</span><span data-l="fr"><b>Arpégiateur :</b> fonctionne comme prévu, réglages dans le menu retrig (FUNC + RETRIG). S’applique au MIDI entrant comme aux notes jouées sur les trigs.</span></li><li><span data-l="en"><b>Step record, slide trigs, trig preview</b>, all the little quality of life updates from @18nelli18's Modded Cycles and then some.</span><span data-l="fr"><b>Step record, slide trigs, préécoute des trigs</b>, et toutes les petites améliorations de confort du Modded Cycles de @18nelli18, et plus encore.</span></li></ul><p><span data-l="en">Near the top of the flasher there are links which you can (and should) use to import wavetables for WAVE as well as DX7 banks in .syx format for Legacy.</span><span data-l="fr">En haut du flasheur, des liens vous permettent (et vous devriez les utiliser) d’importer des tables d’ondes pour WAVE ainsi que des banques DX7 au format .syx pour Legacy.</span></p><p class="fx-read"><span data-l="en"><b>READ:</b> Using some of the extra machines and FX on here together is a heavy load for the CPU. It will keep ticking, don't worry, but it will also literally tick as it struggles to keep up if you push it hard enough. Don't load up 6 copies of the DX7 synth, Legacy, for instance. Use Chord machine sparingly. Of the stock machines it is by far the heaviest. There are clever ways around this, like through Sample Wizard's resample, for instance. You can essentially bounce a couple of tracks together that way to reduce the overall load.</span><span data-l="fr"><b>À LIRE :</b> utiliser ensemble certaines des machines et effets supplémentaires sollicite fortement le processeur. Il continuera de tourner, pas d’inquiétude, mais si vous le poussez assez, il se mettra littéralement à cliqueter en peinant à suivre. Ne chargez pas 6 exemplaires du synthé DX7, Legacy, par exemple. Utilisez la machine Chord avec parcimonie : c’est de loin la plus lourde des machines stock. Il existe des astuces, comme le resample de Sample Wizard : vous pouvez ainsi regrouper quelques pistes en une seule pour alléger la charge globale.</span></p><p><span data-l="en">I have spent hundreds of literal hours and dollars building this mod. It will ALWAYS be 100% FREE but if you love it and want to buy me a coffee, you can do so at <a href="https://buymeacoffee.com/AveyCole" target="_blank" rel="noopener"><b>https://buymeacoffee.com/AveyCole</b></a></span><span data-l="fr">J’ai passé des centaines d’heures et de dollars à construire ce mod. Il sera TOUJOURS 100 % GRATUIT, mais si vous l’aimez et voulez m’offrir un café, c’est ici : <a href="https://buymeacoffee.com/AveyCole" target="_blank" rel="noopener"><b>https://buymeacoffee.com/AveyCole</b></a></span></p><p><span data-l="en">Thanks and happy Cycling!<br>- A.V.</span><span data-l="fr">Merci et bons Cycles !<br>- A.V.</span></p><p><a href="release-notes-2.36.html"><span data-l="en">Full release notes</span><span data-l="fr">Notes de version completes</span></a></p><a href="#step-file"><span data-l="en">Continue: load OS files</span><span data-l="fr">Continuer : charger les OS</span></a></div><div class="super-toolbar"><strong id="super-option-count"></strong><button type="button" id="select-all" data-i18n="select_all" aria-describedby="select-all-note">Select all</button><button type="button" id="super-clear"><span data-l="en">Clear</span><span data-l="fr">Effacer</span></button><button type="button" id="super-expand"><span data-l="en">Expand all</span><span data-l="fr">Tout ouvrir</span></button></div><p id="select-all-note" data-i18n="select_all_note"></p><div class="super-columns"><div id="features"></div><aside class="super-sidebar"><div class="super-machine"><span data-l="en">YOUR FIRMWARE</span><span data-l="fr">VOTRE FIRMWARE</span><h3 id="super-machine-name">Model:Cycles</h3></div>
-        <div class="sel" id="mod-sel" role="region" aria-labelledby="sel-title"></div>
-        <p class="vh" id="mod-live" aria-live="polite"></p>
-        <div id="mod-sel-end" aria-hidden="true"></div><a class="super-next" href="#step-file"><span data-l="en">Load OS files</span><span data-l="fr">Charger les OS</span> &gt;</a></aside></div>
-      </div>
-      <div id="panel-restore" role="tabpanel" aria-labelledby="tab-restore" hidden>
-        <p class="panel-text" data-i18n-html="restore_text"></p>
-        <p class="note" data-i18n-html="restore_from_samples"></p>
-      </div>
-      <div id="panel-samples" role="tabpanel" aria-labelledby="tab-samples" hidden>
-        <div class="seg sub" role="radiogroup" aria-label="Machine">
-          <button type="button" role="radio" id="smp-dir-cyc" aria-checked="true" data-i18n="smp_dir_cyc">Model:Cycles → Samples OS</button>
-          <button type="button" role="radio" id="smp-dir-smp" aria-checked="false" data-i18n="smp_dir_smp">Model:Samples → Cycles OS</button>
-          <button type="button" role="radio" id="smp-dir-back" aria-checked="false" data-i18n="smp_dir_back">Model:Samples: back to its OS</button>
-        </div>
-        <div id="smp-pane-cyc">
-          <p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
-          <p class="panel-text" data-i18n="samples_text"></p>
-          <ul class="warn-list">
-            <li data-i18n="samples_w1"></li>
-            <li data-i18n-html="samples_w2"></li>
-            <li data-i18n="samples_w3"></li>
-          </ul>
-          <label class="check"><input id="samples-ack" type="checkbox"><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
-        </div>
-        <div id="smp-pane-smp" hidden>
-          <p class="samples-head"><span data-i18n="cos_title">Turn your Model:Samples into a Model:Cycles</span><span class="tag exp" data-i18n="experimental">Experimental</span></p>
-          <p class="panel-text" data-i18n="cos_text"></p>
-          <ul class="warn-list">
-            <li data-i18n="cos_w1"></li>
-            <li data-i18n="cos_w5"></li>
-            <li data-i18n-html="cos_w2"></li>
-            <li data-i18n="cos_w3"></li>
-            <li data-i18n="xos_reset"></li>
-            <li data-i18n-html="cos_w4"></li>
-          </ul>
-          <p class="note" data-i18n="cos_mods"></p>
-          <label class="check"><input id="cos-ack" type="checkbox"><span data-i18n="cos_ack">I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.</span></label>
-        </div>
-        <div id="smp-pane-back" hidden>
-          <p class="samples-head"><span data-i18n="sback_title">Give your Model:Samples its own OS back</span><span class="tag exp" data-i18n="experimental">Experimental</span></p>
-          <p class="panel-text" data-i18n="sback_text"></p>
-          <ul class="warn-list">
-            <li data-i18n="sback_w1"></li>
-            <li data-i18n-html="sback_w2"></li>
-            <li data-i18n="xos_reset"></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. OS file -->
-  <section class="step" id="step-file" aria-labelledby="h2s">
-    <header><span class="num">2</span><h2 id="h2s" data-i18n="s2">Load your official OS file</h2></header>
-    <div class="step-body">
-      <label class="drop" id="drop" tabindex="0">
-        <span class="drop-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg></span>
-        <span class="drop-t"><strong id="drop-title" data-i18n="drop_title">Drop model-cycles_OS1.13.syx here</strong>
-          <span id="drop-sub" data-i18n="drop_sub">or click to choose it</span></span>
-        <input id="file" type="file" accept=".syx" hidden>
-      </label>
-      <p class="hint" data-i18n-html="get_os"></p>
-      <div id="file-status" class="status" aria-live="polite"></div>
-      <div id="drop2-wrap" hidden>
-        <label class="drop" id="drop2" tabindex="0">
-          <span class="drop-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg></span>
-          <span class="drop-t"><strong id="drop2-title" data-i18n="drop2_title">Drop model-samples_OS1.13.syx here</strong>
-            <span id="drop2-sub" data-i18n="drop2_sub">the official Model:Samples OS — or click to choose it</span></span>
-          <input id="file2" type="file" accept=".syx" hidden>
-        </label>
-        <p class="hint" data-i18n-html="get_os_samples"></p>
-        <div id="file2-status" class="status" aria-live="polite"></div>
-      </div>
-      <div id="drop3-wrap" hidden>
-        <label class="drop" id="drop3" tabindex="0">
-          <span class="drop-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg></span>
-          <span class="drop-t"><strong id="drop3-title" data-i18n="drop3_title">Drop Syntakt_OS1.42.syx here</strong>
-            <span id="drop3-sub" data-i18n="drop3_sub">the official Syntakt OS, for its engines — or click to choose it</span></span>
-          <input id="file3" type="file" accept=".syx" hidden>
-        </label>
-        <p class="hint" data-i18n-html="get_os_syntakt"></p>
-        <div id="file3-status" class="status" aria-live="polite"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3. Connect -->
-  <section class="step" id="step-connect" aria-labelledby="h3s">
-    <header><span class="num">3</span><h2 id="h3s" data-i18n="s3">Connect your Model:Cycles over USB</h2></header>
-    <div class="step-body">
-      <div class="seg" role="radiogroup" aria-label="Method">
-        <button type="button" role="radio" id="m-fast" aria-checked="true" data-i18n="m_fast">Fast (USB)</button>
-        <button type="button" role="radio" id="m-slow" aria-checked="false" data-i18n="m_slow">Classic (CONFIG › UPGRADE)</button>
-      </div>
-      <p class="panel-text method-note" id="method-note"></p>
-      <ol class="howto" id="howto-fast">
-        <li data-i18n-html="hf1"></li>
-        <li data-i18n-html="hf2"></li>
-        <li data-i18n-html="hf3"></li>
-      </ol>
-      <ol class="howto" id="howto-usb" hidden>
-        <li data-i18n-html="hu1"></li>
-        <li data-i18n-html="hu2"></li>
-        <li data-i18n-html="hu3"></li>
-      </ol>
-      <div class="portrow">
-        <button type="button" class="btn primary" id="allow" data-i18n="allow">Allow MIDI access</button>
-        <select id="port" aria-label="MIDI output" hidden></select>
-        <button type="button" class="btn secondary" id="refresh" data-i18n="refresh" hidden>Refresh</button>
-      </div>
-      <div id="midi-status" class="status" aria-live="polite"></div>
-    </div>
-  </section>
-
-  <!-- 4. Flash -->
-  <section class="step" id="step-flash" aria-labelledby="h4s">
-    <header><span class="num">4</span><h2 id="h4s" data-i18n="s4">Flash</h2></header>
-    <div class="step-body">
-      <div class="summary" id="summary" hidden></div>
-      <label class="check"><input id="ack" type="checkbox"><span data-i18n="ack">I've backed up my projects (Elektron Transfer) and I understand that flashing is at my own risk.</span></label>
-      <div class="actions">
-        <button type="button" class="btn primary big" id="flash" disabled data-i18n="flash_btn">Flash the Model:Cycles</button>
-        <button type="button" class="btn secondary" id="stop" hidden data-i18n="stop">Stop</button>
-      </div>
-      <p class="missing" id="missing" aria-live="polite"></p>
-      <p class="alt" id="alt" hidden><a class="btn secondary" id="download" data-i18n="download">Download the .syx</a>
-        <span data-i18n-html="download_hint"></span></p>
-      <div class="progress" id="progress" hidden>
-        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barwrap"><div id="bar"></div><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="meta"><span id="pct">0 %</span><span id="eta"></span></div>
-        <div class="callout" id="watch"></div>
-      </div>
-      <div class="result" id="result" aria-live="polite"></div>
-      <details class="trouble">
-        <summary data-i18n="trouble">Something went wrong?</summary>
-        <dl>
-          <dt data-i18n="t1q">Nothing happens on the Model:Cycles screen</dt><dd data-i18n-html="t1a"></dd>
-          <dt data-i18n="t2q">The transfer stops, or the Model:Cycles shows an error</dt><dd data-i18n-html="t2a"></dd>
-          <dt data-i18n="t3q">No MIDI port in the list</dt><dd data-i18n-html="t3a"></dd>
-          <dt data-i18n="t5q">The fast method doesn't find the Model:Cycles, or stops</dt><dd data-i18n-html="t5a"></dd>
-          <dt data-i18n="t4q">The update over USB is refused, or the Model:Cycles doesn't start any more</dt><dd data-i18n-html="t4a"></dd>
-        </dl>
-      </details>
-    </div>
-  </section>
-
-  <details class="adv" id="advanced">
-    <summary data-i18n="advanced">Advanced</summary>
-    <div class="field">
-      <label for="pace" data-i18n="pace">Send speed margin</label>
-      <input id="pace" type="number" min="0" step="0.1" value="1.4">
-      <span class="hint" data-i18n="pace_hint">Classic method only. 1.4 by default: raise it to 2.0 if the transfer stalls.</span>
-    </div>
-    <div id="log" aria-live="off"></div>
-  </details>
-
-  <section class="credits" id="credits" aria-labelledby="hcr">
-    <h2 id="hcr" data-i18n="credits">Credits</h2>
-    <p data-i18n="credits_intro">This flasher stands on the shoulders of these projects, none of which includes firmware:</p>
-    <ul id="credits-list"><li><a href="https://github.com/asb2m10/dexed">Dexed</a> / <a href="https://github.com/google/music-synthesizer-for-android">Google MSFA</a> - LEGACY FM core, Apache 2.0; Pascal Gauthier and contributors.</li><li><a href="https://github.com/100demons/cycles-engines">100demons / cycles-engines</a> - PUNCH FM percussion engine, MIT.</li></ul>
-    <p><span data-l="en"><strong>Glycinate</strong> — Feral synthesis engine, integrated in main 2.17.</span><span data-l="fr"><strong>Glycinate</strong> — moteur de synthese Feral, integre au principal 2.17.</span></p>
-    <p data-i18n-html="credits_license">Modded-Cycles is released under the <a href="https://github.com/aveycole/Modded-Cycles/blob/main/LICENSE" target="_blank" rel="noopener">MIT license</a>. Third-party code keeps its own license and Elektron's firmware is not covered: see the <a href="https://github.com/aveycole/Modded-Cycles/blob/main/THIRD-PARTY-NOTICES.md" target="_blank" rel="noopener">notices</a>.</p>
-  </section>
+<p class="alert bad" hidden="" id="selection-error" role="alert"></p>
+<div class="alert bad" hidden="" id="errbar"></div>
+<div class="alert bad" hidden="" id="compat" role="alert"></div>
+<nav aria-label="Firmware" class="build-steps"><a class="active" href="#step-choose"><b>1</b><span data-l="en">Features</span><span data-l="fr">Fonctions</span></a><a href="#step-file"><b>2</b><span data-l="en">Load OS files</span><span data-l="fr">Charger les OS</span></a><a href="#step-connect"><b>3</b><span data-l="en">Connect MIDI</span><span data-l="fr">Connexion MIDI</span></a><a href="#step-flash"><b>4</b><span data-l="en">Install</span><span data-l="fr">Installer</span></a></nav>
+<!-- 1. Choose -->
+<section aria-labelledby="h1s" class="step" id="step-choose">
+<header><span class="num">1</span><h2 id="h1s"><span data-l="en">Your firmware</span><span data-l="fr">Votre firmware</span></h2></header>
+<div class="step-body">
+<div aria-label="Mode" class="seg" role="tablist">
+<button aria-controls="panel-mods" aria-selected="true" data-i18n="tab_mods" id="tab-mods" role="tab" type="button">Mods</button>
+<button aria-controls="panel-restore" aria-selected="false" data-i18n="tab_restore" id="tab-restore" role="tab" type="button">Official firmware</button>
+<button aria-controls="panel-samples" aria-selected="false" data-i18n="tab_samples" id="tab-samples" role="tab" type="button">Samples OS</button>
+</div>
+<div aria-labelledby="tab-mods" id="panel-mods" role="tabpanel">
+<p class="mach-q" data-i18n="mach_q" id="mach-q">Your machine</p>
+<div aria-labelledby="mach-q" class="seg sub" role="radiogroup">
+<button aria-checked="true" data-i18n="mach_cyc" id="mach-cyc" role="radio" type="button">Model:Cycles</button>
+<button aria-checked="false" data-i18n="mach_smp" id="mach-smp" role="radio" type="button">Model:Samples, on its own OS</button>
+<button aria-checked="false" data-i18n="mach_cos" id="mach-cos" role="radio" type="button">Model:Samples, already on the Cycles OS</button>
+</div>
+<div class="mach-pane" hidden="" id="mach-pane">
+<p class="samples-head"><span data-i18n="mach_title">Mods on a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
+<p class="panel-text" data-i18n="mach_text"></p>
+<ul class="warn-list">
+<li data-i18n="mach_w_smp" id="mach-w-smp"></li>
+<li data-i18n="mach_w_cos" hidden="" id="mach-w-cos"></li>
+<li data-i18n="mach_w1"></li>
+<li data-i18n="mach_w2"></li>
+<li data-i18n="mach_w4" id="mach-w-only"></li>
+<li data-i18n="mach_w5"></li>
+<li data-i18n="xos_reset"></li>
+<li data-i18n-html="mach_w3"></li>
+</ul>
+<p class="note mach-credit" data-i18n="mach_credit"></p>
+<label class="check"><input id="mach-ack" type="checkbox"/><span data-i18n="cos_ack">I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.</span></label>
+</div>
+<p class="mods-lede" data-i18n-html="mods_note"></p>
+<div class="super-search"><div class="find" hidden="" id="mod-find">
+<svg aria-hidden="true" class="mag" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-width="1.7" viewbox="0 0 20 20" width="18"><circle cx="8.5" cy="8.5" r="5.8"></circle><path d="M13 13l4.5 4.5"></path></svg>
+<label class="vh" data-i18n="search_label" for="mod-q">Search the mods</label>
+<input autocomplete="off" id="mod-q" spellcheck="false" type="search"/>
+<button class="clr" hidden="" id="mod-q-clr" type="button">×</button>
+</div>
+<select aria-label="Category" id="super-category"></select></div><p aria-live="polite" class="found" hidden="" id="mod-found"></p>
+<ul class="cats" hidden="" id="cats"></ul>
+<div class="edition-choice"><label for="firmware-edition"><span data-l="en">Choose your edition</span><span data-l="fr">Choisissez votre édition</span></label><select aria-describedby="full-info lite-info" id="firmware-edition"><option data-i18n="edition_full" value="full">Supermodel Full — all machines</option><option data-i18n="edition_lite" value="lite">Supermodel Lite — six stock machines</option></select><p id="full-info"><span data-l="en">All added machines and quality of life features.</span><span data-l="fr">Toutes les machines supplémentaires et les améliorations de confort.</span></p></div>
+<div class="edition-info" hidden="" id="lite-info"><h3>Supermodel Lite</h3><p><span data-l="en">The six original machines — Kick, Snare, Metal, Perc, Tone and Chord — with all the shared Supermodel quality-of-life features. Sequence Genie, Scramble, Page Len and Warp in PTN/TRK modes, 1–4 LFOs, scale lock, filters, extra FX, sidechain and more are included. No added machines. Keeps the stock-six startup repair, with open LOW defaults for new/cleared sounds and deferred settings saves during input.</span><span data-l="fr">Les six machines d’origine — Kick, Snare, Metal, Perc, Tone et Chord — avec toutes les améliorations communes de Supermodel. Sequence Genie, Scramble, Page Len et Warp en PTN/TRK, 1–4 LFO, verrouillage de gamme, filtres, effets supplémentaires, sidechain et bien plus sont inclus. Aucune machine supplémentaire. Conserve le correctif de démarrage stock-six, avec filtre LOW ouvert pour les sons neufs/effacés et sauvegardes différées pendant le jeu.</span></p><p><span data-l="en">Lite does not need the Syntakt OS file. Sounds using an added machine will be silent; switch them to a stock machine. Your saved notes and parameter locks remain. </span><span data-l="fr">Lite ne demande pas le fichier OS Syntakt. Les sons utilisant une machine supplémentaire seront silencieux ; choisissez une machine d’origine. Notes et locks sauvegardés sont conservés. </span><a href="lite.html"><span data-l="en">See everything included in Lite</span><span data-l="fr">Voir tout le contenu de Lite</span></a></p></div>
+<p class="current-release-note"><span data-l="en">Each sound machine has its own Punch attack. Full offers 23 sound machines plus MIDI Out; Lite contains the six stock machines.</span><span data-l="fr">Chaque machine sonore possède sa propre attaque Punch. Full propose 23 machines sonores plus MIDI Out ; Lite contient les six machines d’origine.</span></p><div class="fixed-features"><h3><span data-l="en">Supermodel edition includes but is not limited to</span><span data-l="fr">L’édition Supermodel comprend, entre autres</span></h3><ul><li><span data-l="en"><b>20+ Machines!</b> Sample Wizard: A multi-purpose sampler, Elder: a GBA inspired retro synthesizer, MIDI Out Machine: a cc-assignable/dual-lfo MIDI Sequencer, Tiny,: strange percussive blips and clicks, Speak: a Speak-And-Spell inspired sentence maker, Shadow: dust, noise, whispers in the wind, and more to explore!!!</span><span data-l="fr"><b>Plus de 20 machines !</b> Sample Wizard : sampler polyvalent, Elder : synthé rétro inspiré de la GBA, MIDI Out : séquenceur MIDI avec CC assignables et double LFO, Tiny : drôles de bips et de clics percussifs, Speak : fabrique de phrases inspirée du Speak &amp; Spell, Shadow : poussière, bruit, murmures dans le vent, et bien d’autres à explorer !</span></li><li><span data-l="en"><b>Multiple new reverb, delay, and other FX types:</b> Room, Hall, PS1, Gated, Bitcrush, Ring Mod, a Juno inspired two-fold Chorus. Swappable by holding Track and turning either delay time or reverb size.</span><span data-l="fr"><b>Nombreux nouveaux types de reverb, de delay et d’autres effets :</b> Room, Hall, PS1, Gated, Bitcrush, Ring Mod, un chorus double inspiré du Juno. À changer en maintenant TRACK et en tournant DELAY TIME ou REVERB SIZE.</span></li><li><span data-l="en"><b>Per-track Polivoks style resonant two pole filter, Per-Track attack settings.</b> Accessed by pressing Machines and turning Sweep/Contour for filter/resonance, and Machines + Decay for Attack.</span><span data-l="fr"><b>Filtre résonant à deux pôles par piste, style Polivoks, et réglages d’attaque par piste.</b> Accessibles en appuyant sur MACHINES et en tournant SWEEP/CONTOUR pour le filtre/la résonance, et MACHINES + DECAY pour l’attaque.</span></li><li><span data-l="en"><b>4 Filter Types:</b> Choose between Low Pass, High Pass, Bandpass, and Low/High Pass by pressing Settings + Machines and turning Sweep.</span><span data-l="fr"><b>4 types de filtres :</b> Choisissez entre passe-bas, passe-haut, passe-bande et passe-bas/passe-haut en appuyant sur SETTINGS + MACHINES et en tournant SWEEP.</span></li><li><span data-l="en"><b>Per-Page Length Options/Active Step Warp</b></span><span data-l="fr"><b>Options de longueur par page / Warp des pas actifs</b></span></li><li><span data-l="en"><b>Togglable mod settings</b> accessed by long pressing Settings + Track include: Silent track switching, USB 2/6 Channel, Vol/Pan as numbers, Latching mute/solo modes, Diagnostic popup, Delay as time division, and per-track SCRAMBLE settings</span><span data-l="fr"><b>Réglages Mod activables</b> (appui long SETTINGS + TRACK) : changement de piste silencieux, USB 2/6 voies, volume/pan en chiffres, modes mute/solo verrouillés, popup de diagnostic, delay en division de temps et réglages SCRAMBLE par piste.</span></li><li><span data-l="en"><b>SCRAMBLE:</b> Patch randomizer. Use the mod menu to select which parameters you wish to randomize per-track and tap Settings + Track to quickly scramble your sound. P-lockable for a fresh sound every pass. Can not be undone without manually resetting the parameters.</span><span data-l="fr"><b>SCRAMBLE :</b> randomiseur de sons. Choisissez dans le menu Mod les paramètres à randomiser par piste, puis SETTINGS + TRACK pour brouiller rapidement le son. P-lockable : un son neuf à chaque passage. Impossible à annuler sans remettre les paramètres à la main.</span></li><li><span data-l="en"><b>Sidechain:</b> In the Mod Setup menu (Track + Settings) for your source track, select S.Chn and then select your target tracks (or FX sends!), edit the parameters, and Bob's your uncle!</span><span data-l="fr"><b>Sidechain :</b> Dans le menu Mod Setup (Track + Settings) de votre piste source, sélectionnez S.Chn, puis choisissez vos pistes cibles (ou les envois FX !), réglez les paramètres, et le tour est joué !</span></li>
+<li><span data-l="en"><b>Sequence Genie:</b> An in scale sequence generator accessed by pressing Settings + Page. You give it parameters (Such as what to variate, how much to variate it, etc.) and it generates a sequence. Can be queued while playing for the next page or next full playthrough of the pattern. Shazam, Shazam, Shaq don't want none.</span><span data-l="fr"><b>Sequence Genie :</b> générateur de séquences dans la gamme, accessible avec SETTINGS + PAGE. Vous réglez les paramètres (quoi varier, de combien…) et il génère la séquence. Peut être mis en file pendant la lecture, pour la page suivante ou le prochain passage complet du pattern. Shazam, Shazam, Shaq don't want none.</span></li><li><span data-l="en"><b>Arpeggiator:</b> Works as you'd expect, settings accessed in the retrig menu (Function + Retrig). Applies to incoming MIDI as well as notes played live on the step triggers.</span><span data-l="fr"><b>Arpégiateur :</b> fonctionne comme prévu, réglages dans le menu retrig (FUNC + RETRIG). S’applique au MIDI entrant comme aux notes jouées sur les trigs.</span></li><li><span data-l="en"><b>Step record, slide trigs, trig preview</b>, all the little quality of life updates from @18nelli18's Modded Cycles and then some.</span><span data-l="fr"><b>Step record, slide trigs, préécoute des trigs</b>, et toutes les petites améliorations de confort du Modded Cycles de @18nelli18, et plus encore.</span></li></ul><p><span data-l="en"></span><span data-l="fr"></span></p><p class="fx-read"><span data-l="en"><b>READ:</b> Using some of the extra machines and FX on here together is a heavy load for the CPU. It will keep ticking, don't worry, but it will also literally tick as it struggles to keep up if you push it hard enough. Use Chord machine sparingly. Of the stock machines it is by far the heaviest. There are clever ways around this, like through Sample Wizard's resample, for instance. You can essentially bounce a couple of tracks together that way to reduce the overall load.</span><span data-l="fr"><b>À LIRE :</b> utiliser ensemble certaines des machines et effets supplémentaires sollicite fortement le processeur. Il continuera de tourner, pas d’inquiétude, mais si vous le poussez assez, il se mettra littéralement à cliqueter en peinant à suivre. Utilisez la machine Chord avec parcimonie : c’est de loin la plus lourde des machines stock. Il existe des astuces, comme le resample de Sample Wizard : vous pouvez ainsi regrouper quelques pistes en une seule pour alléger la charge globale.</span></p><p><span data-l="en">I have spent hundreds of literal hours and dollars building this mod. It will ALWAYS be 100% FREE but if you love it and want to buy me a coffee, you can do so at <a href="https://buymeacoffee.com/AveyCole" rel="noopener" target="_blank"><b>https://buymeacoffee.com/AveyCole</b></a></span><span data-l="fr">J’ai passé des centaines d’heures et de dollars à construire ce mod. Il sera TOUJOURS 100 % GRATUIT, mais si vous l’aimez et voulez m’offrir un café, c’est ici : <a href="https://buymeacoffee.com/AveyCole" rel="noopener" target="_blank"><b>https://buymeacoffee.com/AveyCole</b></a></span></p><p><span data-l="en">Thanks and happy Cycling!<br/>- A.V.</span><span data-l="fr">Merci et bons Cycles !<br/>- A.V.</span></p><p><a href="release-notes-2.36.html"><span data-l="en">Full release notes</span><span data-l="fr">Notes de version completes</span></a></p><a href="#step-file"><span data-l="en">Continue: load OS files</span><span data-l="fr">Continuer : charger les OS</span></a></div><div class="super-toolbar"><strong id="super-option-count"></strong><button aria-describedby="select-all-note" data-i18n="select_all" id="select-all" type="button">Select all</button><button id="super-clear" type="button"><span data-l="en">Clear</span><span data-l="fr">Effacer</span></button><button id="super-expand" type="button"><span data-l="en">Expand all</span><span data-l="fr">Tout ouvrir</span></button></div><p data-i18n="select_all_note" id="select-all-note"></p><div class="super-columns"><div id="features"></div><aside class="super-sidebar"><div class="super-machine"><span data-l="en">YOUR FIRMWARE</span><span data-l="fr">VOTRE FIRMWARE</span><h3 id="super-machine-name">Model:Cycles</h3></div>
+<div aria-labelledby="sel-title" class="sel" id="mod-sel" role="region"></div>
+<p aria-live="polite" class="vh" id="mod-live"></p>
+<div aria-hidden="true" id="mod-sel-end"></div><a class="super-next" href="#step-file"><span data-l="en">Load OS files</span><span data-l="fr">Charger les OS</span> &gt;</a></aside></div>
+</div>
+<div aria-labelledby="tab-restore" hidden="" id="panel-restore" role="tabpanel">
+<p class="panel-text" data-i18n-html="restore_text"></p>
+<p class="note" data-i18n-html="restore_from_samples"></p>
+</div>
+<div aria-labelledby="tab-samples" hidden="" id="panel-samples" role="tabpanel">
+<div aria-label="Machine" class="seg sub" role="radiogroup">
+<button aria-checked="true" data-i18n="smp_dir_cyc" id="smp-dir-cyc" role="radio" type="button">Model:Cycles → Samples OS</button>
+<button aria-checked="false" data-i18n="smp_dir_smp" id="smp-dir-smp" role="radio" type="button">Model:Samples → Cycles OS</button>
+<button aria-checked="false" data-i18n="smp_dir_back" id="smp-dir-back" role="radio" type="button">Model:Samples: back to its OS</button>
+</div>
+<div id="smp-pane-cyc">
+<p class="samples-head"><span data-i18n="samples_title">Turn your Model:Cycles into a Model:Samples</span><span class="tag ok" data-i18n="tested">Tested</span></p>
+<p class="panel-text" data-i18n="samples_text"></p>
+<ul class="warn-list">
+<li data-i18n="samples_w1"></li>
+<li data-i18n-html="samples_w2"></li>
+<li data-i18n="samples_w3"></li>
+</ul>
+<label class="check"><input id="samples-ack" type="checkbox"/><span data-i18n="samples_ack">I have a MIDI interface for the way back (to the Model:Cycles MIDI IN).</span></label>
+</div>
+<div hidden="" id="smp-pane-smp">
+<p class="samples-head"><span data-i18n="cos_title">Turn your Model:Samples into a Model:Cycles</span><span class="tag exp" data-i18n="experimental">Experimental</span></p>
+<p class="panel-text" data-i18n="cos_text"></p>
+<ul class="warn-list">
+<li data-i18n="cos_w1"></li>
+<li data-i18n="cos_w5"></li>
+<li data-i18n-html="cos_w2"></li>
+<li data-i18n="cos_w3"></li>
+<li data-i18n="xos_reset"></li>
+<li data-i18n-html="cos_w4"></li>
+</ul>
+<p class="note" data-i18n="cos_mods"></p>
+<label class="check"><input id="cos-ack" type="checkbox"/><span data-i18n="cos_ack">I have backed up my samples and projects with Elektron Transfer, and I keep the official Model:Samples OS file for the way back.</span></label>
+</div>
+<div hidden="" id="smp-pane-back">
+<p class="samples-head"><span data-i18n="sback_title">Give your Model:Samples its own OS back</span><span class="tag exp" data-i18n="experimental">Experimental</span></p>
+<p class="panel-text" data-i18n="sback_text"></p>
+<ul class="warn-list">
+<li data-i18n="sback_w1"></li>
+<li data-i18n-html="sback_w2"></li>
+<li data-i18n="xos_reset"></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. OS file -->
+<section aria-labelledby="h2s" class="step" id="step-file">
+<header><span class="num">2</span><h2 data-i18n="s2" id="h2s">Load your official OS file</h2></header>
+<div class="step-body">
+<label class="drop" id="drop" tabindex="0">
+<span class="drop-ic"><svg aria-hidden="true" fill="none" height="26" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24" width="26"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"></path></svg></span>
+<span class="drop-t"><strong data-i18n="drop_title" id="drop-title">Drop model-cycles_OS1.13.syx here</strong>
+<span data-i18n="drop_sub" id="drop-sub">or click to choose it</span></span>
+<input accept=".syx" hidden="" id="file" type="file"/>
+</label>
+<p class="hint" data-i18n-html="get_os"></p>
+<div aria-live="polite" class="status" id="file-status"></div>
+<div hidden="" id="drop2-wrap">
+<label class="drop" id="drop2" tabindex="0">
+<span class="drop-ic"><svg aria-hidden="true" fill="none" height="26" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24" width="26"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"></path></svg></span>
+<span class="drop-t"><strong data-i18n="drop2_title" id="drop2-title">Drop model-samples_OS1.13.syx here</strong>
+<span data-i18n="drop2_sub" id="drop2-sub">the official Model:Samples OS — or click to choose it</span></span>
+<input accept=".syx" hidden="" id="file2" type="file"/>
+</label>
+<p class="hint" data-i18n-html="get_os_samples"></p>
+<div aria-live="polite" class="status" id="file2-status"></div>
+</div>
+<div hidden="" id="drop3-wrap">
+<label class="drop" id="drop3" tabindex="0">
+<span class="drop-ic"><svg aria-hidden="true" fill="none" height="26" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24" width="26"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path class="arrow" d="M12 11v6M9.5 14.5 12 17l2.5-2.5"></path></svg></span>
+<span class="drop-t"><strong data-i18n="drop3_title" id="drop3-title">Drop Syntakt_OS1.42.syx here</strong>
+<span data-i18n="drop3_sub" id="drop3-sub">the official Syntakt OS, for its engines — or click to choose it</span></span>
+<input accept=".syx" hidden="" id="file3" type="file"/>
+</label>
+<p class="hint" data-i18n-html="get_os_syntakt"></p>
+<div aria-live="polite" class="status" id="file3-status"></div>
+</div>
+</div>
+</section>
+<!-- 3. Connect -->
+<section aria-labelledby="h3s" class="step" id="step-connect">
+<header><span class="num">3</span><h2 data-i18n="s3" id="h3s">Connect your Model:Cycles over USB</h2></header>
+<div class="step-body">
+<div aria-label="Method" class="seg" role="radiogroup">
+<button aria-checked="true" data-i18n="m_fast" id="m-fast" role="radio" type="button">Fast (USB)</button>
+<button aria-checked="false" data-i18n="m_slow" id="m-slow" role="radio" type="button">Classic (CONFIG › UPGRADE)</button>
+</div>
+<p class="panel-text method-note" id="method-note"></p>
+<ol class="howto" id="howto-fast">
+<li data-i18n-html="hf1"></li>
+<li data-i18n-html="hf2"></li>
+<li data-i18n-html="hf3"></li>
+</ol>
+<ol class="howto" hidden="" id="howto-usb">
+<li data-i18n-html="hu1"></li>
+<li data-i18n-html="hu2"></li>
+<li data-i18n-html="hu3"></li>
+</ol>
+<div class="portrow">
+<button class="btn primary" data-i18n="allow" id="allow" type="button">Allow MIDI access</button>
+<select aria-label="MIDI output" hidden="" id="port"></select>
+<button class="btn secondary" data-i18n="refresh" hidden="" id="refresh" type="button">Refresh</button>
+</div>
+<div aria-live="polite" class="status" id="midi-status"></div>
+</div>
+</section>
+<!-- 4. Flash -->
+<section aria-labelledby="h4s" class="step" id="step-flash">
+<header><span class="num">4</span><h2 data-i18n="s4" id="h4s">Flash</h2></header>
+<div class="step-body">
+<div class="summary" hidden="" id="summary"></div>
+<label class="check"><input id="ack" type="checkbox"/><span data-i18n="ack">I've backed up my projects (Elektron Transfer) and I understand that flashing is at my own risk.</span></label>
+<div class="actions">
+<button class="btn primary big" data-i18n="flash_btn" disabled="" id="flash" type="button">Flash the Model:Cycles</button>
+<button class="btn secondary" data-i18n="stop" hidden="" id="stop" type="button">Stop</button>
+</div>
+<p aria-live="polite" class="missing" id="missing"></p>
+<p class="alt" hidden="" id="alt"><a class="btn secondary" data-i18n="download" id="download">Download the .syx</a>
+<span data-i18n-html="download_hint"></span></p>
+<div class="progress" hidden="" id="progress">
+<div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="bar" id="barwrap" role="progressbar"><div id="bar"></div><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="meta"><span id="pct">0 %</span><span id="eta"></span></div>
+<div class="callout" id="watch"></div>
+</div>
+<div aria-live="polite" class="result" id="result"></div>
+<details class="trouble">
+<summary data-i18n="trouble">Something went wrong?</summary>
+<dl>
+<dt data-i18n="t1q">Nothing happens on the Model:Cycles screen</dt><dd data-i18n-html="t1a"></dd>
+<dt data-i18n="t2q">The transfer stops, or the Model:Cycles shows an error</dt><dd data-i18n-html="t2a"></dd>
+<dt data-i18n="t3q">No MIDI port in the list</dt><dd data-i18n-html="t3a"></dd>
+<dt data-i18n="t5q">The fast method doesn't find the Model:Cycles, or stops</dt><dd data-i18n-html="t5a"></dd>
+<dt data-i18n="t4q">The update over USB is refused, or the Model:Cycles doesn't start any more</dt><dd data-i18n-html="t4a"></dd>
+</dl>
+</details>
+</div>
+</section>
+<details class="adv" id="advanced">
+<summary data-i18n="advanced">Advanced</summary>
+<div class="field">
+<label data-i18n="pace" for="pace">Send speed margin</label>
+<input id="pace" min="0" step="0.1" type="number" value="1.4"/>
+<span class="hint" data-i18n="pace_hint">Classic method only. 1.4 by default: raise it to 2.0 if the transfer stalls.</span>
+</div>
+<div aria-live="off" id="log"></div>
+</details>
+<section aria-labelledby="hcr" class="credits" id="credits">
+<h2 data-i18n="credits" id="hcr">Credits</h2>
+<p data-i18n="credits_intro">This flasher stands on the shoulders of these projects, none of which includes firmware:</p>
+<ul id="credits-list"><li><a href="https://github.com/100demons/cycles-engines">100demons / cycles-engines</a> - PUNCH FM percussion engine, MIT.</li></ul>
+<p><span data-l="en"><strong>Glycinate</strong> — Feral synthesis engine, integrated in main 2.17.</span><span data-l="fr"><strong>Glycinate</strong> — moteur de synthese Feral, integre au principal 2.17.</span></p>
+<p data-i18n-html="credits_license">Modded-Cycles is released under the <a href="https://github.com/aveycole/Modded-Cycles/blob/main/LICENSE" rel="noopener" target="_blank">MIT license</a>. Third-party code keeps its own license and Elektron's firmware is not covered: see the <a href="https://github.com/aveycole/Modded-Cycles/blob/main/THIRD-PARTY-NOTICES.md" rel="noopener" target="_blank">notices</a>.</p>
+</section>
 </main>
-
 <footer class="foot">
-  <div class="wrap">
-    <p><span data-i18n="privacy">Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.</span>
-      <span data-i18n-html="links"></span></p>
-    <p>Flasher <span data-rel="version">1.0</span> <span id="build-stamp"></span></p>
-  </div>
+<div class="wrap">
+<p><span data-i18n="privacy">Your firmware file never leaves your computer. Nothing is uploaded, no firmware is provided.</span>
+<span data-i18n-html="links"></span></p>
+<p>Flasher <span data-rel="version">1.0</span> <span id="build-stamp"></span></p>
+</div>
 </footer>
-
 <!-- ?v= : same version stamp as MC_BUILD, so a browser never mixes a new page with cached old scripts -->
-<script src="midi-machine-release.js?v=2026-10-28-main256-playability"></script>
-<script src="../assets/site.js?v=2026-10-28-main256-playability"></script>
-<script src="builder.js?v=2026-10-28-main256-playability"></script>
-<script src="tweaks.js?v=2026-10-28-main256-playability"></script>
-<script src="flasher.js?v=2026-10-28-main256-playability"></script>
-<script src="app.js?v=2026-10-28-main256-playability-credits"></script>
-<script src="bundle.js?v=2026-10-28-main256-playability"></script>
-<script src="catalogue.js?v=2026-10-28-main256-playability"></script><script src="compose.js?v=2026-10-28-main256-playability"></script><script src="wizard-refs.js?v=2026-10-28-main256-playability"></script><script src="wizard.js?v=2026-10-28-main256-playability"></script><script src="queue-choice.js?v=2026-10-28-main256-playability"></script><script src="hardware-status.js?v=2026-10-28-main256-playability"></script><script src="genie-attack.js?v=2026-10-28-main256-playability"></script><script src="continuous-filter.js?v=2026-10-28-main256-playability"></script><script src="preview-chord.js?v=2026-10-28-main256-playability"></script><script src="tiny-data.js?v=2026-10-28-main256-playability"></script><script src="machine-combinations-data.js?v=2026-10-28-main256-playability"></script><script src="midi-machine-all-data.js?v=2026-10-28-main256-playability"></script><script src="midi-machine-all-catalogue.js?v=2026-10-28-main256-playability"></script><script src="machine-combinations.js?v=2026-10-28-main256-playability"></script><script src="compose-normal.js?v=2026-10-28-main256-playability"></script><script src="tiny.js?v=2026-10-28-main256-playability"></script><script src="retrosyn-data.js?v=2026-10-28-main256-playability"></script><script src="retrosyn.js?v=2026-10-28-main256-playability"></script><script src="main-policy.js?v=2026-10-28-main256-playability"></script><script src="midi-bank-data.js?v=2026-10-28-main256-playability"></script><script src="midi-bank.js?v=2026-10-28-main256-playability"></script><script src="midi-persistence-data.js?v=2026-10-28-main256-playability"></script><script src="midi-persistence.js?v=2026-10-28-main256-playability"></script><script src="genie-timing-data.js?v=2026-10-28-main256-playability"></script><script src="genie-timing.js?v=2026-10-28-main256-playability"></script><script src="beat-repeat-data.js?v=2026-10-28-main256-playability"></script><script src="no-midi-capacity-data.js?v=2026-10-28-main256-playability"></script><script src="no-midi-capacity.js?v=2026-10-28-main256-playability"></script><script src="beat-repeat.js?v=2026-10-28-main256-playability"></script><script src="filter-precision-data.js?v=2026-10-28-main256-playability"></script><script src="filter-precision.js?v=2026-10-28-main256-playability"></script><script src="filter-load-data.js?v=2026-10-28-main256-playability"></script><script src="filter-load.js?v=2026-10-28-main256-playability"></script><script src="midi-experimental-status.js?v=2026-10-28-main256-playability"></script><script src="swarm-lite-data.js?v=2026-10-28-main256-playability"></script><script src="swarm-chord-layout.js?v=2026-10-28-main256-playability"></script><script src="macro-halfband-data.js?v=2026-10-28-main256-playability"></script><script src="macro-render-optimization.js?v=2026-10-28-main256-playability"></script><script src="swarm-lite.js?v=2026-10-28-main256-playability"></script><script src="filter-transition-data.js?v=2026-10-28-main256-playability"></script><script src="filter-transition.js?v=2026-10-28-main256-playability"></script><script src="quick-save-data.js?v=2026-10-28-main256-playability"></script><script src="quick-save.js?v=2026-10-28-main256-playability"></script><script src="quick-save-exit-data.js?v=2026-10-28-main256-playability"></script><script src="quick-save-exit.js?v=2026-10-28-main256-playability"></script><script src="midi-cursor-data.js?v=2026-10-28-main256-playability"></script><script src="arp-zero-data.js?v=2026-10-28-main256-playability"></script><script src="performance-release.js?v=2026-10-28-main256-playability"></script><script src="machine-combinations-build.js?v=2026-10-28-main256-playability"></script><script src="macro-lofi-data.js?v=2026-10-28-main256-playability"></script><script src="macro-lofi.js?v=2026-10-28-main256-playability"></script><script src="midi-page-leds-data.js?v=2026-10-28-main256-playability"></script><script src="midi-page-leds.js?v=2026-10-28-main256-playability"></script><script src="lfo-destinations-data.js?v=2026-10-28-main256-playability"></script><script src="lfo-destinations.js?v=2026-10-28-main256-playability"></script><script src="invert-track.js?v=2026-10-28-main256-playability"></script><script src="midi-machine-main.js?v=2026-10-28-main256-playability"></script><script src="macro-fine-data.js?v=2026-10-28-main256-playability"></script><script src="macro-fine-release.js?v=2026-10-28-main256-playability"></script><script src="level-pan-main-data.js?v=2026-10-28-main256-playability"></script><script src="pad-mode-data.js?v=2026-10-28-main256-playability"></script><script src="pad-mode.js?v=2026-10-28-main256-playability"></script><script src="genie-entropy-data.js?v=2026-10-28-main256-playability"></script><script src="genie-entropy.js?v=2026-10-28-main256-playability"></script><script src="midi-safety-data.js?v=2026-10-28-main256-playability"></script><script src="midi-safety-release.js?v=2026-10-28-main256-playability"></script><script src="step-rec-solo-data.js?v=2026-10-28-main256-playability"></script><script src="step-rec-solo-main.js?v=2026-10-28-main256-playability"></script><script src="fixed-main-image.js?v=2026-10-28-main256-playability"></script></body>
+<script src="midi-machine-release.js?v=2026-10-28-main256-clean-references"></script>
+<script src="../assets/site.js?v=2026-10-28-main256-clean-references"></script>
+<script src="builder.js?v=2026-10-28-main256-clean-references"></script>
+<script src="tweaks.js?v=2026-10-28-main256-clean-references"></script>
+<script src="flasher.js?v=2026-10-28-main256-clean-references"></script>
+<script src="app.js?v=2026-10-28-main256-clean-references-credits"></script>
+<script src="bundle.js?v=2026-10-28-main256-clean-references"></script>
+<script src="catalogue.js?v=2026-10-28-main256-clean-references"></script><script src="compose.js?v=2026-10-28-main256-clean-references"></script><script src="wizard-refs.js?v=2026-10-28-main256-clean-references"></script><script src="wizard.js?v=2026-10-28-main256-clean-references"></script><script src="queue-choice.js?v=2026-10-28-main256-clean-references"></script><script src="hardware-status.js?v=2026-10-28-main256-clean-references"></script><script src="genie-attack.js?v=2026-10-28-main256-clean-references"></script><script src="continuous-filter.js?v=2026-10-28-main256-clean-references"></script><script src="preview-chord.js?v=2026-10-28-main256-clean-references"></script><script src="tiny-data.js?v=2026-10-28-main256-clean-references"></script><script src="machine-combinations-data.js?v=2026-10-28-main256-clean-references"></script><script src="midi-machine-all-data.js?v=2026-10-28-main256-clean-references"></script><script src="midi-machine-all-catalogue.js?v=2026-10-28-main256-clean-references"></script><script src="machine-combinations.js?v=2026-10-28-main256-clean-references"></script><script src="compose-normal.js?v=2026-10-28-main256-clean-references"></script><script src="tiny.js?v=2026-10-28-main256-clean-references"></script><script src="retrosyn-data.js?v=2026-10-28-main256-clean-references"></script><script src="retrosyn.js?v=2026-10-28-main256-clean-references"></script><script src="main-policy.js?v=2026-10-28-main256-clean-references"></script><script src="midi-bank-data.js?v=2026-10-28-main256-clean-references"></script><script src="midi-bank.js?v=2026-10-28-main256-clean-references"></script><script src="midi-persistence-data.js?v=2026-10-28-main256-clean-references"></script><script src="midi-persistence.js?v=2026-10-28-main256-clean-references"></script><script src="genie-timing-data.js?v=2026-10-28-main256-clean-references"></script><script src="genie-timing.js?v=2026-10-28-main256-clean-references"></script><script src="beat-repeat-data.js?v=2026-10-28-main256-clean-references"></script><script src="no-midi-capacity-data.js?v=2026-10-28-main256-clean-references"></script><script src="no-midi-capacity.js?v=2026-10-28-main256-clean-references"></script><script src="beat-repeat.js?v=2026-10-28-main256-clean-references"></script><script src="filter-precision-data.js?v=2026-10-28-main256-clean-references"></script><script src="filter-precision.js?v=2026-10-28-main256-clean-references"></script><script src="filter-load-data.js?v=2026-10-28-main256-clean-references"></script><script src="filter-load.js?v=2026-10-28-main256-clean-references"></script><script src="midi-experimental-status.js?v=2026-10-28-main256-clean-references"></script><script src="swarm-lite-data.js?v=2026-10-28-main256-clean-references"></script><script src="swarm-chord-layout.js?v=2026-10-28-main256-clean-references"></script><script src="macro-halfband-data.js?v=2026-10-28-main256-clean-references"></script><script src="macro-render-optimization.js?v=2026-10-28-main256-clean-references"></script><script src="swarm-lite.js?v=2026-10-28-main256-clean-references"></script><script src="filter-transition-data.js?v=2026-10-28-main256-clean-references"></script><script src="filter-transition.js?v=2026-10-28-main256-clean-references"></script><script src="quick-save-data.js?v=2026-10-28-main256-clean-references"></script><script src="quick-save.js?v=2026-10-28-main256-clean-references"></script><script src="quick-save-exit-data.js?v=2026-10-28-main256-clean-references"></script><script src="quick-save-exit.js?v=2026-10-28-main256-clean-references"></script><script src="midi-cursor-data.js?v=2026-10-28-main256-clean-references"></script><script src="arp-zero-data.js?v=2026-10-28-main256-clean-references"></script><script src="performance-release.js?v=2026-10-28-main256-clean-references"></script><script src="machine-combinations-build.js?v=2026-10-28-main256-clean-references"></script><script src="macro-lofi-data.js?v=2026-10-28-main256-clean-references"></script><script src="macro-lofi.js?v=2026-10-28-main256-clean-references"></script><script src="midi-page-leds-data.js?v=2026-10-28-main256-clean-references"></script><script src="midi-page-leds.js?v=2026-10-28-main256-clean-references"></script><script src="lfo-destinations-data.js?v=2026-10-28-main256-clean-references"></script><script src="lfo-destinations.js?v=2026-10-28-main256-clean-references"></script><script src="invert-track.js?v=2026-10-28-main256-clean-references"></script><script src="midi-machine-main.js?v=2026-10-28-main256-clean-references"></script><script src="macro-fine-data.js?v=2026-10-28-main256-clean-references"></script><script src="macro-fine-release.js?v=2026-10-28-main256-clean-references"></script><script src="level-pan-main-data.js?v=2026-10-28-main256-clean-references"></script><script src="pad-mode-data.js?v=2026-10-28-main256-clean-references"></script><script src="pad-mode.js?v=2026-10-28-main256-clean-references"></script><script src="genie-entropy-data.js?v=2026-10-28-main256-clean-references"></script><script src="genie-entropy.js?v=2026-10-28-main256-clean-references"></script><script src="midi-safety-data.js?v=2026-10-28-main256-clean-references"></script><script src="midi-safety-release.js?v=2026-10-28-main256-clean-references"></script><script src="step-rec-solo-data.js?v=2026-10-28-main256-clean-references"></script><script src="step-rec-solo-main.js?v=2026-10-28-main256-clean-references"></script><script src="fixed-main-image.js?v=2026-10-28-main256-clean-references"></script></body>
 </html>

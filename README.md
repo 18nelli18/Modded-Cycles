@@ -4,7 +4,7 @@
 
 **Custom firmware mods for the Elektron Model:Cycles, installed from your browser in about 30 seconds.**
 
-6-channel USB audio · Syntakt engines · Sample Wizard · ACID and MACRO machines · ChordKeys · extra LFOs · sequence generator · arpeggiator · up to 546 BPM · and more
+6-channel USB audio · Syntakt engines · Sample Wizard · ACID and MACRO machines · extra LFOs · sequence generator · arpeggiator · up to 546 BPM · and more
 
 [**Open the web flasher**](https://aveycole.github.io/Modded-Cycles/flasher/) &nbsp;·&nbsp;
 [Read the guide](https://aveycole.github.io/Modded-Cycles/guide/) &nbsp;·&nbsp;
@@ -42,11 +42,10 @@ Going back to the official firmware is one click away.
 | **6-channel USB audio** | Each track gets its own USB channel (48 kHz / 32-bit): record six separate stems in your DAW. OS updates over USB keep working. | ✅ Tested |
 | **Syntakt engines** | Up to five real Syntakt machines added next to the original six: **SD VINTAGE**, **CP VINTAGE**, **SY TOY**, **SY BITS** and **SY SWARM**, with the Syntakt's knob names and defaults. They are read from your own Syntakt OS file. | ✅ Tested |
 | **Sample Wizard** | Adds Wizard as machine 7: sample playback modes, a sample browser and Slice varispeed (notes choose the slice, `PITCH` changes its speed). Upload your own samples with Elektron Transfer in SMP mode, and go back to CYC before a firmware upgrade. By TinyGregAudio, roterodamus and A.V. | ✅ Tested |
-| **Sample preview** | An add-on to Sample Wizard: in its sample browser (`FUNC` + `MACHINES`), the track's pad plays the sample under the cursor, the way presets can be heard before you pick them. A sample not yet in memory loads on the first press; if there isn't enough free memory, the press plays nothing. The track keeps its own sample. Requires Sample Wizard (ticking it ticks Sample Wizard) and can't be combined with ChordKeys. | ✅ Tested |
+| **Sample preview** | An add-on to Sample Wizard: in its sample browser (`FUNC` + `MACHINES`), the track's pad plays the sample under the cursor, the way presets can be heard before you pick them. A sample not yet in memory loads on the first press; if there isn't enough free memory, the press plays nothing. The track keeps its own sample. Requires Sample Wizard (ticking it ticks Sample Wizard). | ✅ Tested |
 | **MACRO machine** | One extra machine with the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator, from [her own code](https://github.com/pichenettes/eurorack): analog-style waves, FM, vowels, physical models, drums, wavetables and noises. `SHAPE` picks the model, `COLOR` and `SWEEP` shape it, `CONTOUR` lets the amp envelope open the timbre, and `FUNC` + `PITCH` gives lo-fi (`RATE`/`BITS`). Works with Sample Wizard and with the Syntakt engines; the combined option puts MACRO after the selected engines. | ✅ Tested |
-| **RETROSYN machine** | Six retro oscillator types with pitch sweep, arpeggios and four-bit punch. Combine RETROSYN with any selection of the added machines, including WAVE and TINY, with independent Sample Wizard optional. ChordKeys is compatible. Expanded machine combinations are verified in emulation. Model-TG is excluded from the main flasher. | ✅ Hardware tested by AveyCole (2026-10-16) |
+| **RETROSYN machine** | Six retro oscillator types with pitch sweep, arpeggios and four-bit punch. Combine RETROSYN with any selection of the added machines, including WAVE and TINY, with independent Sample Wizard optional. Expanded machine combinations are verified in emulation. Model-TG is excluded from the main flasher. | ✅ Hardware tested by AveyCole (2026-10-16) |
 | **ACID machine** | One extra machine: a TB-303-style acid bass from the open-source Open303 model by Robin Schmidt. `COLOR` is the cutoff, `SHAPE` the resonance, `SWEEP` the env mod, `CONTOUR` the drive. A trig longer than the next one slides into it. Includes Kevin Shallvari's retrigger click fix. | ✅ Tested |
-| **ChordKeys** | On a CHORD track, TRIG 1–16 play the chords of your scale (I–VII, then higher octaves). `FUNC` + `RETRIG` sets key, root, scale and triad/7/9/11/13, saved with the pattern. By Nico Heuser. | ✅ Tested |
 | **Per-track filter** | Hold `MACHINES` and turn `SWEEP` for cutoff or `CONTOUR` for resonance: a four-pole low-pass on synth and drum tracks (Wizard tracks keep their own filter). Works with p-locks, LFO and CC 74/71, and is saved with the sound. Replaces the older LP/OFF/HP filter. | ✅ Tested |
 | **LFO 2, 3, 4** | Press `LFO` again on the LFO page to reach three extra LFOs per track. LFO 2 is saved with the sound and can be p-locked; 3 and 4 are for live play. Based on DavidCaruso's work. | ✅ Tested |
 | **Second LFO** | LFO 2 gets its own `LFO SPEED` knob and quick assign (hold `LFO` and turn a knob), and is saved with the sound. Can't be combined with LFO 2, 3, 4. Hardware tested by AveyCole (12–13 October 2026). | ✅ Tested |
@@ -68,7 +67,7 @@ Going back to the official firmware is one click away.
 | **Samples OS** | Turns the Model:Cycles into a Model:Samples, built from both official OS files. Coming back needs a MIDI interface. | ✅ Tested |
 | **Cycles OS for Model:Samples** | The other way round: turns a Model:Samples into a Model:Cycles, over USB, from both official OS files. Going back to the Model:Samples OS works over USB too, from the same tab. | 🧪 Experimental |
 
-The mods can be combined except where stated (the two MIDI mods are alternatives; LFO 2, 3, 4 can't be combined with Second LFO, Per-track filter or Sequence Generator; Sample preview excludes ChordKeys; Samples OS and Cycles OS for Model:Samples are separate installs). Each one is explained step by step, with the buttons to press, in the
+The mods can be combined except where stated (the two MIDI mods are alternatives; LFO 2, 3, 4 can't be combined with Second LFO, Per-track filter or Sequence Generator; Samples OS and Cycles OS for Model:Samples are separate installs). Each one is explained step by step, with the buttons to press, in the
 **[guide](https://aveycole.github.io/Modded-Cycles/guide/)**.
 
 <p align="center">
@@ -150,7 +149,6 @@ This project stands on the work of others, all MIT licensed:
 - **[TinyGregAudio/Model-TG](https://github.com/TinyGregAudio/Model-TG)**: the base behind Sample Wizard, with roterodamus and A.V. ([license](tweaks/model-cycles_OS1.13/LICENSE-Model-TG)).
 - **[pichenettes/eurorack](https://github.com/pichenettes/eurorack)**: Émilie Gillet's Braids code, compiled as is for the synthesis models of the MACRO machine ([license](tweaks/model-cycles_OS1.13/LICENSE-Braids)).
 - **Open303** by Robin Schmidt: the TB-303 model behind the ACID machine, with Kevin Shallvari's retrigger click fix.
-- **Nico Heuser**: ChordKeys.
 - **DavidCaruso**: the LFO work behind LFO 2, 3, 4 and Second LFO.
 - **djd_oz**: the volume/pan readout and dimmed trigless trigs.
 - **[dagargo/elektroid](https://github.com/dagargo/elektroid)**: the Elektron Transfer update protocol behind fast USB flashing.
@@ -173,7 +171,7 @@ Swarm LITE replaces the original seven-oscillator Swarm in the main flasher: fun
 Main 2.37 serves the user-tested v115: WAVE includes the AV-WAVE-Morph starter table, custom tables still override it, and BACK goes up folders before closing at /Wavetables. [Controls and printable guide](docs/flasher/shortcut-guide.html).
 
 
-Main 2.38 serves the user-tested v121: selected FX types and added settings belong to each pattern. Blank patterns start with standard Delay/Reverb; queued switches apply when the pattern starts. Save the project to preserve these settings after reloading. WAVE output gains 6 dB. [Current controls and printable guide](docs/flasher/shortcut-guide.html). [WAV/DX7 importers and resource links](docs/flasher/convert.html).
+Main 2.38 serves the user-tested v121: selected FX types and added settings belong to each pattern. Blank patterns start with standard Delay/Reverb; queued switches apply when the pattern starts. Save the project to preserve these settings after reloading. WAVE output gains 6 dB. [Current controls and printable guide](docs/flasher/shortcut-guide.html). [WAV importer and resource links](docs/flasher/convert.html).
 
 
 Main 2.44 serves the exact regular v141 approved by AveyCole. Includes PUNCH FM percussion, PUNCH-controlled Shadow distortion, Mod Setup parameter previews, and MIDI return parameter preservation. S.Chn adds Rev. and Del. stereo effect-return targets alongside its five other track targets, saved per source and pattern. MACHINES closes Mod Setup, including Scramble and S.Chn, so machine selection responds immediately. In S.Chn, Mute On follows source mute/solo, while Off keeps muted sources ducking. This choice saves per source and pattern. Tap SETTINGS + TRACK for Mod Setup; hold to Scramble once. Elder is back to its original level and Shadow gains 12 dB over its original level. Mod Setup > S.Chn adds note-triggered volume ducking with per-source target checkboxes and Depth/Attack/Hold/Release. Sidechain and Scramble checklists save per pattern with Save Project. Blank patterns start with Sidechain off and default Scramble selections. DUCK remains a separate delay type. [Controls and printable guide](docs/flasher/shortcut-guide.html).
@@ -195,6 +193,3 @@ Main2.52 serves the exact user-supplied v186 (`5ec78631f29a4ffcaedac2d940eb6c7d8
 
 
 Main2.53 serves exact user-confirmed v189: clearing all four audio LFOs with a track sound/full pattern, correct LFO1 destination names, and ESTUS SETTINGS controls during playback. [Release notes](docs/flasher/release-notes-2.53.html).
-
-
-Main Full/Lite playability update (2026-10-28): the exact approved builds add distinct Punch transients, LFO/filter headroom and per-track FX, and remove Legacy, Vinyl and ChordKeys. Machine Optional remains unchanged. [Current release notes](docs/flasher/release-notes-2.56.html) include compatibility behavior and remaining reports; no new hardware verification is claimed.

@@ -26,7 +26,7 @@
     "Chord + Control All filter rhythmic click not hardware verified"
   ],
   "hardware_tested": false,
-  "optional_tree_git_sha": "fba6461e2cb36128ddeeec8bb49af5748eb2a152",
+  "optional_tree_git_sha": "7017c6bb22ffe31c31bc2aab31569fea1acbccfd",
   "publication_checks": {
     "exact_image_delivery": true,
     "immutable_loader_and_retry": true,
@@ -35,11 +35,11 @@
     "samples_lite_js_python_native_boot": true,
     "optional_original_assets_none_all_exact": true,
     "optional_mixed_selection_valid": true,
-    "optional_files_and_shared_scripts_unchanged": true,
     "synthetic_web_builder_python_js_parity": true,
     "sysex_validator_parity": true,
     "python_syntax": true,
-    "tweak_overlap_check": true
+    "tweak_overlap_check": true,
+    "optional_machine_builder_and_firmware_unchanged": true
   },
   "preexisting_source_check_failures": [
     "gen_flasher_tweaks.py --check: stale generated catalogue/license baseline",
@@ -48,5 +48,11 @@
   ],
   "unavailable_legacy_checks": [
     "jsdom smoke dependency unavailable; actual Playwright browser edition test passed"
-  ]
+  ],
+  "reference_cleanup": {
+    "main_visible_text_en_fr_clean": true,
+    "main_wav_conversion_verified": true,
+    "optional_bank_importer_isolated": true,
+    "pdf_text_and_visual_review": true
+  }
 }
