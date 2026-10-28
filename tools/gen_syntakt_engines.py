@@ -425,6 +425,7 @@ MAP = g7.ENGINE_MAP          # table machine -> entrée des tables update/render
 # s'éteint par un fondu (bridge_engines.c). Vaut pour les 6 machines d'origine comme pour les machines ajoutées.
 DISPATCH = (0x400a7dfe, 0x400a7e24)
 TG_AFTER = (0x400a7e24, 0x400a7e2a)    # avec Model-TG : fin commune de la piste (3 instructions, 6 o)
+PARAM_TABLE = 0x4010dce0   # tables des paramètres de l'OS : 56 o par identifiant, +0x2c = nom long
 KEY_MACHINES = 5             # touche MACHINES, code logique de 0x4007faf4 (KEY_PRESET mesuré par Model-TG, notes/31 §6)
 KEY_BITS = 0x40f95744        # état des touches que lit 0x4007faf4 : bit 0x4010ae5c[code], numéroté depuis le bit 0
 KEY_MACHINES_BIT = 0         # 0x4010ae5c[5] (lofi_ui.py relit la table de l'image : un autre bit y échouerait)
@@ -682,6 +683,10 @@ def lofi_asm():
     return f"""
 	.globl	lofi_step, lofi_fmt, lofi_draw, lofi_name, lofi_knob
 lofi_knob:
+	/* nom de la plaque : param_table[FTUN] +0x2c -> "Lo-Fi" (l'id 43 n'est sous aucun potard dans
+	   l'OS, seul notre lo-fi l'utilise : le renommer ne change rien d'autre) */
+	move.l	#lofi_name, %d1
+	move.l	%d1, {PARAM_TABLE + 56 * FTUN + 0x2c:#x}
 	move.b	{KEY_BITS + (KEY_MACHINES_BIT >> 3):#x}, %d1
 	btst	#{KEY_MACHINES_BIT & 7}, %d1
 	beq.s	9f

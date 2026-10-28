@@ -24,6 +24,7 @@ VTABLE = 0x400fd134
 UI_REC = 0x40a71754                  # objets d'interface, 100 o par descripteur
 PITCH, FTUN = 42, 43
 PITCH_KNOB = 2
+PARAM_TABLE = 0x4010dce0
 KEY_HELD, KEY_TABLE, KEY_BITS = 0x4007faf4, 0x4010ae5c, 0x40f95744   # (code) -> touche tenue ; code -> bit ; état
 KEY_MACHINES = 5
 PAGE_VT = 0x4010052c                 # vtable de ParameterPageView (slot 124 en 0x401005a8)
@@ -220,6 +221,11 @@ def check_lofi(base_img, fw_img, payload, top, label, check, end=None, base_end=
     check(got[top, PITCH_KNOB, False, 1] == FTUN and got[top, PITCH_KNOB, False, 0] == PITCH,
           f"{label} : piste MACRO, MACHINES + PITCH -> {got[top, PITCH_KNOB, False, 1]} (FINE, {FTUN}) ; "
           f"PITCH seul -> {got[top, PITCH_KNOB, False, 0]} (PITCH, {PITCH})")
+    # le nom de la plaque : param_table[FTUN] +0x2c -> "Lo-Fi" (l'id 43 n'est sous aucun potard dans l'OS)
+    import struct as _struct
+    ptr = _struct.unpack(">I", b.uc.mem_read(PARAM_TABLE + 56 * FTUN + 0x2c, 4))[0]
+    nom = bytes(b.uc.mem_read(ptr, 16)).split(b"\x00")[0].decode("latin-1")
+    check(nom == "Lo-Fi", f"{label} : nom de la plaque pour FTUN -> {nom!r} (attendu 'Lo-Fi')")
     check(got[top, PITCH_KNOB, True, 0] == PITCH,
           f"{label} : FUNC + PITCH rendu au pitch, {got[top, PITCH_KNOB, True, 0]} (PITCH, {PITCH})")
     check(got[top, PITCH_KNOB, True, 1] == FTUN,

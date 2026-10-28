@@ -465,5 +465,7 @@ plaque affiche `Lo-Fi` au lieu de `Pitch`.
 machines identiques à la base. Génération : `25-macro.json`, `32-macro-tg.json`, les combinaisons de moteurs
 (`24-*`, `31-*`) et `REGISTRY.md` régénérés ; `--check`, `check_overlaps` et `registry --check` verts.
 
+**Rapport d'un utilisateur (28/10/2026, sa propre machine)** : `MACHINES` + `PITCH` donne le lo-fi avec les mêmes valeurs (`46K` … `OFF` … `12B`) et la plaque affiche bien **`Lo-Fi`** ; `FUNC` + `PITCH` rend les demis-tons de l'OS ; régression vérifiée (Attack/Filtre/Résonance sous `MACHINES`, navigateur sans doublons de LOCKS, `Res` sur la plaque).
+
 **Reste à faire** : l'essai sur la machine (Maxime) — `MACHINES` + `PITCH` doit afficher `Lo-Fi` avec
 `OFF` au centre, `46K..4K` à gauche, `12B..2B` à droite ; `FUNC` + `PITCH` doit redevenir les demi-tons.
