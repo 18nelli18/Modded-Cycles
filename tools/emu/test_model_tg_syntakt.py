@@ -244,15 +244,15 @@ def interface(ref, fw, codes, tg):
         filled = [i for i, (k, _, _) in enumerate(marks) if k == "repère plein"]
         ys = [y for _, _, y in marks]
         rows_ok &= len(marks) == nm and filled == [m] and min(x for _, x, _ in marks) >= 64 \
-            and sorted(set(ys)) == sorted(gs.MARKS["y"]) and ys[:gs.MARKS_ROW] == [gs.MARKS["y"][0]] * gs.MARKS_ROW
+            and sorted(set(ys)) == sorted(gs.MARKS["y"]) and ys[:gs.marks_row(nm)] == [gs.MARKS["y"][0]] * gs.marks_row(nm)
         where.append(marks[m][1:])
-    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), les 7 premiers en "
+    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), les {gs.marks_row(nm)} premiers en "
                    f"haut (y = {gs.MARKS['y'][0]}, l'axe y monte), le plein sur la "
                    f"machine choisie (1, 7, {first + 1}, {top + 1} : {where})")
 
     blob = bytes(b.uc.mem_read(tg["sampler_name_table"], 28))
     names = bytes(b.uc.mem_read(gs.DATA, 4 * nm))
-    strs = [bytes(b.uc.mem_read(struct.unpack_from(">I", names, 4 * m)[0], 6)).split(b"\0")[0].decode()
+    strs = [bytes(b.uc.mem_read(struct.unpack_from(">I", names, 4 * m)[0], 16)).split(b"\0")[0].decode()
             for m in range(first, nm)]
     if re.search("meter|profile", fw.tweaks[-1]["id"]):     # diagnostic : chaque nom est un compteur
         check(len(set(struct.unpack(f">{nm}I", names))) == nm, "noms : un compteur par machine (diagnostic)")
