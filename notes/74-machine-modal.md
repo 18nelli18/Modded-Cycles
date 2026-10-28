@@ -11,8 +11,10 @@ cœur contre Rings) et `tools/emu/test_modal.py` (la machine dans l'OS). Plan de
 
 - **MODAL**, 15e machine, après ACID : 4 modèles de Rings (modal, cordes sympathiques, corde, cordes sympathiques en
   accord ; ni la voix FM ni la corde et réverbe, retirées le 22/10/2026 à la demande de Maxime, §5.4), la polyphonie
-  1, 2 ou 4, l'excitateur interne de chaque modèle. Le
+  1, 2 ou 3 (4 jusqu'au 27/10/2026, §5.6), l'excitateur interne de chaque modèle. Le
   synthé caché (`StringSynthPart`) n'y est pas.
+- **Le potard Model** (SHAPE) tourne comme WAVE du LFO et sa fenêtre montre le nom du modèle et 4 points ; Voices
+  (FUNC + SHAPE) au même rythme, avec 3 points, depuis le 28/10/2026 (§9).
 - Le cœur est **la `Part` de Rings réécrite en virgule fixe** (le ColdFire n'a pas de FPU) : mêmes calculs, dans le
   même ordre, au même rythme, sur des blocs de 32 trames au lieu de 24. Comparé au code même de Rings compilé pour
   l'ordinateur : 54 cas, médiane 77 dB de rapport signal / écart, le plus faible 36 dB (§6).
@@ -132,7 +134,8 @@ Rapport d'exploration : `build/ref/rings-scout.md` (non versionné). Ce qui comp
   piste MODAL, FUNC tenu et le potard SHAPE (5), l'entrée lue devient 16 (FINE), et les fonctions de l'objet
   d'interface de FINE deviennent celles de MODAL (`modal_poly_step` : un cran par tour, 1, 2, 4 ;
   `modal_poly_fmt` : « 1 », « 2 », « 4 » ; `modal_poly_draw` : ce texte dans la fenêtre de valeur, dessiné comme
-  l'OS dessine le texte d'un paramètre). Le bloc de MODAL passe avant celui de MACRO.
+  l'OS dessine le texte d'un paramètre). Le bloc de MODAL passe avant celui de MACRO. Depuis : 1, 2, 3 (§5.6), et
+  le profil d'encodeur et les 3 points du §9.
 - Image : celle de Metal (2). Noms : Bright (BRIG), Model (MODL), Position (POS), Struct (STRC). Au départ
   « Brightness » et « Structure » : ils débordaient de l'écran (§5.2).
 - **Le nom sous FUNC + SHAPE** : « Voices » (au départ « Pitch », le nom de FINE dans l'OS, relevé par Maxime).
@@ -498,7 +501,124 @@ menu des presets d'une piste MODAL (trois tests « machine = 6 » de Model-TG ac
 début à chaque trig, à sa vitesse, comme l'entrée de Rings (`internal_exciter` à 0) ; sans sample, l'excitateur
 interne.
 
-## 9. Chronologie
+## 9. Le potard Model et la fenêtre Voices (28/10/2026)
+
+Retour de Maxime (28/10/2026) : le potard qui choisit le modèle (SHAPE, « Model ») change trop vite, il est trop
+sensible ; et les petits points pleins ou creux en bas de la fenêtre de valeur sont pauvres. Ses choix, sur des
+maquettes dessinées par le code de l'OS en émulation : le nom du modèle et 4 points, « mais attention a ce que ça
+rentre correctement dans l'affichage » ; la vitesse « comme le WAVE du LFO » ; le même traitement pour Voices
+(FUNC + SHAPE).
+
+### 9.1 Ce que fait l'OS `[FAIT]`
+
+- **Un cran d'un potard de la page des paramètres** (`0x4001f4f0`) : à chaque événement, la recherche du descripteur
+  (slot 124, donc `knob_vec`), puis son objet d'interface (`0x4004df40`), dont le mot +0x10 pointe le **profil
+  d'encodeur** (28 o, recopié sur la pile en `0x4001f79c`) ; le pas de l'événement × 4 (× 8 en mode rapide,
+  `0x4006f73a`) ; puis `0x4006f96a(états, potard, delta, profil, rapide)` rend le delta à ajouter à la valeur (8.8).
+  Un delta nul : rien (`0x4001f7f8`).
+- **Le profil** : 3 drapeaux, puis (accélération, diviseur, multiplicateur), normal puis rapide. Les 6 profils
+  statiques sont construits au démarrage (`0x400e7aa8`), de `0x40ea1424` à `0x40ea14b0`. Ceux des 76 descripteurs :
+
+| Profil | Drapeaux | Normal | Descripteurs |
+|---|---|---|---|
+| `0x40ea1494` | 1, 1, 1 | (2, 3, 1) | 64 des 76, dont FINE (43) et le 2e potard de SNARE (52) |
+| `0x40ea1478` | 0, 1, 1 | (0, 6, 1) | les sélecteurs : Trig Note, COND, FLT.T, LFO.T, MULT, **WAVE** (33), MODE, ALG, PAW, GATE |
+| `0x40ea1440` | 0, 1, 1 | (0, 6, 1) | DEST du LFO (32) |
+| `0x40a73664` | 1, 1, 0 | (7, 4, 1) | PITCH (42) |
+
+- **`0x4006f96a`**, par potard, un état de 20 o (objet + 32 + 20 × potard, l'objet en `vue + 116`) : une **zone
+  morte** (+16) : au-dessus de 24, l'événement en retire 3 × |delta| et ne fait rien. Sinon le delta s'accumule (+12) ;
+  pas = cumul / diviseur × multiplicateur, multiplié par une vitesse (+8 : le pas × accélération / 8 quand il dépasse
+  1). Un pas remet le cumul à 0 et, quand le drapeau 0 est nul (les sélecteurs), ajoute 48 à la zone morte ;
+  drapeau 1 : le pas en unités entières (× 256). Au départ (`0x4006f7c8`) la zone morte vaut 48. Un minuteur à
+  10 Hz (`0x4006f8b0`, posé par le constructeur `0x4006f7f8` : `0x4009109e(objet, 10, …)`, appelé tous les 3 tours
+  du service des minuteurs à 30 Hz) multiplie la vitesse par 2/3 et remonte la zone morte de 1, jusqu'à 48.
+- Donc, `[FAIT en émulation]` (l'accumulateur et le minuteur de l'OS, §9.3) : avec le profil commun, 2 crans mangés
+  après une pause, puis **un pas par cran**. Model de MODAL va de 0 à 3 : **chaque cran changeait de modèle**.
+  Avec celui des sélecteurs (WAVE), le 1er changement au 4e cran (2 mangés, 2 cumulés), puis **un tous les 6** en
+  continuant (la zone morte remonte à 72 après chaque changement : 4 crans mangés, 2 cumulés).
+- **Les potards des machines ajoutées** : `state_at` (le détour de `0x4004df40`) leur donne les objets d'interface de
+  SNARE, 51 à 55. Model de MODAL (descripteur 112) avait celui du 2e potard de SNARE (52, « Snare Shape »,
+  0..0x7f00), partagé avec les 2es potards des autres machines ajoutées (MACRO : son Model, 102) : son profil, pas de
+  fonction de dessin.
+- **La fenêtre de valeur** (`0x4001d818`), avant la valeur : 5 points de position, de (76 + 9 i, 0x17) à
+  (80 + 9 i, 0x1b) (`0x40070efc` plein, `0x40070c4e` creux), le plein au rang (valeur − min) × 5 / (max − min + 1).
+  Pour Model (0..3) : rangs 0, 1, 3, 4, le 3e jamais ; pour Voices (FINE à `0x4000`, `0x5000`, `0x6000`) : 2, 3, 3
+  (2 et 3 voix au même point). Puis la valeur : la fonction de dessin de l'objet (+0x2c gestionnaire, +0x30
+  invocateur) s'il en a une, sinon son texte (+0x20) dans la grande police (`0x401429ec`). Autour d'une valeur
+  verrouillée sur un pas, l'OS inverse ensuite le cadre (0x46, 0x20)..(0x79, 0x39) (`0x4001d9b2`).
+- **Les polices de l'OS** (objets `0x40ea14cc` à `0x40ea14e8`) : `0x40140ab0`, la plus petite (9 lignes, sans
+  jambage, environ 6 points par lettre) ; `0x4014120c`, celle du nom du potard ; `0x40141b08`, grasse ;
+  `0x401429ec`, celle de la valeur (3 caractères tiennent).
+
+### 9.2 La correction
+
+- **Model : son propre objet d'interface.** `state_at`, pour le descripteur Model de MODAL (`own_ui` de
+  `detours_asm`), appelle `modal_model_ui` (`modal.c`) : à son premier appel une fois l'objet 52 construit par l'OS
+  (`0x400de244` ; +0x50 non nul), une copie de cet objet (100 o, dans les variables de MODAL), avec le profil des
+  sélecteurs (+0x10 = `0x40ea1478`, celui de WAVE) et notre dessin (+0x2c : un gestionnaire qui ne fait rien, l'objet
+  n'étant ni copié ni détruit ; +0x30 : `modal_model_draw`). Le détour garde a0 et a1 autour de l'appel C :
+  `0x4004df40` ne touche que d0 et d1, un appelant de l'OS peut y compter. L'objet partagé ne change pas : les 2es
+  potards des autres machines ajoutées comme avant. Pourquoi pas les fonctions de l'objet 52 remplacées à la
+  recherche du potard, comme pour FINE : l'objet est partagé, et la fenêtre est dessinée plus tard, au minuteur de
+  rendu, sur le descripteur gardé ; une autre recherche entre les deux aurait remis les fonctions de SNARE.
+- **`modal_model_draw`**, en (0x60, 0x22) : efface les 5 points de l'OS (rectangle éteint, `0x40070dea`), écrit le
+  nom du modèle centré dans la plus petite police, et dessine 4 points au pas de 9 (x = 80, 89, 98, 107), celui du
+  modèle plein. Noms : **Modal** ; **Sympath. / strings** ; **String** ; **Chord / strings** (une ligne en y = 0x28,
+  deux en 0x2e et 0x23). Le texte va de x 75 à 117 et de y 35 à 54 : à 2 points au moins du cadre d'une valeur
+  verrouillée (70..121, 32..57). « Sympathetic » (58 points) et « resonator » (53) ne tiennent pas dans ce cadre
+  (52) : d'où « Sympath. », et « Modal » seul. Ailleurs qu'en (0x60, 0x22) (d'autres vues de l'OS appellent la même
+  fonction par `vt[64]`), le chiffre seul dans la grande police, comme avant. Le texte de la valeur (+0x20) reste
+  celui de l'OS (« 0 » à « 3 »).
+- **Voices** : `knob_vec` pose aussi le profil des sélecteurs dans l'objet de FINE (+0x10) avec les fonctions de
+  MODAL, et le lo-fi de MACRO (FUNC + PITCH) y remet le profil commun (`0x40ea1494`) avec les siennes : FINE n'est
+  sous aucun autre potard. `modal_poly_draw` dessine 3 points sous le chiffre (x = 84, 93, 102).
+- Rien ne change dans les valeurs rangées (Model 0..3, FINE `0x4000`/`0x5000`/`0x6000`) : les projets et les sons
+  d'avant restent tels quels. Le son ne change pas.
+- Place : détours 2 252 → 2 308 o (sur 3 Ko) ; code et tables de MODAL 42 500 → 43 404 o ; charge utile rangée
+  +578 o, image jusqu'à `0x401ff520` (2 784 o sous `0x40200000`). Les autres tweaks gardent leurs octets (`own_ui`
+  et `profile` ne sont émis que pour MODAL ; `--check` des générateurs, §9.3).
+
+### 9.3 Preuve `[FAIT en émulation]`
+
+`tools/emu/test_modal.py`, parties « FUNC + SHAPE » et « SHAPE : le potard Model », sur le code de l'interface de
+l'OS (`lofi_ui.py` : la recherche du potard, `0x4004df40`, l'accumulateur `0x4006f96a` avec l'état de départ
+`0x4006f7c8` et le minuteur `0x4006f8b0`, la fenêtre de valeur `0x4001d818`, verrouillée ou non) :
+
+- l'objet de Model : une copie de l'objet partagé sauf +0x10, +0x2c et +0x30 ; l'objet partagé tant que l'OS ne
+  l'a pas construit ; a0 et a1 gardés ; les 39 autres descripteurs ajoutés et les 77 objets de l'OS comme sans
+  MODAL ; la fenêtre de Model de MACRO pixel pour pixel comme sans MODAL ;
+- la vitesse, 20 crans d'un côté depuis chaque bout, sans pause, en tournant vite ou à un cran par dixième de seconde :
+
+| | Avant (profil commun) | Après, vite | Après, un cran par 1/10 s |
+|---|---|---|---|
+| Model, 0 → 3 et 3 → 0 | 3, 1, 1 crans | 4, 6, 6 | 5, 6, 6 |
+| Voices, 1 → 3 et 3 → 1 | 3, 1 | 4, 6 | 5, 6 |
+
+  Model donne exactement la suite de WAVE du LFO dans tous ces cas ;
+- la fenêtre : pour chaque modèle, le nom pixel pour pixel comme la petite police de l'OS l'écrit, 4 points, celui
+  du modèle plein, plus aucun point de l'OS ; verrouillée, tout dans le cadre inversé ; ailleurs, le chiffre ; Voices :
+  le chiffre pixel pour pixel comme le chemin texte de l'OS, 3 points ;
+- le profil de FINE : celui de WAVE sous FUNC + SHAPE, le commun sous FUNC + PITCH de MACRO.
+
+Les `--check` de `gen_modal.py`, `gen_macro.py`, `gen_acid.py`, `gen_macro_syntakt.py` (62) et `gen_acid_combos.py`
+(126) : les autres tweaks gardent leurs octets. `gen_syntakt_engines.py --all` (sans Model-TG) produit les mêmes
+fichiers qu'avant ce changement (comparés octet pour octet sur `sd` et `sd,bits`) ; ses `--check` échouent comme
+avant lui (« NE CORRESPOND PAS », et `gov_cut.S` avec `--tg`), sans rapport.
+
+Le code de l'interface passe avant les noyaux en assembleur de MODAL (`.text` de `modal_asm.S`, lié après) : ils se
+décalent de `0x344` o (836). `test_budget.py --engines modal` : 60 cas, tous sous 13 %, au pire 12,6 % ; chaque cas à
+0,2 point au plus de la mesure d'avant (12,8 % au pire).
+
+### 9.4 À vérifier sur la machine
+
+1. Une piste MODAL, tourner SHAPE : la fenêtre montre le nom du modèle et 4 points ; environ 4 crans pour quitter un
+   modèle, puis 6 pour chaque suivant, comme WAVE sur la page LFO.
+2. Tenir un trig et tourner SHAPE (valeur verrouillée) : le nom tient dans le cadre inversé.
+3. FUNC + SHAPE : « Voices », le chiffre et 3 points, au même rythme.
+4. MACRO : son potard Model (le 2e) un modèle par cran comme avant ; FUNC + PITCH (lo-fi) comme avant.
+
+## 10. Chronologie
 
 - 20/10/2026 : demande, choix de Maxime (§1), cœur, passerelle, machine, preuves ; OS 2.1.
 - 20/10/2026 : « allège en assembleur » (Maxime) : `modal_asm.S` et les retouches du §5.1.
@@ -514,3 +634,5 @@ interne.
   [81](81-budget-de-13-pourcent.md) §8).
 - 28/10/2026 : retour de Maxime (aucune différence entre 2 et 3 voix, la 1re note coupée par la 3e) : les voix tour à
   tour au lieu du motif de Rings, 3 voix pour les modèles sympathiques ([81](81-budget-de-13-pourcent.md) §8.6).
+- 28/10/2026 : retour de Maxime (le potard Model trop rapide, les points de la fenêtre) : la vitesse de WAVE du LFO,
+  le nom du modèle et 4 points ; Voices au même rythme avec 3 points (§9).

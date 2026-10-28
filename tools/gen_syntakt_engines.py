@@ -511,7 +511,7 @@ def marks_asm(a, ins, lab, nm):
     ins("bne.s 1b"); ins("jmp 0x400a26f2")
 
 
-def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
+def detours_asm(n, images, firsts, tg=None, lofi=None, fine=(), own_ui=()):
     """Détours pour n machines ajoutées (index 6..5+n), descripteurs firsts[i]..firsts[i]+4 (5 par machine).
     Avec Model-TG (tg : ses symboles), les machines ajoutées vont de 7 à 6+n (6 est son Sampler) et nos détours
     passent la main aux siens pour le reste (notes/31). lofi : rang de MACRO parmi les machines ajoutées (None
@@ -520,7 +520,10 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
     adresses ; MODAL, FUNC + SHAPE : sa polyphonie, notes/74), même mécanique que le lo-fi de MACRO. Avec un nom
     (name_at : son adresse ; name_orig : celle du nom d'origine de FINE, « Pitch »), la fenêtre du potard montre ce
     nom le temps de ce réglage : knob_vec le pose dans le descripteur de FINE, et remet celui d'origine à toute
-    autre recherche de potard."""
+    autre recherche de potard. Avec un profil (profile), knob_vec pose aussi ce profil d'encodeur dans l'objet
+    d'interface de FINE (+0x10), et le lo-fi de MACRO y remet celui d'origine (PROFILE_DEFAULT). own_ui :
+    [(descripteur, fonction)] des descripteurs ajoutés qui ont leur propre objet d'interface au lieu de celui de
+    SNARE qu'ils partagent (state_at appelle la fonction, qui le rend ; MODAL, le potard Model, notes/74 §9)."""
     named = [f for _, f in fine if f.get("name_at")]     # réglages sous FUNC avec leur propre nom
     fname = DESCN + FTUN * 0x38 + 0x2c                   # nom long du descripteur de FINE
     last = 76 + 5 * n                                    # 1er descripteur après ceux des machines ajoutées
@@ -546,13 +549,23 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
     lab("9"); ins("rts")
     for name, off in (("state_at", "0x40a71754"), ("state_connect", "0x40a71768")):
         a.append(f"\t.globl\t{name}"); lab(name)
-        ins("move.l 4(%sp), %d0"); ins("bsr.w map_state"); ins("moveq #100, %d1"); ins("muls.l %d1, %d0")
+        ins("move.l 4(%sp), %d0")
+        for k, (desc, _) in enumerate(own_ui if name == "state_at" else ()):
+            if desc > 127:
+                raise SystemExit(f"!! own_ui : descripteur {desc} (moveq)")
+            ins(f"moveq #{desc}, %d1"); ins("cmp.l %d1, %d0"); ins(f"beq.w own_ui_{k}")
+        ins("bsr.w map_state"); ins("moveq #100, %d1"); ins("muls.l %d1, %d0")
         ins(f"add.l #{off}, %d0")
         if name == "state_at":
             ins("rts")
         else:
             ins("pea 0x40a71500"); ins("move.l 12(%sp), -(%sp)"); ins("move.l %d0, -(%sp)"); ins("jsr 0x400ddf60")
             ins("lea 12(%sp), %sp"); ins("move.l #0x40a71500, %d0"); ins("rts")
+    for k, (_, fn) in enumerate(own_ui):
+        # l'objet rendu par une fonction C de la machine ; 0x4004df40 ne touche que d0 et d1 : a0 et a1 gardés
+        lab(f"own_ui_{k}")
+        ins("lea -8(%sp), %sp"); ins("movem.l %a0-%a1, (%sp)"); ins(f"jsr {fn:#x}")
+        ins("movem.l (%sp), %a0-%a1"); ins("lea 8(%sp), %sp"); ins("rts")
     # CC reçu -> descripteur
     a.append("\t.globl\tcc_bounds"); lab("cc_bounds")
     ins("moveq #5, %d2"); ins("cmp.l %d1, %d2"); ins("bcs.s 1f")
@@ -634,8 +647,9 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
         # même chose que le lo-fi de MACRO (plus bas), pour le potard f["knob"] et les fonctions de la machine
         ins(f"moveq #{first + rank}, %d1"); ins("cmp.l %d1, %d0"); ins("bne.s 7f"); ins("tst.b %d5"); ins("beq.s 7f")
         ins(f"moveq #{f['knob']}, %d1"); ins("cmp.l %d1, %d2"); ins("bne.s 7f"); ins("moveq #16, %d3")
-        for k, off in (("step", 0x50), ("fmt", 0x20), ("draw", 0x30)):
-            ins(f"move.l #{f[k]:#x}, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + off:#x}")
+        for k, off in (("step", 0x50), ("fmt", 0x20), ("draw", 0x30), ("profile", 0x10)):
+            if k in f:
+                ins(f"move.l #{f[k]:#x}, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + off:#x}")
         if f.get("name_at"):                           # tg_sync le repose apres sa copie des noms (fine_name)
             ins(f"move.l #{f['name_at']:#x}, %d1"); ins(f"move.l %d1, {fname:#x}"); ins("move.l %d1, fine_name")
         ins("bra.w 2f" if f.get("name_at") else "bra.s 2f")
@@ -651,6 +665,8 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
         ins("move.l #lofi_step, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x50:#x}")
         ins("move.l #lofi_fmt, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x20:#x}")
         ins("move.l #lofi_draw, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x30:#x}")
+        if any(f.get("profile") for _, f in fine):     # le profil d'origine de FINE, après celui de MODAL
+            ins(f"move.l #{PROFILE_DEFAULT:#x}, %d1"); ins(f"move.l %d1, {UI_REC + 100 * FTUN + 0x10:#x}")
     lab("2"); ins("rts")
     if named:
         a.append("\t.globl\tfine_name"); lab("fine_name"); ins(".long 0")   # le nom du réglage sous FUNC, ou 0
@@ -696,6 +712,10 @@ def detours_asm(n, images, firsts, tg=None, lofi=None, fine=()):
 
 FTUN = 43                    # descripteur FINE (Pitch, FTUN) : p+0x22, 0..0x7f00, sans potard dans l'OS
 UI_REC = 0x40a71754          # objets d'interface des descripteurs (0x4004df40), 100 o chacun
+# profils d'encodeur (+0x10 d'un objet d'interface, lus par 0x4006f96a à chaque cran, 28 o) : celui de la plupart des
+# paramètres (un pas par cran, accéléré) et celui des sélecteurs (WAVE, MULT, MODE du LFO, conditions de trig : sans
+# accélération, une zone morte après chaque pas : 4 crans pour le premier, puis 6 en continuant), notes/74 §9
+PROFILE_DEFAULT, PROFILE_PICKER = 0x40ea1494, 0x40ea1478
 
 
 def lofi_khz(r):
@@ -1190,6 +1210,11 @@ def fine_list(machines):
     return [(i, m["fine"]) for i, m in enumerate(machines) if m.get("fine")]
 
 
+def own_ui_list(machines):
+    """[(descripteur, fonction)] des potards de machines ajoutées qui ont leur propre objet d'interface (detours_asm)."""
+    return [(76 + 5 * i + m["ui"]["slot"], m["ui"]["at"]) for i, m in enumerate(machines) if m.get("ui")]
+
+
 def lofi_index(machines):
     """Rang de MACRO (lofi) parmi les machines ajoutées, pour detours_asm ; None sans elle (ACID peut la suivre)."""
     lofi = [i for i, m in enumerate(machines) if m.get("lofi")]
@@ -1201,7 +1226,7 @@ def lofi_index(machines):
 def detours_text(machines, syms, rnd_at, tg):
     """Texte des détours (à STUBS) pour ces machines ajoutées, comme compile_code."""
     return (detours_asm(len(machines), [m["image"] for m in machines], [76 + 5 * i for i in range(len(machines))], tg,
-                        lofi=lofi_index(machines), fine=fine_list(machines))
+                        lofi=lofi_index(machines), fine=fine_list(machines), own_ui=own_ui_list(machines))
             + probe_asm(syms) + (dispatch_tg_asm(syms, rnd_at, tg) if tg else dispatch_asm(syms, rnd_at)))
 
 

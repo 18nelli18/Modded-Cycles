@@ -61,6 +61,7 @@ MACHINE = dict(name="MODAL", image=2, decay=64,
                knobs=(("Bright", "BRIG", 64), ("Model", "MODL", 0, 0, len(MODELS) - 1),
                       ("Position", "POS", 40), ("Struct", "STRC", 36)))   # 8 lettres au plus par mot (gs.check_names)
 SHAPE_KNOB = 5                  # numéro de potard de SHAPE pour l'OS (PITCH = 2 : l'entrée potard - 2 de l'enregistrement)
+MODEL_SLOT = 1                  # Model : le 2e des descripteurs de MODAL
 
 CFLAGS = ["-mcpu=54418", "-O2", "-malign-int", "-U_FORTIFY_SOURCE", "-ffreestanding", "-fno-builtin",
           "-fno-tree-loop-distribute-patterns", "-nostdlib", "-fno-pic", "-fno-common", "-ffunction-sections",
@@ -74,7 +75,7 @@ LINK = """SECTIONS
   /DISCARD/ : {{ *(.comment) *(.note*) *(.eh_frame*) }}
 }}
 """
-ENTRIES = ("modal_update", "modal_render", "modal_poly_step", "modal_poly_fmt", "modal_poly_draw")
+ENTRIES = ("modal_update", "modal_render", "modal_poly_step", "modal_poly_fmt", "modal_poly_draw", "modal_model_ui")
 
 LICENSE = """Machine MODAL of Modded-Cycles: fixed-point code written after Rings by Emilie Gillet (the Part of
 rings/dsp and what it uses of stmlib: modal resonator, strings, sympathetic strings and chords, internal
@@ -332,9 +333,13 @@ def modal_part(pay):
     """MODAL lié à sa place : dict(machine, at, blob, end, syms), pour gen_macro_syntakt.build_tweak (more)."""
     with tempfile.TemporaryDirectory() as d:
         blob, syms, end = compile_machine(pathlib.Path(d), pay, tables_header())
+    import gen_syntakt_engines as gs                       # noqa: E402
+    # FUNC + SHAPE : la polyphonie dans FINE ; SHAPE seul : le potard Model, avec son propre objet d'interface
+    # (modal_model_ui : la vitesse des sélecteurs de l'OS, le nom du modèle et 4 points, notes/74 §9)
     machine = dict(MACHINE, label="MODAL", update=syms["modal_update"], render=syms["modal_render"],
                    fine=dict(knob=SHAPE_KNOB, step=syms["modal_poly_step"], fmt=syms["modal_poly_fmt"],
-                             draw=syms["modal_poly_draw"], name="Voices"))
+                             draw=syms["modal_poly_draw"], name="Voices", profile=gs.PROFILE_PICKER),
+                   ui=dict(slot=MODEL_SLOT, at=syms["modal_model_ui"]))
     return dict(machine=machine, at=pay + MODAL_AT, blob=blob, end=end, syms=syms)
 
 

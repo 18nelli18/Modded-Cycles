@@ -472,7 +472,7 @@ Code trop gros pour un masque, ajouté à la fin de l'image (`at`) et copié au 
 | syntakt-tg-sd-cp-toy-bits-swarm-acid | 31 | `0x401bf8c0` | 147 726 | `0x401e39ce` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-swarm-macro | 31 | `0x401bf8c0` | 228 373 | `0x401f74d5` | `0x46700000` | 481 168 | model-tg-st |
 | syntakt-tg-sd-cp-toy-bits-swarm-macro-acid | 31 | `0x401bf8c0` | 233 012 | `0x401f86f4` | `0x46700000` | 492 288 | model-tg-st |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 31 | `0x401bf8c0` | 260 638 | `0x401ff2de` | `0x46700000` | 562 300 | model-tg-st |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 31 | `0x401bf8c0` | 261 216 | `0x401ff520` | `0x46700000` | 562 404 | model-tg-st |
 | syntakt-tg-sd-cp-toy-macro | 31 | `0x401bf8c0` | 219 136 | `0x401f50c0` | `0x46700000` | 481 168 | model-tg-st |
 | syntakt-tg-sd-cp-toy-macro-acid | 31 | `0x401bf8c0` | 223 765 | `0x401f62d5` | `0x46700000` | 492 288 | model-tg-st |
 | syntakt-tg-sd-cp-toy-swarm | 31 | `0x401bf8c0` | 242 492 | `0x401fabfc` | `0x46700000` | 269 056 | model-tg-st |
@@ -528,7 +528,7 @@ Code trop gros pour un masque, ajouté à la fin de l'image (`at`) et copié au 
 | syntakt-tg-meter | 91 | `0x401bf8c0` | 243 472 | `0x401fafd0` | `0x46700000` | 269 056 | model-tg-st |
 | syntakt-tg-profile | 92 | `0x401bf8c0` | 243 904 | `0x401fb180` | `0x46700000` | 269 056 | model-tg-st |
 
-Fin la plus haute : `0x401ff2de`, soit 3 362 o avant la limite (une charge posée sur une autre, comme les moteurs du Syntakt sur Model-TG, est déjà comptée à sa place dans la chaîne).
+Fin la plus haute : `0x401ff520`, soit 2 784 o avant la limite (une charge posée sur une autre, comme les moteurs du Syntakt sur Model-TG, est déjà comptée à sa place dans la chaîne).
 
 ## 4. Points d'accroche (crochets) sur l'OS
 
@@ -588,7 +588,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4004df76` | `7205202f0004` | jmp | charge utile (mémoire), 9 cibles selon la combinaison | acid, macro, macro-acid, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/36 |
 | `0x4004df76` | `4ef9401b278a` | jmp | charge utile (mémoire), 8 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | notes/31, notes/36, notes/43, notes/54 |
 | `0x4004df76` | `7205202f0004` | jmp | charge utile (image) +0x864a | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x4004dfa2` | `704c222f0004` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal, syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
+| `0x4004dfa2` | `704c222f0004` | jmp | charge utile (mémoire), 4 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal, syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x40053a6c` | `4fefff8048d77cfc42af…` | jsr | OS `0x4008e6ba` | boot-anim | notes/39 |
 | `0x40056610` | `4fefffd848d73cfc` | jmp | charge utile (image) +0xdbf6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40056698` | `4fefffd848d73cfc` | jmp | masque `0x40170c48` +0x32 `s7_check` | out-sleep | notes/78 |
@@ -618,7 +618,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4005a6a6` | `7205b2826430` | jmp | charge utile (image) +0x47bc | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4005a6b6` | `4ef9401ae936` | jmp | charge utile (mémoire), 14 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | notes/31, notes/36, notes/43, notes/54 |
 | `0x4005a6b6` | `eb8a41f940a7` | jmp | charge utile (image) +0x47f6 | model-tg, model-tg-st | notes/31, notes/36 |
-| `0x4005a8f0` | `7405b4816532` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal, syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
+| `0x4005a8f0` | `7405b4816532` | jmp | charge utile (mémoire), 4 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal, syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x4005aa22` | `202f000cb481` | jmp | masque `0x40185308` +0x82 `lfo_plk_load` | lfo-plus | notes/56 |
 | `0x4005aa34` | `7417b480640c` | jmp | masque `0x40166760` +0x8a `tf_conv` | track-filter | notes/47 |
 | `0x4005aecc` | `4feffff448d7` | jmp | charge utile (image) +0x9b66 | model-tg, model-tg-st | notes/31, notes/36 |
@@ -770,7 +770,7 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | syntakt-tg-*-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 138 176–147 726 o | notes/36 |
 | syntakt-tg-*-macro (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 218 802–228 373 o | notes/36 |
 | syntakt-tg-*-macro-acid (31 tweaks) | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 223 445–233 012 o | notes/36 |
-| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 260 638 o | notes/36 |
+| syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal | 117 | 51 | 17 | 47 | 1 | 1 | 0 | 261 216 o | notes/36 |
 | macro-acid-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 116 804 o | notes/54 |
 | macro-tg | 114 | 50 | 15 | 47 | 1 | 1 | 0 | 110 276 o | notes/43 |
 | sample-preview | 11 | 0 | 3 | 0 | 4 | 4 | 0 |  | notes/46 |

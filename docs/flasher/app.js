@@ -27,7 +27,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.1: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+midi-out-fix+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "0750fa3bb7734061178a4b2c12c29c68f25ad87cfa7de254b0375171bd75798d",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+midi-out-fix+mod-settings+lfo-plus+out-sleep+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": "aebf29b29a7138f056611b4d6eedcaea3cdd9d0a61ff20974e35e5e5aab87173",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "6356c30c4c10211f6bd47298df3d526e28039db6ecfeb59d84ce7e2b77dd3fed"},
@@ -45,7 +45,7 @@ const REF_MODS = {
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
   "out-sleep": {"w": "2465ffb9e4159117a59d6b0d6f9c657d0c24c7f0eee1df922d6cd95d8dd25b91"},
-  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": {"w": "31d54bf9e59693eae8a3070c99a91e22426069d4a9c3687a8a91dcf87fee0eeb", "p": "e5853898eab920f7c68cf4748b61ebe3096f36e0d1c7a1493c9f726fe4de58dd"},
+  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-modal": {"w": "dd361f787cbbc6e4c3b318a16c2049ddd05184deace022bd6bfd96c04fbf96f3", "p": "09c09729c94a21a10133ba3df14635f1a5b582462d1cdccfb0ffacd796bf0887"},
 };
 
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
@@ -590,7 +590,7 @@ const FEAT = {
       note: "Turn GATE on for notes that hold their whole length, as on the original. Under a very heavy load the governor can fade an ACID note out; the track's next trig then plays afresh." },
     modal: { label: "MODAL machine",
       short: "Machine 15, the last one: a resonator after Mutable Instruments Rings, struck or plucked by each trig. SHAPE picks the model.",
-      desc: "An extra machine, the 15th: a resonator after Rings, from Émilie Gillet's own open-source code, rewritten in fixed point. Each trig strikes or plucks it and it rings on by itself. SHAPE picks one of four models: bars, plates and bells; strings that ring in sympathy; a plucked string; strings tuned to a chord. COLOR is the brightness, CONTOUR the structure, SWEEP the position, DECAY the damping. Hold FUNC and turn SHAPE for 1, 2 or 3 voices (2 at most on the string, SHAPE 2): each new note rings on the next voice while the others keep ringing. Velocity sets how hard it is struck. Your own sample can strike it too: on a MODAL track, pick a sample in the preset menu (FUNC + MACHINES), and each trig plays it from its start into the resonator.",
+      desc: "An extra machine, the 15th: a resonator after Rings, from Émilie Gillet's own open-source code, rewritten in fixed point. Each trig strikes or plucks it and it rings on by itself. SHAPE picks one of four models: bars, plates and bells; strings that ring in sympathy; a plucked string; strings tuned to a chord. Its window shows the model's name, and it turns like the LFO's WAVE, a few notches per model. COLOR is the brightness, CONTOUR the structure, SWEEP the position, DECAY the damping. Hold FUNC and turn SHAPE for 1, 2 or 3 voices (2 at most on the string, SHAPE 2): each new note rings on the next voice while the others keep ringing. Velocity sets how hard it is struck. Your own sample can strike it too: on a MODAL track, pick a sample in the preset menu (FUNC + MACHINES), and each trig plays it from its start into the resonator.",
       note: "Under 13 % of the processor on its track: computed at 24 kHz and made lighter for that (fewer sympathetic strings, simpler strings). One sample per track, saved with the project; loading a MODAL preset goes back to its own exciter." },
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Three more LFOs per track: on the LFO page, press LFO again for LFO 2, 3 and 4.",
@@ -673,7 +673,7 @@ const FEAT = {
       note: "Mettez GATE pour des notes tenues toute leur longueur, comme sur l'original. Sous une très forte charge, le régulateur peut éteindre une note ACID en fondu ; le trig suivant de la piste rejoue alors la note." },
     modal: { label: "Machine MODAL",
       short: "Machine 15, la dernière : un résonateur d'après Rings de Mutable Instruments, frappé ou pincé à chaque trig. SHAPE choisit le modèle.",
-      desc: "Une machine ajoutée, la 15e : un résonateur d'après Rings, tiré du code libre d'Émilie Gillet, réécrit en virgule fixe. Chaque trig le frappe ou le pince, et il résonne tout seul. SHAPE choisit l'un des quatre modèles : barres, plaques et cloches ; cordes qui vibrent par sympathie ; corde pincée ; cordes accordées en accord. COLOR règle la brillance, CONTOUR la structure, SWEEP la position, DECAY l'amortissement. Maintenez FUNC et tournez SHAPE pour 1, 2 ou 3 voix (2 au plus sur la corde, SHAPE 2) : chaque nouvelle note résonne sur la voix suivante pendant que les autres continuent. La vélocité règle la force de la frappe. Votre propre sample peut aussi le frapper : sur une piste MODAL, choisissez un sample dans le menu des presets (FUNC + MACHINES), et chaque trig le joue depuis son début dans le résonateur.",
+      desc: "Une machine ajoutée, la 15e : un résonateur d'après Rings, tiré du code libre d'Émilie Gillet, réécrit en virgule fixe. Chaque trig le frappe ou le pince, et il résonne tout seul. SHAPE choisit l'un des quatre modèles : barres, plaques et cloches ; cordes qui vibrent par sympathie ; corde pincée ; cordes accordées en accord. Sa fenêtre affiche le nom du modèle, et il tourne comme le WAVE du LFO, quelques crans par modèle. COLOR règle la brillance, CONTOUR la structure, SWEEP la position, DECAY l'amortissement. Maintenez FUNC et tournez SHAPE pour 1, 2 ou 3 voix (2 au plus sur la corde, SHAPE 2) : chaque nouvelle note résonne sur la voix suivante pendant que les autres continuent. La vélocité règle la force de la frappe. Votre propre sample peut aussi le frapper : sur une piste MODAL, choisissez un sample dans le menu des presets (FUNC + MACHINES), et chaque trig le joue depuis son début dans le résonateur.",
       note: "Sous 13 % du processeur sur sa piste : calculée à 24 kHz et allégée pour cela (moins de cordes sympathiques, des cordes plus simples). Un sample par piste, sauvé avec le projet ; charger un preset de MODAL ramène son propre excitateur." },
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Trois LFO de plus par piste : sur la page LFO, appuyez encore sur LFO pour LFO 2, 3 et 4.",

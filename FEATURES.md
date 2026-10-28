@@ -87,7 +87,7 @@ retrig page, menus) are listed with that page as context.
 | **FUNC** + **PAGE** | Scale menu, as stock, with two added items **Scl** and **Key** (Scale Lock) | Model-TG Scale Lock | Stock menu, extended |
 | **FUNC** + **PITCH** (turn) | Lo-fi: OFF in the middle, sample rate on the left (46K down to 4K), bit depth on the right (12B down to 2B) | MACRO | **MACRO tracks only.** Stock, changed: on every other machine FUNC + PITCH still moves the note by semitones |
 | **FUNC** + **MACHINES** on a MODAL track, then pick a sample | The sample becomes MODAL's exciter: each trig plays it from the start into the resonator (*Sample loaded to track N*) | MODAL | MODAL tracks. Loading a MODAL preset goes back to MODAL's own exciter |
-| **FUNC** + **SHAPE** (turn) | Polyphony: 1, 2 or 3 voices (2 at most on the string, SHAPE 2) | MODAL | **MODAL tracks only.** On every other machine, FUNC + SHAPE does what it does on the stock OS |
+| **FUNC** + **SHAPE** (turn) | Polyphony: 1, 2 or 3 voices (2 at most on the string, SHAPE 2), at the pace of the LFO's WAVE | MODAL | **MODAL tracks only.** On every other machine, FUNC + SHAPE does what it does on the stock OS |
 | **FUNC** + **RETRIG** | Retrig Setup menu, now with two more rows under Rte, Len, A.On: **Arp** (direction) and **Oct** (octaves) | Arpeggiator | Stock menu, extended |
 | **FUNC** + trig key on an empty step | Places a trigless trig (stock); the key now lights dimmed | Dimmed trigless trigs | Grid mode |
 | **FUNC** + trig key (on a step with a trig) | Stock change applied on release; now decided within 0.5 s instead of 0.2 s | Easier trig removal | Grid mode |
@@ -372,18 +372,21 @@ egg). The code is Rings' own DSP (the `Part` of
 
 1. Press **MACHINES** and pick **MODAL**, the last machine (15). Its icon is Metal's. The MACHINES screen shows two
    rows of eight marks.
-2. **SHAPE** picks the model (0 to 3); it can be locked on a step.
+2. **SHAPE** picks the model (0 to 3); it can be locked on a step. Its window shows the model's name (*Modal*,
+   *Sympath. strings*, *String*, *Chord strings*) and four dots, and it turns like **WAVE** on the LFO page: about
+   4 notches to leave a model, then 6 for each next one as you keep turning (since 28/10/2026, notes/74 §9; it used
+   to change the model at every notch).
 3. The other knobs are Rings' own.
 
 | Knob | Name on screen | Rings | What it does |
 |---|---|---|---|
 | PITCH | Pitch | FREQUENCY | the root note, C4 in the middle; the keys and trig notes play as V/OCT |
 | COLOR | Bright (BRIG) | BRIGHTNESS | wood or nylon at the bottom, glass or steel at the top |
-| SHAPE | Model (MODL) | the model button | 0 modal, 1 sympathetic strings, 2 string, 3 strings in a chord |
+| SHAPE | Model (MODL); the window: the model's name and 4 dots | the model button | 0 modal, 1 sympathetic strings, 2 string, 3 strings in a chord |
 | SWEEP | Position (POS) | POSITION | where it is struck |
 | CONTOUR | Struct (STRC) | STRUCTURE | the ratios between the partials (harmonic in a notch in the first quarter); model 1: the intervals of the strings; model 3: one of 11 chords |
 | DECAY | — | DAMPING | how long it rings, from a short knock to about ten seconds; at the top the strings ring almost forever |
-| **FUNC** + SHAPE | 1, 2 or 3 | the polyphony button | 1, 2 or 3 voices (the string, SHAPE 2: 2 at most, 3 plays as 2): each new note takes the voice that has rung the longest, so on 3 voices the fourth note cuts the first |
+| **FUNC** + SHAPE | Voices: 1, 2 or 3, and 3 dots | the polyphony button | 1, 2 or 3 voices (the string, SHAPE 2: 2 at most, 3 plays as 2): each new note takes the voice that has rung the longest, so on 3 voices the fourth note cuts the first |
 
 4. Velocity sets how hard the resonator is struck (the exciter's level), not the track volume: the notes still
    ringing keep their level.
