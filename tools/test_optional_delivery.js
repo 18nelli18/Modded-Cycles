@@ -3,6 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..'),dir=path.join(root,'docs/flasher-optional'),B=require('../docs/flasher/builder.js'),O=require('../docs/flasher-optional/optional-builder.js');
 const run=name=>{const context={window:{}};vm.runInNewContext(fs.readFileSync(path.join(dir,name),'utf8'),context);return context.window};
 const recipe=run('recipe.js').MCOptionalRecipe,editions=run('editions.js').MCOptionalBaseEditions,descriptions=run('machine-descriptions.js').MCOptionalDescriptions;
+const metadata=JSON.parse(fs.readFileSync(path.join(dir,'BUILD.json'))),canonical=fs.readFileSync(path.join(dir,'recipe.js'),'utf8').replace(/\r\n/g,'\n');assert.equal(B.hex(B.sha256(new TextEncoder().encode(canonical))),metadata.recipe_sha256);
 const html=fs.readFileSync(path.join(dir,'index.html'),'utf8'),main=fs.readFileSync(path.join(root,'docs/flasher/index.html'),'utf8');
 assert(main.includes('id="optional-flasher-link"')&&main.includes('href="../flasher-optional/"'));
 assert(html.includes('Only some combinations have been tested on hardware. Use this version at your own risk.'));
