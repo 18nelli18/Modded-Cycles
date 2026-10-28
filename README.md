@@ -195,3 +195,6 @@ Main2.52 serves the exact user-supplied v186 (`5ec78631f29a4ffcaedac2d940eb6c7d8
 
 
 Main2.53 serves exact user-confirmed v189: clearing all four audio LFOs with a track sound/full pattern, correct LFO1 destination names, and ESTUS SETTINGS controls during playback. [Release notes](docs/flasher/release-notes-2.53.html).
+
+
+Main Full/Lite playability update (2026-10-28): the exact approved builds add distinct Punch transients, LFO/filter headroom and per-track FX, and remove Legacy, Vinyl and ChordKeys. Machine Optional remains unchanged. [Current release notes](docs/flasher/release-notes-2.56.html) include compatibility behavior and remaining reports; no new hardware verification is claimed.

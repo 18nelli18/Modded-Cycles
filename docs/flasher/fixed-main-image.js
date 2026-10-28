@@ -1,61 +1,56 @@
-/* 2026-10-27-main256-lite216 : images verifiees par edition, caches et sources independants. */
+/* 2026-10-28-main256-playability : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
- "full": {
-  "id": "full",
-  "productName": "Supermodel",
-  "release": "2.56",
-  "file": "Supermodel_2.56_c00942b054d0.syx",
-  "syxSha256": "c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6",
-  "mainOsSha": "a82d10eaccea90141951015a1e4b38ad732fdd2b32b17a4b45e37d3bfbad137e",
-  "requiresSyntakt": true,
-  "source_build": 215,
-  "hardware_source_sha256": "c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6",
-  "title_only_change": false,
-  "base_source_build": 208,
-  "new_clear_filter_defaults": true,
-  "ui_idle_saves": true,
-  "hardware_verified": false,
-  "full_lfo2_pattern_storage": true,
-  "lfo_menu_musical_controls": true,
-  "tiny_sustain_punch": true,
-  "clipboard_allocation_bytes": 164,
-  "publication_user_report": "Okay, push 215 as main full build"
- },
- "lite": {
-  "id": "lite",
-  "productName": "Supermodel Lite",
-  "release": "2.56",
-  "file": "Supermodel_Lite_2.56_0a6e67c552c3.syx",
-  "syxSha256": "0a6e67c552c3a799cb4090357ebe8018503efdebaae9ad3aaa3e68b5f3bd4e0e",
-  "mainOsSha": "7ae63e059ecf21a5a364ce880b7822dc04c392549d4cc193e3ff1daf1a71f12e",
-  "requiresSyntakt": false,
-  "source_build": 216,
-  "title_only_change": false,
-  "base_source_build": 211,
-  "new_clear_filter_defaults": true,
-  "ui_idle_saves": true,
-  "hardware_verified": false,
-  "full_lfo2_pattern_storage": true,
-  "lfo_menu_musical_controls": true,
-  "clipboard_allocation_bytes": 164,
-  "publication_user_report": "Okay, make 216 the live lite version and then work on the machine optional flasher",
-  "base211_hardware_report": {
-   "hardware_source_sha256": "269388b3187af386115a986a50774f8c831906c5a36ad259249b2b949b886fa7",
-   "hardware_user_report": "Seems much more responsive now. and dx works.",
-   "boot_hardware_verified": true,
-   "encoder_hardware_verified": true,
-   "dx_hardware_verified": true
+  "full": {
+    "id": "full",
+    "productName": "Supermodel",
+    "release": "2.56",
+    "file": "Supermodel_2.56_fec67ab4282a.syx",
+    "syxSha256": "fec67ab4282a68b3c5538e76c87fba0c3d16e5cff5f6c15b5bb54202d952cb58",
+    "mainOsSha": "a91f0f56fa007004883ab582b94024383a679bf2d31815981d4234013e6d86f3",
+    "requiresSyntakt": true,
+    "source_build": 215,
+    "new_clear_filter_defaults": true,
+    "ui_idle_saves": true,
+    "hardware_verified": false,
+    "legacy_removed": true,
+    "vinyl_removed": true,
+    "chordkeys_removed": true,
+    "unique_machine_punch": true,
+    "unassigned_secondary_lfos_pause": true,
+    "visible_machine_count": 24,
+    "publication_user_report": "Push these to main and keep the machine optional flasher the same.",
+    "status": "experimental"
+  },
+  "lite": {
+    "id": "lite",
+    "productName": "Supermodel Lite",
+    "release": "2.56",
+    "file": "Supermodel_Lite_2.56_b5220ffdcf54.syx",
+    "syxSha256": "b5220ffdcf541a9109c389de4d6a9a38eba4539f173ee2ba960603221926f563",
+    "mainOsSha": "d38cc90b677d57865d20dc64310cb1c0803fc66f0aa4a46fa4b52aea031e41e3",
+    "requiresSyntakt": false,
+    "source_build": 216,
+    "new_clear_filter_defaults": true,
+    "ui_idle_saves": true,
+    "hardware_verified": false,
+    "legacy_removed": true,
+    "vinyl_removed": true,
+    "chordkeys_removed": true,
+    "unique_machine_punch": true,
+    "unassigned_secondary_lfos_pause": true,
+    "visible_machine_count": 6,
+    "publication_user_report": "Push these to main and keep the machine optional flasher the same.",
+    "status": "experimental"
   }
- }
 };
  for(const meta of Object.values(catalogue))Object.freeze(meta);
  Object.freeze(catalogue);
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/0d9177469d937f9362165d7dfd97a16f360cc26e/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Supermodel/566d8b45a669528436bddae202030d2b7a0aa71e/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});

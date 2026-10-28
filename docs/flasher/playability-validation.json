@@ -1,0 +1,52 @@
+{
+  "editions": {
+    "full": {
+      "filename": "Supermodel_CPU_Full_Punch_No_Legacy_No_Vinyl_No_ChordKeys_Experimental.syx",
+      "sha256": "fec67ab4282a68b3c5538e76c87fba0c3d16e5cff5f6c15b5bb54202d952cb58",
+      "module_sha256": "b7d2ae97f26cc7a9565ddcb5634cb85fd60ee981c2fa733f98973bb315a0c8f0",
+      "visible_machines": 24,
+      "punch_audio_cases": 46,
+      "headroom_suites": 6,
+      "usb_cases": 36,
+      "hardware_tested": false
+    },
+    "lite": {
+      "filename": "Supermodel_CPU_Lite_Punch_No_Legacy_No_Vinyl_No_ChordKeys_Experimental.syx",
+      "sha256": "b5220ffdcf541a9109c389de4d6a9a38eba4539f173ee2ba960603221926f563",
+      "module_sha256": "edea64975d53264e6c598f549a5beb13fcfff8b89549f3454b0502d44794b86c",
+      "visible_machines": 6,
+      "punch_audio_cases": 12,
+      "headroom_suites": 6,
+      "usb_cases": 36,
+      "hardware_tested": false
+    }
+  },
+  "remaining": [
+    "Held-step Punch/Gate UI issue not reproduced or fixed",
+    "Chord + Control All filter rhythmic click not hardware verified"
+  ],
+  "hardware_tested": false,
+  "optional_tree_git_sha": "fba6461e2cb36128ddeeec8bb49af5748eb2a152",
+  "publication_checks": {
+    "exact_image_delivery": true,
+    "immutable_loader_and_retry": true,
+    "real_browser_editions": true,
+    "samples_full_js_python_native_boot": true,
+    "samples_lite_js_python_native_boot": true,
+    "optional_original_assets_none_all_exact": true,
+    "optional_mixed_selection_valid": true,
+    "optional_files_and_shared_scripts_unchanged": true,
+    "synthetic_web_builder_python_js_parity": true,
+    "sysex_validator_parity": true,
+    "python_syntax": true,
+    "tweak_overlap_check": true
+  },
+  "preexisting_source_check_failures": [
+    "gen_flasher_tweaks.py --check: stale generated catalogue/license baseline",
+    "registry.py --check: stale generated registry baseline",
+    "relocate_6ch.py --check: stale generated USB tweak baseline"
+  ],
+  "unavailable_legacy_checks": [
+    "jsdom smoke dependency unavailable; actual Playwright browser edition test passed"
+  ]
+}

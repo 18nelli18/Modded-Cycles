@@ -4,8 +4,20 @@
  */
 window.MC_RELEASES = [{
   "version": "2.56",
-  "date": "2026-10-27",
+  "date": "2026-10-28",
   "changes": [
+    {
+      "en": "Full and Lite now serve the exact approved playability builds: distinct Punch attacks for each sound machine, reduced LFO/filter overhead and per-track FX. Legacy, Vinyl and ChordKeys are removed. Full has 23 sound machines plus MIDI Out; Lite retains six stock machines.",
+      "fr": "Full et Lite servent les versions playability exactes approuvées : attaques Punch propres à chaque machine sonore, charge LFO/filtre réduite et effets par piste. Legacy, Vinyl et ChordKeys sont retirés. Full propose 23 machines sonores plus MIDI Out ; Lite conserve six machines d’origine."
+    },
+    {
+      "en": "Existing Legacy sounds use Tone; older Vinyl choices become Reverb. The separate Machine Optional flasher is unchanged and retains its previous machines and processing.",
+      "fr": "Les anciens sons Legacy utilisent Tone ; les anciens choix Vinyl deviennent Reverb. Le flasheur Machine Optional reste inchangé et conserve ses machines et traitements précédents."
+    },
+    {
+      "en": "Emulator checks cover default Punch audio, unchanged Punch-off audio, LFO/filter state, USB duplex, startup and recovery. The reported held-step Punch/Gate lock issue remains unreproduced; rhythmic Chord/filter clicking still needs device confirmation. No new hardware verification is claimed.",
+      "fr": "Les contrôles en émulation couvrent les sons Punch par défaut, le son inchangé avec Punch désactivé, les LFO/filtres, l’USB duplex, le démarrage et la récupération. Le problème de locks Punch/Gate sur pas maintenus reste non reproduit ; les clics rythmiques Chord/filtre demandent une confirmation sur machine. Aucun nouveau test matériel n’est annoncé."
+    },
     {
       "en": "Choose Supermodel Full or Supermodel Lite in the main flasher. Full now serves the approved v215 with complete LFO pattern storage, playable LFO menus, TINY sustain/PUNCH and clipboard fixes. Lite now serves the approved v216, adding the LFO pattern storage, playable LFO menus and clipboard fixes to its six stock machines.",
       "fr": "Choisissez Supermodel Full ou Supermodel Lite dans le flasheur principal. Full sert le v215 approuvé : réglages LFO par pattern, commandes musicales dans les menus LFO, sustain/PUNCH TINY et correction du presse-papiers. Lite sert maintenant le v216 approuvé : réglages LFO par pattern, commandes musicales dans les menus LFO et correction du presse-papiers, avec ses six machines d’origine."
