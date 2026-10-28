@@ -141,5 +141,5 @@ ajoutées.
 
 - Essai sur la machine (programme : notes/96 §5 du fork : les 6 SHAPE, COLOR/SWEEP/CONTOUR, PUNCH, FINE,
   DECAY/GATE, retrigs, 6 pistes ensemble, l'écran MACHINES à 15 repères).
-- Licence à confirmer avec AveyCole.
+- Licence **MIT** (`LICENSE-Punch.txt` du dépôt amont, vérifié le 28/10/2026 ; le dépôt s'appelle désormais AveyCole/Supermodel, l'ancien nom redirige).
 - Section du guide (`docs/guide/`) : pas encore écrite, d'où l'absence de `guide` dans `os.json`.
