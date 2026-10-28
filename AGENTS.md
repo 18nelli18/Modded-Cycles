@@ -385,3 +385,20 @@ User explicitly requests making216 the live Lite version. Publish exact approved
 ## Machine Optional publication (2026-10-27)
 
 User explicitly requests linking the separate Machine Optional flasher from main, with a hardware-testing/own-risk warning and brief machine descriptions. Authorizes docs/flasher-optional/ and one link outside the protected main blurb. Full215 and Lite216 firmware bytes, checksums, release and main behavior stay unchanged. No new firmware images are committed. The optional edition is experimental: fixed runtime layout, excluded DSP dormant, none exact Lite216 and all exact Full215; mixed selections are not all hardware-tested. Per-track FX investigation remains separate private work.
+
+
+## AveyCole Full/Lite playability promotion (2026-10-28)
+
+User: "Push these to main and keep the machine optional flasher the same."
+Publish the exact delivered Full SHA `fec67ab4282a68b3c5538e76c87fba0c3d16e5cff5f6c15b5bb54202d952cb58`
+and Lite SHA `b5220ffdcf541a9109c389de4d6a9a38eba4539f173ee2ba960603221926f563`
+through the established checksum-pinned Full/Lite loader and legacy Full alias.
+This explicitly authorizes these fixed delivery images and direct main push;
+it supersedes the generic firmware-commit and draft-PR requirements here.
+Keep release/startup title 2.56 to preserve the approved bytes. Legacy, Vinyl
+and ChordKeys are removed; sound machines gain distinct Punch transients.
+Keep the protected fixed-features blurb byte-identical and put the current
+build notice outside it. Every docs/flasher-optional file and its shared runtime
+dependencies must remain unchanged. Its recipe still targets Full215/Lite216.
+No hardware result is inferred: the held-step Punch/Gate issue remains
+unreproduced and Chord + Control All filter clicking remains unverified.
