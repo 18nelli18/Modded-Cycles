@@ -1350,9 +1350,11 @@ modal_str_run:
  * l0 est cette place, que la boucle de str_process lirait avant que l'echantillon suivant ne l'ecrive : son ancien
  * contenu, old[k] (cp[3], garde par str_fast avant d'ecrire ; pas lu si comb >> 20 n'est jamais nul sur le bloc).
  * Le retard peut bouger (la glissade des cordes sympathiques) : dv += d_inc avant chaque echantillon, comme pv.
- * cp : 0 dv (rendu), 4 pv (rendu), 8 p_inc, 12 old (avance de n), 16 d_inc. */
-	.globl	modal_str_comb
-modal_str_comb:
+ * cp : 0 dv (rendu), 4 pv (rendu), 8 p_inc, 12 old (avance de n), 16 d_inc.
+ * modal_str_combn : le meme, le peigne retire de aux (la sortie d'une voix en polyphonie : out - aux, notes/81). */
+	.macro	COMBK name, op
+	.globl	\name
+\name:
 	lea	-36(%sp), %sp
 	movem.l	%d2-%d7/%a2-%a4, (%sp)
 	move.l	48(%sp), %d0		/* n */
@@ -1385,7 +1387,7 @@ modal_str_comb:
 	addq.l	#4, %a4
 	movclr.l %acc1, %d1
 	add.l	%d2, %d1
-	add.l	%d1, (%a1)+
+	\op\().l	%d1, (%a1)+
 	cmpa.l	%a2, %a1
 	bne.s	1b
 	movem.l	%d4-%d5, (%a3)		/* dv, pv */
@@ -1393,6 +1395,9 @@ modal_str_comb:
 9:	movem.l	(%sp), %d2-%d7/%a2-%a4
 	lea	36(%sp), %sp
 	rts
+	.endm
+	COMBK	modal_str_comb, add
+	COMBK	modal_str_combn, sub
 
 /* void modal_str_dw(const s32 *hb, s32 *pw, s32 *out, int n, s32 *k)
  * modal_str_run sans la lecture : x = hb[k] (la lecture faite a part, entree comprise : modal_str_read_ap, _nz,

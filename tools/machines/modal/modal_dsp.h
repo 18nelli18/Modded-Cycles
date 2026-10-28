@@ -372,6 +372,7 @@ void modal_str_read_mv(const s32 *pw, s32 *st, const s32 *in, s32 *hb, int n);
 void modal_str_read_nz(s32 *line, s32 *hb, const s32 *in, int n, s32 *k);
 void modal_str_run(s32 *pw, const s32 *pr, const s32 *in, s32 *out, int n, s32 *k);
 void modal_str_comb(const s32 *pb, s32 *aux, int n, s32 *cp);
+void modal_str_combn(const s32 *pb, s32 *out, int n, s32 *cp);
 void modal_str_dw(const s32 *hb, s32 *pw, s32 *out, int n, s32 *k);
 void modal_str_read_cb(s32 *line, s32 *hb, const s32 *in, int n, s32 *k);
 void modal_str_damp_mv(s32 *hb, s32 *dk);
@@ -900,16 +901,18 @@ static void str_wout(const s32 *hb, s32 *line, s32 wp, s32 *out, int n)
  * que str_plan a prepare. Seuls la position (le peigne de aux) et, sans dispersion, le retard (la glissade des cordes
  * sympathiques) peuvent bouger. Les passes vont par morceaux de c echantillons, c la partie entiere du retard la
  * plus courte du bloc (MB au plus) : rien de ce qu'un morceau lit n'est ecrit par lui (les notes aigues). */
+/* comb : 0 sans peigne ; 1 le peigne ajoute a aux = out + MB ; 2 (COMB_NEG) le peigne retire de out (la sortie d'une
+ * voix en polyphonie, out - aux, ecrite directement : notes/81) */
+#define COMB_NEG    2
+
 static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in, s32 *out, s32 p_inc, s32 d_inc,
 						u32 *rng, int comb)
 {
 	s32 *hb = sc.x, *line = s->line, *aux = out + MB, wp = s->wp;
-	s32 a30 = aux[MB - 2], a31 = aux[MB - 1], dk[9], dpp[4], st[4], di = s->fdi, ff = s->ff;
-	int k0, c, cs;
+	s32 a30 = 0, a31 = 0, dk[9], dpp[4], st[4], di = s->fdi, ff = s->ff;
+	int k0, c, cs, common;
 
 	if (s->enable_dispersion) {
-		if (s->fmode != 2)                       /* le bruit de dispersion ne sert pas : ses tirages d'un coup */
-			*rng = *rng * M_LCG16A + M_LCG16C;
 		cs = di;
 	} else {
 		s32 d = qmul(s->delay, s->prev_damp_comp) - (1 << 20);
@@ -919,7 +922,27 @@ static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in,
 		cs = (d < d1 ? d : d1) >> 20;
 	}
 	cs = cs > MB ? MB : (cs < 1 ? 1 : cs);         /* 1 : lu avant d'etre ecrit, comme dans la boucle de str_process */
-	if (likely(cs == MB)) {
+	/* modal_str_run lit, amortit et ecrit echantillon par echantillon, dans l'ordre de la boucle de str_process : il
+	 * vaut pour tout retard, les cordes aigues comprises ; seules les lectures a part (passe-tout, retard module,
+	 * glissade) demandent que le retard depasse le bloc (sinon : par morceaux, plus bas) */
+	common = cs == MB || !(s->fap || s->fmode || d_inc);
+	if (unlikely(comb == COMB_NEG && !common)) {     /* par morceaux : dans out et aux a part, puis out - aux */
+		s32 t[2 * MB];
+		int k;
+		for (k = 0; k < 2 * MB; k++)
+			t[k] = 0;
+		str_fast(s, in, t, p_inc, d_inc, rng, 1);
+		for (k = 0; k < MB; k++)
+			out[k] += t[k] - t[MB + k];
+		return;
+	}
+	if (comb == 1) {
+		a30 = aux[MB - 2];
+		a31 = aux[MB - 1];
+	}
+	if (s->enable_dispersion && s->fmode != 2)       /* le bruit de dispersion ne sert pas : ses tirages d'un coup */
+		*rng = *rng * M_LCG16A + M_LCG16C;
+	if (likely(common)) {
 		/* le cas courant, en deux ou trois boucles : la lecture a part s'il le faut (passe-tout de l'etirement,
 		 * retard module par le bruit ou le chevalet courbe), puis une boucle (modal_str_run, ou modal_str_dw apres
 		 * cette lecture), puis le peigne a part (modal_str_comb) ; quand la lecture du peigne tombe sur la place que
@@ -1016,18 +1039,27 @@ static __attribute__((noinline)) void str_fast(struct mstring *s, const s32 *in,
 		s->fx2 = kk[7];
 		s->iir.ic1 = kk[8];
 		s->iir.ic2 = kk[9];
+		if (comb == COMB_NEG) {
+			a30 = out[MB - 2];
+			a31 = out[MB - 1];
+		}
 		if (comb) {
+			s32 *ca = comb == COMB_NEG ? out : aux;
+			void (*cf)(const s32 *, s32 *, int, s32 *) = comb == COMB_NEG ? modal_str_combn : modal_str_comb;
 			kk[0] = s->delay;
 			kk[1] = pv0;
 			kk[2] = p_inc;
 			kk[3] = (s32)(unsigned long)&old[1];
 			kk[4] = d_inc;
 			if (n3)
-				modal_str_comb(&line[wp - 1], aux, n3, kk);
+				cf(&line[wp - 1], ca, n3, kk);
 			if (n3 < MB)
-				modal_str_comb(&line[DLINE - 1], aux + n3, MB - n3, kk);
+				cf(&line[DLINE - 1], ca + n3, MB - n3, kk);
 		}
-		if (comb) {
+		if (comb == COMB_NEG) {
+			s->aux1 = a30 - out[MB - 2];
+			s->aux0 = a31 - out[MB - 1];
+		} else if (comb) {
 			s->aux1 = aux[MB - 2] - a30;
 			s->aux0 = aux[MB - 1] - a31;
 		} else {
@@ -1938,17 +1970,31 @@ static MODAL_COLD void str_process_full(struct mstring *s, const s32 *in, s32 *o
 /* s->frequency etc. deja poses ; ajoute la corde a out / aux. aux nul : sans peigne (les cordes sympathiques, notes/81) :
  * la sortie aux de la corde, la seule qui depende de sa position, n'est pas calculee. Le chemin court (str_fast) sans
  * entrer dans le complet : moins de code relu a chaque bloc. */
+#define NEG_AUX     ((s32 *)1)                       /* str_process : la sortie out - aux, dans out (notes/81) */
+
 static __attribute__((noinline)) void str_process(struct mstring *s, const s32 *in, s32 *out, s32 *aux, u32 *rng)
 {
 	str_params(s);
 #ifdef MODAL_ASM
-	if (likely(s->fast && s->fver == s->kver && s->fdisp == s->dispersion && (aux == out + MB || !aux))) {
+	if (likely(s->fast && s->fver == s->kver && s->fdisp == s->dispersion
+		   && (aux == out + MB || !aux || aux == NEG_AUX))) {
 		s32 clamped = 0x40000000 - qmul(Q31(0.98), iabs(s->position - 0x40000000));
 		str_fast(s, in, out, (clamped - s->clamped_position) / MB,
-			 s->enable_dispersion ? 0 : (s->k_delay - s->delay) / MB, rng, aux != 0);
+			 s->enable_dispersion ? 0 : (s->k_delay - s->delay) / MB, rng,
+			 aux == NEG_AUX ? COMB_NEG : aux != 0);
 		return;
 	}
 #endif
+	if (aux == NEG_AUX) {                            /* dans out et aux a part, puis out - aux */
+		s32 t[2 * MB];
+		int k;
+		for (k = 0; k < 2 * MB; k++)
+			t[k] = 0;
+		str_process_full(s, in, t, t + MB, rng);
+		for (k = 0; k < MB; k++)
+			out[k] += t[k] - t[MB + k];
+		return;
+	}
 	str_process_full(s, in, out, aux, rng);
 }
 
@@ -2129,7 +2175,6 @@ struct modal_part {
 	s32 model, poly, dirty, active;
 	struct vcache vc[MAXPOLY];
 	s32 gvalid, gbright, glide;                      /* render_string : la glissade des cordes sympathiques */
-	u32 step;
 	s32 note[MAXPOLY];
 	u32 rng;
 	struct note_filter nf;
@@ -2140,13 +2185,13 @@ struct modal_part {
 	s32 peak, lz, ln;                                /* limiteur : peak (UNIT), 1 / m (Q30) et n de lim_gain ; cet ordre */
 	s32 rin_zero;                                    /* rin nul a l'entree de la voix (pas d'entree) */
 	s32 exc_idle[MAXPOLY];                           /* blocs d'excitation muette d'une voix inactive (exc_quiet) */
+	s32 lp_idle[MAXPOLY];                            /* blocs de pincement et de filtre d'excitation muets (lp_quiet) */
 	s32 rin[MB], sym[MB], ob[MB], ab[MB], nb[MB];
 	/* le bloc court des cordes (modal_fast, notes/81) : ce que le dernier bloc complet a vu */
 	s32 fk_valid, fk_active, fk_note;
 	struct mstring str[NSTRINGS];
 };
 
-static const s32 PING[8] = { 1, 0, 2, 1, 0, 2, 1, 0 };
 /* modal_pluck lit nb a 4 MB mots de rin */
 typedef char modal_nb_at_rin[(__builtin_offsetof(struct modal_part, nb) - __builtin_offsetof(struct modal_part, rin)
 			      == 4 * MB * sizeof(s32)) ? 1 : -1];
@@ -2159,13 +2204,13 @@ static MODAL_COLD void modal_part_init(struct modal_part *p)
 	for (i = 0; i < MAXPOLY; i++) {
 		p->note[i] = 0;
 		p->exc_idle[i] = 0;
+		p->lp_idle[i] = 0;
 		p->vc[i].valid = p->vc[i].svalid = 0;
 	}
 	p->gvalid = 0;
 	p->poly = 1;
 	p->model = MODEL_MODAL;
 	p->dirty = 1;
-	p->step = 0;
 	p->rng = 0x21;
 	for (i = 0; i < MAXPOLY; i++) {
 		svf_set(&p->exc[i], tan_dirty(M_001), XC(M_R100), 0, 0);
@@ -2220,7 +2265,7 @@ static MODAL_COLD void configure_now(struct modal_part *p)
 	if (p->active >= p->poly)
 		p->active = 0;
 	for (i = 0; i < MAXPOLY; i++)
-		p->exc_idle[i] = 0;
+		p->exc_idle[i] = p->lp_idle[i] = 0;
 	p->dirty = 0;
 }
 
@@ -2323,6 +2368,41 @@ static inline int exc_skip(const struct modal_part *p, int v, int strum)
 	return p->exc_idle[v] >= EXC_IDLE && p->rin_zero && !(strum && v == p->active);
 }
 
+/* Les cordes (notes/81) : quand le pincement (sa bouffee finie, son passe-bas) et le filtre d'excitation sont restes
+ * sous -108 dB pendant EXC_IDLE blocs, sans entree, il ne reste a la sortie de la chaine que la traine de son filtre
+ * anti-continu : une constante qui decroit (100 ms par facteur e) mais reste au-dessus de -108 dB pendant 0,7 s
+ * apres chaque note, et avec elle toute la chaine tournait. Elle est alors calculee seule (dc_tail), l'entree de
+ * l'anti-continu mise a zero. Le pincement : sous -72 dB (LP_EPS), sa traine (son peigne, qui perd 5 dB par periode)
+ * n'apporte plus a la corde qu'une energie negligeable. pl : le pincement sert (l'excitateur interne). */
+#ifndef LP_EPS
+#define LP_EPS      (1 << 12)                        /* 2^-12 : -72 dB */
+#endif
+
+static inline void lp_quiet(struct modal_part *p, int v, int pl)
+{
+	const struct plucker *q = &p->pl[v];
+	const struct svf *e = &p->exc[v];
+
+	if (!p->rin_zero || (pl && (q->remaining || iabs(q->svf.ic1) >= LP_EPS || iabs(q->svf.ic2) >= LP_EPS))
+	    || iabs(e->ic1) >= MODE_EPS || iabs(e->ic2) >= MODE_EPS)
+		p->lp_idle[v] = 0;
+	else if (p->lp_idle[v] < EXC_IDLE)
+		p->lp_idle[v]++;
+}
+
+static inline int lp_skip(const struct modal_part *p, int v, int strum)
+{
+	return p->lp_idle[v] >= EXC_IDLE && p->rin_zero && !(strum && v == p->active);
+}
+
+static void dc_tail(struct dcblock *d, s32 *x)       /* l'anti-continu sur une entree nulle */
+{
+	int k;
+
+	for (k = 0; k < MB; k++)
+		x[k] = dc_one(d, 0);
+}
+
 /* les cordes d'une voix des modeles sympathiques : 3 pour une voix (la corde jouee et deux cordes sympathiques),
  * 1 pour plusieurs (Rings : 8, 4, 2 pour 1, 2, 4 voix ; eco, notes/74 : 4, 2, 1 ; le budget de 13 %, notes/81 :
  * une corde sympathique coute presque 2 % du processeur) */
@@ -2361,7 +2441,10 @@ static MODAL_COLD void render_string(struct modal_part *p, int voice, const stru
 	} else {
 		freqs[0] = xto(frequency, 31);
 	}
-	if (!exc_skip(p, voice, ps->strum)) {            /* sinon : rin reste a zero (exc_quiet) */
+	if (!exc_skip(p, voice, ps->strum) && lp_skip(p, voice, ps->strum)) {
+		dc_tail(&p->dcb[voice], p->rin);         /* la traine de l'anti-continu seule (lp_quiet) */
+		exc_quiet(p, voice, p->rin);
+	} else if (!exc_skip(p, voice, ps->strum)) {     /* sinon : rin reste a zero (exc_quiet) */
 		struct svf *e = &p->exc[voice];
 		if (voice == p->active && !p->rin_zero) {
 			s32 g = M_SQRTG[ns];
@@ -2388,6 +2471,7 @@ static MODAL_COLD void render_string(struct modal_part *p, int voice, const stru
 #ifdef MODAL_ASM
 	done:
 #endif
+		lp_quiet(p, voice, ps->internal_exciter);
 		exc_quiet(p, voice, p->rin);
 	}
 	for (i = 0; i < MB; i++)
@@ -2495,10 +2579,16 @@ static __attribute__((noinline)) void modal_fast(struct modal_part *p, s32 *out,
 		s32 *ob = p->poly == 1 ? out : p->ob, *ab = p->poly == 1 ? aux : p->ab;
 		const struct vcache *vc = &p->vc[v];
 		p->rin_zero = 1;
-		for (k = 0; k < MB; k++)
-			p->rin[k] = 0;
-		if (!exc_skip(p, v, 0)) {
+		if (exc_skip(p, v, 0)) {
+			for (k = 0; k < MB; k++)
+				p->rin[k] = 0;
+		} else if (lp_skip(p, v, 0)) {
+			dc_tail(&p->dcb[v], p->rin);     /* (rin entierement ecrit) */
+			exc_quiet(p, v, p->rin);
+		} else {
 			struct svf *e = &p->exc[v];
+			for (k = 0; k < MB; k++)
+				p->rin[k] = 0;
 			if (e->ic1 || e->ic2)
 				svf_lp_block(e, p->rin, MB, 0, 0);
 #ifdef MODAL_ASM
@@ -2511,7 +2601,18 @@ static __attribute__((noinline)) void modal_fast(struct modal_part *p, s32 *out,
 				for (k = 0; k < MB; k++)
 					p->rin[k] = dc_one(&p->dcb[v], p->rin[k] + p->nb[k]);
 			}
+			lp_quiet(p, v, 1);
 			exc_quiet(p, v, p->rin);
+		}
+		if (p->poly > 1) {
+			/* une corde par voix : out - aux de la voix, ajoute a la sortie de son cote (une voix sur deux), sans
+			 * passer par ob et ab (la meme somme, l'ordre des additions modulo 2^32 n'y change rien) */
+			s32 *d = (v & 1) ? aux : out;
+			if (v < 2)
+				for (k = 0; k < MB; k++)
+					d[k] = 0;
+			str_process(&p->str[v], p->rin, d, NEG_AUX, &p->rng);
+			continue;
 		}
 		for (k = 0; k < MB; k++)
 			ob[k] = ab[k] = 0;
@@ -2529,15 +2630,6 @@ static __attribute__((noinline)) void modal_fast(struct modal_part *p, s32 *out,
 			if (i == 0 && ns > 1)
 				for (k = 0; k < MB; k++)
 					p->sym[k] = qmul(M_SYMG[ns], ob[k] - ab[k]);
-		}
-		if (p->poly > 1) {
-			s32 *d = (v & 1) ? aux : out;
-			if (v < 2)
-				for (k = 0; k < MB; k++)
-					d[k] = p->ob[k] - p->ab[k];
-			else
-				for (k = 0; k < MB; k++)
-					d[k] += p->ob[k] - p->ab[k];
 		}
 	}
 }
@@ -2557,12 +2649,10 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 	nf_process(&p->nf, ps->note, ps->strum);
 	if (ps->strum) {
 		p->note[p->active] = nf_stable(&p->nf);
-		if (p->poly > 1 && (p->poly & 1)) {
-			p->active = PING[p->step & 7];
-			p->step = (p->step + 1) & 7;
-		} else {
-			p->active = (p->active + 1) % p->poly;
-		}
+		/* les voix tour a tour, 3 voix comprises : Rings, en 3 voix, suit un motif de 8 pas (kPingPattern : 1, 0, 2,
+		 * 1, 0, 2, 1, 0) qui, au bout du motif, reprend une voix apres deux notes et coupe une note qui sonne ; sur
+		 * une seule sortie, il n'apporte rien (notes/81) */
+		p->active = (p->active + 1) % p->poly;
 	}
 	p->note[p->active] = p->nf.note;
 	if (likely(ps->same && p->fk_valid && !ps->strum && !in && ps->internal_exciter && !p->dirty
@@ -2578,18 +2668,25 @@ static void modal_process(struct modal_part *p, const struct modal_perf *ps, con
 		int act = v == p->active;
 		if (!vc->valid || vc->note != note || vc->cut != cutoff || vc->act != act
 		    || vc->ie != ps->internal_exciter) {
-			frequency = xmul(xs2r(note - (69 << 16)), XC(M_A3));
-			if (ps->internal_exciter)
+			/* la hauteur ne depend que de la note ; le filtre d'excitation, que de sa coupure (celle d'une voix
+			 * inactive est fixe) : refaits seulement s'ils changent (notes/81) */
+			frequency = vc->valid && vc->note == note ? vc->frequency : xmul(xs2r(note - (69 << 16)), XC(M_A3));
+			if (!act)
+				fc = XC(M_FCIDLE);
+			else if (ps->internal_exciter)
 				fc = xmul(frequency, xs2r(qmul(cutoff - 0x40000000, 96 << 16)));
 			else
 				fc = xmul(XC(M_EXTFC), xs2r(qmul(cutoff - Q31ONE, 108 << 16)));
-			if (!act)
-				fc = XC(M_FCIDLE);
 			fc = xmin(fc, XC(M_0998));
 			fcq = xto(fc, 31);
-			svf_set(&p->exc[v], tan_exact(fcq), ps->internal_exciter
-				? q_fade_r(fcq, XC(M_Q150), XC(M_QD150), XC(M_R150))
-				: q_fade_r(fcq, XC(M_Q080), XC(M_QD080), XC(M_R080)), &a2x, &a3x);
+			if (vc->valid && fcq == vc->fcq && vc->ie == ps->internal_exciter) {
+				a2x = vc->a2x;
+				a3x = vc->a3x;
+			} else {
+				svf_set(&p->exc[v], tan_exact(fcq), ps->internal_exciter
+					? q_fade_r(fcq, XC(M_Q150), XC(M_QD150), XC(M_R150))
+					: q_fade_r(fcq, XC(M_Q080), XC(M_QD080), XC(M_R080)), &a2x, &a3x);
+			}
 			vc->valid = 1;
 			vc->note = note;
 			vc->cut = cutoff;

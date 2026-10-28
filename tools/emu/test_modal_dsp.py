@@ -11,9 +11,9 @@ compilée pour l'ordinateur (rings_ref.cc) depuis une copie de ses sources où n
     hertz (SR24) ;
   - les allègements du budget de 13 % (notes/81) : la lecture linéaire de la ligne des cordes (Read au lieu de
     ReadHermite), et les cordes sympathiques sans peigne (sans leur sortie aux, la seule où joue leur position), leur
-    entrée x racine 2 ; 3 cordes pour une voix (au lieu de 4), une seule par voix au-delà (au lieu de 2) ; et un
-    plancher de 1/2 au facteur du retard de la dispersion (LITE). La passerelle (modal.c) donne aux modèles à cordes 2
-    voix au plus.
+    entrée x racine 2 ; 3 cordes pour une voix (au lieu de 4), une seule par voix au-delà (au lieu de 2) ; un
+    plancher de 1/2 au facteur du retard de la dispersion ; en 3 voix, les voix tour à tour (LITE). La passerelle
+    (modal.c) donne à la corde (SHAPE 2) 2 voix au plus.
 C'est la définition du son de MODAL. Un contrôle à part compare cette définition à Rings sans LITE, par tiers
 d'octave.
 Le cœur en virgule fixe est compilé pour l'ordinateur (modal_host.c) avec la même arithmétique que sur le Cycles
@@ -122,6 +122,8 @@ LITE = (  # le budget de 13 % (notes/81) : après SR24 ; (fichier, avant, après
     # pas, sur lequel compte le chemin en assembleur)
     ("rings/dsp/string.cc", "delay_fm -= curved_bridge_ * bridge_curving;",
      "delay_fm -= curved_bridge_ * bridge_curving;\n        if (delay_fm < 0.5f) delay_fm = 0.5f;", 1),
+    # 3 voix : les voix tour à tour, sans le motif de 8 pas de Rings (kPingPattern, qui coupe parfois une note qui sonne)
+    ("rings/dsp/part.cc", "if (polyphony_ > 1 && polyphony_ & 1) {", "if (false) {", 1),
     # les modèles sympathiques : 3 cordes pour une voix, une seule pour plusieurs (ECO : 4, 2, 1)
     ("rings/dsp/part.cc", "num_strings = kMaxPolyphony / polyphony_;",
      "num_strings = polyphony_ == 1 ? 3 : 1;", 1),
@@ -265,6 +267,30 @@ def bands(x, n=8192):
     return np.array([10 * np.log10(p[(f >= lo) & (f < hi)].sum() + 1e-12) for lo, hi in zip(edges[:-1], edges[1:])])
 
 
+def voices(fix):
+    """Les voix (notes/81) : 4 notes de hauteurs différentes, 100 blocs d'écart ; le niveau de la 1re (sa fondamentale,
+    fenêtre de Hann de 60 blocs) après chaque note suivante, contre juste avant. En 3 voix, la 3e note ne coupe pas la
+    1re, la 4e la coupe (les voix tour à tour) ; en 2 voix, la 3e la coupe."""
+    f1, bad, out = 440 * 2 ** ((48 - 69) / 12), [], []
+
+    def level(x, a, b):
+        seg = x[(PRE + a) * MB:(PRE + b) * MB]
+        n = np.arange(len(seg))
+        return 20 * np.log10(abs(np.sum(seg * np.hanning(len(seg)) * np.exp(-2j * np.pi * f1 * n / 24000))) + 1e-12)
+    for model, name in ((0, "modal"), (1, "sympathiques"), (4, "accord")):
+        for poly in (2, 3):
+            x = run(fix, b"".join(scenario(model, poly, blocks=420, da=0.7, st=0.25,
+                                           notes=((0, 0.0), (100, 5.0), (200, 10.0), (300, 15.0)))))
+            r3 = level(x, 215, 275) - level(x, 140, 200)
+            r4 = level(x, 315, 375) - level(x, 240, 300)
+            ok = r3 > -6 and r4 < -12 if poly == 3 else r3 < -12
+            out.append(f"{name} {poly} voix {r3:+.0f}/{r4:+.0f} dB")
+            if not ok:
+                bad.append(out[-1])
+    check(not bad, "voix : en 3 voix la 3e note ne coupe pas la 1re et la 4e la coupe, en 2 voix la 3e la coupe "
+                   f"(niveau de la 1re après la 3e / la 4e) : {', '.join(out)}")
+
+
 def lite_spectrum(ref, full):
     """Ce que LITE change au son (notes/81) : Rings avec et sans LITE, par tiers d'octave (les bandes à moins de 50 dB
     du maximum), et le niveau ; sur des suites de notes des modèles à cordes, 1 à 3 voix, graves et aigus."""
@@ -314,6 +340,7 @@ def main():
         worst.sort()
         print(f"\n  le plus faible : {worst[0][1]} ({worst[0][0]:.1f} dB) ; médiane {worst[len(worst) // 2][0]:.1f} dB")
         lite_spectrum(ref, full)
+        voices(fix)
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 
