@@ -7,8 +7,8 @@ window.MC_RELEASES = [{
   "date": "2026-10-27",
   "changes": [
     {
-      "en": "Choose Supermodel Full or Supermodel Lite in the main flasher. Full is the approved v208 filter-clear build based on verified v204; Lite is v211, with hardware-confirmed DATA response and DX operation.",
-      "fr": "Choisissez Supermodel Full ou Supermodel Lite dans le flasheur principal. Full reprend le v208 approuvé, basé sur v204 vérifié, avec clear du filtre ; Lite reprend v211, dont la réponse DATA et le diagnostic DX sont confirmés sur matériel."
+      "en": "Choose Supermodel Full or Supermodel Lite in the main flasher. Full now serves the approved v215 with complete LFO pattern storage, playable LFO menus, TINY sustain/PUNCH and clipboard fixes. Public Lite remains v211, with hardware-confirmed DATA response and DX operation.",
+      "fr": "Choisissez Supermodel Full ou Supermodel Lite dans le flasheur principal. Full sert le v215 approuvé : réglages LFO par pattern, commandes musicales dans les menus LFO, sustain/PUNCH TINY et correction du presse-papiers. Lite public reste v211, dont la réponse DATA et le diagnostic DX sont confirmés sur matériel."
     },
     {
       "en": "Lite includes Kick, Snare, Metal, Perc, Tone and Chord with all shared Supermodel quality-of-life features, including Sequence Genie, Scramble, four LFOs, filters, FX, sidechain and PTN/TRK Page Len/Warp. No Syntakt OS file is needed for Lite.",

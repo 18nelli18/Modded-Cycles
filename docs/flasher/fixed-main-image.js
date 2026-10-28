@@ -1,4 +1,4 @@
-/* 2026-10-27-main256-full-lite-copy : images verifiees par edition, caches et sources independants. */
+/* 2026-10-27-main256-full215 : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
@@ -6,17 +6,22 @@
   "id": "full",
   "productName": "Supermodel",
   "release": "2.56",
-  "file": "Supermodel_2.56_5efc8abf7f4b.syx",
-  "syxSha256": "5efc8abf7f4b6113d8d084897e3a17546be0107d74ec1d603b122bb0bd0c3980",
-  "mainOsSha": "798e01fbab0ff691b17584853e2802b7a0b6bee437d8a8277fe24250c824f0ba",
+  "file": "Supermodel_2.56_c00942b054d0.syx",
+  "syxSha256": "c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6",
+  "mainOsSha": "a82d10eaccea90141951015a1e4b38ad732fdd2b32b17a4b45e37d3bfbad137e",
   "requiresSyntakt": true,
-  "source_build": 208,
-  "hardware_source_sha256": "f1218c35323a4c4eec2f209757f067bc8f1c0aad679ab472e9d588dbe4f578f5",
+  "source_build": 215,
+  "hardware_source_sha256": "c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6",
   "title_only_change": false,
-  "base_source_build": 204,
+  "base_source_build": 208,
   "new_clear_filter_defaults": true,
-  "ui_idle_saves": false,
-  "hardware_verified": false
+  "ui_idle_saves": true,
+  "hardware_verified": false,
+  "full_lfo2_pattern_storage": true,
+  "lfo_menu_musical_controls": true,
+  "tiny_sustain_punch": true,
+  "clipboard_allocation_bytes": 164,
+  "publication_user_report": "Okay, push 215 as main full build"
  },
  "lite": {
   "id": "lite",

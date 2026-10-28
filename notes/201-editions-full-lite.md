@@ -23,3 +23,11 @@ Pour chaque édition : SHA SysEx/MAIN, paquets, capacité flash, layout de déco
 ## Suite
 
 [À FAIRE] Flasheur Machine Optional séparé. Ne pas confondre validation des524288sélections avec une preuve de démarrage matériel de chaque combinaison.
+
+## Full215 — 27/10/2026
+
+[FAIT demande] AveyCole autorise la publication exacte de Full215 (`c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6`). La version visible/flasheur reste2.56 ; Lite211 public est conserve, les corrections Lite doivent etre testees prive avant promotion.
+
+[FAIT en emulation] Reproduction du cache natif sortant dans214 puis banque LFO2 complete par pattern/piste dans215 ; controle8 reglages contre32 frames obsoletes, retour au pattern, reload froid, migration L2x vers L2p sans modifier L2x, import son natif, polarite/copie immediate, clear/Undo et canaris. Les504 chemins du ViewManager natif livrent les touches musicales sous les menus. TINY tient ses enveloppes internes pour14/49/50/51 ; PUNCH, PCM neutre52 modeles, locks Estus et filtres regressent sans erreur. Aucun resultat materiel exhaustif revendique.
+
+Le texte court Full est simplifie selon la demande ; le bloc protege reste identique. Les deux transports Model:Samples, SHA des images et fallback immuable demeurent des controles de livraison obligatoires.

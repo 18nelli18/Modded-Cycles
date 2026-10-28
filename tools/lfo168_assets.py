@@ -1,7 +1,7 @@
 """200 : trois banques secondaires, une UI, quatre contributions natives."""
 import struct,json,subprocess
 CODE=0x46900000;BSS=0x46910000;END=0x46940000
-def apply(root,build,prefix,rt,tail,meta,patch,lazy_start=False,count_option=False,wave_safe=False,compact_ram=False,sound_polarity=False,copy_four=False,live_clear=False,clear_commit=False,destination_abi=False,filter_defaults=False,ui_idle=False):
+def apply(root,build,prefix,rt,tail,meta,patch,lazy_start=False,count_option=False,wave_safe=False,compact_ram=False,sound_polarity=False,copy_four=False,live_clear=False,clear_commit=False,destination_abi=False,filter_defaults=False,ui_idle=False,pattern_workflow=False):
  from gen_governor_recovery_test import BASE,TAIL,RUNTIME
  CODE,BSS,END=(0x468f4000,0x468fc000,0x46900000) if compact_ram else (0x46900000,0x46910000,0x46940000)
  profile=json.loads((root/'build/volume-pan-toggle/volume-pan-toggle-test.json').read_text());native={k:int(v,16) for t in profile['composedTweaks'] for k,v in t.get('symbols',{}).items()}
@@ -27,7 +27,7 @@ def apply(root,build,prefix,rt,tail,meta,patch,lazy_start=False,count_option=Fal
    if n>=6:break
   assert n>=6;tramp+=f'.globl {name}\n{name}:\n.byte '+','.join(map(str,raw[:n]))+f'\njmp {at+n:#x}\n';writes.append((at,raw[:n],target))
  (build/'mx_tramp.S').write_text(tramp)
- for source in (src/'control.c',src/'hook.S',build/'mx_tramp.S'):
+ for source in (src/('control214.c' if pattern_workflow else 'control.c'),src/'hook.S',build/'mx_tramp.S'):
   obj=build/('mx-'+source.name+'.o');objects.append(obj);subprocess.run([cross+'gcc.exe','-mcpu=54418',*(['-DUI_IDLE210=1'] if ui_idle else []),'-O2','-fwrapv','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',*(['-DMX_LAZY_START=1'] if lazy_start else []),*(['-DMX_COUNT_OPTION=1'] if count_option else []),*(['-DLFO_WAVE_SAFE=1'] if wave_safe else []),*(['-DMX_COMPACT_RAM=1'] if compact_ram else []),*(['-DLFO_SOUND_POL=1'] if sound_polarity else []),*(['-DLFO_COPY_FOUR=1'] if copy_four else []),*(['-DLFO_LIVE_CLEAR187=1'] if live_clear else []),*(['-DLFO_CLEAR_COMMIT188=1'] if clear_commit else []),*(['-DLFO_DEST_ABI189=1'] if destination_abi else []),*(['-DFILTER_DEFAULTS208=1'] if filter_defaults else []),'-c',str(source),'-o',str(obj)],check=True)
  ld=build/'lfo168.ld';elf=ld.with_suffix('.elf');binary=ld.with_suffix('.bin')
  ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.mxentry) *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} mx_code_end = .; .bss {BSS:#x} (NOLOAD) : {{ *(.bss.mxcount) *(.bss*) *(COMMON) }} . = ALIGN(4); mx_end = .; }}\n'+''.join(f'PROVIDE({k} = {v:#x});\n' for k,v in aliases.items()))

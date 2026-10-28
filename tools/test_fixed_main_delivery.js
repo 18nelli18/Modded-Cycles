@@ -3,11 +3,11 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const root=path.resolve(__dirname,'..'),site=path.join(root,'docs/flasher'),b=require(path.join(site,'builder.js')),f=require(path.join(site,'flasher.js'));
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex'),meta=JSON.parse(fs.readFileSync(path.join(site,'BUILD.json')));
 assert.equal(meta.release,'2.56');assert.deepEqual(Object.keys(meta.editions),['full','lite']);
-const pinned={full:'5efc8abf7f4b6113d8d084897e3a17546be0107d74ec1d603b122bb0bd0c3980',lite:'df9b8d2241e28df96f81d51b68fba171ac6bd8d09daf70233deb2b7b4d04cd3f'};
+const pinned={full:'c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6',lite:'df9b8d2241e28df96f81d51b68fba171ac6bd8d09daf70233deb2b7b4d04cd3f'};
 for(const [id,m] of Object.entries(meta.editions)){
  const raw=fs.readFileSync(path.join(site,m.file));assert.equal(hash(raw),pinned[id]);assert.equal(hash(raw),m.syxSha256);assert(f.verify(raw).count>0);
  const pkg=b.parseContainer(b.unwrap(raw).stream),s=pkg.sections.find(x=>x.id===3),main=b.aplibDepack(pkg.blob.subarray(s.off,s.off+s.size),{bootLayout:true}).data;
- assert.equal(hash(main),m.mainOsSha);assert(pkg.blob.length<=0x1c0000,'flash capacity regression');assert(m.new_clear_filter_defaults);assert.equal(m.ui_idle_saves,id==='lite');assert.equal(m.release,meta.release);assert.equal(m.requiresSyntakt,id==='full');
+ assert.equal(hash(main),m.mainOsSha);assert(pkg.blob.length<=0x1c0000,'flash capacity regression');assert(m.new_clear_filter_defaults);assert.equal(m.ui_idle_saves,true);assert.equal(m.release,meta.release);assert.equal(m.requiresSyntakt,id==='full');
  console.log('PASS',id,'approved image, packets, exact MAIN, safe native bootstrap layout and flash capacity',pkg.blob.length);
 }
 assert.equal(hash(fs.readFileSync(path.join(site,meta.fixed_image_legacy))),meta.fixed_image_sha256);

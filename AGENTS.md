@@ -369,3 +369,9 @@ User: "Seems much more responsive now. and dx works. Let's push211 as lite and t
 ## AveyCole blurb update (2026-10-27)
 
 User explicitly adds two bullets: "4 Filter Types: Choose between Low Pass, High Pass, Bandpass, and Low/High Pass by pressing Settings + Machines and turning Sweep." and "Per-Page Length Options/Active Step Warp". Matching French text is included. These exact insertions are authorized; all other protected blurb bytes remain unchanged. New protected block SHA256 `b6ab6a510ac726ddad5f5f53afea3e915ffa14c5813bc6ab8c5712b23e00fa7d` supersedes the earlier b3486b46 pin for future work. Firmware images and release2.56 remain unchanged. Machine Optional remains the primary subsequent task.
+
+## AveyCole Full215 promotion and Lite test gate (2026-10-27)
+
+User requests "Okay, push215 as main full build" and "include those fixes in the lite build, make sure to let me test first". Publish exact Full215 SHA `c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6`, MAIN `a82d10eaccea90141951015a1e4b38ad732fdd2b32b17a4b45e37d3bfbad137e`, immutable `Supermodel_2.56_c00942b054d0.syx` and the established Full alias. This explicitly authorizes these firmware files through the existing delivery path. Keep release/title2.56 to deliver the exact approved bytes. Public Lite remains exact211 until the user approves a separate Lite test. Do not infer exhaustive hardware testing from publication approval.
+
+The Full edition blurb is exactly "All added machines and quality of life features." with matching French. Do not re-add implementation history, filter defaults or other technical details there. The separate protected fixed-features block keeps SHA `b6ab6a510ac726ddad5f5f53afea3e915ffa14c5813bc6ab8c5712b23e00fa7d` unchanged.
