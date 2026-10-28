@@ -55,7 +55,7 @@
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/40a6a5dec35380b3d57985d0fb0fdb2c30e85cc8/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Modded-Cycles/0d9177469d937f9362165d7dfd97a16f360cc26e/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});
