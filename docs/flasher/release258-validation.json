@@ -1,0 +1,169 @@
+{
+  "release": "2.58",
+  "hardware_tested": false,
+  "asset_source_commit": "97987303f46fe7c6d1750bc0590ee4b606c5aa1c",
+  "filter_full": {
+    "cases": [
+      {
+        "build": "..\\release258-investigation\\test-filter-main\\full",
+        "sha256": "dec88b00faca94e7ee58c808a05c1624611b9403b29cbaa745a804bfeb012e32",
+        "six_tracks_root_missing": true,
+        "six_tracks_handles_missing": true,
+        "saved_load_cancels_pending": true,
+        "ui_frame_resolves": true,
+        "native_clear_undo_and_saved_startup": true
+      },
+      {
+        "build": "..\\release258-investigation\\test-filter-optional\\full",
+        "sha256": "46021f2591e2f05b6d1492f1876c2d07addb84a6f1ded55275d6be5e4511ef22",
+        "six_tracks_root_missing": true,
+        "six_tracks_handles_missing": true,
+        "saved_load_cancels_pending": true,
+        "ui_frame_resolves": true,
+        "native_clear_undo_and_saved_startup": true
+      }
+    ],
+    "hardware_tested": false
+  },
+  "filter_lite": {
+    "cases": [
+      {
+        "build": "..\\release258-investigation\\test-filter-main\\lite",
+        "sha256": "a46b2fe88f1c4ad08cfbae96882725a2821891508231c7f7730672cdecd68946",
+        "six_tracks_root_missing": true,
+        "six_tracks_handles_missing": true,
+        "saved_load_cancels_pending": true,
+        "ui_frame_resolves": true,
+        "native_clear_undo_and_saved_startup": true
+      },
+      {
+        "build": "..\\release258-investigation\\test-filter-optional\\lite",
+        "sha256": "3f8ea64121df94b17b222f0b61593b83c389b0bd2fc87aaa71eb0113aef71fb2",
+        "six_tracks_root_missing": true,
+        "six_tracks_handles_missing": true,
+        "saved_load_cancels_pending": true,
+        "ui_frame_resolves": true,
+        "native_clear_undo_and_saved_startup": true
+      }
+    ],
+    "hardware_tested": false
+  },
+  "panic_full": {
+    "cases": [
+      {
+        "scope": "test-filter-main",
+        "first_stop_preserves_tail": true,
+        "all_sound_off_clears_ps1": true,
+        "silent_blocks_after_panic": 160,
+        "new_input_recovers": true,
+        "repeated_panic_count": 4,
+        "settings_preserved": true,
+        "reset_instructions": 2162
+      },
+      {
+        "scope": "test-filter-optional",
+        "first_stop_preserves_tail": true,
+        "all_sound_off_clears_ps1": true,
+        "silent_blocks_after_panic": 160,
+        "new_input_recovers": true,
+        "repeated_panic_count": 4,
+        "settings_preserved": true,
+        "reset_instructions": 2181
+      }
+    ],
+    "hardware_tested": false
+  },
+  "panic_lite": {
+    "cases": [
+      {
+        "scope": "test-filter-main",
+        "first_stop_preserves_tail": true,
+        "all_sound_off_clears_ps1": true,
+        "silent_blocks_after_panic": 160,
+        "new_input_recovers": true,
+        "repeated_panic_count": 4,
+        "settings_preserved": true,
+        "reset_instructions": 2162
+      },
+      {
+        "scope": "test-filter-optional",
+        "first_stop_preserves_tail": true,
+        "all_sound_off_clears_ps1": true,
+        "silent_blocks_after_panic": 160,
+        "new_input_recovers": true,
+        "repeated_panic_count": 4,
+        "settings_preserved": true,
+        "reset_instructions": 2181
+      }
+    ],
+    "hardware_tested": false
+  },
+  "native_boots": [
+    {
+      "scope": "main",
+      "edition": "full",
+      "sha256": "dec88b00faca94e7ee58c808a05c1624611b9403b29cbaa745a804bfeb012e32",
+      "native_payload_boot": true,
+      "code_copied_exact": true,
+      "all_packaged_hooks_verified": true,
+      "bss_zero": true,
+      "recovery_updater_sections_identical": true,
+      "flash_bytes": 1611440,
+      "runtime_bytes": 3145728,
+      "hardware_tested": false
+    },
+    {
+      "scope": "main",
+      "edition": "lite",
+      "sha256": "a46b2fe88f1c4ad08cfbae96882725a2821891508231c7f7730672cdecd68946",
+      "native_payload_boot": true,
+      "code_copied_exact": true,
+      "all_packaged_hooks_verified": true,
+      "bss_zero": true,
+      "recovery_updater_sections_identical": true,
+      "flash_bytes": 1638432,
+      "runtime_bytes": 3145728,
+      "hardware_tested": false
+    },
+    {
+      "scope": "optional",
+      "edition": "full",
+      "sha256": "46021f2591e2f05b6d1492f1876c2d07addb84a6f1ded55275d6be5e4511ef22",
+      "native_payload_boot": true,
+      "code_copied_exact": true,
+      "all_packaged_hooks_verified": true,
+      "bss_zero": true,
+      "recovery_updater_sections_identical": true,
+      "flash_bytes": 1664384,
+      "runtime_bytes": 3145728,
+      "hardware_tested": false
+    },
+    {
+      "scope": "optional",
+      "edition": "lite",
+      "sha256": "3f8ea64121df94b17b222f0b61593b83c389b0bd2fc87aaa71eb0113aef71fb2",
+      "native_payload_boot": true,
+      "code_copied_exact": true,
+      "all_packaged_hooks_verified": true,
+      "bss_zero": true,
+      "recovery_updater_sections_identical": true,
+      "flash_bytes": 1638416,
+      "runtime_bytes": 3145728,
+      "hardware_tested": false
+    }
+  ],
+  "full_menu_positions": 60,
+  "browser": {
+    "release": "2.58",
+    "main_and_optional_displayed": true,
+    "machine_choices": 19,
+    "all_none_legacy_only": true,
+    "sending_locked": true,
+    "page_errors": [],
+    "hardware_tested": false
+  },
+  "main_samples_native_boot_and_signature_checks": {
+    "full": true,
+    "lite": true
+  }
+}

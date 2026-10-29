@@ -7,7 +7,7 @@ let mask=O.ALL,revision=0,os=null,context=null,current=null,pending=null;
 window.MCFirmwareImages={...base};window.MCFixedMainImageMeta=base.full;
 window.MCFixedMainImageReady=Promise.resolve();window.MCOptionalBusy=false;
 async function load(meta){
- const urls=[new URL(meta.file,document.baseURI).href,'https://raw.githubusercontent.com/AveyCole/Supermodel/a887e15ff60b1e3c4be453af4155d6319c852756/docs/flasher/'+meta.file];let error;
+ const urls=[new URL(meta.file,document.baseURI).href,'https://raw.githubusercontent.com/AveyCole/Supermodel/97987303f46fe7c6d1750bc0590ee4b606c5aa1c/docs/flasher/'+meta.file];let error;
  for(const url of urls)try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error('Could not load verified base');const raw=new Uint8Array(await r.arrayBuffer());if(B.hex(B.sha256(raw))!==meta.syxSha256)throw Error('Base firmware checksum mismatch');window.MCFlasher.verify(raw);return raw}catch(e){error=e}throw error;
 }
 let sources;function sourceFiles(){if(!sources)sources=Promise.all([load(base.full),load(base.lite)]).catch(e=>{sources=null;throw e});return sources}

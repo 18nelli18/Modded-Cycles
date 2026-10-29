@@ -1,4 +1,22 @@
 window.MC_RELEASES=[
+{
+  "version": "2.58",
+  "date": "2026-10-29",
+  "changes": [
+    {
+      "en": "New sounds reliably start with LOW filtering even when track setup finishes late. Saved filter choices remain preserved.",
+      "fr": "Les nouveaux sons demarrent avec le filtre LOW meme si la preparation des pistes se termine plus tard. Les choix de filtre sauvegardes sont conserves."
+    },
+    {
+      "en": "Double STOP now clears reverb and delay tails, including PS1. The first STOP keeps tails. ACID no longer receives the added Punch transient; its native Punch behavior remains.",
+      "fr": "Un double STOP coupe les queues de reverb et de delay, PS1 compris. Le premier STOP les conserve. ACID ne recoit plus le transitoire Punch ajoute ; son comportement Punch natif reste present."
+    },
+    {
+      "en": "Full, Lite and Machine Optional startup screens and flashers display 2.58. Optional retains Legacy, ChordKeys and Vinyl. Checked in emulation; hardware confirmation is pending.",
+      "fr": "Les ecrans de demarrage et flasheurs Full, Lite et Machine Optional affichent 2.58. Optional conserve Legacy, ChordKeys et Vinyl. Verification en emulation ; confirmation materielle en attente."
+    }
+  ]
+},
   {
     "version": "2.57",
     "date": "2026-10-29",

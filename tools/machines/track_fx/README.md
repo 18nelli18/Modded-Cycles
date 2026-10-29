@@ -43,3 +43,5 @@ ainsi que les tests de livraison, de transport et d'emulation pertinents.
 
 Les validations restent experimentales et ne constituent pas une mesure CPU,
 une preuve de timing DDR/cache ou un test physique de toutes les combinaisons.
+
+La version2.58 ajoute filter-startup.c : attente de six buffers de sons neufs, resolution par getter/frame UI, annulation au reemploi par initialiseur natif. Les filtres sauvegardes ne sont pas remis a zero au boot. fx-panic.c reporte All Sound Off au bloc audio suivant, avec invalidation logique des historiques ; le premier STOP conserve les queues. ACID conserve son Punch natif sans transitoire ajoute. Preuves : tools/emu/test_filter_startup.py et test_track_fx_panic.py.

@@ -3,6 +3,7 @@
 .text
 .globl idle_voice_begin,idle_delay,idle_reverb,idle_check
 idle_voice_begin:
+ jsr mf_fx_begin
  jsr idle_present
  jmp 0x401b72c8
 idle_delay:

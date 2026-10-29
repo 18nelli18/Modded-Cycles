@@ -25,7 +25,7 @@ static const struct recipe recipes[25]={
  {13,11,13,70,-32},  /* Bits: digital snap */
  {10,11,61,-12,38},  /* Swarm: detune burst with a low pitch scoop */
  {11,13,26,60,35},   /* Macro: timbre strike */
- {14,13,83,50,25},   /* Acid: resonant accent */
+ {0,0,0,0,0},       /* ACID : conserver son Punch natif et ses anciens timbres. */
  {11,13,45,55,25},   /* Wave: scanning pluck */
  {13,11,20,45,-35},  /* Feral: digital bark */
  {10,14,24,24,50},   /* Elder: chip sweep */

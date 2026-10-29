@@ -196,3 +196,5 @@ Main2.53 serves exact user-confirmed v189: clearing all four audio LFOs with a t
 
 
 Release 2.57 (2026-10-29): startup screens and flasher versions advance together. Full retains the inactive-FX bypass and repaired effect menu. Machine Optional adds the current per-track FX and audio fixes while retaining Legacy, ChordKeys, Vinyl and all nineteen machine choices. [Release notes](docs/flasher/release-notes-2.57.html) and [Optional validation](docs/flasher-optional/validation257.json) describe the emulator checks and remaining hardware limits.
+
+Release 2.58 fixes late new-sound filter initialization and double-STOP FX tail clearing, and removes the added ACID Punch transient. Full/Lite and Machine Optional share these fixes; Optional retains its extra choices. Validation is by emulation; hardware confirmation is pending.

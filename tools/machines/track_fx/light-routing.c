@@ -18,6 +18,23 @@ s32 lt_bus[8][64];static s32 work[64];
 u32 lt_active,lt_calls[8],lt_sent;
 static u32 drained[8],quiet[8];
 static s32 native_gain[8][2][6];
+extern void lt_ch_reset(void),lt_crush_reset(void),lt_extra_reset(u32);
+#ifndef MF_NO_VINYL
+extern void lt_vinyl_reset(void);
+#endif
+void lt_panic(void){
+ lt_active=lt_sent=0;
+ for(u32 e=0;e<8;e++){
+  drained[e]=quiet[e]=0;
+  for(u32 i=0;i<64;i++)lt_bus[e][i]=0;
+  for(u32 c=0;c<2;c++)for(u32 t=0;t<6;t++)native_gain[e][c][t]=0;
+ }
+ for(u32 i=0;i<64;i++)work[i]=0;
+ lt_ch_reset();lt_crush_reset();lt_extra_reset(0);lt_extra_reset(1);
+#ifndef MF_NO_VINYL
+ lt_vinyl_reset();
+#endif
+}
 static s32 sat20(s32 x){return x>1048575?1048575:x< -1048576?-1048576:x;}
 void lt_render(s32*out){
  for(u32 i=0;i<64;i++)out[i]=0;

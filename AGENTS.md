@@ -425,3 +425,7 @@ fixes and explicitly requests keeping its extra Legacy/ChordKeys choices.
 Preserve all nineteen optional machine choices and Optional's extra features;
 do not inherit the main edition's feature removals. Mark new validation accurately
 and do not carry old hardware or exhaustive-combination results onto new binaries.
+
+## Release 2.58 (2026-10-29)
+
+The user explicitly requests "push to main" for the deferred new-sound LOW reset, ACID added-transient removal and All Sound Off FX tail reset. Publish the verified 2.58 Full/Lite and Optional bases through the existing fixed-image paths; startup titles and both flashers must match 2.58. Main Full SHA dec88b00faca94e7ee58c808a05c1624611b9403b29cbaa745a804bfeb012e32; Lite a46b2fe88f1c4ad08cfbae96882725a2821891508231c7f7730672cdecd68946; Optional Full 46021f2591e2f05b6d1492f1876c2d07addb84a6f1ded55275d6be5e4511ef22; Optional Lite 3f8ea64121df94b17b222f0b61593b83c389b0bd2fc87aaa71eb0113aef71fb2. This authorizes these exact firmware assets and direct main release. Preserve Optional extras and the protected blurb. Validation is native emulation/browser/signature testing, not hardware confirmation. Proofs: docs/flasher/release258-validation.json and docs/flasher-optional/validation258.json.
