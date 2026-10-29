@@ -370,8 +370,8 @@ with or without Model-TG.
   its SPD and DEP are stored a little less finely than LFO 1's (whole values shown come back exactly).
 - **LFO 3 and 4 are for live play**: one setting per track whatever the pattern, kit or sound; not saved, back to
   defaults at power-on; cannot be p-locked ("turning a knob with a trig held changes the setting itself").
-- An extra LFO aimed at LFO 1's destination does nothing. DEST skips destinations another LFO of the track already
-  uses (NONE is always available). Two extra LFOs loaded onto the same destination add up.
+- Holding **[LFO]** + turning a knob assigns that destination to the displayed LFO (holding **MACHINES** + **PITCH** on a MACRO track assigns Lo-Fi). Knob LEDs on the LFO page light up for Attack, Filter, Resonance and Lo-Fi.
+- An extra LFO aimed at LFO 1's destination does nothing (LFO 1 is master). The DEST wheel skips taken destinations, but direct knob assignment allows stacking: LFO 2, 3 and 4 targeting the same destination add up (each bounded 0..0x7f00).
 - Old sounds load with LFO 2 at no destination. Sounds saved with DavidCaruso's firmware keep their LFO 2. The
   official OS loads sounds saved with this mod and ignores LFO 2.
 - **Fixes a Model-TG bug**: p-locks on Attack, Filter and Resonance used to come back after reloading a pattern as

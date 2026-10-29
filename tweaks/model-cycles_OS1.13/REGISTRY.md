@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 283 tweaks, 31 787 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 57 pris (19 200 o) et **107 libres (16 760 o)**.
-- Crochets sur l'OS : 105 adresses détournées, dont 57 à l'identique par des mods de familles différentes.
+- 283 tweaks, 31 791 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 58 pris (19 472 o) et **106 libres (16 488 o)**.
+- Crochets sur l'OS : 107 adresses détournées, dont 57 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 58 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
 
@@ -113,7 +113,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401699a8` | `0x400b1500` | libre | |
 | `0x4016aa28` | `0x400b1480` | libre | |
 
-### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 11 pris, 3 libres (816 o)
+### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 12 pris, 2 libres (544 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -127,7 +127,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40185f48` | `0x400ad9c4` | pris (266/272 o) | lfo-plus (266 o) |
 | `0x40186238` | `0x400ad988` | pris (218/272 o) | lfo-plus (218 o) |
 | `0x40189618` | `0x400ad364` | pris (256/272 o) | lfo-plus (256 o) |
-| `0x4018af88` | `0x400ad18a` | libre | |
+| `0x4018af88` | `0x400ad18a` | pris (156/272 o) | lfo-plus (156 o) |
 | `0x4018b1a8` | `0x400ad16e` | libre | |
 | `0x4018ff64` | `0x400ac7fc` | libre | |
 | `0x40192ba4` | `0x400ac276` | pris (132/272 o) | midi-live-both (132 o) |
@@ -565,6 +565,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4001c3dc` | `4eb940025798` | jsr | masque `0x40189618` +0x0 `lfo_ctor` | lfo-plus | notes/56 |
 | `0x4001d25e` | `4eb940016086` | jsr | masque `0x4018a788` +0x1a | arp | notes/32 |
 | `0x4001e8da` | `202f0020226a0068` | jsr | charge utile (mémoire), 28 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
+| `0x4001eb50` | `2f024eb94005a4e8588f…` | jmp | masque `0x4018af88` +0x0 `lfo_learn` | lfo-plus | notes/56 |
 | `0x40021f56` | `2f034e944879404a8cb8…` | jsr | charge utile (image) +0x4f1a | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4002249c` | `4eb940072490` | jsr | masque `0x4015c044` +0x28 `th_press` | trig-hold | notes/33 |
 | `0x400224ee` | `2f034eb9400724a0` | jmp | cave `0x401489fa` +0x0 | model-tg, model-tg-st, trig-preview | notes/31, notes/34, notes/36 |
@@ -573,6 +574,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4002351a` | `2f024eb9400740ca` | jmp | cave `0x40148328` +0x0 | latching-mute, model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400243d6` | `700ab084673e` | jmp | masque `0x40182b38` +0x0 `sr_key` | step-rec | notes/73 |
 | `0x40025e10` | `4feffff02f0a` | jmp | masque `0x40189618` +0x4e `lfo_gate` | lfo-plus | notes/56 |
+| `0x400262ac` | `4fef000c200f` | jmp | masque `0x4018af88` +0x68 `lfo_led` | lfo-plus | notes/56 |
 | `0x4002d480` | `4cef7c7c0018` | jmp | masque `0x4016cae8` +0xc0 | arp | notes/32 |
 | `0x4002f7d8` | `4cef7c7c0018` | jmp | charge utile (image) +0x11350 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40032aee` | `4cef7c7c0018` | jmp | charge utile (image) +0xd428 | model-tg, model-tg-st | notes/31, notes/36 |
@@ -781,5 +783,5 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | track-filter | 40 | 1 | 6 | 3 | 15 | 15 | 0 |  | notes/47 |
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
-| lfo-plus | 39 | 0 | 15 | 4 | 10 | 10 | 0 |  | notes/56 |
+| lfo-plus | 43 | 0 | 17 | 4 | 11 | 11 | 0 |  | notes/56 |
 

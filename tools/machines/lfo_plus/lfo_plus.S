@@ -61,6 +61,7 @@
 	.globl	lfo_pack, lfo_unpack, lfo_init, lfo_plk_save, lfo_plk_load
 	.globl	page, pend, ready, kready, view, lfo34, slots, sel_track, slot_of_id, copy192, run_set, taken, audio_sets
 	.globl	audio_done, cur34, blk34, snd34, pk5, upk5, dflt5, kit_save, kit_load, kit_copy, buf_find, buf_put
+	.globl	lfo_learn, lfo_led
 
 /* ================================================================== moteur, interruption audio ============ */
 
@@ -598,6 +599,88 @@ taken:
 	rts
 9:	moveq	#0, %d0
 	rts
+
+/* ================================================================== [LFO] + potard, diode DEST ============= */
+
+	.equ	KEY_BITS, 0x40f95744		/* état des touches que lit 0x4007faf4 ; MACHINES (code 5) = bit 0 */
+	.equ	PITCH_ID, 42			/* PITCH, sous le potard PITCH de toutes les machines */
+	.equ	FTUN_ID, 43			/* FINE : le lo-fi de MACRO (entrée 16 de son enregistrement) */
+
+	.section .text.learn, "ax"
+
+/* 0x4001eb50, dans l'affectation par potard (0x4001eaa2, [LFO] tenue + un potard ; d2 = l'identifiant sous le
+ * potard, lu dans l'enregistrement de KICK que Model-TG change tant que MACHINES est tenue : Attack, Filtre, Résonance
+ * en positions 1, 4, 5 ; d7 = piste, a3 = l'accesseur des réglages de la piste) : jmp lfo_learn à la place de
+ * move.l d2,-(sp) ; jsr 0x4005a4e8 ; addq.l #4,sp ; movea.l (a3),a0 ; move.l d0,d2 ; lsl.l #8,d2.
+ *  - MACHINES tenue (bit 0 de KEY_BITS) sur PITCH (position 0) d'une piste MACRO (son enregistrement, 0x4004df76,
+ *    porte FINE en entrée 16) : FINE (id 43), le lo-fi, comme MACHINES + PITCH le règle sur la page ;
+ *    FUNC+PITCH (a5 != 0) reste le stock PITCH ; autres machines inchangées.
+ *  - affectation libre ou déjà prise : admise (la molette DEST saute les prises, mais l'affectation directe par
+ *    potard autorise le cumul, notes/56 §3.13).
+ * d0-d1/a0-a1 libres ; d3-d6, a2-a5 gardés (la suite s'en sert). */
+lfo_learn:
+	tstl	68(%sp)				/* potard 0 seulement (PITCH) */
+	bne.s	1f
+	moveq	#PITCH_ID, %d0
+	cmp.l	%d2, %d0
+	bne.s	1f
+	tstl	%a5				/* FUNC tenue : reste stock */
+	bne.s	1f
+	move.b	KEY_BITS, %d0
+	btst	#0, %d0				/* MACHINES tenue */
+	beq.s	1f
+	jsr	CUR_PROJ
+	move.l	%d0, -(%sp)
+	jsr	0x4000eb9c			/* kit */
+	move.l	%d7, (%sp)
+	move.l	%d0, -(%sp)
+	jsr	0x40009c1a			/* (kit, piste) -> la piste */
+	move.l	%d0, (%sp)
+	jsr	0x40014042			/* -> sa machine */
+	move.l	%d0, (%sp)
+	jsr	0x4004df76			/* -> son enregistrement */
+	addq.l	#8, %sp
+	movea.l	%d0, %a0
+	moveq	#FTUN_ID, %d0
+	cmp.l	72(%a0), %d0
+	bne.s	1f
+	move.l	%d0, %d2
+1:	move.l	%d2, -(%sp)
+	jsr	0x4005a4e8			/* id -> k */
+	addq.l	#4, %sp
+	move.l	%d0, %d2
+	lsl.l	#8, %d2
+	movea.l	(%a3), %a0
+	jmp	0x4001eb60
+
+/* 0x400262ac, dans la diode de la page LFO (0x400261aa ; d2 = l'identifiant de la destination, a2 = les 17
+ * identifiants de l'enregistrement de la machine, que l'OS vient de copier et où il va le chercher ; sa position
+ * donne la diode) : jmp lfo_led à la place de lea 12(sp),sp ; move.l sp,d0. L'enregistrement est celui de la
+ * machine, sans le changement de Model-TG (MACHINES n'est plus tenue) : Attack, Filtre, Résonance n'y sont pas, et
+ * FINE de MACRO y est en entrée 16, sans potard ; sans diode, ou une diode hors des potards. On cherche donc
+ * l'identifiant du potard qui les règle sous MACHINES : DECAY (1) pour Attack, SWEEP (4) pour Filtre, CONTOUR (5)
+ * pour Résonance, PITCH (0) pour FINE de MACRO. d0-d1 libres ; d0 = sp à la sortie, comme l'OS. */
+lfo_led:
+	lea	12(%sp), %sp
+	move.l	%d2, %d0
+	moveq	#0x0b, %d1
+	sub.l	%d1, %d0
+	moveq	#2, %d1
+	cmp.l	%d0, %d1
+	bcs.s	1f
+	mvs.b	led_pos(%pc, %d0.l), %d0
+	move.l	(%a2, %d0.l*4), %d2
+	bra.s	9f
+1:	moveq	#FTUN_ID, %d0
+	cmp.l	%d2, %d0
+	bne.s	9f
+	cmp.l	64(%a2), %d0
+	bne.s	9f
+	move.l	(%a2), %d2
+9:	move.l	%sp, %d0
+	jmp	0x400262b2
+led_pos:	.byte	5, 4, 1			/* Résonance (0x0b), Filtre (0x0c), Attack (0x0d) */
+	.align	2
 
 /* ================================================================== son et pattern ======================== */
 

@@ -1948,9 +1948,10 @@ window.MC_TWEAKS = {
     "Chaque LFO de plus a ses SPD, MULT, WAVE, DEST, DEP ; FADE, SPH, MODE et le retrig sont ceux de LFO 1. Même calcul que LFO 1 (la fonction des LFO de l'OS, avec son état à part).",
     "LFO 2 : sauvé avec le son (kit, réserve de sons ; 4 octets libres de l'enregistrement, même format que DavidCaruso), p-lockable. LFO 3 et 4 : un réglage par piste et par pattern (kit), sauvé dans 52 octets inutilisés de l'enregistrement du kit (+648..+699), remis aux défauts avec le son de la piste (effacement, nouveau projet), emporté par les copies de kit entier (nouveau projet, copie de pattern) ; pas de p-lock.",
     "Un LFO de plus réglé sur la destination de LFO 1 ne fait rien ; la molette DEST saute les destinations déjà prises par un autre LFO de la piste. LFO 2 non calculé quand aucune piste n'a de destination.",
+    "[LFO] tenue + un potard (affectation de l'OS) : MACHINES + PITCH sur une piste MACRO donne le lo-fi (FINE) ; la destination choisie peut être libre ou déjà prise par un autre LFO (le cumul s'additionne). La diode de la destination s'allume aussi pour Attack, Filtre, Résonance (potards DECAY, SWEEP, CONTOUR) et le lo-fi (PITCH), réglés sous MACHINES (notes/56 §3.13).",
     "Corrige au passage les p-locks d'Attack, Filtre et Résonance de Model-TG dans le pattern (relus en None, LFO Speed, Multiplier).",
     "D'après le Model-TG-VA-DR-v1 de DavidCaruso (octobre 2026), réécrit ; s'installe avec ou sans Model-TG.",
-    "Code et données : 2632 o dans 10 masques de sprites 34x34 libérés (0x4016f8c8, 0x40173848, 0x401780a8, 0x401784e8, 0x401835b8, 0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618) ; mémoire de travail 0x4233e000..0x4233e49c, blocs LFO 3/4 0x4233b000..0x4233def4 (au-dessus du BSS). Généré par tools/gen_lfo_plus.py, notes/56 §3.",
+    "Code et données : 2788 o dans 11 masques de sprites 34x34 libérés (0x4016f8c8, 0x40173848, 0x401780a8, 0x401784e8, 0x401835b8, 0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88) ; mémoire de travail 0x4233e000..0x4233e49c, blocs LFO 3/4 0x4233b000..0x4233def4 (au-dessus du BSS). Généré par tools/gen_lfo_plus.py, notes/56 §3.",
     "Pas avec le filtre par piste : les deux rangent leurs réglages en k 28..31 et en +88..+91 du son (notes/56 §3.6)."
    ],
    "device": "Model:Cycles",
@@ -1988,7 +1989,9 @@ window.MC_TWEAKS = {
     "upk5": "0x4018531a",
     "kit_save": "0x40183654",
     "kit_load": "0x4018539c",
-    "kit_copy": "0x40178584"
+    "kit_copy": "0x40178584",
+    "lfo_learn": "0x4018af88",
+    "lfo_led": "0x4018aff0"
    },
    "writes": [
     {
@@ -2002,9 +2005,19 @@ window.MC_TWEAKS = {
      "new": "4eb940189618"
     },
     {
+     "off": 124752,
+     "old": "2f024eb94005a4e8588f20532400e18a",
+     "new": "4ef94018af884e714e714e714e714e71"
+    },
+    {
      "off": 154128,
      "old": "4feffff02f0a",
      "new": "4ef940189666"
+    },
+    {
+     "off": 155308,
+     "old": "4fef000c200f",
+     "new": "4ef94018aff0"
     },
     {
      "off": 365510,
@@ -2060,6 +2073,11 @@ window.MC_TWEAKS = {
      "off": 585200,
      "old": "226f0004206f0008",
      "new": "4ef9401785844e71"
+    },
+    {
+     "off": 707978,
+     "old": "4018af88",
+     "new": "4016bfc8"
     },
     {
      "off": 708452,
@@ -2185,6 +2203,11 @@ window.MC_TWEAKS = {
      "off": 1610264,
      "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
      "new": "202f0004670606800000003823c0401784e84239401784ec4239401784ed4ef94002579841ea0038b1f9401784e8661242b9401784e84239401784ec4239401784ed2f4a0008245f4ef9400d97fe70001039401784ec5580640c4feffff02f0a4ef940025e164e750c8000000016620616b54803600416bb08f1174200014e7518191affff1b1c1d1e1f202f000c7405b481651474e8d4800c8200000007620871bb2810241f4e757406b4814ef94005aa281718191c1d1e1f204cd00c3f48d10c3f4ce80c3f002048e90c3f00204ce80c3f004048e90c3f00404ce80c3f006048e90c3f00604ce80c3f008048e90c3f00804ce80c3f00a048e90c3f00a04e75"
+    },
+    {
+     "off": 1616776,
+     "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffff",
+     "new": "4aaf0044664c702ab08266464a8d6642103940f957440800000067364eb9400cf8662f004eb94000eb9c2e872f004eb940009c1a2e804eb9400140422e804eb94004df76508f2040702bb0a80048660224002f024eb94005a4e8588f2400e18a20534ef94001eb604fef000c2002720b90817202b280650a713b081e24320c00600e702bb0826608b0aa004066022412200f4ef9400262b205040100"
     }
    ]
   },

@@ -48,8 +48,11 @@ OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "60-lfo-plus.json"
 BASE = gx.BASE
 # Les masques 34x34 (272 o) réservés à ce mod, remplis dans cet ordre ; ceux qui restent vides ne sont pas touchés.
 MASKS = (0x4016f8c8, 0x40173848, 0x401780a8, 0x401784e8, 0x401835b8,
-         0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618)
+         0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88)
 ROOM = 272
+# Sections mises d'office dans un masque (ajouts après coup : les autres restent à leur place, leurs adresses ne
+# bougent pas) : [LFO] + potard et la diode de la destination (notes/56 §3.13).
+PINNED = {".text.learn": 0x4018af88}
 # Mémoire de travail (1 180 o) : trou de 32 Ko entre la fin du BSS de l'OS (0x423380b0) et ses premiers tampons
 # DMA (0x42340000, alias sans cache 0x4a340000), que rien ne vise (notes/56 §3, notes/44). Pas remise à zéro au
 # démarrage : lfo_plus.S la met à zéro au premier usage, tant que l'octet ready (dans un masque, donc rechargé à 0
@@ -85,6 +88,11 @@ HOOKS = (
      "création de la vue LFO : jsr 0x40025798 -> jsr lfo_ctor"),
     (0x400d97f8, "2f4a0008245f", "lfo_dtor", 0x4ef9,
      "destruction de la vue LFO (0x400d979a) : move.l a2,8(sp) ; movea.l (sp)+,a2 -> jmp lfo_dtor"),
+    (0x4001eb50, "2f024eb94005a4e8588f20532400e18a", "lfo_learn", 0x4ef9,
+     "affectation par [LFO] + potard (0x4001eaa2) : move.l d2,-(sp) ; jsr 0x4005a4e8 ; addq.l #4,sp ; "
+     "movea.l (a3),a0 ; move.l d0,d2 ; lsl.l #8,d2 -> jmp lfo_learn ; nop × 5"),
+    (0x400262ac, "4fef000c200f", "lfo_led", 0x4ef9,
+     "diode de la destination, page LFO (0x400261aa) : lea 12(sp),sp ; move.l sp,d0 -> jmp lfo_led"),
     (0x4000c140, "4e56ffe0202e000c", "lfo_dest", 0x4ef9,
      "pas de la liste des destinations (DEST) : link.w fp,#-32 ; move.l 12(fp),d0 -> jmp lfo_dest ; nop"),
     (0x4005b2ae, "4fefffe448d77c0c", "kit_save", 0x4ef9,
@@ -103,7 +111,8 @@ PTRS = (
 )
 SYMBOLS = ("lfo_audio", "lfo_id2k", "lfo_get", "lfo_set", "lfo_key", "lfo_draw", "lfo_ctor", "lfo_dtor", "lfo_gate",
            "lfo_dest", "lfo_pack", "lfo_unpack", "lfo_init", "lfo_plk_save", "lfo_plk_load", "page", "pend", "ready", "view",
-           "lfo34", "kready", "cur34", "blk34", "snd34", "pk5", "upk5", "kit_save", "kit_load", "kit_copy")
+           "lfo34", "kready", "cur34", "blk34", "snd34", "pk5", "upk5", "kit_save", "kit_load", "kit_copy", "lfo_learn",
+           "lfo_led")
 
 
 CONFLICTS = ["track-filter"]   # mêmes k 28..31 et mêmes octets +88..+91 du son (notes/56 §3.6, notes/47 §4)
@@ -128,8 +137,10 @@ def compile_lfo():
         if [n for n, *_ in sections(obj) if not n.startswith((".text.", ".data."))]:
             raise SystemExit("!! section inattendue dans lfo_plus.o")
         bins = [{"at": va, "size": 0, "parts": []} for va in MASKS]
-        for name, size, align in sorted(parts, key=lambda p: (-p[1], p[0])):
+        for name, size, align in sorted(parts, key=lambda p: (p[0] not in PINNED, -p[1], p[0])):
             for b in bins:
+                if PINNED.get(name, b["at"]) != b["at"] or (name not in PINNED and b["at"] in PINNED.values()):
+                    continue
                 at = (b["size"] + align - 1) & -align
                 if at + size <= ROOM:
                     b["parts"].append((name, align))
@@ -205,6 +216,10 @@ def build_tweak(stock):
             "nouveau projet), emporté par les copies de kit entier (nouveau projet, copie de pattern) ; pas de p-lock.",
             "Un LFO de plus réglé sur la destination de LFO 1 ne fait rien ; la molette DEST saute les destinations "
             "déjà prises par un autre LFO de la piste. LFO 2 non calculé quand aucune piste n'a de destination.",
+            "[LFO] tenue + un potard (affectation de l'OS) : MACHINES + PITCH sur une piste MACRO donne le lo-fi "
+            "(FINE) ; la destination choisie peut être libre ou déjà prise par un autre LFO (le cumul s'additionne). "
+            "La diode de la destination s'allume aussi pour Attack, Filtre, Résonance (potards DECAY, SWEEP, CONTOUR) "
+            "et le lo-fi (PITCH), réglés sous MACHINES (notes/56 §3.13).",
             "Corrige au passage les p-locks d'Attack, Filtre et Résonance de Model-TG dans le pattern (relus en None, "
             "LFO Speed, Multiplier).",
             "D'après le Model-TG-VA-DR-v1 de DavidCaruso (octobre 2026), réécrit ; s'installe avec ou sans Model-TG.",

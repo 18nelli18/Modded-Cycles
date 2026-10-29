@@ -1438,6 +1438,222 @@ def per_kit(base_img, img, rt, syms):
     check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
 
 
+# ----------------------------------------------------------------------- 9. [LFO] + potard, diode DEST ------
+
+LEARN, LED_PAINT = 0x4001eaa2, 0x400261aa                     # affectation par potard ; diode de la page LFO
+KIT_OF, TRACK_OF, MACHINE_OF, REC_OF = 0x4000eb9c, 0x40009c1a, 0x40014042, 0x4004df76
+ACC_OF, KEYS_HELD, SEQ_STATE, TRIG_HELD, TRIG_HELD2 = 0x400097f0, 0x4007faf4, 0x400cf9a8, 0x4006b978, 0x4006b736
+LED_CTL, LED_SET, TRIG_SCAN, FN_DTOR = 0x400cfaf4, 0x40005f86, 0x4006be48, 0x400cf044
+UI_INIT, KEY_BITS = 0x400de244, 0x40f95744                    # objets d'interface et enregistrements ; MACHINES = bit 0
+KIT_OBJ, TRACK_OBJ2, LEDS, FCODE2 = FAKE + 0x20000, FAKE + 0x21000, FAKE + 0x22000, FAKE + 0x23000
+ATK, FLT, RES, PITCH, FTUN = 0x0d, 0x0c, 0x0b, 42, 43
+
+
+def learn_rig(img, rt, sel, machine, held):
+    """Rig dont l'interface tourne : enregistrements et objets d'interface construits (0x400de244), piste sel[0] dans
+    le kit 9 (son = kit(9) + 28 + 100 t), machine machine[0] ; held : touches tenues (0x4007faf4)."""
+    r = Rig(img, rt)
+    for a, ret in ((FN_DTOR, 0), (0x400c9afc, 0), (0x400f4dc6, 1), (0x400f4e22, 0)):
+        r.stub(a, lambda x, ret=ret: ret)
+    r.call(UI_INIT)
+    r.stub(0x400f4dc6, None)
+    r.stub(0x400f4e22, None)
+    setup_track(r)
+    r.w32(CUR_KIT, kit(9))
+    r.stub(FCODE, lambda a: kit(9) + 28 + 100 * sel[0])
+    r.stub(CUR_PROJ, lambda a: PROJ)
+    r.stub(PROJ_SEQ, lambda a: SEQ)
+    r.stub(SEL_TRACK, lambda a: sel[0])
+    r.stub(KIT_OF, lambda a: KIT_OBJ)
+    r.stub(ACC_OF, lambda a: THIS)
+    r.stub(TRACK_OF, lambda a: TRACK_OBJ2)
+    r.stub(MACHINE_OF, lambda a: machine[0])
+    r.stub(KEYS_HELD, lambda a: 1 if a[0] in held else 0)
+    r.stub(SEQ_STATE, lambda a: SEQ)
+    r.stub(TRIG_HELD, lambda a: 0)
+    r.stub(TRIG_HELD2, lambda a: 0)
+    r.stub(TRIG_SCAN, lambda a: 0)
+    r.stub(NEEDS_REDRAW, lambda a: 0)
+    r.stub(LED_CTL, lambda a: LEDS)
+    r.stub(LED_SET, lambda a: r.log.append(("led", a[1], a[2])) or 0)
+    r.stub(r.r32(ACC_VT + 72), lambda a: 0)            # 0x4000b942 : suite de 0x4000b274 vers le pattern (bouchon)
+    r.w32(VIEWOBJ + 56, FAKEVT)
+    r.w32(FAKEVT + 128, FCODE2)
+    r.stub(FCODE2, lambda a: THIS)
+    return r
+
+
+def learn_led(base_img, img, rt, syms, tg):
+    """[LFO] tenue + un potard (0x4001eaa2, le vrai code) et la diode de la destination (0x400261aa, le vrai code), sur
+    la machine montée : Attack, Filtre, Résonance sous MACHINES (Model-TG), le lo-fi de MACRO, destinations prises."""
+    sel, machine, held = [3], [0], set()
+    S, P = learn_rig(base_img, rt, sel, machine, held), learn_rig(img, rt, sel, machine, held)
+    P.call(syms["blk34"], regs={D[0]: kit(9)})
+    page = syms["page"]
+    snd = lambda: kit(9) + 28 + 100 * sel[0]          # noqa: E731
+    macro = [m for m in range(6, 16) if P.r32(P.call(REC_OF, m) + 72) == FTUN]
+    if macro:
+        check(len(macro) == 1 and S.r32(S.call(REC_OF, macro[0]) + 72) == FTUN,
+              f"MACRO = machine {macro} : son enregistrement (0x4004df76) porte FINE (43) en entrée 16, la seule")
+    macro = macro[0] if macro else None
+
+    def mod(on):
+        for r in (S, P):
+            r.w8(KEY_BITS, 1 if on else 0)
+            if tg:
+                r.w32(tg["mod_held"], 1 if on else 0)
+
+    def dest(r, pg):
+        r.w8(page, pg) if r is P else None
+        return s32(r.call(syms["lfo_get"] if r is P else ORIG_GET, THIS, 0x20)) >> 8
+
+    def set_dest(r, pg, k):
+        if pg == 0:
+            r.w8(snd() + 28, k)
+        elif pg == 1:
+            r.w8(snd() + 82, k)
+        else:
+            r.w8(page, pg)
+            r.call(syms["lfo_set"], THIS, 0x20, k << 8)
+
+    def learn(r, pg, knob):
+        if r is P:
+            r.w8(page, pg)
+        r.call(LEARN, VIEWOBJ + 56, knob, 1, check="affectation par potard")
+        return dest(r, pg)
+
+    def clear(r):
+        r.uc.mem_write(snd(), sound_bytes(random.Random(1), DEFAULTS))
+        r.w8(snd() + 38, machine[0])
+        r.w8(snd() + 28, 0)
+        r.w8(snd() + 82, 0)
+        if r is P:
+            for pg in (2, 3):
+                set_dest(r, pg, 0)
+
+    P.w8(page, 0)
+    k_of = {i: s32(P.call(ID2K, i)) for i in (ATK, FLT, RES, PITCH, FTUN)}
+    expect_k = {PITCH: 10, FTUN: 17}
+    if tg:
+        expect_k.update({ATK: 23, FLT: 24, RES: 25})
+    check(all(k_of[i] == expect_k[i] for i in expect_k) and all(s32(S.call(ID2K, i)) == expect_k[i] for i in expect_k),
+          f"id -> k : {expect_k} ({k_of})")
+    # 1. affectation : la destination du LFO affiché
+    good, n = True, 0
+    for m in list(range(6)) + ([macro] if macro is not None else []):
+        machine[0] = m
+        for on in (False, True):
+            mod(on)
+            for knob in range(12):
+                ref = None
+                for pg in range(4):
+                    for r in (S, P):
+                        clear(r)
+                    got = learn(P, pg, knob)
+                    if pg == 0:
+                        ref = learn(S, 0, knob)
+                        good &= got == ref or (on and knob == 0 and m == macro)
+                    others = [dest(P, x) for x in range(4) if x != pg]
+                    good &= others == [0, 0, 0] and (got == ref or (on and knob == 0 and m == macro))
+                    if on and tg and knob in (1, 4, 5):
+                        good &= got == {1: 23, 4: 24, 5: 25}[knob]
+                    if on and knob == 0:
+                        good &= got == (17 if m == macro else 10)
+                    if not on and knob == 0:
+                        good &= got == 10
+                    n += 1
+    P.w8(page, 0)
+    mod(False)
+    # FUNC + PITCH : reste stock (PITCH, k = 10) même sur MACRO et sous MACHINES
+    good_func = True
+    for m in list(range(6)) + ([macro] if macro is not None else []):
+        machine[0] = m
+        for on in (False, True):
+            mod(on)
+            held.add(2)
+            clear(P)
+            got = learn(P, 0, 0)
+            good_func &= got == 10
+            held.discard(2)
+    mod(False)
+    machine[0] = 0
+    check(good and good_func and n > 300, f"[LFO] + potard, machines 0..5 et MACRO, 12 potards, LFO 1..4, MACHINES tenue ou non ({n} cas) : "
+                                          "la destination du LFO affiché, celle de l'OS d'origine sur LFO 1, les autres LFO pas "
+                                          "touchés ; MACHINES + DECAY / SWEEP / CONTOUR -> Attack / Filtre / Résonance (k 23, 24, 25)"
+                                          + ("" if tg else " [sans Model-TG : pas vérifié]")
+                                          + " ; MACHINES + PITCH -> FINE (k 17, le lo-fi) sur MACRO seulement, PITCH (k 10) ailleurs ; FUNC + PITCH -> PITCH (k 10)")
+    # 2. destination déjà prise par un autre LFO de la piste : admise (cumul de plusieurs LFO)
+    machine[0] = 0
+    mod(bool(tg))
+    good, n = True, 0
+    for pg in range(4):
+        for other in range(4):
+            if other == pg:
+                continue
+            for knob, k in (((1, 23), (4, 24), (5, 25)) if tg else ((2, 11), (3, 12), (4, 13))):
+                clear(P)
+                set_dest(P, other, k)
+                set_dest(P, pg, 14 if k != 14 else 15)
+                got = learn(P, pg, knob)
+                good &= got == k and dest(P, other) == k
+                n += 1
+    clear(S)
+    S.w8(snd() + 82, 23 if tg else 11)
+    s_dup = learn(S, 0, 1 if tg else 2)
+    mod(False)
+    check(good and s_dup == (23 if tg else 11),
+          f"destination déjà prise par un autre des 4 LFO ({n} cas) : admise (le cumul s'additionne, comme l'OS d'origine)")
+    # 3. diode de la page LFO
+    good, rows = True, []
+    for m in list(range(6)) + ([macro] if macro is not None else []):
+        machine[0] = m
+        for k in [0] + list(range(9, 26)):
+            lit = []
+            for pg in range(4):
+                for r in (S, P):
+                    clear(r)
+                set_dest(P, pg, k)
+                P.log.clear()
+                P.w8(page, pg)
+                P.call(LED_PAINT, VIEWOBJ, check="diode de la page LFO")
+                lit.append([a for t, a, _ in P.log if t == "led"])
+            set_dest(S, 0, k)
+            S.log.clear()
+            S.call(LED_PAINT, VIEWOBJ)
+            ls = [a for t, a, _ in S.log if t == "led"]
+            want = ({23: [37], 24: [40], 25: [41]}.get(k) if tg else None) or ([36] if k == 17 and m == macro else ls)
+            good &= all(x == want for x in lit)
+            if want != ls:
+                rows.append((m, k, ls, lit[0]))
+    machine[0] = 0
+    P.w8(page, 0)
+    desc = "; ".join(f"m{m} k{k} : {ls} -> {lp}" for m, k, ls, lp in rows[:3] + [x for x in rows if x[0] == macro])
+    nm = 6 + (macro is not None)
+    check(good and len(rows) == (3 * nm if tg else 0) + (macro is not None),
+          "diode de la destination (0x400261aa), machines 0..5 et MACRO, k = 0, 9..25, LFO 1..4 : Attack -> DECAY (37), "
+          "Filtre -> SWEEP (40), Résonance -> CONTOUR (41), lo-fi de MACRO -> PITCH (36) ; tout le reste = l'OS "
+          f"d'origine, sur les 4 pages ({len(rows)} différences, avant -> après : {desc})")
+    # 4. sauvegarde et rechargement : LFO 1 -> Attack, LFO 2 -> Filtre, LFO 3 -> Résonance
+    if tg:
+        mod(True)
+        clear(P)
+        got = [learn(P, 0, 1), learn(P, 1, 4), learn(P, 2, 5)]
+        mod(False)
+        P.uc.mem_write(KREC, b"\xa5" * 0x1e00)
+        ok = P.call(KIT_SAVE, KREC, kit(9), 0, check="sauvegarde du kit") & 0xff
+        rec = P.rd(KREC, 0x1e00)
+        P.uc.mem_write(kit(9), b"\x55" * KIT_SZ)
+        P.uc.mem_write(blk(syms, 9), b"\x33" * 120)
+        P.uc.mem_write(KREC2, rec)
+        ok2 = P.call(KIT_LOAD, kit(9), KREC2, check="chargement du kit") & 0xff
+        back = [dest(P, pg) for pg in range(4)]
+        P.w8(page, 0)
+        check(ok == ok2 == 1 and got == [23, 24, 25] and back == [23, 24, 25, 0],
+              f"par potard sous MACHINES : LFO 1 -> Attack, LFO 2 -> Filtre, LFO 3 -> Résonance (k {got}) ; kit sauvé "
+              f"(0x4005b2ae) puis rechargé (0x4005d080) : {back[:3]}, LFO 4 None")
+    check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
+
+
 # ------------------------------------------------------------------------------------------------ main -----------
 
 def payload_runtimes(tweaks, stock, syntakt_path):
@@ -1470,7 +1686,9 @@ def main():
     rt = payload_runtimes(others, stock, args.syntakt)
     syms = {k: int(v, 16) for k, v in tweak["symbols"].items()}
     david = T.main_os_from_syx(args.david) if args.david else None
-    only = {int(x) for x in args.only.split(",") if x} or set(range(9))
+    only = {int(x) for x in args.only.split(",") if x} or set(range(10))
+    tg = next((t["symbols"] for t in others if "mod_held" in t.get("symbols", {})), None)
+    tg = {k: int(v, 16) for k, v in tg.items()} if tg else None
     print(f"firmware : {', '.join(t['id'] for t in sorted(others + [tweak], key=lambda t: t['order']))}")
     steps = ((0, "écritures", lambda: writes_ok(stock, img, tweak, every, rt)),
              (1, "bloc audio sans LFO de plus = l'origine", lambda: audio_identity(base, img, rt, syms)),
@@ -1480,7 +1698,8 @@ def main():
              (5, "p-locks dans le pattern", lambda: plocks(base, img, rt)),
              (6, "coût", lambda: cost(base, img, rt, syms)),
              (7, "accroches au milieu des fonctions", lambda: sites(base, img, rt, syms)),
-             (8, "LFO 3/4 par pattern", lambda: per_kit(base, img, rt, syms)))
+             (8, "LFO 3/4 par pattern", lambda: per_kit(base, img, rt, syms)),
+             (9, "[LFO] + potard, diode DEST", lambda: learn_led(base, img, rt, syms, tg)))
     for n, name, fn in steps:
         if n in only:
             print(f"{n}. {name}")

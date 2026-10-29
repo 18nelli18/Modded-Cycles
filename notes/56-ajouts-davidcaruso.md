@@ -673,3 +673,35 @@ construit avec ce tweak et le firmware a été flashé.
 appui bref et appui tenu avec rotation d'un potentiomètre, Clear LFO sur la page affichée, LFO 3/4 conservés d'un
 pattern à l'autre et à travers une extinction — conforme à ce qui est décrit ici. **Maxime n'a pas encore essayé cette
 version** : la carte reste `experimental` jusqu'à son rapport.
+
+### 3.13 Mise à jour du 29/10/2026 : affectation directe [LFO] + potard, lo-fi sur MACRO et diode de la destination
+
+Deux ajustements ergonomiques vérifiés sur le matériel et intégrés :
+
+1. **Diode de la destination sur la page LFO** (`0x400261aa` → hook `lfo_led` en `0x400262ac`, masque `0x4018af88`) :
+   sur la page LFO, l'OS allume la diode du potentiomètre qui correspond à la destination actuelle du LFO affiché.
+   Pour les paramètres stock, cela fonctionne d'origine. Pour les paramètres substitués sous `MACHINES` (Attack, Filtre,
+   Résonance via Model-TG) ou le lo-fi de MACRO (assigné en entrée 16 de l'enregistrement), la recherche d'identifiant
+   de l'OS échouait car l'enregistrement classique de la machine ne les contient pas aux positions 0..11.
+   Le hook `lfo_led` intercepte la recherche :
+   - Attack (`0x0d`) renvoie vers la position de DECAY (knob 1, diode 37) ;
+   - Filtre (`0x0c`) renvoie vers SWEEP (knob 4, diode 40) ;
+   - Résonance (`0x0b`) renvoie vers CONTOUR (knob 5, diode 41) ;
+   - Lo-Fi de MACRO (`FTUN_ID` = 43) renvoie vers PITCH (knob 0, diode 36) sur la machine MACRO.
+   La diode s'allume ainsi fidèlement lorsque la page LFO est ouverte.
+
+2. **Lo-Fi sur MACRO via MACHINES + PITCH** (`0x4001eaa2` → hook `lfo_learn` en `0x4001eb50`, masque `0x4018af88`) :
+   lors du geste d'affectation directe (`[LFO]` maintenu + potentiomètre), tourner le potentiomètre PITCH (position 0)
+   avec `MACHINES` maintenu sur une piste MACRO assigne le paramètre Lo-Fi (`FINE`, identifiant 43) au lieu de Pitch
+   (identifiant 42). Si `FUNC` est maintenu (`FUNC + PITCH`), le comportement stock (Pitch) est conservé. Les autres
+   machines ne sont pas touchées. L'édition de la valeur de Lo-Fi reste confiée à `lofi_knob`.
+
+3. **Vérité sur le cumul / surimpression des LFO (comportement moteur vérifié sur le code)** :
+   - Un LFO supplémentaire (LFO 2, 3 ou 4) réglé sur la même destination que LFO 1 est ignoré par le moteur audio
+     (`0x400597c6` / `run_set`) : LFO 1 reste le seul maître sur sa destination.
+   - En revanche, si plusieurs LFO parmi 2, 3 et 4 ciblent la même destination, leurs modulations **s'additionnent**
+     successivement avec bornage intermédiaire : `borne(borne(base + q2) + q3)`.
+   - La molette `DEST` saute les destinations déjà prises par un autre LFO de la piste (pour faciliter la navigation).
+     En revanche, l'affectation directe par potentiomètre (`[LFO]` maintenu + potard) **autorise** le cumul : elle ne
+     refuse pas une destination déjà prise. L'utilisateur a vérifié sur le matériel que le cumul s'entend et constitue
+     une possibilité sonore volontaire.
