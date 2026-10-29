@@ -2143,7 +2143,7 @@ window.MC_TWEAKS = {
    "description": [
     "SETTINGS tenu + DELAY TIME ou LFO SPEED : vers la droite, SYNC (la valeur de note la plus proche) ; vers la gauche, FREE (la valeur d'origine la plus proche). En SYNC, le potard seul passe d'une valeur de note à l'autre : celles du retrig de Model-TG (1/64 .. 1 BAR, triolets et pointées), plus 1/128, 1/96, 4/3, 3/2, 2 BAR, et 4, 8, 16 BAR pour les LFO. Le signe d'une valeur de LFO est son sens.",
     "Gardé dans le mot du paramètre (kit, son, LFO 2, LFO 3/4) : bit 7 = SYNC. Le délai suit le tempo et reste borné à 8 s par l'OS ; « > » à côté de la valeur quand il l'est. Le LFO fait un cycle par valeur de note, quel que soit MULT.",
-    "La fenêtre de valeur affiche les valeurs de note dans la petite police 5x9 de l'OS, centrée : elles ne tiennent pas dans la grande (« 3/16 » 48 px, « 1 BAR » 65 px, « -16 BAR » 82 px mesurés pour une plaque de 60 px) ; en FREE, la fenêtre reste celle de l'OS, pixel pour pixel.",
+    "La fenêtre de valeur affiche les valeurs de note dans la police 6x10 grasse de l'OS, centrée : elles ne tiennent pas dans la grande (« 3/16 » 48 px, « 1 BAR » 65 px, « -16 BAR » 82 px mesurés pour une plaque de 60 px) ; en FREE, la fenêtre reste celle de l'OS, pixel pour pixel.",
     "Lit et écrit SETTINGS tenu et « accord utilisé » de Model-TG (set_held, mod_used, symboles de 30-model-tg-st.json) : demande model-tg-st.",
     "Code et données : 1708 o dans 12 masques de sprites 48x22 libérés (0x401829b8, 0x40183408, 0x40184808, 0x40184af8, 0x40184c78, 0x4018b9c8, 0x4018bb48, 0x4018cbc8, 0x4018d038, 0x40190334, 0x4019089c, 0x40192a24). Généré par tools/gen_tempo_sync.py, notes/82."
    ],
@@ -2326,7 +2326,7 @@ window.MC_TWEAKS = {
     {
      "off": 1648164,
      "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ff",
-     "new": "000c001000180020003000400060008000c0010001200180020002400300040004800600080009000c001800300060004018bb484018bb4e4018bb534018bb584018bb5d4018bb624018bb674018bb6c4018bb714018bb754018bb794018bb7e4018bb824018bb864018bb8a4018bb8e4018bb924018bb964018bb9c4018bba04018bba44018bbaa4018bbb04018bbb6000000004a3940192ad4670a283c40140ab02f440004280f0684000000404e7500"
+     "new": "000c001000180020003000400060008000c0010001200180020002400300040004800600080009000c001800300060004018bb484018bb4e4018bb534018bb584018bb5d4018bb624018bb674018bb6c4018bb714018bb754018bb794018bb7e4018bb824018bb864018bb8a4018bb8e4018bb924018bb964018bb9c4018bba04018bba44018bbaa4018bbb04018bbb6000000004a3940192ad4670a283c40143d282f440004280f0684000000404e7500"
     }
    ]
   },

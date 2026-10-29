@@ -510,10 +510,10 @@ def text(base, img, engines=False):
     missing = [c for c in chars if not b.glyph(c)]
     check(not missing, f"every character ({''.join(chars)}) exists in the value window's big font {missing}")
     # 5b. la fenêtre de valeur elle-même (vrai 0x4001d818, slot 144) : en FREE pixel pour pixel celle de l'OS ; en
-    # SYNC la petite police 5x9 de l'OS, centrée, et le texte dedans la plaque au lieu de déborder (avant : « 1 BAR »
+    # SYNC la police 6x10 grasse de l'OS, centrée, et le texte dedans la plaque au lieu de déborder (avant : « 1 BAR »
     # 65 px et « -16 BAR » 82 px dans une plaque de 60 px, dès x = 38).
     CELL = (64, 124)                            # la plaque de la valeur, en x (le grand texte déborde jusqu'à 38)
-    SMALL = 0x40140ab0                          # la petite police 5x9 de l'OS (une face, comme 0x401429ec : 16x22)
+    SMALL = 0x40143d28                          # la police 6x10 grasse de l'OS (une face, comme 0x401429ec : 16x22)
 
     def draw(s, face, dy=0):
         """Ce que l'OS dessinerait d'un texte seul : (police, x 0x60, y 0x22 + dy, centré), pixels (x, y)."""
@@ -564,13 +564,13 @@ def text(base, img, engines=False):
             continue
         missing = want - ink(shot[0])               # le texte de la petite police que la fenêtre n'a pas dessiné
         b_ = box(want)
-        if missing or b_[0] < CELL[0] or b_[1] > CELL[1] or b_[2] < 40 or b_[3] > 48:
+        if missing or b_[0] < CELL[0] or b_[1] > CELL[1] or b_[2] < 40 or b_[3] > 49:
             bad.append((d, hex(v), len(missing), b_))
         shots[(d, v)] = (shot[0], want)
     if drawn:
         check(not bad,
-              f"SYNC: la fenêtre de valeur dessine ses {len(shots)} valeurs de note avec la petite police 5x9 de l'OS "
-              f"({SMALL:#x}) : 9 px de haut, centrée sur la ligne de la grande (y 40..48), toute dans la plaque "
+              f"SYNC: la fenêtre de valeur dessine ses {len(shots)} valeurs de note avec la police 6x10 grasse de l'OS "
+              f"({SMALL:#x}) : 10 px de haut, centrée sur la ligne de la grande (y 40..49), toute dans la plaque "
               f"x {CELL[0]}..{CELL[1]} {bad[:3]}")
     wide = max(shots.values() or [(None, {(0, 0)})], key=lambda r: box(r[1])[1] - box(r[1])[0])[1] if drawn else None
     check(not drawn or box(wide)[1] - box(wide)[0] + 1 <= CELL[1] - CELL[0] + 1,

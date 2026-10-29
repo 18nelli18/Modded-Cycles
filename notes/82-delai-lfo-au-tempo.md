@@ -272,3 +272,20 @@ démarrage) : l'émulateur d'interface ne la projette pas, la lecture y échoue,
 donc `SKIP` dans la passe combinée. Ce chemin existait avant cette mise à jour (même échec avec le tweak du 26/10) ;
 sur la machine il lit des zéros. À contrôler : la case de DELAY TIME en SYNC avec tout l'OS doit afficher la valeur de
 note, sans jauge parasite.
+
+**Retour machine du 29/10 (soir), puis passage à la police 6×10.** Sur la machine (OS complet, `os-full5`) : les valeurs
+tiennent dans la case et il n'y a pas de jauge parasite, mais la 5×9 a été jugée trop petite. La police de la case
+« LFO 2-3-4 » (la grande 16×22) n'est pas possible : 28 valeurs sur 56 seulement y tiennent (les fractions sans
+signe), et elle n'a pas tous les glyphes. Les faces de l'OS, mesurées dans le vrai `DRAW_TEXT` sur les 56 textes :
+
+| face | `3/16` | `1 BAR` | le plus large (`-16 BAR`, `2 BAR >`) | hauteur |
+|---|---|---|---|---|
+| 5×9 `0x40140ab0` | 23 px | 29 px | 39–41 px | 9 px |
+| **6×10 grasse `0x40143d28`** | — | — | **48 px** | 10 px |
+| 7×9 `0x4014120c` | 31 px | 39 px | 54 px (x 69..123, collé au bord) | 9 px |
+| 16×22 `0x401429ec` | 48 px | 65 px | 82 px | 22 px |
+
+Choix du propriétaire : **6×10 grasse** (`FACE_SMALL`). Le `y + 6` de `ts_draw` est inchangé : la ligne de 10 px
+(34..43) devient 40..49, centrée sur la ligne de la grande (34..55). Tous les glyphes utilisés (`0-9 / - B A R >`)
+existent dans cette face. Preuve : `test_tempo_sync.py` `TOUT OK` seul (69 valeurs, 10 px, y 40..49, dans x 64..124,
+le plus large 48 px pour 61) et avec tout `os.json` (fenêtre `SKIP` comme plus haut).

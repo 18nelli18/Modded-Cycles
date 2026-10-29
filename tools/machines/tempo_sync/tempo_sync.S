@@ -25,7 +25,7 @@
 	ID_DTIME = 0x25
 	ID_LSPD	= 0x1d
 	ID_LMULT = 0x1e
-	FACE_SMALL = 0x40140ab0		/* petite police 5x9 de l'OS (une face, comme 0x401429ec : 16x22) */
+	FACE_SMALL = 0x40143d28		/* police 6x10 grasse de l'OS (une face, comme 0x401429ec : 16x22) ; 5x9 trop petite */
 
 	.globl	ts_audio, ts_smooth, ts_lfo, ts_hook, ts_dfmt, ts_lfmt, lu, names, tsf, ts_face, ts_draw, small
 
@@ -561,8 +561,8 @@ ts_face:
 	add.l	#64, %d4			/* sp + 4 (retour) + 60 : le sp + 60 du stock */
 	rts
 
-/* ---- même fenêtre, 0x4001d8d6 : jsr 0x40071a04 (DRAW_TEXT) -> jsr ts_draw. La ligne de 9 px se poserait en haut
- * de la case de 22 px : +6 la centre sur la ligne de la grande police (34..55 -> 34..42 devient 40..48). Et le
+/* ---- même fenêtre, 0x4001d8d6 : jsr 0x40071a04 (DRAW_TEXT) -> jsr ts_draw. La ligne de 10 px se poserait en haut
+ * de la case de 22 px : +6 la centre sur la ligne de la grande police (34..55 -> 34..43 devient 40..49). Et le
  * drapeau est remis à zéro : la fenêtre suivante (un autre paramètre, ou FREE) reprend la grande police. */
 	.section .text.draw2, "ax"
 ts_draw:
