@@ -188,3 +188,18 @@ Preuves :
 Image de test `os-all.syx` (les cinq correctifs déjà éprouvés + RETROSYN, 9 machines) : « тестед » — l'utilisateur
 confirme que l'image fonctionne sur sa machine. Détail de ce qu'il a essayé non consigné ici ; à compléter s'il le
 précise. Rien n'est marqué `tested` : c'est le mot du mainteneur, pas le nôtre.
+
+## Réglage fin du son (29/10/2026) : largeur d'impulsion continue et cadence du bruit
+
+Demande du propriétaire : la machine fonctionne mais sonne pauvrement. Deux ajouts au cœur, aucun nouveau paramètre :
+
+- **PULSE** : les quatre rapports fixes (12,5 / 25 / 50 / 75 %) deviennent une **PWM continue**, donc le LFO peut
+  faire bouger la largeur d'impulsion — c'est le gain le plus audible sur une voix chiptune ;
+- **NOISE** : la cadence du registre est continue au lieu de deux caractères fixes.
+
+Compatibilité vérifiée **bit à bit** : `tools/machines/retrosyn/test_retrosyn.py` garde une implémentation de
+référence de l'ancienne impulsion à quatre paliers (`old_pulse`) et exige que le nouveau code la reproduise
+exactement sur ces quatre valeurs.
+
+Preuves : test DSP « all checks passed » ; preuve niveau OS `tools/emu/test_retrosyn.py --quick` : **ALL OK**,
+53 vérifications, 0 échec. Compilation propre avec le jeu d'outils exact (-Wall -Wextra -Werror).
