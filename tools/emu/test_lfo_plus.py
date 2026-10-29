@@ -494,12 +494,35 @@ def rules(S, P, base, syms):
     none = [lfo() for _ in range(6)]
     ref1 = reference(S, [dict(c) for c in l1], common, base, sched, 14, n)
 
-    # même destination que LFO 1 : ignoré
+    # même destination que LFO 1 : s'additionnent avec saturation
+    q = []
+
+    def grab12(blk):
+        q.append([(s32(P.r32(ST[2] + 32 * t + 20)), s32(P.r32(LFO_ST + 32 * t + 20))) for t in range(6)])
     l2 = [lfo(spd=0x6000, mult=5, wave=1, dest=14, dep=0x7f00) for _ in range(6)]
+    b14 = {**base, 14: 0x7000}
     P.reset_lfo(syms)
-    got = run(P, tracks(l1, l2, base), sched, [11, 14], n, syms, table34(none, none))
-    check([[g[t][1] for t in range(6)] for g in got] == ref1 and all(g[t][0] == 0x4000 for g in got for t in range(6)),
-          "LFO 2 sur la destination de LFO 1 : ignoré (seul LFO 1 la module)")
+    got = run(P, tracks(l1, l2, b14), sched, [14], n, syms, table34(none, none), after=grab12)
+    exp = [[min(max(min(max(0x7000 + q2, 0), 0x7f00) + q1, 0), 0x7f00) for q2, q1 in q[b]] for b in range(n)]
+    sat = sum(v in (0, 0x7f00) for b in range(n) for v in exp[b])
+    check([[g[t][0] for t in range(6)] for g in got] == exp and sat > 0,
+          f"LFO 1 et LFO 2 sur la même destination : mot = borne(borne(base + q2) + q1), 0..0x7f00 ({sat} butées)")
+
+    # trois LFO sur la même destination (LFO 2 + LFO 3 + LFO 1) : s'additionnent avec saturation
+    q.clear()
+
+    def grab123(blk):
+        q.append([(s32(P.r32(ST[2] + 32 * t + 20)),
+                   s32(P.r32(ST[3] + 32 * t + 20)),
+                   s32(P.r32(LFO_ST + 32 * t + 20))) for t in range(6)])
+    l3_stack = [lfo(spd=0x7400, mult=3, wave=(t + 2) % 6, dest=14, dep=0x7800) for t in range(6)]
+    P.reset_lfo(syms)
+    got3 = run(P, tracks(l1, l2, b14), sched, [14], n, syms, table34(l3_stack, none), after=grab123)
+    exp3 = [[min(max(min(max(min(max(0x7000 + q2, 0), 0x7f00) + q3, 0), 0x7f00) + q1, 0), 0x7f00)
+             for q2, q3, q1 in q[b]] for b in range(n)]
+    sat3 = sum(v in (0, 0x7f00) for b in range(n) for v in exp3[b])
+    check([[g[t][0] for t in range(6)] for g in got3] == exp3 and sat3 > 0,
+          f"trois LFO (LFO 2, 3 et 1) sur la même destination : mot = borne(borne(borne(base + q2) + q3) + q1), 0..0x7f00 ({sat3} butées)")
 
     # destination > 32 : rien d'autre que LFO 1
     l2 = [lfo(spd=0x6000, mult=5, wave=1, dest=40, dep=0x7f00) for _ in range(6)]

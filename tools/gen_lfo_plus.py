@@ -214,8 +214,9 @@ def build_tweak(stock):
             "DavidCaruso), p-lockable. LFO 3 et 4 : un réglage par piste et par pattern (kit), sauvé dans 52 octets "
             "inutilisés de l'enregistrement du kit (+648..+699), remis aux défauts avec le son de la piste (effacement, "
             "nouveau projet), emporté par les copies de kit entier (nouveau projet, copie de pattern) ; pas de p-lock.",
-            "Un LFO de plus réglé sur la destination de LFO 1 ne fait rien ; la molette DEST saute les destinations "
-            "déjà prises par un autre LFO de la piste. LFO 2 non calculé quand aucune piste n'a de destination.",
+            "Plusieurs LFO réglés sur la même destination s'additionnent (y compris sur la destination de LFO 1) ; "
+            "la molette DEST saute les destinations déjà prises par un autre LFO de la piste. LFO 2 non calculé "
+            "quand aucune piste n'a de destination.",
             "[LFO] tenue + un potard (affectation de l'OS) : MACHINES + PITCH sur une piste MACRO donne le lo-fi "
             "(FINE) ; la destination choisie peut être libre ou déjà prise par un autre LFO (le cumul s'additionne). "
             "La diode de la destination s'allume aussi pour Attack, Filtre, Résonance (potards DECAY, SWEEP, CONTOUR) "

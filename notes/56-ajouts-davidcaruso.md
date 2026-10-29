@@ -204,13 +204,13 @@ Analyse détaillée hors dépôt (scratchpad du coordinateur, `analysis/lfo.md`)
    3. faux obj : en-tête et mots des pistes recopiés de obj, avec les réglages du jeu en k = 1, 2, 4, 5, 8 ;
    4. `0x40091ab2(faux obj, tempo, masque)` ;
    5. état du jeu repris, état de l'OS remis ;
-   6. pour chaque piste, si DEST ≤ 32 et ≠ DEST de LFO 1 : le vrai mot de obj reçoit la modulation (mot du faux obj
+   6. pour chaque piste, si DEST ≤ 32 : le vrai mot de obj reçoit la modulation (mot du faux obj
       moins mot d'avant), borné à 0..0x7f00.
 5. **Puis LFO 1**, par l'appel d'origine. Les LFO de plus passent avant lui. Ils peuvent donc moduler ses réglages
    (SPD, DEP…), mais la liste DEST de l'OS n'en propose aucun. Cette modulation croisée n'est atteignable que par
    des données, pas depuis l'interface.
 
-Deux LFO de plus sur la même destination s'additionnent, chacun borné : `borne(borne(base + q2) + q3)`.
+Deux LFO de plus sur la même destination s'additionnent, y compris sur la destination de LFO 1, chacun borné : `borne(borne(base + q2) + q3)`.
 
 #### 3.3.2 Écarts avec David dans le moteur
 

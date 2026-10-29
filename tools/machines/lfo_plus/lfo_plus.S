@@ -204,9 +204,6 @@ run_set:
 	moveq	#32, %d1
 	cmp.l	%d0, %d1
 	bcs.s	3f				/* > 32 (non signé) : aucune */
-	mvs.b	8(%a2), %d1			/* destination de LFO 1 (octet fort du mot k = 4) */
-	cmp.l	%d1, %d0
-	beq.s	3f				/* la même : LFO 1 seul la module */
 	add.l	%d0, %d0
 	mvs.w	(%a2, %d0.l), %d1
 	add.l	20(%a5), %d1
@@ -221,6 +218,7 @@ run_set:
 	subq.l	#1, %d5
 	bne.s	2b
 	rts
+	.space	8
 
 	.section .text.copy192, "ax"
 
