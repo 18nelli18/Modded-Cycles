@@ -1,4 +1,4 @@
-/* 2026-10-28-main256-playability : images verifiees par edition, caches et sources independants. */
+/* 2026-10-28-main256-fx-menu-fix : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
@@ -6,9 +6,9 @@
     "id": "full",
     "productName": "Supermodel",
     "release": "2.56",
-    "file": "Supermodel_2.56_fec67ab4282a.syx",
-    "syxSha256": "fec67ab4282a68b3c5538e76c87fba0c3d16e5cff5f6c15b5bb54202d952cb58",
-    "mainOsSha": "a91f0f56fa007004883ab582b94024383a679bf2d31815981d4234013e6d86f3",
+    "file": "Supermodel_2.56_63c6b399e0e4.syx",
+    "syxSha256": "63c6b399e0e4fffd678042e7ed98e7288fecad0642f0060dd52dc5cee538399d",
+    "mainOsSha": "8f429d40da9d326a26f8d12724634cbb17717026d4939d1470280fd3b932d2ec",
     "requiresSyntakt": true,
     "source_build": 215,
     "new_clear_filter_defaults": true,
@@ -20,8 +20,10 @@
     "unique_machine_punch": true,
     "unassigned_secondary_lfos_pause": true,
     "visible_machine_count": 24,
-    "publication_user_report": "Push these to main and keep the machine optional flasher the same.",
-    "status": "experimental"
+    "publication_user_report": "okay go ahead and push to main",
+    "status": "experimental",
+    "inactive_fx_zero_bypass": true,
+    "fx_menu_stack_helper_fixed": true
   },
   "lite": {
     "id": "lite",
@@ -50,7 +52,7 @@
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Supermodel/566d8b45a669528436bddae202030d2b7a0aa71e/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Supermodel/58cef0fade692b623e96d8e0c94888acce31bbbf/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});
