@@ -28,6 +28,7 @@ u32 per_storage_initialize(void){
 }
 extern void per_project_ctor_stock(void*,void*);
 void per_project_ctor(void *object,void *project){per_storage_initialize();per_project_ctor_stock(object,project);}
+volatile u32 per_edit_epoch DATA=0,per_amount_cache_valid DATA=0,per_amount_cache_slot DATA=0,per_amount_cache_generation DATA=0,per_amount_cache_epoch DATA=0;
 volatile u32 per_active_pattern DATA=0,per_active_kit DATA=0,per_storage_reload DATA=0,per_storage_fault DATA=0;
 extern u32 per_encode_stock(void*,const void*,u32),per_decode_stock(void*,const void*,u32);
 
@@ -60,11 +61,11 @@ void per_storage_snapshot(u32 slot,u8 *out){
  u32 generation;
  do{generation=per_saved_generation[slot];volatile u8 *from=storage_bank(slot,generation);for(u32 i=0;i<256;i++)out[i]=from[i];__asm__ volatile("":::"memory");}while(generation!=per_saved_generation[slot]);
 }
-static void record_defaults(u8 *record){
+static void record_initialize(u8 *record){
  memset(record,0,256);write32(record,0x50455246u);record[4]=3;record[5]=15;record[6]=4;write16(record+8,240);
  for(u32 i=0;i<60;i++)write16(record+16+i*4+2,0x100);
- write32(record+12,record_crc(record+16));
 }
+static void record_defaults(u8 *record){record_initialize(record);write32(record+12,record_crc(record+16));}
 u32 per_record_valid(const u8 *r){
  if(!r||read32(r)!=0x50455246u||(r[4]!=2&&r[4]!=3)||r[5]!=15||r[6]!=4||r[7]||read16(r+8)!=240||read16(r+10)||read32(r+12)!=record_crc(r+16))return 0;
  for(u32 i=0;i<60;i++){const u8 *p=r+16+i*4;if((r[4]==2?p[0]:(p[0]&7))>6||p[1]==128||!read16(p+2))return 0;
@@ -93,6 +94,7 @@ static u32 storage_irq_lock(void){
 }
 static void storage_irq_restore(u32 saved){__asm__ volatile("move.w %0,%%sr"::"d"(saved):"memory","cc");}
 static void storage_clear_offsets(void){
+ per_edit_epoch++;per_amount_cache_valid=0;
  for(u32 m=0;m<15;m++)per_amounts[m]=0;
  per_level_mask=per_fx_mask=0;
  for(u32 t=0;t<6;t++){per_sound_mask[t]=0;per_level_sums[t]=0;for(u32 d=0;d<PER_SOUND_COUNT;d++)per_sound_sums[t][d]=0;}
@@ -152,7 +154,7 @@ void *per_kit_copy(void *out,const void *in,u32 count){
  }
  return result;
 }
-static void storage_release(void *object){if(!per_storage_memory)return;u32 kit=(u32)object+0x77fa;for(u32 i=0;i<PER_EXTRA_KITS;i++)if(per_saved_extra[i]==kit){per_saved_extra[i]=0;for(u32 j=0;j<256;j++)per_saved[96+i][j]=per_saved_other[96+i][j]=0;}}
+static void storage_release(void *object){if(!per_storage_memory)return;u32 kit=(u32)object+0x77fa;for(u32 i=0;i<PER_EXTRA_KITS;i++)if(per_saved_extra[i]==kit){if(per_amount_cache_slot==96+i)per_amount_cache_valid=0;per_saved_extra[i]=0;for(u32 j=0;j<256;j++)per_saved[96+i][j]=per_saved_other[96+i][j]=0;}}
 void per_clip_destroy(void *object){storage_release(object);CALL(0x400d3b3c,void(*)(void*))(object);}
 void per_clip_delete(void *object){storage_release(object);CALL(0x400d3bd6,void(*)(void*))(object);}
 extern volatile u8 *per_temp_memory;
@@ -176,7 +178,7 @@ void per_storage_observe(void){
 }
 
 static void per_record_routes(u8 *r){
- record_defaults(r);
+ record_initialize(r);
  for(u32 i=0;i<60;i++){volatile Route *route=&per_routes[i/4][i%4];u8 *p=r+16+i*4;
   u32 identity=route->reserved?route->reserved:per_param_key(route->track,route->dest);
   p[0]=route->track;p[1]=route->depth;write16(p+2,identity?identity:0x100);
@@ -188,6 +190,7 @@ static void per_storage_notice(u32 slot){
  if(slot<96){void *manager=CALL(0x400cf866,void*(*)(void))();if(manager)CALL(0x400d1f98,void(*)(void*,u32,void*))((u8*)manager+0x74,slot,0);}
 }
 
+extern void per_mirror_notify(void*,u32,u32,u32);
 /* Jobs natifs de miroirs puis notification du parent, sans remplacement du kit audio. */
 static void per_storage_edit_notice(u32 slot){
  if(slot>=96)return;
@@ -195,20 +198,44 @@ static void per_storage_edit_notice(u32 slot){
  u32 *model=(u32*)((u8*)manager+0x74);
  u32 *begin=(u32*)model[8],*end=(u32*)model[9];
  for(u32 *p=begin;p<end;p++)if(*p&&model[4])
-  CALL(0x4000a12e,void(*)(void*,u32,u32,u32))(model,slot,*p,0);
+  per_mirror_notify(model,slot,*p,0);
  if(model[17]==slot){
   begin=(u32*)model[11];end=(u32*)model[12];
   for(u32 *p=begin;p<end;p++)if(*p&&model[4])
-   CALL(0x4000a276,void(*)(void*,u32,u32,u32))(model,slot,*p,0);
+   per_mirror_notify(model,slot,*p,1);
  }
  CALL(0x400d0f6c,void(*)(void*,void*))(model,0);
 }
+/* Linearite du CRC : contribution de chaque bit du montant a position fixe. */
+const u32 per_amount_crc[15][7]={{0x77f00d0u,0xefe01a0u,0x1dfc0340u,0x3bf80680u,0xfb52fb5bu,0x2dd4f0f7u,0x5ba9e1eeu},{0x79adc1b6u,0xf35b836cu,0x3dc60099u,0x7b8c0132u,0xecf54eau,0x1d9ea9d4u,0x3b3d53a8u},{0x3408cbb5u,0x6811976au,0xd0232ed4u,0x7b375be9u,0x23839f87u,0x47073f0eu,0x8e0e7e1cu},{0x969fcbd7u,0xf64e91efu,0x37ec259fu,0x6fd84b3eu,0xe0c271abu,0x1af5e517u,0x35ebca2eu},{0xa1ec1617u,0x98a92a6fu,0xea23529fu,0xf37a37fu,0x95c7e89u,0x12b8fd12u,0x2571fa24u},{0xeecb8c08u,0x6e61e51u,0xdcc3ca2u,0x1b987944u,0xeade201u,0x1d5bc402u,0x3ab78804u},{0x6e3c913u,0xdc79226u,0x1b8f244cu,0x371e4898u,0x6b3552d5u,0xd66aa5aau,0x77a44d15u},{0x891d5fb2u,0xc94bb925u,0x49e6740bu,0x93cce816u,0x2dabb054u,0x5b5760a8u,0xb6aec150u},{0xa9610f72u,0x89b318a5u,0xc817370bu,0x4b5f6857u,0xd2b7334bu,0x7e1f60d7u,0xfc3ec1aeu},{0x9d02e2aau,0xe174c315u,0x1998806bu,0x333100d6u,0xdad33551u,0x6ed76ce3u,0xddaed9c6u},{0x19088711u,0x32110e22u,0x64221c44u,0xc8443888u,0x89163eadu,0xc95d7b1bu,0x49cbf077u},{0x9e6ff41du,0xe7aeee7bu,0x142cdab7u,0x2859b56eu,0x1b23d03bu,0x3647a076u,0x6c8f40ecu},{0x6dfcc142u,0xdbf98284u,0x6c820349u,0xd9040692u,0xcf108ce3u,0x45501f87u,0x8aa03f0eu},{0x1d596ee9u,0x3ab2ddd2u,0x7565bba4u,0xeacb7748u,0x1b5fd1d0u,0x36bfa3a0u,0x6d7f4740u},{0xe6273e9eu,0x173f7b7du,0x2e7ef6fau,0x5cfdedf4u,0xc18edfcu,0x1831dbf8u,0x3063b7f0u}};
+void per_record_amount(u8 *r,u32 m,u32 amount){
+ if(m>=15)return;if(amount>127)amount=127;
+ u32 old=(r[16+m*16]>>4)|((r[20+m*16]>>4)<<4),delta=old^amount;
+ u32 crc=read32(r+12);
+ for(u32 bit=0;bit<7;bit++)if(delta&(1u<<bit))crc^=per_amount_crc[m][bit];
+ r[16+m*16]=(r[16+m*16]&15)|((amount&15)<<4);
+ r[20+m*16]=(r[20+m*16]&15)|((amount>>4)<<4);
+ write32(r+12,crc);
+}
+static u32 per_edit_publish(u32 slot,u32 pattern,u32 kit,u32 epoch){
+ u32 irq=storage_irq_lock();
+ if(pattern!=per_active_pattern||kit!=per_active_kit||epoch!=per_edit_epoch){storage_irq_restore(irq);return 0;}
+ storage_publish(slot);per_amount_cache_slot=slot;per_amount_cache_generation=per_saved_generation[slot];per_amount_cache_epoch=epoch;per_amount_cache_valid=1;
+ storage_irq_restore(irq);return 1;
+}
 static void per_storage_edit(void){
  s32 slot=per_storage_slot((void*)per_active_kit,1);if(slot<0)return;
- u32 pattern=per_active_pattern,kit=per_active_kit;
+ u32 pattern=per_active_pattern,kit=per_active_kit,epoch=per_edit_epoch;
  per_record_routes((u8*)storage_pending(slot));
- if(pattern!=per_active_pattern||kit!=per_active_kit)return;
- storage_publish(slot);per_storage_edit_notice(slot);
+ if(per_edit_publish(slot,pattern,kit,epoch))per_storage_edit_notice(slot);
+}
+void per_storage_amount_edit(u32 m){
+ s32 slot=per_storage_slot((void*)per_active_kit,1);if(slot<0)return;
+ if(m>=15||!per_amount_cache_valid||per_amount_cache_slot!=(u32)slot||per_amount_cache_generation!=per_saved_generation[slot]||per_amount_cache_epoch!=per_edit_epoch){per_storage_edit();return;}
+ u32 pattern=per_active_pattern,kit=per_active_kit,epoch=per_edit_epoch;
+ u8 *pending=(u8*)storage_pending(slot);per_storage_snapshot(slot,pending);
+ per_record_amount(pending,m,per_amounts[m]);
+ if(per_edit_publish(slot,pattern,kit,epoch))per_storage_edit_notice(slot);
 }
 
 #define PER_TEMP_BYTES (96u*524u)

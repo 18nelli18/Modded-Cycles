@@ -68,7 +68,7 @@ python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
 | Kit encode/decode | Champs natifs | Meme codec plus record de macros |
 | Projet change | Pas de presse-papiers Performance | Presse-papiers dedie invalide |
 
-La preuve comporte164 verifications ; les huit tests de catalogue et de garde passent. La reconstruction SysEx est relue : checksums, HMAC et sections autres que3 identiques. La reference MAIN OS est `4d19ca0984476d178abb31be303f27c716d57206de80a1864f155186dec00e93` (autonome, GCC16.2.0).
+La preuve comporte164 verifications ; les huit tests de catalogue et de garde passent. La reconstruction SysEx est relue : checksums, HMAC et sections autres que3 identiques. La reference MAIN OS est `9d5d11a3d39b5f233f8c5c0d8cfbc611d5371bd1e882122dd573819dd16fa1e2` (autonome, GCC16.2.0).
 
 ## 5. Limites et integration a examiner
 
@@ -151,3 +151,45 @@ Aucune image, donnees musicales ou information personnelle de cet essai n'est
 incluse. Le mainteneur doit encore verifier les six pistes actives, les routes
 niveau/son/FX et l'upgrade USB. Statut toujours experimental, PR toujours brouillon
 et absente du flasheur.
+
+## 10. Editions de montant et miroirs differes (29/10/2026)
+
+[FAIT] Le serialiseur complet ne calcule plus un CRC par defaut aussitot remplace.
+Apres une premiere edition complete, un changement de montant copie le record
+actuel, modifie ses deux demi-octets et ajuste le CRC par les contributions
+precalculees des sept bits du montant. Le cache est indexe par slot, generation
+et epoque d'edition ; chargement, changement de slot et publication externe
+provoquent le retour au serialiseur complet. Une publication sous masque IRQ
+verifie a nouveau motif, kit et epoque avant de rendre le record visible.
+Les formats256 octets et les identites de destinations ne changent pas.
+
+[FAIT] Quatre detours gardes sont ajoutes : gestionnaires de foncteurs natifs
+`0x40009708`/`0x4000977c`, rappels `0x40009600`/`0x40009630`. Le constructeur
+genere la reprise des seuls octets de prologue verifies sur le fichier officiel.
+Huit groupes cles par modele/destination/slot/epoque et32 proprietaires de
+payload suivent les vrais clonages et destructions. Quatre sondes bornent chaque
+recherche de proprietaire ; une saturation revient au chemin natif. Le debut
+d'un rappel libere la reservation avant l'encodage : une edition concurrente
+peut planifier un suivi. Une destruction d'une ancienne epoque ne peut liberer
+un nouveau groupe. Chaque edition conserve la publication du record et la
+notification du parent ; seuls les jobs de miroirs redondants encore en attente
+sont evites. Aucun nouveau travail n'est ajoute au rappel audio.
+
+[FAIT en emulation] `test_performance15_storage.py` compare1920 montants aux
+records complets et a un CRC independant, verifie le refus d'une publication
+apres changement d'epoque et l'invalidation au chargement. Une rafale de128
+editions conserve deux jobs, un par miroir ; les deux vrais encodeurs natifs
+produisent le dernier record. Annulation, epoque, suivi apres debut du rappel,
+saturation, collisions, file sans clone survivant et128 cycles reutilisant les
+tombes passent. Les307 allocations de payload sont toutes liberees. La preuve
+compte5776 verifications ; elle substitue tas, service de file et synchronisation,
+mais execute gestionnaires, rappels, encodeurs et destructeurs natifs.
+L'ordonnancement physique, MMC/USB et la charge CPU ne sont pas etablis.
+
+[FAIT] Charge utile autonome :20708 octets, fenetre RAM inchangee,42 gardes
+natives. Les164 controles existants et420 cas audio EMAC restent valides.
+Les compteurs CPU/RAM, diagnostics, nouvelles machines et modifications de DSP
+des essais combines sont exclus de cette PR, a la demande du contributeur.
+[À FAIRE] Validation du mainteneur : gestes rapides sur plusieurs macros, deux
+miroirs, TEMP save/reload, motifs en lecture et projet/redemarrage ; verifier
+absence de changement sonore parasite. Statut experimental inchange.

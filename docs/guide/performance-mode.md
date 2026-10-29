@@ -90,3 +90,18 @@
 **EN - 2026-10-18:** Source preview of fifteen per-pattern performance macros, four track/FX destinations each, persistent amounts and whole-macro copy/clear/paste. Standalone source build only, MIT. No web-flasher card, firmware image, screenshot or extracted OS section is included. See [technical note 58](../../notes/58-mode-performance.md) for validation and integration limits.
 
 **FR - 18/10/2026 :** Preversion source de quinze macros de performance par motif, quatre destinations piste/FX chacune, montants sauvegardes et copier/effacer/coller de macros entieres. Compilation source autonome uniquement, MIT. Ni carte dans le flasheur web, ni image firmware, ni capture d'ecran, ni section extraite de l'OS n'est fournie. Voir la [note technique 58](../../notes/58-mode-performance.md) pour la validation et les limites d'integration.
+
+## Knob updates / Actualisation des potentiometres
+
+**EN:** Turning a macro now updates its saved amount with less repeated work.
+Repeated updates can share a pending background save job; it writes the latest
+state. Controls, destinations, TEMP/project saving and the saved format are
+unchanged. This source preview includes no CPU/RAM meters or extra machines.
+The stock-only build still needs maintainer hardware testing.
+
+**FR :** La rotation d'une macro actualise son montant sauvegarde avec moins
+de travail repete. Plusieurs editions peuvent partager un job de sauvegarde
+encore en attente ; il ecrit le dernier etat. Commandes, destinations, sauvegardes
+TEMP/projet et format restent identiques. Cette preversion n'inclut ni compteurs
+CPU/RAM ni machines ajoutees. La compilation autonome reste a tester sur appareil
+par le mainteneur.

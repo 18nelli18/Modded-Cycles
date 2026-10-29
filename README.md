@@ -170,3 +170,8 @@ overhead. The scope is the six stock machines, the stock LFO and global FX. This
 pending. See the [bilingual controls guide](docs/guide/performance-mode.md), [standalone build commands](BUILD.md#prototype-source-autonome--performance15)
 and [technical note58](notes/58-mode-performance.md). The contribution is MIT-licensed with neutral collective
 attribution. No firmware image, extracted OS section or local test capture is included.
+
+The standalone Performance Mode preview also reduces repeated work when turning
+macros: cached amount/CRC updates and coalesced pending native save-mirror jobs.
+Saved formats and controls are unchanged. CPU/RAM meters, diagnostics and extra
+machine engines are excluded.

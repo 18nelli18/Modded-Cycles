@@ -686,12 +686,13 @@ python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx --c
 python3 tools/test_performance15.py
 python3 tools/emu/test_performance15.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/emu/test_performance15_audio.py --cycles firmware/model-cycles_OS1.13.syx
+python3 tools/emu/test_performance15_storage.py --cycles firmware/model-cycles_OS1.13.syx
 python3 tools/gen_performance15.py --cycles firmware/model-cycles_OS1.13.syx \
   --output build/performance15/local-test.syx
 ```
 
-Les deux preuves demandent `unicorn` ; les outils de construction restent en bibliotheque standard.
-La reference MAIN OS autonome est `4d19ca0984476d178abb31be303f27c716d57206de80a1864f155186dec00e93`.
+Les trois preuves demandent `unicorn` ; les outils de construction restent en bibliotheque standard.
+La reference MAIN OS autonome est `9d5d11a3d39b5f233f8c5c0d8cfbc611d5371bd1e882122dd573819dd16fa1e2`.
 Aucune empreinte de combinaison n'est annoncee. [Note58](notes/58-mode-performance.md),
 [commandes et limites](docs/guide/performance-mode.md). Les routines de transport/conteneur reutilisees sont
 `tools/mtlib/` (MIT, notice existante) ; aucun packer tiers supplementaire n'est copie.
@@ -701,3 +702,11 @@ La preversion Performance15 inclut maintenant CONFIG > MACROS > RLD: OFF/ON (cho
 La preuve audio execute le vrai lissage EMAC sur420 cas SRAM/fallback, avec sources,
 registres et masque IRQ restaures. Le crochet en SRAM ne copie plus toute la trame ;
 la contribution reste limitee aux six machines et au LFO d'origine, sans moteur ajoute.
+
+Les editions de montant mettent a jour seulement les bits modifies du record et
+leur contribution CRC. Les jobs de miroirs natifs identiques encore en attente
+sont regroupes ; les encodeurs lisent toujours le dernier etat. La nouvelle preuve
+execute les gestionnaires, rappels, encodeurs et destructeurs natifs sur5776
+verifications, dont1920 montants et une rafale de128 editions vers deux miroirs.
+Aucun compteur CPU/RAM, instrumentation, moteur ajoute ou changement de DSP
+n'est inclus. Les formats sauvegardes et les commandes restent identiques.

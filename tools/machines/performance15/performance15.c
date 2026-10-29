@@ -120,6 +120,7 @@ static void level_from_routes(u32 t,u32 base){
  level_overlay(t,base,sum,touched);
 }
 static void per_storage_edit(void);
+void per_storage_amount_edit(u32);
 extern void per_track_level_stock(u32,u32,void*),per_kit_stock(void*);
 void per_track_level(u32 t,u32 value,void *cache){per_track_level_stock(t,value,cache);level_from_routes(t,value);}
 extern volatile u32 per_active_kit,per_storage_reload;
@@ -175,6 +176,7 @@ void per_refresh(u32 tracks){
 }
 #include "performance_storage_runtime.h"
 #include "performance_project_settings.h"
+#include "performance_mirror_runtime.h"
 
 static u32 per_ui_state_ok(void){
  u32 bad=per_mode>2||per_selected>=15||per_route>=4;
@@ -268,7 +270,7 @@ u32 per_parameter(void *view,void *event){
 
   r->on=enabled;if(m==1||m==2){r->reserved=0;r->pad=0;}if(m==1||m==2||m==3)per_storage_edit();per_refresh(old|mask(per_selected));
  }else{
-  per_selected=(u32)m;per_amounts[m]=clamp((s32)per_amounts[m]+change,0,127);per_storage_edit();per_refresh(mask((u32)m));
+  per_selected=(u32)m;per_amounts[m]=clamp((s32)per_amounts[m]+change,0,127);per_storage_amount_edit((u32)m);per_refresh(mask((u32)m));
  }
  invalidate(view);return 1;
 }
@@ -514,7 +516,7 @@ u32 per_root_encoder(void *root,void *event){
  if(per_mode&&((u32*)event)[3]==16){
   if(!blocked()&&!key(2)&&!key(3)&&!key(4)){
    s32 change=delta(event);
-   if(change){u32 m=per_mode==2?per_selected:4;if(per_mode==1)per_selected=4;per_amounts[m]=clamp((s32)per_amounts[m]+change,0,127);per_storage_edit();per_refresh(mask(m));if(per_main_view)invalidate((void*)per_main_view);}
+   if(change){u32 m=per_mode==2?per_selected:4;if(per_mode==1)per_selected=4;per_amounts[m]=clamp((s32)per_amounts[m]+change,0,127);per_storage_amount_edit((u32)m);per_refresh(mask(m));if(per_main_view)invalidate((void*)per_main_view);}
   }
   return 1;
  }
@@ -534,5 +536,5 @@ void per_power(void *root,u32 pressed){
  u32 reset=per_power_owned&&per_mode&&per_main_view&&!*((u8*)per_main_view+0x17)&&notification&&!*((u8*)notification+0x20)&&!blocked();
  u32 m=per_power_macro;per_power_owned=0;
  CALL(0x4000637a,void(*)(void*,u32))(root,pressed);
- if(reset&&m<15){per_amounts[m]=0;per_storage_edit();per_refresh(mask(m));invalidate((void*)per_main_view);}
+ if(reset&&m<15){per_amounts[m]=0;per_storage_amount_edit(m);per_refresh(mask(m));invalidate((void*)per_main_view);}
 }

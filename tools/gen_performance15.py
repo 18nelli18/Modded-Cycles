@@ -34,6 +34,10 @@ def compile_mode(cycles):
     require(hashlib.sha256(stock).hexdigest()==STOCK_SHA,'MAIN OS officiel 1.13 requis')
     replay=['.text']
     hooks=[
+      (0x40009708,'4feffff47201','pm_manager_a','pm_manager_a_original'),
+      (0x4000977c,'4feffff47201','pm_manager_b','pm_manager_b_original'),
+      (0x40009600,'2f0a206f0008','pm_callback_a','pm_callback_a_original'),
+      (0x40009630,'2f0a206f0008','pm_callback_b','pm_callback_b_original'),
       (0x4005adc6,'2f0b2f0a206f000c','per_settings_encode','per_settings_encode_stock'),
       (0x4005aa8e,'4feffff048d70c0c','per_settings_decode','per_settings_decode_stock'),
       (0x40061676,'206f00044a88','per_settings_clear','per_settings_clear_stock'),
