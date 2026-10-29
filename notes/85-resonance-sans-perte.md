@@ -163,3 +163,9 @@ compilateur préexistant, sans rapport ; le tweak 31 ne lit de model-tg-st que s
    saturer doucement, sans grondement, craquement ni bruit.
 3. Résonance 0 : rien ne doit changer.
 4. Page System : la charge avec six pistes résonantes ne doit pas monter de façon visible (+2,6 % sur le filtre).
+
+## Rapport d'un utilisateur (29/10/2026, sa propre machine)
+
+Image de test contenant les cinq correctifs déjà éprouvés, RETROSYN et cette retouche : « по слуху резонанс стал
+ровнее » — à l'oreille, le niveau ne baisse plus quand on monte la résonance ; le haut de course ne clippe pas.
+Rien n'est marqué `tested` : c'est le mot du mainteneur.
