@@ -1,0 +1,700 @@
+{
+  "firmware_sha256": "63c6b399e0e4fffd678042e7ed98e7288fecad0642f0060dd52dc5cee538399d",
+  "boot": {
+    "sha256": "63c6b399e0e4fffd678042e7ed98e7288fecad0642f0060dd52dc5cee538399d",
+    "native_payload_boot": true,
+    "code_copied_exact": true,
+    "all_packaged_hooks_verified": true,
+    "bss_zero": true,
+    "recovery_updater_sections_identical": true,
+    "flash_bytes": 1610656,
+    "runtime_bytes": 3145728,
+    "hardware_tested": false
+  },
+  "menu": {
+    "firmware_sha256": "63c6b399e0e4fffd678042e7ed98e7288fecad0642f0060dd52dc5cee538399d",
+    "previous_bug_reproduced": true,
+    "menu_positions_checked": 60,
+    "vinyl_absent": true,
+    "closed_menu_unchanged": true,
+    "checks": [
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 0,
+        "rows": [
+          "GATED",
+          "HALL",
+          "ROOM"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 1,
+        "rows": [
+          "GATED",
+          "HALL",
+          "ROOM"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 2,
+        "rows": [
+          "HALL",
+          "ROOM",
+          "PS1"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 3,
+        "rows": [
+          "ROOM",
+          "PS1",
+          "REVERB"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 4,
+        "rows": [
+          "PS1",
+          "REVERB",
+          "CHORUS 1"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 5,
+        "rows": [
+          "REVERB",
+          "CHORUS 1",
+          "CHORUS 2"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 6,
+        "rows": [
+          "CHORUS 1",
+          "CHORUS 2",
+          "RING MOD"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 7,
+        "rows": [
+          "CHORUS 1",
+          "CHORUS 2",
+          "RING MOD"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 0,
+        "rows": [
+          "GATED",
+          "HALL",
+          "ROOM"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 1,
+        "rows": [
+          "GATED",
+          "HALL",
+          "ROOM"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 2,
+        "rows": [
+          "HALL",
+          "ROOM",
+          "PS1"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 3,
+        "rows": [
+          "ROOM",
+          "PS1",
+          "REVERB"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 4,
+        "rows": [
+          "PS1",
+          "REVERB",
+          "CHORUS 1"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 5,
+        "rows": [
+          "REVERB",
+          "CHORUS 1",
+          "CHORUS 2"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 6,
+        "rows": [
+          "CHORUS 1",
+          "CHORUS 2",
+          "RING MOD"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 0,
+        "cursor": 7,
+        "rows": [
+          "CHORUS 1",
+          "CHORUS 2",
+          "RING MOD"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 0,
+        "rows": [
+          "GATED",
+          "HALL",
+          "ROOM"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 1,
+        "rows": [
+          "GATED",
+          "HALL",
+          "ROOM"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 2,
+        "rows": [
+          "HALL",
+          "ROOM",
+          "PS1"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 3,
+        "rows": [
+          "ROOM",
+          "PS1",
+          "REVERB"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 4,
+        "rows": [
+          "PS1",
+          "REVERB",
+          "CHORUS 1"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 5,
+        "rows": [
+          "REVERB",
+          "CHORUS 1",
+          "CHORUS 2"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 6,
+        "rows": [
+          "CHORUS 1",
+          "CHORUS 2",
+          "RING MOD"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 7,
+        "rows": [
+          "CHORUS 1",
+          "CHORUS 2",
+          "RING MOD"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 0,
+        "rows": [
+          "GATED",
+          "HALL",
+          "ROOM"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 1,
+        "rows": [
+          "GATED",
+          "HALL",
+          "ROOM"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 2,
+        "rows": [
+          "HALL",
+          "ROOM",
+          "PS1"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 3,
+        "rows": [
+          "ROOM",
+          "PS1",
+          "REVERB"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 4,
+        "rows": [
+          "PS1",
+          "REVERB",
+          "CHORUS 1"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 5,
+        "rows": [
+          "REVERB",
+          "CHORUS 1",
+          "CHORUS 2"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 6,
+        "rows": [
+          "CHORUS 1",
+          "CHORUS 2",
+          "RING MOD"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 0,
+        "mode": 1,
+        "cursor": 7,
+        "rows": [
+          "CHORUS 1",
+          "CHORUS 2",
+          "RING MOD"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 0,
+        "rows": [
+          "PHASER",
+          "DUCK",
+          "DUB"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 1,
+        "rows": [
+          "PHASER",
+          "DUCK",
+          "DUB"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 2,
+        "rows": [
+          "DUCK",
+          "DUB",
+          "PING PONG"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 3,
+        "rows": [
+          "DUB",
+          "PING PONG",
+          "DELAY"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 4,
+        "rows": [
+          "PING PONG",
+          "DELAY",
+          "CRUSH 1"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 5,
+        "rows": [
+          "DELAY",
+          "CRUSH 1",
+          "CRUSH 2"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 6,
+        "rows": [
+          "DELAY",
+          "CRUSH 1",
+          "CRUSH 2"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 0,
+        "rows": [
+          "PHASER",
+          "DUCK",
+          "DUB"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 1,
+        "rows": [
+          "PHASER",
+          "DUCK",
+          "DUB"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 2,
+        "rows": [
+          "DUCK",
+          "DUB",
+          "PING PONG"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 3,
+        "rows": [
+          "DUB",
+          "PING PONG",
+          "DELAY"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 4,
+        "rows": [
+          "PING PONG",
+          "DELAY",
+          "CRUSH 1"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 5,
+        "rows": [
+          "DELAY",
+          "CRUSH 1",
+          "CRUSH 2"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 0,
+        "cursor": 6,
+        "rows": [
+          "DELAY",
+          "CRUSH 1",
+          "CRUSH 2"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 0,
+        "rows": [
+          "PHASER",
+          "DUCK",
+          "DUB"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 1,
+        "rows": [
+          "PHASER",
+          "DUCK",
+          "DUB"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 2,
+        "rows": [
+          "DUCK",
+          "DUB",
+          "PING PONG"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 3,
+        "rows": [
+          "DUB",
+          "PING PONG",
+          "DELAY"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 4,
+        "rows": [
+          "PING PONG",
+          "DELAY",
+          "CRUSH 1"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 5,
+        "rows": [
+          "DELAY",
+          "CRUSH 1",
+          "CRUSH 2"
+        ]
+      },
+      {
+        "path": "public",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 6,
+        "rows": [
+          "DELAY",
+          "CRUSH 1",
+          "CRUSH 2"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 0,
+        "rows": [
+          "PHASER",
+          "DUCK",
+          "DUB"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 1,
+        "rows": [
+          "PHASER",
+          "DUCK",
+          "DUB"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 2,
+        "rows": [
+          "DUCK",
+          "DUB",
+          "PING PONG"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 3,
+        "rows": [
+          "DUB",
+          "PING PONG",
+          "DELAY"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 4,
+        "rows": [
+          "PING PONG",
+          "DELAY",
+          "CRUSH 1"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 5,
+        "rows": [
+          "DELAY",
+          "CRUSH 1",
+          "CRUSH 2"
+        ]
+      },
+      {
+        "path": "stack-clone",
+        "slot": 1,
+        "mode": 1,
+        "cursor": 6,
+        "rows": [
+          "DELAY",
+          "CRUSH 1",
+          "CRUSH 2"
+        ]
+      }
+    ],
+    "hardware_tested": false
+  },
+  "inactive_render": {
+    "render_comparisons": 1184,
+    "pcm_and_router_state_exact": true,
+    "effect_fixture": "deterministic half-amplitude kernels; existing DSP objects verified unchanged",
+    "inactive_render_instructions": {
+      "baseline": 933,
+      "candidate": 204
+    },
+    "changed_objects": [
+      "routing.o"
+    ],
+    "baseline_firmware_reproduced": true,
+    "hardware_tested": false
+  },
+  "hardware_tested": false,
+  "note": "Inactive render proof applies to the unchanged routing object; the subsequent menu fix changes only no-vinyl.o and tramp.S.o. History cadence and clipping arithmetic remain unchanged."
+}
