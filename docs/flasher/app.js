@@ -27,10 +27,10 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.0: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "82a79f453151cbaceffdd047a646c96721f3ae3849a28f7821928bfbd4a1cca9",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "752ff03fa387073908ea8bfd0184abf58d90fbc26a7e12b465d369182ada23ce",
 };
 const REF_MODS = {
-  "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
+  "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "7c62daa2e9e0008bfbcb973146e7a81b31d9358ae5bc3f33e1bb491c377c8585"},
   "sample-preview-st": {"w": "f9aaf10e71f3a06e22b608405eeca967c254a7400b4e8ba0557cddf7eb6166e3"},
   "trig-hold": {"w": "c9a9aafba763ea25ac3c35e33c55f34a18c0eda94cc726fa344ce6bdd06271f8"},
   "arp": {"w": "5bf9b805de8757164548fd4d77a3c2e8419d914e8164ac363ab10c9fe105ca80"},

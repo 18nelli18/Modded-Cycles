@@ -991,6 +991,10 @@ pump. The delay and reverb receive the ducked tracks, but their own returns aren
   in the sources.
 - Real parameters: p-locks, LFO destinations, saved with the project. The p-lock reload bug is fixed by LFO 2, 3, 4
   ([2.5](#25-lfo-2-3-4)).
+- **Resonance keeps the level** (this project's change, notes/85): turning Resonance up no longer makes the sound
+  thinner and quieter (Model-TG lost up to about 5.5 dB at full Resonance). Bright sounds get louder with Resonance,
+  as on an analog filter, because the resonant peak is added on top; very loud resonant peaks are rounded off softly
+  instead of hitting a hard ceiling. Resonance 0 sounds exactly as before.
 
 ### 6.10 Slide trigs
 
@@ -1086,6 +1090,7 @@ MACHINE)". Model-TG's "PRESET" key is **MACHINES** (key code 5 in its `INTERNALS
 | Attack/Filter/Resonance p-locks reload correctly | fixed by LFO 2, 3, 4 | notes/56 |
 | Sample preview in the preset menu | Discord request | notes/46 |
 | USB tracks cut at mute with Model-TG; USB send at a fixed time | 6-channel glitches (the send at a fixed time helps 2CH too; see 4.3) | notes/35 |
+| Resonance no longer lowers the level: full makeup at the filter's output, with a soft clip | owner's report: the sound drops when Resonance is turned up, on every machine | notes/85 |
 
 ---
 
