@@ -31,7 +31,7 @@ crush=crush.replace('void cr_crush(s32 *out,const s32 *in,u32 rate,u32 bits){cru
 crush+='\nvoid lt_crush_reset(void){lt_cr_state.echo=(struct quant_state){0};lt_cr2_state.echo=(struct quant_state){0};}\n'
 compile('crush-shared',crush,['-O3','-funroll-loops','-DCR_LEAN_FX=1'])
 for p in args.extra:
- if p.suffix.lower()=='.c':compile(p.stem,p.read_text(encoding='utf-8'),['-O2' if p.stem in ('lfo-idle','filter-low','filter-modes','fx-idle','lfo-sync') else '-O3' if p.stem in ('firmware-bridge','governor','irq-budget') else '-Os','-fwrapv'])
+ if p.suffix.lower()=='.c':compile(p.stem,p.read_text(encoding='utf-8'),['-O2' if p.stem in ('lfo-idle','filter-low','filter-modes','fx-idle','lfo-sync') else '-O3' if p.stem in ('firmware-bridge','governor','irq-budget','acid-envelope-dsp') else '-Os','-fwrapv',*(['-funroll-loops'] if p.stem=='acid-envelope-dsp' else [])])
  elif p.suffix.lower()=='.cc':
   obj=OUT/(p.name+'.o');subprocess.run([cross+'g++.exe','-mcpu=54418','-O2','-fno-exceptions','-fno-rtti','-fno-threadsafe-statics','-fno-use-cxa-atexit','-fno-pic','-fno-common','-ffunction-sections','-fdata-sections','-fomit-frame-pointer','-I',vendor,'-c',str(p),'-o',str(obj)],check=True);objects.append(str(obj))
  else:

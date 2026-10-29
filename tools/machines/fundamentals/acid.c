@@ -76,6 +76,9 @@ struct track {
 };
 
 static struct track trk[6];
+#ifdef ACID_ENV_SELECT
+extern volatile u32 ae_mode; /* 0:F historique, 1:A, 2:AF */
+#endif
 
 static inline s32 knob(s32 x)                        /* 8.8, 0..127 -> 0..32766 */
 {
@@ -113,6 +116,10 @@ void acid_update(s32 pmod, char *v, const char *p)
 	dec = (s8)p[0x24];
 	dec = dec < 0 ? 0 : (dec > 127 ? 127 : dec);
 	V32(0x24c) = 1; /* Toujours gate : le volume tient tant que la note tient. */
+#ifdef ACID_ENV_SELECT
+	u32 env_mode=ae_mode;
+	if(env_mode)V32(0x24c)=(s8)p[0x20]!=0;
+#endif
 	if (V32(0x38)) {
 		V32(0x274) = V32(0x278) = 0x012c0f26;
 		V32(0x280) = V32(0x284) = 0x001f7c5c;
@@ -148,6 +155,9 @@ void acid_update(s32 pmod, char *v, const char *p)
 		tr->held = 0;
 	/* Release courte fixe : jamais la DECAY du filtre apres note-off. */
 	V32(0x250) = LUT_DECAY[tr->held ? 127 : 4];
+#ifdef ACID_ENV_SELECT
+	if(env_mode)V32(0x250)=LUT_DECAY[dec];
+#endif
 
 	/* note du trig, glissee ; au bloc d'un trig rejoue, l'ancienne note finit (fondu de l'ampli) */
 	if (!V32(0x34))
@@ -159,6 +169,9 @@ void acid_update(s32 pmod, char *v, const char *p)
 	tr->in.envmod = knob(P16(0x1a));
 	tr->in.drive = knob(P16(0x1c));
 	tr->in.decay = knob(P16(0x24));
+#ifdef ACID_ENV_SELECT
+	tr->in.filter_env=env_mode!=1;
+#endif
 	tr->in.wave = P16(0x1e) != 0;
 	tr->in.accent = tr->accent;
 	tr->in.trig = slide ? ACID_SLIDE : (V32(0x38) ? ACID_TRIG : 0);

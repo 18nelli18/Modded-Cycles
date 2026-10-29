@@ -1,0 +1,154 @@
+{
+  "release": "2.60",
+  "hardware_tested": false,
+  "native": {
+    "boots": [
+      {
+        "mask": 0,
+        "sha256": "a0163f84dbb7ace11e91a232013e435ea037abb20d5d4b73af5605a60fa288cd",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 1,
+        "sha256": "48568ed1b4945b281858826dac5d16ef0fbf93f021f248e66bf9fb6b15656406",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 320,
+        "sha256": "76b4387eb311ec31f4e42ae59e414d4865f44e3090671f5e5747e4c848f23b77",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 2048,
+        "sha256": "774d2e92f0658474d9cb17433fe13462d33d200dd174f39e3c288014bf9bc56b",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 32768,
+        "sha256": "4f7f8ca75eac0386b6fc5c7101ed180c64dccd3e8f0a3a016c7e6cbfa12ddb40",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 349525,
+        "sha256": "fca1b83dfdc7067f7bade26b6ed69469721e28c53e821d814f3d6dbcd903d881",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 491519,
+        "sha256": "5d174017c938f0fa9464950ba03bf44a2099e44e46ea0fe51895753fa2989c19",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 524287,
+        "sha256": "2a61e86e0cd4f9802cece1057d2f3806fe01490fea50b0a354d51885afbb462c",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      }
+    ],
+    "selector_masks": 65,
+    "selector_checks": 5265,
+    "native_dispatches": 1625,
+    "extra_choices_preserved": true,
+    "hardware_tested": false
+  },
+  "samples": {
+    "cases": [
+      {
+        "mask": 0,
+        "sha256": "22560790ea1ec0ac92ec0eebe24c804ab77eed04c1e3f4dc9b2b59823f31b0a0",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 32768,
+        "sha256": "93d352c3e3d1b0fe187b120c82e6cb3b098415e4536d6950d84ee38a2b2a90dc",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 320,
+        "sha256": "bdbf6a6ecc3a69a812c334023f93456297716af17a6459b674a945da6edc33bf",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 524287,
+        "sha256": "5346bf5e4df4589e85bf04b936ea39b1f587e4de8f2c231b453d6961033455ea",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      }
+    ],
+    "hardware_tested": false
+  },
+  "browser": {
+    "release": "2.60",
+    "main_and_optional_displayed": true,
+    "machine_choices": 19,
+    "all_none_legacy_only": true,
+    "sending_locked": true,
+    "page_errors": [],
+    "hardware_tested": false
+  },
+  "base_ui": {
+    "sha256": "5e0eb6248b0efaa74ffaf4a607c1d3ee28eb42631b5774918d6515e35ffccfda",
+    "default_F": true,
+    "display_order": [
+      "A",
+      "F",
+      "AF"
+    ],
+    "eleven_native_global_menu_rows": [
+      "Pad",
+      "USB",
+      "Num",
+      "Mute",
+      "Dly",
+      "DX",
+      "QntM",
+      "Grv",
+      "LFOs",
+      "FX",
+      "ACID"
+    ],
+    "displayed_values": [
+      "A",
+      "F",
+      "AF"
+    ],
+    "data_edit_back_navigation": true,
+    "single_global_choice": true,
+    "save_deferred_during_playback": true,
+    "reload_preserves_choices": true,
+    "invalid_files_rejected": 4,
+    "preload_changes_preserved": true,
+    "legacy_migration": true,
+    "original_track_menu_restored": true,
+    "FX_edit_preserved": true,
+    "hardware_tested": false
+  },
+  "signed_variants": 8,
+  "samples_transports_per_variant": 2
+}

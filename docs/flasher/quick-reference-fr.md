@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.58 - 29 octobre2026
+Supermodel2.60 - 29 octobre2026
 
-Principal2.58. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
+Principal2.60. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
 
 ## Fonctions incluses
 
@@ -152,6 +152,7 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 | Humanize Apply / Undo | Track > Human > Trk / Tim / Vel / Apply / Undo | Reglez temps/velocite0..100 par piste ou All. A l arret, Apply modifie le pattern et Undo retablit les valeurs. Aucun aleatoire en lecture. |
 | Nombre de LFO audio | Global > LFOs | 1/2/3/4 par piste audio ; 2 par defaut. Sauvegarde globale a l arret. LFO inactifs arretes, reglages conserves. |
 | Mode FX | Global > FX > MST / TRK | MST utilise les choix partages ; TRK suit la piste selectionnee pour les FX legers. Reverbs/delays lourds natifs restent partages. Memes gestes TRACK + SIZE/TIME. |
+| Enveloppe ACID (Full / Machine Optional) | Global > ACID > A / F / AF | Un choix global sauvegarde pour toutes les pistes ACID. A = ampli ; F = filtre (defaut) ; AF = les deux. Gate OFF laisse decroitre l ampli en A/AF ; ON maintient jusqu au note-off. Sauvegarde a l arret et au repos. Lite ne contient pas ACID. |
 
 BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cette sauvegarde attend l’arrêt. Arrêtez et attendez la fin avant extinction. Routage/réglages Sidechain, listes Scramble et types/réglages FX ajoutés propres à chaque pattern : Save Project les conserve au chargement. Fermer un sous-menu ne sauvegarde pas le projet.
 

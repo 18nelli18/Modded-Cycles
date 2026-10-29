@@ -80,6 +80,9 @@ typedef struct {
 	s32 note;          /* note du trig, demi-tons << 16 (0..127 << 16) : le slide glisse vers elle */
 	s32 tune;          /* + PITCH et FINE, demi-tons << 16, sans glissement */
 	s32 cut, res, envmod, decay, drive;
+#ifdef ACID_ENV_SELECT
+	u32 filter_env;
+#endif
 	s32 accent; /* 0..32767, accent de la note, pas un potard supplementaire */    /* potards 0..32767 */
 	s32 wave;          /* 0 : scie, 1 : carre */
 	s32 trig;          /* 0 : rien ; ACID_TRIG : nouvelle note ; ACID_SLIDE : note liee (glisse, sans MEG) */
@@ -161,6 +164,10 @@ static inline void acid_block(acid_t * ACID_R s, const acid_in_t * ACID_R in, s3
 	   + qmul(s->env - (ACID_EOFF0 + qmul(c << 16, ACID_EOFFSPAN)), e);
 	/* Accent : ouverture transitoire jusque0,75octave, suit le MEG. */
 	lc += qmul(s->env, in->accent * 24);
+#ifdef ACID_ENV_SELECT
+	/* A : coupure de base, sans MEG ni ouverture Accent du filtre. */
+	if(!in->filter_env)lc=ACID_LC0+qmul(c << 16,ACID_LCSPAN);
+#endif
 	lc = lc < 0 ? 0 : (lc > ((ACID_NCUT - 1) << 16) - 1 ? ((ACID_NCUT - 1) << 16) - 1 : lc);
 	i = lc >> 16;
 	f = (lc & 0xffff) << 15;

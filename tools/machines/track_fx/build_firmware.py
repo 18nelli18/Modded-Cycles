@@ -75,6 +75,9 @@ def main():
  entries += [('panic_set',0x40058c04,'mf_panic_set'),('panic_transport',0x40059692,'mf_panic_transport')]
  aliases['mf_filter_set']=0x468d0120
  entries += [('filter_init',0x400618f2,'mf_filter_init'),('filter_new',meta['filter_modes']['symbols']['fc_new_sound'],'mf_filter_new'),('filter_get',0x468d0110,'mf_filter_get'),('filter_frame',0x468d0020,'mf_filter_frame')]
+ if not lite:
+  entries=[(name,at,{'gc_key':'ae_key','gc_encoder':'ae_encoder','gc_draw':'ae_draw','frame':'ae_frame'}.get(name,target)) for name,at,target in entries]
+  entries += [('acid_update',meta['fundamentals']['symbols']['acid_update'],'ae_update'),('acid_render',meta['fundamentals']['symbols']['acid_render'],'ae_render')]
  if args.remove_legacy or args.unique_punch:entries.append(('voice_playability',0x400a7d4a,'pp_voice_loop'))
  if args.no_vinyl:entries += [('fx_overlay',fx['fx_overlay'],'nv_overlay'),('fx_overlay_canvas',fx['fx_overlay.part.0'],'nv_overlay_canvas'),('vinyl_bypass',fx['fx_vinyl'],'nv_bypass')]
  if args.remove_legacy:
@@ -116,10 +119,16 @@ def main():
  view=view.replace('gc_global_draw','mf_global_draw').replace('gc_tree_edit','mf_tree_edit').replace('moveq #9,%d0','moveq #10,%d0').replace('    clrb %a0@(752)','    clrb %a0@(752)\n    clrb %a0@(836)').replace('.Lallocator: .byte 0','.Llabel9: .asciz "FX"\n.Lallocator: .byte 0')
  view+='\n.long 0,0,0,.Llabel9,0,1,.Lts_label,0,0,0,0,0,0,1,mf_global_value,0,0,0,0,0,0\n'
  (output/'global.S').write_text(view,encoding='utf-8');(output/'aliases.json').write_text(json.dumps(aliases,indent=2)+'\n')
+ if not lite:
+  view=view.replace('mf_tree_edit','ae_global_edit').replace('moveq #10,%d0','moveq #11,%d0').replace('    clrb %a0@(836)','    clrb %a0@(836)\n    clrb %a0@(920)').replace('.Lallocator: .byte 0','.Lacid_label: .asciz "ACID"\n.Lallocator: .byte 0')
+  view+='\n.long 0,0,0,.Lacid_label,0,1,.Lts_label,0,0,0,0,0,0,1,ae_value,0,0,0,0,0,0\n'
+  (output/'global.S').write_text(view,encoding='utf-8')
  (output/'roots.json').write_text(json.dumps([h['target'] for h in hooks]+['dry_osc','gv_fade_entry','idle_check','idle_voice_begin']+[f[3] for f in fold_specs]+([] if lite else [harmonic_target,cymbal_target])+(['li_store_gate'] if args.runtime_headroom else [])+(['rm_noop','rm_silence'] if args.remove_legacy else [])))
  command=[sys.executable,str(WORK/'build_light_lab.py'),'--code',hex(CODE),'--bss',hex(BSS),'--output',str(output),'--aliases',str(output/'aliases.json'),'--roots',str(output/'roots.json')]
  for source in ('slot-state.c','slot-controls.c','firmware-bridge.c','repeat-idle.c','lfo-idle.c','sparse.S','governor.c','governor-hooks.S','irq-budget.c','irq-budget.S','fx-idle.c','fx-idle.S','fx-panic.c','filter-startup.c','native-osc.S','filter-low.c','filter-modes.c','lfo-sync.c')+(() if lite else ('macro-fold.cc','macro-harmonics.cc','macro-cymbal.cc')):command+=['--extra',str(WORK/source)]
  for source in ('tramp.S','global.S'):command+=['--extra',str(output/source)]
+ if not lite:
+  for source in ('acid-envelope.c','acid-envelope-dsp.c'):command+=['--extra',str(WORK/source)]
  if args.no_vinyl:
   order=list(struct.unpack('>9I',peek(fx['fx_rev_order'],36)));assert order.count(3)==1
   order.remove(3);(output/'no-vinyl-order.c').write_text('const unsigned int nv_rev_order[8]={'+','.join(map(str,order))+'};\n')
@@ -184,6 +193,7 @@ def main():
  proof.update(fx_output_duplicate_setup_removed=True,fx_sleep_skips_ring_and_dma_writeback=True,hardware_click_fix_verified=False)
  proof.update(native_send_zero_gain_fast_path=True)
  proof.update(filter_new_sound_deferred_low=True,filter_saved_load_cancels_pending=True)
+ if not lite:proof.update(acid_envelope_modes=['A','F','AF'],acid_envelope_default='F',acid_envelope_storage='one global setting /AcidEnv.cfg',acid_envelope_menu='Mod Setup > Global > ACID')
  proof.update(retrig_idle_history_packed=True,retrig_active_and_fades_original=True)
  proof.update(lfo_direct_collection=args.runtime_headroom,unassigned_secondary_banks_pause=args.runtime_headroom,filter_fractional_divisions=4)
  proof.update(legacy_internal_samples=None if lite or args.remove_legacy else 8 if args.legacy12 else 16 if args.eco24 else 32,macro_eco_only=args.macro_eco_only)

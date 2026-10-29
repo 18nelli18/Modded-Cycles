@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.58 - 29 October 2026
+Supermodel 2.60 - 29 October 2026
 
-Main 2.58. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
+Main 2.60. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
 
 ## Included features
 
@@ -133,7 +133,7 @@ Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMB
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Global / Track | DATA enters; BACK returns | Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root. |
+| Global / Track | DATA enters; BACK returns | Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID (when installed). Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root. |
 | Access and sound editing | Tap SETTINGS + TRACK | Available from the main screen or machine selection. DATA navigates Mod Setup; sound knobs show the edited parameter for two seconds, then return to the same menu position. BACK closes the popup first, then Mod Setup; machine selection stays open underneath. |
 | Pad | Stk / SIL Default: Stk | Stk keeps the original track-pad behavior: a pad selects and plays its track. Silent selects the track without sounding it; hold TRACK and press a track pad to select and play. |
 | USB | 2ch / 6ch Default: 2ch | 2ch sends the stereo mix to the computer. 6ch sends six separate mono tracks, before pan and without the mix delay/crusher/reverb/chorus returns. Stereo audio from the computer to Cycles works in both modes. Stop playback before changing this toggle. Changing modes reconnects the USB audio device; select its new channel layout in your DAW if needed. |
@@ -152,6 +152,7 @@ Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMB
 | Humanize Apply / Undo | Track > Human > Trk / Tim / Vel / Apply / Undo | Set timing/velocity amounts0..100 for a track or All. Stop playback, then Apply writes changes to the pattern; Undo restores the prior values. No randomization during playback. |
 | Audio LFO count | Global > LFOs | 1/2/3/4 LFOs per audio track; default2. Saves globally while stopped. Disabled LFOs stop running and retain their settings. |
 | FX mode | Global > FX > MST / TRK | MST uses shared effect selection; TRK follows the selected track for light FX choices. Heavy native reverbs and delays stay shared. Use the same TRACK + SIZE/TIME gestures in either mode. |
+| ACID envelope (Full / Machine Optional) | Global > ACID > A / F / AF | One globally saved choice for all ACID tracks. A = amp only; F = filter only (default); AF = both. Gate OFF allows amp decay while held in A/AF; Gate ON sustains until note-off. Save completes while stopped and idle. Lite has no ACID machine. |
 
 BACK closes Mod Setup and saves its global preferences. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Sidechain routing/settings, Scramble checklists and FX types/added settings are per pattern: Save Project preserves these after reloading. Closing a submenu alone does not save the project.
 

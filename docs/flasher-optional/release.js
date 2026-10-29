@@ -1,5 +1,19 @@
 window.MC_RELEASES=[
 {
+  "version": "2.60",
+  "date": "2026-10-29",
+  "changes": [
+    {
+      "en": "Global > ACID selects A (amp), F (filter) or AF (both) for every ACID track and saves the choice globally. F preserves the previous sound and remains the default. Gate OFF allows amp decay while held in A/AF.",
+      "fr": "Global > ACID choisit A (ampli), F (filtre) ou AF (les deux) pour toutes les pistes ACID et sauvegarde ce choix globalement. F conserve le son precedent et reste le defaut. Gate OFF permet la decroissance d ampli en A/AF."
+    },
+    {
+      "en": "Lite retains the shared sequencing, modulation, filter, FX and workflow features; only added machines and their controls are excluded. All startup screens and flashers display 2.60. Machine Optional keeps its extra choices. The feature guide includes the global selector. Validation is by emulation; this global revision still needs device confirmation.",
+      "fr": "Lite conserve les fonctions communes de sequence, modulation, filtre, FX et utilisation ; seules les machines ajoutees et leurs commandes sont exclues. Ecrans et flasheurs affichent 2.60. Machine Optional conserve ses choix supplementaires. Le guide inclut le selecteur global. Validation en emulation ; cette revision globale attend une confirmation sur machine."
+    }
+  ]
+},
+{
   "version": "2.58",
   "date": "2026-10-29",
   "changes": [

@@ -1,6 +1,6 @@
 {
-  "release": "2.58",
-  "stamp": "2026-10-29-guide258",
+  "release": "2.60",
+  "stamp": "2026-10-29-guide260",
   "cards": [
     {
       "en": [
@@ -1046,7 +1046,7 @@
           "en": [
             "Global / Track",
             "DATA enters; BACK returns",
-            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root."
+            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID (when installed). Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root."
           ],
           "fr": [
             "Global / Track",
@@ -1268,6 +1268,18 @@
             "Mode FX",
             "Global > FX > MST / TRK",
             "MST utilise les choix partages ; TRK suit la piste selectionnee pour les FX legers. Reverbs/delays lourds natifs restent partages. Memes gestes TRACK + SIZE/TIME."
+          ]
+        },
+        {
+          "en": [
+            "ACID envelope (Full / Machine Optional)",
+            "Global > ACID > A / F / AF",
+            "One globally saved choice for all ACID tracks. A = amp only; F = filter only (default); AF = both. Gate OFF allows amp decay while held in A/AF; Gate ON sustains until note-off. Save completes while stopped and idle. Lite has no ACID machine."
+          ],
+          "fr": [
+            "Enveloppe ACID (Full / Machine Optional)",
+            "Global > ACID > A / F / AF",
+            "Un choix global sauvegarde pour toutes les pistes ACID. A = ampli ; F = filtre (defaut) ; AF = les deux. Gate OFF laisse decroitre l ampli en A/AF ; ON maintient jusqu au note-off. Sauvegarde a l arret et au repos. Lite ne contient pas ACID."
           ]
         }
       ]

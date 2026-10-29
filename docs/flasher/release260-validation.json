@@ -1,0 +1,234 @@
+{
+  "release": "2.60",
+  "hardware_tested": false,
+  "asset_source_commit": "40dbba58b815db761185e4b24b4a49b9726594d7",
+  "global_acid_ui": {
+    "sha256": "9faeca94dc5ef71905511aa8855ab555e475d827555dbe343e25a2af7800aea4",
+    "default_F": true,
+    "display_order": [
+      "A",
+      "F",
+      "AF"
+    ],
+    "eleven_native_global_menu_rows": [
+      "Pad",
+      "USB",
+      "Num",
+      "Mute",
+      "Dly",
+      "DX",
+      "QntM",
+      "Grv",
+      "LFOs",
+      "FX",
+      "ACID"
+    ],
+    "displayed_values": [
+      "A",
+      "F",
+      "AF"
+    ],
+    "data_edit_back_navigation": true,
+    "single_global_choice": true,
+    "save_deferred_during_playback": true,
+    "reload_preserves_choices": true,
+    "invalid_files_rejected": 4,
+    "preload_changes_preserved": true,
+    "legacy_migration": true,
+    "original_track_menu_restored": true,
+    "FX_edit_preserved": true,
+    "hardware_tested": false
+  },
+  "global_acid_dsp": {
+    "sha256": "e978a297cb6c66d37e1792d2e1882ac9b07e1eaca6113e7c252f5799c504a889",
+    "modes": [
+      "F",
+      "A",
+      "AF"
+    ],
+    "gate_settings": [
+      0,
+      1
+    ],
+    "blocks_each": 100,
+    "A_filter_constant": true,
+    "F_AF_filter_trajectory_equal": true,
+    "single_setting_controls_six_tracks": true,
+    "amp_decay_restored": true,
+    "gate_sustain_preserved": true,
+    "hardware_tested": false
+  },
+  "PCM_preserved_from_working_prototype": {
+    "all_six_mode_gate_cases_equal_to_working_per_track_prototype": true,
+    "cases": {
+      "(0, 0)": true,
+      "(0, 1)": true,
+      "(1, 0)": true,
+      "(1, 1)": true,
+      "(2, 0)": true,
+      "(2, 1)": true
+    },
+    "hardware_tested": false
+  },
+  "Full_Lite_shared_features": {
+    "full": "9faeca94dc5ef71905511aa8855ab555e475d827555dbe343e25a2af7800aea4",
+    "lite": "5defda326152406506ccb1b925a41cf711231554f5c80ba42dd4b0d7fdfb0eed",
+    "shared_boolean_features": [
+      "hardware_tested",
+      "shared_reverb_delay",
+      "native_exports_include_sidecar",
+      "track_release_commit_guard",
+      "selection_track_latched",
+      "lfo_idle_copy_optimization",
+      "governor_thresholds_unchanged",
+      "governor_original_limits_restored",
+      "governor_fade_end_zero",
+      "irq_budget_includes_prelude",
+      "irq_budget_previous_tail",
+      "dx_near_complete_irq",
+      "irq_immediate_overload_guard",
+      "governor_spike_hysteresis_restored",
+      "fx_native_idle_pipeline_restored",
+      "fx_dma_prepare_before_voices",
+      "fx_idle_respects_sends",
+      "ui_masked_word_capture",
+      "fx_startup_asleep_before_first_send",
+      "fx_post_send_tail_guard_preserved",
+      "native_osc_zero_modulation_fast_path",
+      "filter_exact_q30_division_reduction",
+      "filter_shared_coefficient_cache",
+      "master_mode_skips_track_scan",
+      "lfo_stable_bank_sync_optimization",
+      "shared_chorus_crusher_code_independent_state",
+      "fx_tail_scan_fused",
+      "ring_exact_endpoint_paths",
+      "fx_output_duplicate_setup_removed",
+      "fx_sleep_skips_ring_and_dma_writeback",
+      "hardware_click_fix_verified",
+      "native_send_zero_gain_fast_path",
+      "filter_new_sound_deferred_low",
+      "filter_saved_load_cancels_pending",
+      "retrig_idle_history_packed",
+      "retrig_active_and_fades_original",
+      "lfo_direct_collection",
+      "unassigned_secondary_banks_pause",
+      "macro_eco_only",
+      "chord_exact_delta_interpolation",
+      "legacy_removed",
+      "unique_machine_punch",
+      "vinyl_removed",
+      "chordkeys_audio_disabled",
+      "chordkeys_ui_midi_removed",
+      "eco24",
+      "firmware_hooks_installed"
+    ],
+    "machine_only_exceptions": [
+      "cymbal_fixed_filter_path",
+      "harmonics_exact_target_cache",
+      "harmonics_zero_trailing_partials",
+      "macro_fold_steady_parameter"
+    ],
+    "shared_subsystems": 10,
+    "filter_and_FX_choices_equal": true,
+    "ACID_Full_only": true,
+    "hardware_tested": false
+  },
+  "browser": {
+    "release": "2.60",
+    "main_and_optional_displayed": true,
+    "machine_choices": 19,
+    "all_none_legacy_only": true,
+    "sending_locked": true,
+    "page_errors": [],
+    "hardware_tested": false
+  },
+  "native_base_boots": [
+    {
+      "sha256": "9faeca94dc5ef71905511aa8855ab555e475d827555dbe343e25a2af7800aea4",
+      "native_payload_boot": true,
+      "code_copied_exact": true,
+      "all_packaged_hooks_verified": true,
+      "bss_zero": true,
+      "recovery_updater_sections_identical": true,
+      "flash_bytes": 1614576,
+      "runtime_bytes": 3145728,
+      "hardware_tested": false
+    },
+    {
+      "sha256": "2a61e86e0cd4f9802cece1057d2f3806fe01490fea50b0a354d51885afbb462c",
+      "native_payload_boot": true,
+      "code_copied_exact": true,
+      "all_packaged_hooks_verified": true,
+      "bss_zero": true,
+      "recovery_updater_sections_identical": true,
+      "flash_bytes": 1667552,
+      "runtime_bytes": 3145728,
+      "hardware_tested": false
+    }
+  ],
+  "Lite_title_only_changes": [
+    {
+      "source_sha256": "a46b2fe88f1c4ad08cfbae96882725a2821891508231c7f7730672cdecd68946",
+      "sha256": "5defda326152406506ccb1b925a41cf711231554f5c80ba42dd4b0d7fdfb0eed",
+      "version": "2.60",
+      "title": {
+        "name": "Supermodel Lite",
+        "version": "2.60",
+        "edition": "LITE 2.60",
+        "code": 1074084460,
+        "code_bytes": 856,
+        "sha256": "245cbdfc8436858e9f8e5bb89a96b0209d9bbbed7c063c85f2d2a544eecb1340",
+        "native_os_protocol_version_unchanged": true,
+        "hardware_tested": false
+      },
+      "only_startup_code_changed": true,
+      "changed_main_bytes": 6,
+      "recovery_updater_unchanged": true,
+      "flash_bytes": 1638432,
+      "packing": {
+        "original_bytes": 1590974,
+        "stored_bytes": 1590974,
+        "bootstrap_gap": 2096128,
+        "margin": 64,
+        "added_literal_bytes": 0,
+        "split_matches": 0,
+        "main_unchanged": true
+      },
+      "hardware_tested": false
+    },
+    {
+      "source_sha256": "3f8ea64121df94b17b222f0b61593b83c389b0bd2fc87aaa71eb0113aef71fb2",
+      "sha256": "a0163f84dbb7ace11e91a232013e435ea037abb20d5d4b73af5605a60fa288cd",
+      "version": "2.60",
+      "title": {
+        "name": "Supermodel Lite",
+        "version": "2.60",
+        "edition": "LITE 2.60",
+        "code": 1074084460,
+        "code_bytes": 856,
+        "sha256": "245cbdfc8436858e9f8e5bb89a96b0209d9bbbed7c063c85f2d2a544eecb1340",
+        "native_os_protocol_version_unchanged": true,
+        "hardware_tested": false
+      },
+      "only_startup_code_changed": true,
+      "changed_main_bytes": 6,
+      "recovery_updater_unchanged": true,
+      "flash_bytes": 1638416,
+      "packing": {
+        "original_bytes": 1590954,
+        "stored_bytes": 1590954,
+        "bootstrap_gap": 2096128,
+        "margin": 64,
+        "added_literal_bytes": 0,
+        "split_matches": 0,
+        "main_unchanged": true
+      },
+      "hardware_tested": false
+    }
+  ],
+  "native_main_Samples_boots_and_signatures": [
+    "full",
+    "lite"
+  ],
+  "user_hardware_report_scope": "Per-track 2.59 prototype works; global revision not yet confirmed on hardware"
+}
