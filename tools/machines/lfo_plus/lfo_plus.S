@@ -360,7 +360,15 @@ lfo_key:
 	move.l	8(%sp), -(%sp)
 	jsr	KEY_CODE
 	addq.l	#4, %sp
-	moveq	#8, %d1
+	cmp.l	#5, %d0			/* MACHINES sur la page LFO : la touche est un modificateur, elle ne doit pas
+						   ouvrir l'écran des machines (0x40075822) ; atk_watch/KEY_BITS lit l'état physique */
+	bne.s	0f
+	clr.b	pend			/* prise, comme une touche que la vue traite ; l'original ne la voit jamais.
+					   Traitée ici et non par un saut vers un bloc commun : celui-ci tombait dans la
+					   branche de l'appui de [LFO], qui n'atteignait donc plus l'original */
+	moveq	#1, %d0
+	rts
+0:	moveq	#8, %d1
 	cmp.l	%d0, %d1
 	beq.s	1f
 	clr.b	pend				/* autre touche : pas un appui bref */
@@ -627,22 +635,10 @@ lfo_learn:
 	move.b	KEY_BITS, %d0
 	btst	#0, %d0				/* MACHINES tenue */
 	beq.s	1f
-	jsr	CUR_PROJ
-	move.l	%d0, -(%sp)
-	jsr	0x4000eb9c			/* kit */
-	move.l	%d7, (%sp)
-	move.l	%d0, -(%sp)
-	jsr	0x40009c1a			/* (kit, piste) -> la piste */
-	move.l	%d0, (%sp)
-	jsr	0x40014042			/* -> sa machine */
-	move.l	%d0, (%sp)
-	jsr	0x4004df76			/* -> son enregistrement */
-	addq.l	#8, %sp
-	movea.l	%d0, %a0
-	moveq	#FTUN_ID, %d0
-	cmp.l	72(%a0), %d0
-	bne.s	1f
-	move.l	%d0, %d2
+	/* LO-FI n'est PAS une destination de LFO (décision du propriétaire) : sur n'importe quelle machine,
+	   MACHINES + PITCH tenu donne FINE (id 43), la vraie fonction stock. MACHINES + PITCH sans LFO reste
+	   le lo-fi de MACRO, par knob_vec. */
+	moveq	#FTUN_ID, %d2
 1:	move.l	%d2, -(%sp)
 	jsr	0x4005a4e8			/* id -> k */
 	addq.l	#4, %sp

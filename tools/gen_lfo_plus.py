@@ -217,10 +217,12 @@ def build_tweak(stock):
             "Plusieurs LFO réglés sur la même destination s'additionnent (y compris sur la destination de LFO 1) ; "
             "la molette DEST saute les destinations déjà prises par un autre LFO de la piste. LFO 2 non calculé "
             "quand aucune piste n'a de destination.",
-            "[LFO] tenue + un potard (affectation de l'OS) : MACHINES + PITCH sur une piste MACRO donne le lo-fi "
-            "(FINE) ; la destination choisie peut être libre ou déjà prise par un autre LFO (le cumul s'additionne). "
-            "La diode de la destination s'allume aussi pour Attack, Filtre, Résonance (potards DECAY, SWEEP, CONTOUR) "
-            "et le lo-fi (PITCH), réglés sous MACHINES (notes/56 §3.13).",
+            "[LFO] tenue + un potard (affectation de l'OS) : MACHINES + PITCH donne FINE (l'accord fin, le lo-fi sur "
+            "MACRO) sur toutes les machines ; la destination choisie peut être libre ou déjà prise par un autre LFO "
+            "(le cumul s'additionne). La diode de la destination s'allume aussi pour Attack, Filtre, Résonance "
+            "(potards DECAY, SWEEP, CONTOUR) et le lo-fi (PITCH), réglés sous MACHINES (notes/56 §3.13).",
+            "Sur la page LFO, MACHINES sert de modificateur au geste [LFO] + MACHINES + potard : elle n'ouvre plus "
+            "l'écran des machines par-dessus la page (notes/56 §3.14).",
             "Corrige au passage les p-locks d'Attack, Filtre et Résonance de Model-TG dans le pattern (relus en None, "
             "LFO Speed, Multiplier).",
             "D'après le Model-TG-VA-DR-v1 de DavidCaruso (octobre 2026), réécrit ; s'installe avec ou sans Model-TG.",

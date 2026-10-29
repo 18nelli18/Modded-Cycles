@@ -705,3 +705,46 @@ Deux ajustements ergonomiques vérifiés sur le matériel et intégrés :
      En revanche, l'affectation directe par potentiomètre (`[LFO]` maintenu + potard) **autorise** le cumul : elle ne
      refuse pas une destination déjà prise. L'utilisateur a vérifié sur le matériel que le cumul s'entend et constitue
      une possibilité sonore volontaire.
+
+### 3.14 Mise à jour du 29/10/2026 : MACHINES avalée sur la page LFO, FINE (FTUN) sur toutes les machines
+
+Deux corrections de comportement, décidées par le propriétaire après essai sur la machine, et le défaut que la preuve
+a trouvé sur la première version.
+
+1. **`MACHINES` n'ouvre plus l'écran des machines depuis la page LFO** (`lfo_key`, `0x40024e86` remplacé, même place) :
+   l'original passe le code 5 à `0x40075822` ; pendant le geste `[LFO]` tenu + `MACHINES` + potard, l'écran des
+   machines s'ouvrait donc par-dessus la page LFO (la destination était posée, la page et sa diode partaient). Sur
+   la page LFO, la touche est maintenant **avalée** : appui, répétition, relâchement, avec ou sans `FUNC`, rendus
+   pris (1) sans atteindre l'original. L'état « MACHINES tenue » que lisent Model-TG (`atk_watch` → `mod_held`),
+   `lfo_learn` et `knob_vec` est celui des touches (`KEY_BITS`, `0x4007faf4(5)`), pas cet événement : il suit la
+   touche comme avant, et les substituts de potentiomètres sous `MACHINES` continuent de fonctionner.
+
+2. **`MACHINES` + `PITCH` tenu donne `FINE` (identifiant 43) sur toutes les machines** (`lfo_learn`) : la version
+   du 26/10 cherchait l'enregistrement de la piste et ne substituait que sur MACRO ; c'est faux, `FINE` est une
+   destination de LFO stock qui doit rester elle-même partout, et c'est sur MACRO qu'elle est le lo-fi. Le test de
+   l'enregistrement est donc retiré (il coûtait aussi 52 o et une lecture de kit par affectation). Sans `[LFO]`
+   tenue, `MACHINES` + `PITCH` reste le lo-fi de MACRO, par `knob_vec`, inchangé.
+
+3. **`FTUN` garde son nom sur la page LFO** : renommer la destination en « Lo-Fi » par `DESCN` (essayé le 29/10)
+   faisait lire « Lo-Fi » à la place de `FTUN` sur **toutes** les machines, alors que la plaque `MACHINES` lit
+   `param_table` et affiche déjà `Lo-Fi` sur MACRO seule. L'écriture dans `DESCN` a été retirée : la liste `DEST`
+   affiche `FTUN`, la plaque affiche `Lo-Fi` sur MACRO.
+
+**Défaut trouvé par la preuve, corrigé** : la première version avalait le code 5 par un saut vers un bloc commun
+placé après `move.b %d0, pend` de l'appui de `[LFO]` ; ce bloc **tombait dans la branche de l'appui**, qui
+n'atteignait donc plus l'original : `pend` restait à 0, l'appui de `[LFO]` n'était plus noté et la page ne cyclait
+plus (LFO 1 → 2 → 3 → 4) à l'appui bref. La preuve en émulation (`touche [LFO]`) l'a signalé sur les quatre pages.
+Le code 5 est maintenant traité sur place (`bne.s 0f` puis `rts`), sans saut vers un bloc partagé.
+
+**Preuve `[FAIT en émulation]`** : `tools/emu/test_lfo_plus.py`, 108 vérifications `TOUT OK` seul et avec les treize
+autres tweaks de `os.json` (`--with …`) :
+- `touche [LFO]` : la séquence de l'original (appui bref, tenue, répétition, `FUNC`, LFO 4, autre touche) est
+  inchangée ; `MACHINES` (code 5) appui / répétition / relâchement / `FUNC` rend 1, ne touche ni la page ni `pend`
+  en cours si l'appui bref de `[LFO]` était noté, et l'original n'est jamais appelé ;
+- `[LFO] + potard` : 576 cas (machines 0..5 et MACRO, 12 potards, LFO 1..4, `MACHINES` tenue ou non) ;
+  `MACHINES` + `PITCH` → `k` 17 (`FINE`) sur **toutes** les machines, `PITCH` (`k` 10) sans `MACHINES` ;
+  `FUNC + PITCH` → `PITCH` ;
+- diode de la destination, destinations déjà prises (cumul admis), place, sauvegarde des kits : inchangés et verts.
+
+**Place** : aucun masque de plus (`lfo_key` et `lfo_learn` restent dans `0x4018af88`, `lfo_led` suit) ; la
+suppression de la lecture de kit rend 52 o.

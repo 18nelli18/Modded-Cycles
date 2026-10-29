@@ -641,7 +641,13 @@ def ui(base_img, img, rt, syms):
         (8, 3, 0, 0x77, 1, 0, True, False),             # FUNC + [LFO] : l'original
         (8, 1, 0, 0x77, 1, 1, True, False), (8, 0, 0, 1, 2, 0, False, True),       # LFO 3
         (8, 1, 0, 0x77, 2, 1, True, False), (8, 0, 0, 1, 3, 0, False, True),       # LFO 4
-        (8, 1, 0, 0x77, 3, 0, True, False), (8, 0, 0, 0x77, 3, 0, True, False)]    # sur LFO 4 : l'original (ferme)
+        (8, 1, 0, 0x77, 3, 0, True, False), (8, 0, 0, 0x77, 3, 0, True, False),   # sur LFO 4 : l'original (ferme)
+        # MACHINES sur la page LFO : avalée, elle n'ouvre plus l'écran des machines (0x40075822) ; l'état « tenue »
+        # que lisent atk_watch / KEY_BITS reste celui des touches
+        (5, 1, 0, 1, 3, 0, False, False),               # appui MACHINES : prise, l'original n'est pas appelé
+        (5, 9, 0, 1, 3, 0, False, False),               # répétition : idem
+        (5, 0, 0, 1, 3, 0, False, False),               # relâchement : idem (l'original ne ferme pas la page)
+        (5, 3, 0, 1, 3, 0, False, False)]               # FUNC + MACHINES : idem
     good = True
     for code, flags, flag, ret, pg, pend, orig, redraw in seq:
         P.uc.mem_write(EVT, struct.pack(">5I", 0, 0, 0, code, flags))
@@ -655,7 +661,18 @@ def ui(base_img, img, rt, syms):
     check(good, "touche [LFO] : appui -> l'original (noté) ; relâchement d'un appui bref (drapeau tenue de la vue à "
                 "0) -> LFO 2, 3, 4 (redessin) ; potard tourné [LFO] tenue (drapeau mis) ou autre touche entre-temps "
                 "-> l'original, la page reste ; répétition / FUNC / relâchement de l'appui d'ouverture / LFO 4 -> "
-                "l'original (il ferme la page au relâchement)")
+                "l'original (il ferme la page au relâchement) ; MACHINES -> prise sur les 4 pages (l'original ne la "
+                "voit jamais)")
+    # MACHINES annule un appui bref de [LFO] en cours, comme toute autre touche (page 1 : l'appui bref y existe)
+    P.w8(page, 0)
+    P.w8(syms["pend"], 1)
+    P.uc.mem_write(EVT, struct.pack(">5I", 0, 0, 0, 5, 1))
+    P.log.clear()
+    r = P.call(P.r32(P_KEY), view, EVT, check="touche")
+    check(r == 1 and P.r8(syms["pend"]) == 0 and P.r8(page) == 0 and "orig" not in [x[0] for x in P.log],
+          "MACHINES sur la page LFO, appui bref de [LFO] en cours : la touche est prise et l'appui bref annulé "
+          "(pend = 0, page inchangée, l'original pas appelé)")
+    P.w8(page, 3)
 
     # création / destruction de la vue
     P.stub(VIEW_CTOR, P.logged("ctor", 0x55))
@@ -1575,13 +1592,13 @@ def learn_led(base_img, img, rt, syms, tg):
                     got = learn(P, pg, knob)
                     if pg == 0:
                         ref = learn(S, 0, knob)
-                        good &= got == ref or (on and knob == 0 and m == macro)
+                        good &= got == ref or (on and knob == 0)
                     others = [dest(P, x) for x in range(4) if x != pg]
-                    good &= others == [0, 0, 0] and (got == ref or (on and knob == 0 and m == macro))
+                    good &= others == [0, 0, 0] and (got == ref or (on and knob == 0))
                     if on and tg and knob in (1, 4, 5):
                         good &= got == {1: 23, 4: 24, 5: 25}[knob]
                     if on and knob == 0:
-                        good &= got == (17 if m == macro else 10)
+                        good &= got == 17          # FINE : le lo-fi de MACRO, l'accord fin ailleurs (id 43 partout)
                     if not on and knob == 0:
                         good &= got == 10
                     n += 1
@@ -1604,7 +1621,8 @@ def learn_led(base_img, img, rt, syms, tg):
                                           "la destination du LFO affiché, celle de l'OS d'origine sur LFO 1, les autres LFO pas "
                                           "touchés ; MACHINES + DECAY / SWEEP / CONTOUR -> Attack / Filtre / Résonance (k 23, 24, 25)"
                                           + ("" if tg else " [sans Model-TG : pas vérifié]")
-                                          + " ; MACHINES + PITCH -> FINE (k 17, le lo-fi) sur MACRO seulement, PITCH (k 10) ailleurs ; FUNC + PITCH -> PITCH (k 10)")
+                                          + " ; MACHINES + PITCH -> FINE (k 17, le lo-fi de MACRO et l'accord fin ailleurs) "
+                                          "sur toutes les machines, PITCH (k 10) sans MACHINES ; FUNC + PITCH -> PITCH (k 10)")
     # 2. destination déjà prise par un autre LFO de la piste : admise (cumul de plusieurs LFO)
     machine[0] = 0
     mod(bool(tg))

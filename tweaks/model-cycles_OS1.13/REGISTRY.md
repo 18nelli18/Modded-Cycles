@@ -122,12 +122,12 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401780a8` | `0x400af946` | pris (plein) | lfo-plus (272 o) |
 | `0x401784e8` | `0x400af832` | pris (plein) | lfo-plus (272 o) |
 | `0x401835b8` | `0x400adedc` | pris (plein) | lfo-plus (272 o) |
-| `0x40184df8` | `0x400adbc8` | pris (268/272 o) | lfo-plus (268 o) |
-| `0x40185308` | `0x400adb8c` | pris (264/272 o) | lfo-plus (264 o) |
-| `0x40185f48` | `0x400ad9c4` | pris (266/272 o) | lfo-plus (266 o) |
-| `0x40186238` | `0x400ad988` | pris (218/272 o) | lfo-plus (218 o) |
+| `0x40184df8` | `0x400adbc8` | pris (plein) | lfo-plus (272 o) |
+| `0x40185308` | `0x400adb8c` | pris (266/272 o) | lfo-plus (266 o) |
+| `0x40185f48` | `0x400ad9c4` | pris (260/272 o) | lfo-plus (260 o) |
+| `0x40186238` | `0x400ad988` | pris (236/272 o) | lfo-plus (236 o) |
 | `0x40189618` | `0x400ad364` | pris (256/272 o) | lfo-plus (256 o) |
-| `0x4018af88` | `0x400ad18a` | pris (156/272 o) | lfo-plus (156 o) |
+| `0x4018af88` | `0x400ad18a` | pris (104/272 o) | lfo-plus (104 o) |
 | `0x4018b1a8` | `0x400ad16e` | libre | |
 | `0x4018ff64` | `0x400ac7fc` | libre | |
 | `0x40192ba4` | `0x400ac276` | pris (132/272 o) | midi-live-both (132 o) |
@@ -574,7 +574,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4002351a` | `2f024eb9400740ca` | jmp | cave `0x40148328` +0x0 | latching-mute, model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400243d6` | `700ab084673e` | jmp | masque `0x40182b38` +0x0 `sr_key` | step-rec | notes/73 |
 | `0x40025e10` | `4feffff02f0a` | jmp | masque `0x40189618` +0x4e `lfo_gate` | lfo-plus | notes/56 |
-| `0x400262ac` | `4fef000c200f` | jmp | masque `0x4018af88` +0x68 `lfo_led` | lfo-plus | notes/56 |
+| `0x400262ac` | `4fef000c200f` | jmp | masque `0x4018af88` +0x34 `lfo_led` | lfo-plus | notes/56 |
 | `0x4002d480` | `4cef7c7c0018` | jmp | masque `0x4016cae8` +0xc0 | arp | notes/32 |
 | `0x4002f7d8` | `4cef7c7c0018` | jmp | charge utile (image) +0x11350 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40032aee` | `4cef7c7c0018` | jmp | charge utile (image) +0xd428 | model-tg, model-tg-st | notes/31, notes/36 |
@@ -600,7 +600,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40059382` | `4eb94005979e` | jsr | charge utile (mémoire), 23 cibles selon la combinaison | syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36 |
 | `0x40059392` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
 | `0x400593ce` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
-| `0x400597c6` | `4eb940091ab2` | jsr | masque `0x40185f48` +0x88 `lfo_audio` | lfo-plus | notes/56 |
+| `0x400597c6` | `4eb940091ab2` | jsr | masque `0x40186238` +0x0 `lfo_audio` | lfo-plus | notes/56 |
 | `0x4005981e` | `4eb9401b715c` | jsr | charge utile (mémoire) +0x3350e | syntakt-tg-* (1/33) | notes/31 |
 | `0x40059852` | `4eb940056f58` | jsr | masque `0x4014ab5c` +0x0 `tf_post` | track-filter | notes/47 |
 | `0x40059872` | `4eb9401b7b54` | jsr | charge utile (mémoire) +0x3353e | syntakt-tg-* (1/33) | notes/31 |
@@ -618,17 +618,17 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4005aa34` | `7417b480640c` | jmp | masque `0x40166760` +0x8a `tf_conv` | track-filter | notes/47 |
 | `0x4005aecc` | `4feffff448d7` | jmp | charge utile (image) +0x9b6a | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4005aecc` | `4feffff448d7` | jmp | masque `0x40166760` +0x0 `tf_load` | track-filter | notes/47 |
-| `0x4005af1c` | `41f94010eea8` | jsr | masque `0x40185308` +0x0 `lfo_unpack` | lfo-plus | notes/56 |
+| `0x4005af1c` | `41f94010eea8` | jsr | masque `0x40185f48` +0x0 `lfo_unpack` | lfo-plus | notes/56 |
 | `0x4005afa0` | `4feffff448d7` | jmp | charge utile (image) +0x9ad2 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4005afa0` | `4feffff448d7` | jmp | masque `0x4016616c` +0x0 `tf_save2` | track-filter | notes/47 |
-| `0x4005b028` | `356b005e005c` | jsr | masque `0x40186238` +0x70 `lfo_pack` | lfo-plus | notes/56 |
+| `0x4005b028` | `356b005e005c` | jsr | masque `0x40186238` +0x82 `lfo_pack` | lfo-plus | notes/56 |
 | `0x4005b054` | `4feffff448d7` | jmp | charge utile (image) +0x9aec | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4005b054` | `4feffff448d7` | jmp | masque `0x4016616c` +0x1c `tf_save1` | track-filter | notes/47 |
-| `0x4005b0dc` | `356b005e005c` | jsr | masque `0x40186238` +0x70 `lfo_pack` | lfo-plus | notes/56 |
+| `0x4005b0dc` | `356b005e005c` | jsr | masque `0x40186238` +0x82 `lfo_pack` | lfo-plus | notes/56 |
 | `0x4005b2ae` | `4fefffe448d77c0c` | jmp | masque `0x401835b8` +0x9c `kit_save` | lfo-plus | notes/56 |
 | `0x4005b9c6` | `16b5480317420001` | jsr | masque `0x40189618` +0x68 `lfo_plk_save` | lfo-plus | notes/56 |
-| `0x4005d080` | `4fefffdc48d77c3c` | jmp | masque `0x40185308` +0x94 `kit_load` | lfo-plus | notes/56 |
-| `0x400618e2` | `e18b35430026` | jsr | masque `0x40185308` +0x80 `lfo_init` | lfo-plus | notes/56 |
+| `0x4005d080` | `4fefffdc48d77c3c` | jmp | masque `0x40185308` +0x96 `kit_load` | lfo-plus | notes/56 |
+| `0x400618e2` | `e18b35430026` | jsr | masque `0x40185f48` +0x80 `lfo_init` | lfo-plus | notes/56 |
 | `0x4007240c` | `206f00042028` | jmp | charge utile (image) +0x4828 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40081474` | `b08365000178` | jmp | charge utile (image) +0x10ffc | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4008171e` | `4ef9401b3214` | jmp | masque `0x40185968` +0x0 `pv_note` | sample-preview, sample-preview-st | notes/46 |
@@ -716,10 +716,10 @@ Constantes 32 bits de l'OS (tables de fonctions, données) qui pointent maintena
 | `0x400a7d6c` | `40118628` | charge utile (mémoire), 8 valeurs selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage |
 | `0x400a7dc4` | `40118640` | charge utile (mémoire), 8 valeurs selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) |
 | `0x400a7e16` | `40118610` | charge utile (mémoire), 2 valeurs selon la combinaison | acid, macro, macro-acid, sdvintage-7th, syntakt-vintage |
-| `0x400fd150` | `4000ae20` | masque `0x40184df8` +0x5a | lfo-plus |
-| `0x400fd190` | `4000ba7a` | masque `0x40184df8` +0x6e | lfo-plus |
+| `0x400fd150` | `4000ae20` | masque `0x40185308` +0x5a | lfo-plus |
+| `0x400fd190` | `4000ba7a` | masque `0x40185308` +0x6e | lfo-plus |
 | `0x401005a8` | `4001e814` | masque `0x401625bc` +0x0 | track-filter |
-| `0x401016e4` | `40024e86` | masque `0x40185f48` +0x0 | lfo-plus |
+| `0x401016e4` | `40024e86` | masque `0x40184df8` +0x0 | lfo-plus |
 | `0x401016ec` | `400426fa` | masque `0x401780a8` +0xa2 | lfo-plus |
 | `0x40118614` | `400ab6e8` | charge utile (mémoire) +0x31196 | sdvintage-exact |
 | `0x40118614` | `400ab6e8` | masque `0x4018a788` +0x0 | sdvintage-snare |
