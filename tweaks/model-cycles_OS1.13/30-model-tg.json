@@ -796,6 +796,8 @@
   "slot_hash": "0x401be4a0",
   "pd_mode": "0x401befc8",
   "ld_busy": "0x401beff4",
-  "pad_load_hook": "0x401b3210"
+  "pad_load_hook": "0x401b3210",
+  "set_held": "0x401b235c",
+  "mod_used": "0x401b2360"
  }
 }

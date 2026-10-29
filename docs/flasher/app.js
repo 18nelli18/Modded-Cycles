@@ -27,7 +27,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.0: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "82a79f453151cbaceffdd047a646c96721f3ae3849a28f7821928bfbd4a1cca9",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+tempo-sync+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "cf582fd1e0e1d3e8cbe433a2fb92fe5494fa4bcf69cda20e100e01ba9d337524",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
@@ -43,6 +43,7 @@ const REF_MODS = {
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
+  "tempo-sync": {"w": "0b872dccb978b7be514306223b3c10743c4c690a622a0f82eb86a0564c4125da"},
   "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": {"w": "045d7a3afb79336a765556762de67b49d1b3143dc5ee89559fae1b08529e6afe", "p": "c1f8b90c879c09659c843589daf4213c7e32696f94a80f64679c7a3e90473060"},
 };
 
@@ -589,6 +590,10 @@ const FEAT = {
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Three more LFOs per track: on the LFO page, press LFO again for LFO 2, 3 and 4.",
       desc: "On the LFO page, press [LFO] again: a big 2, then 3, then 4 shows in the left box, and the fifth press closes the page. Each extra LFO has its own speed, multiplier, waveform, destination and depth; fade, start phase and mode stay shared with LFO 1. LFO 2 is saved with the sound and can be p-locked; LFO 3 and 4 are for live play (one setting per track, not saved). Rewritten for this project from DavidCaruso's Model-TG-VA-DR-v1 firmware." },
+    "tempo-sync": { label: "Delay and LFO in note values",
+      short: "Hold SETTINGS and turn DELAY TIME or LFO SPEED right: they follow the tempo in note values (1/16, triplets, dotted, bars).",
+      desc: "Hold SETTINGS and turn DELAY TIME or LFO SPEED (on the LFO page, LFO 2, 3 and 4 too) to the right: the value becomes a note value, the nearest to where it was, and follows the tempo. Turned alone it now steps through 1/128, 1/96, 1/64, 1/48, 1/32, 1/24, 1/16, 1/12, 1/8, 1/6, 3/16, 1/4, 1/3, 3/8, 1/2, 2/3, 3/4 and 1 BAR (the retrig's values: 1/12 is the 1/8 triplet, 3/16 the dotted 1/8), then 4/3, 3/2 and 2 BAR for the delay, and up to 16 BAR for an LFO cycle. A minus sign on an LFO value plays it backwards; the multiplier does not count in this mode. Hold SETTINGS and turn left to go back to the usual values, the nearest one. The note value is saved with the pattern (the sound for an LFO), so a new tempo keeps it.",
+      note: "The delay line holds 8 seconds: below 60 BPM 2 BAR (and below 30 BPM 1 BAR) is cut to 8 s, and the value shows a > after it. P-locks keep the usual values. On an OS without this feature, a pattern saved with a note value plays a delay within a 1/128 note of it; an LFO in a note value plays another speed." },
     "trig-preview": { label: "Trig preview",
       short: "Sequencer stopped or paused: hold a step and press PAGE to hear it, with its note, length and p-locks.",
       desc: "With the sequencer stopped or paused (after a MIDI Stop too), hold a step and press PAGE: the step plays with its own note, length and p-locks. By drumkilla, part of Model-TG, with this project's fix for the paused sequencer." },
@@ -661,6 +666,10 @@ const FEAT = {
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Trois LFO de plus par piste : sur la page LFO, appuyez encore sur LFO pour LFO 2, 3 et 4.",
       desc: "Sur la page LFO, appuyez encore sur [LFO] : un grand 2, puis 3, puis 4 s'affiche dans le cadre de gauche, et le cinquième appui ferme la page. Chaque LFO de plus a sa vitesse, son multiplicateur, sa forme, sa destination et sa profondeur ; le fondu, la phase de départ et le mode restent communs avec LFO 1. LFO 2 est sauvé avec le son et se p-locke ; LFO 3 et 4 servent au live (un réglage par piste, pas sauvé). Réécrit pour ce projet d'après le firmware Model-TG-VA-DR-v1 de DavidCaruso." },
+    "tempo-sync": { label: "Délai et LFO en valeurs de notes",
+      short: "Maintenez SETTINGS et tournez DELAY TIME ou LFO SPEED vers la droite : ils suivent le tempo en valeurs de notes (1/16, triolets, pointées, mesures).",
+      desc: "Maintenez SETTINGS et tournez DELAY TIME ou LFO SPEED (sur la page LFO, LFO 2, 3 et 4 aussi) vers la droite : la valeur devient une valeur de note, la plus proche de celle d'avant, et suit le tempo. Tourné seul, le potard passe alors par 1/128, 1/96, 1/64, 1/48, 1/32, 1/24, 1/16, 1/12, 1/8, 1/6, 3/16, 1/4, 1/3, 3/8, 1/2, 2/3, 3/4 et 1 BAR (les valeurs du retrig : 1/12 est le triolet de croches, 3/16 la croche pointée), puis 4/3, 3/2 et 2 BAR pour le délai, et jusqu'à 16 BAR pour un cycle de LFO. Un signe moins sur une valeur de LFO le fait tourner à l'envers ; le multiplicateur ne compte pas dans ce mode. Maintenez SETTINGS et tournez vers la gauche pour revenir aux valeurs habituelles, à la plus proche. La valeur de note est sauvée avec le pattern (le son pour un LFO) : un nouveau tempo la garde.",
+      note: "La ligne de délai tient 8 secondes : sous 60 BPM, 2 BAR (et sous 30 BPM, 1 BAR) est coupé à 8 s et la valeur affiche un > après elle. Les p-locks gardent les valeurs habituelles. Sur un OS sans cette fonction, un pattern sauvé avec une valeur de note joue un délai juste à 1/128 de note près ; un LFO en valeur de note y joue une autre vitesse." },
     "trig-preview": { label: "Écoute d'un pas",
       short: "Séquenceur à l'arrêt ou en pause : maintenez un pas et appuyez sur PAGE pour l'entendre, avec sa note, sa longueur et ses p-locks.",
       desc: "Séquenceur à l'arrêt ou en pause (après un Stop MIDI aussi), maintenez un pas et appuyez sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks. Par drumkilla, inclus dans Model-TG, avec le correctif de ce projet pour le séquenceur en pause." },

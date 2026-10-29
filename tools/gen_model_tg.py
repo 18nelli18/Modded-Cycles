@@ -146,6 +146,9 @@ ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_e
 # Symboles dont l'écoute des samples a besoin (tools/gen_sample_preview.py, notes/46), dans les deux tweaks : son code
 # appelle ces fonctions et lit ces variables de Model-TG, aux mêmes adresses dans les deux builds.
 PV_SYMBOLS = ("tok_of", "sound_obj", "ensure_loaded", "slot_hash", "pd_mode", "ld_busy", "pad_load_hook")
+# Symboles dont la synchro au tempo du délai et des LFO a besoin (tools/gen_tempo_sync.py, notes/82), dans les deux
+# tweaks : SETTINGS tenu (set_held) et « un accord a servi » (mod_used, qui évite le Config Menu au relâchement).
+TS_SYMBOLS = ("set_held", "mod_used")
 
 
 def export(cycles, repo, patches=()):
@@ -219,14 +222,15 @@ def adapt_st(tw, stock, syms):
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
         "conflicts": others,
-        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS + tuple(n for n in PV_SYMBOLS if n not in ST_SYMBOLS)},
+        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS + tuple(n for n in PV_SYMBOLS + TS_SYMBOLS
+                                                                    if n not in ST_SYMBOLS)},
     })
     return out
 
 
 def adapt(tw, stock, syms):
     """Format et métadonnées de ce dépôt ; vérifie que le tweak redonne l'image exportée."""
-    missing = [n for n in PV_SYMBOLS if n not in syms]
+    missing = [n for n in PV_SYMBOLS + TS_SYMBOLS if n not in syms]
     if missing:
         raise SystemExit(f"!! symboles absents du build de Model-TG : {missing}")
     patched, _ = build.apply_writes(stock, [tw])
@@ -273,7 +277,7 @@ def adapt(tw, stock, syms):
         "conflicts": others,
         "writes": writes,
         "append": tw["append"],
-        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS},
+        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS + TS_SYMBOLS},
     }
 
 
