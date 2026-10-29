@@ -101,5 +101,6 @@
   ],
   "asset_source_commit": "97987303f46fe7c6d1750bc0590ee4b606c5aa1c",
   "filter_deferred_new_sound_low": true,
-  "double_stop_fx_reset": true
+  "double_stop_fx_reset": true,
+  "guide_version": "2026-10-29-guide258"
 }

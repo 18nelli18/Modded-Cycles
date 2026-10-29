@@ -1,25 +1,25 @@
 {
-  "release": "2.51",
-  "stamp": "2026-10-26-lfo-braids-memory-main-251",
+  "release": "2.58",
+  "stamp": "2026-10-29-guide258",
   "cards": [
     {
       "en": [
         "Machines and sound",
-        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN, PUNCH and MIDI Out. Elder is an original synth inspired by Junior by Fors. PUNCH is an FM percussion engine by100demons (MIT)."
+        "Six stock engines plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral by Glycinate, Elder, TINY, Shadow, SPEAK, RETROSYN, PUNCH and MIDI Out. Elder is an original synth inspired by Junior by Fors. PUNCH is an FM percussion engine by100demons (MIT)."
       ],
       "fr": [
         "Machines et son",
-        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, LEGACY, RETROSYN, PUNCH et MIDI Out. Elder est inspiré de Junior de Fors. PUNCH est un moteur de percussions FM de100demons (MIT)."
+        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, RETROSYN, PUNCH et MIDI Out. Elder est inspiré de Junior de Fors. PUNCH est un moteur de percussions FM de100demons (MIT)."
       ]
     },
     {
       "en": [
         "Performance and sequencing",
-        "Arpeggiator, held-note octave 0, ChordKeys and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching and quantized mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists."
+        "Arpeggiator, held-note octave 0 and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching and quantized mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists."
       ],
       "fr": [
         "Performance et séquenceur",
-        "Arpège, octave 0 sur notes tenues, ChordKeys et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute et solo verrouillés ou quantifiés. Sidechain déclenché par les notes et listes Scramble par pattern."
+        "Arpège, octave 0 sur notes tenues et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute et solo verrouillés ou quantifiés. Sidechain déclenché par les notes et listes Scramble par pattern."
       ]
     },
     {
@@ -162,12 +162,12 @@
           "en": [
             "Control All setup",
             "TRACK + TRIG 1–6",
-            "Include or exclude audio tracks from Control All changes."
+            "Use step keys 1-6, not track pads. Toggle which audio tracks follow Control All; the selected track always follows."
           ],
           "fr": [
             "Configuration Control All",
             "TRACK + TRIG 1–6",
-            "Inclut ou exclut les pistes audio des changements collectifs."
+            "Touches de pas1-6, pas les pads de piste. Choisissez les pistes suivant Control All ; la piste selectionnee suit toujours."
           ]
         },
         {
@@ -220,38 +220,14 @@
         },
         {
           "en": [
-            "Arpeggiator / ChordKeys settings",
+            "Arpeggiator settings",
             "FUNC + RETRIG",
-            "Open the settings for the active Arpeggiator or ChordKeys feature. Arpeggiator octave 0 cycles only through held notes."
+            "Open the settings for the active Arpeggiator feature. Arpeggiator octave 0 cycles only through held notes."
           ],
           "fr": [
             "Arpège / réglages ChordKeys",
             "FUNC + RETRIG",
             "Ouvre les réglages actifs. Octave 0 de l’arpège parcourt uniquement les notes tenues."
-          ]
-        },
-        {
-          "en": [
-            "ChordKeys",
-            "Select the Chord machine, then play TRIG 1–16",
-            "Play scale-based chord voicings from the step keys. To leave a ChordKeys track you must use TRACK + Track Pad."
-          ],
-          "fr": [
-            "ChordKeys",
-            "Sur Chord : jouer TRIG 1–16",
-            "Voicings en gamme. TRACK + pad de piste est nécessaire pour quitter une piste ChordKeys."
-          ]
-        },
-        {
-          "en": [
-            "ChordKeys harmony locks",
-            "Grid record: hold a step TRIG and press T1-T6 . Live record: play a chord and use the harmony pads.",
-            "Record a harmony on the step. Press the same harmony pad again on a held step to restore its base harmony."
-          ],
-          "fr": [
-            "Locks d’harmonie ChordKeys",
-            "Grille : maintenir TRIG et appuyer T1–T6 ; live : accord puis pad d’harmonie",
-            "Enregistre une harmonie sur le pas. Rappuyez sur le même pad d’harmonie avec le pas tenu pour retrouver son harmonie de base."
           ]
         },
         {
@@ -264,6 +240,42 @@
             "Scale Lock",
             "FUNC + PAGE > Lock / Scl / Key",
             "Off desactive ; ORGN suit les degres ; BRDS choisit la note de gamme la plus proche (egalite vers le bas). 19 gammes par demi-tons. Sauvegarde globale a l arret."
+          ]
+        },
+        {
+          "en": [
+            "Page Len / Warp",
+            "FUNC + PAGE > Page Len / Warp",
+            "Page Len: 1-16 active steps per page. Warp ON spreads them over the normal page duration; OFF keeps normal step speed. Scope follows PTN or TRK. Warp defaults OFF and saves with the pattern."
+          ],
+          "fr": [
+            "Page Len / Warp",
+            "FUNC + PAGE > Page Len / Warp",
+            "Page Len :1-16 pas actifs par page. Warp ON les repartit sur la duree normale ; OFF conserve la vitesse des pas. Portee PTN ou TRK. Warp est OFF par defaut et se sauvegarde avec le pattern."
+          ]
+        },
+        {
+          "en": [
+            "Shared filter type",
+            "Hold SETTINGS, then MACHINES + turn SWEEP",
+            "HIGH / LOW / BAND / LO/HI. Release the modifiers to commit. New and cleared sounds start LOW, cutoff127, resonance0, including late track initialization. Saved filter choices survive startup. Sample Wizard keeps its internal filter."
+          ],
+          "fr": [
+            "Type de filtre commun",
+            "Maintenir SETTINGS, puis MACHINES + tourner SWEEP",
+            "HIGH / LOW / BAND / LO/HI. Relachez pour valider. Sons neufs/effaces : LOW, coupure127, resonance0, meme si la piste est initialisee tard. Choix sauvegardes conserves au demarrage. Sample Wizard garde son filtre interne."
+          ]
+        },
+        {
+          "en": [
+            "Track filter controls",
+            "MACHINES + SWEEP / CONTOUR",
+            "Cutoff / Resonance on the selected track. Add TRACK to apply across included Control All tracks."
+          ],
+          "fr": [
+            "Filtre par piste",
+            "MACHINES + SWEEP / CONTOUR",
+            "Coupure / resonance de la piste selectionnee. Ajouter TRACK pour les pistes incluses dans Control All."
           ]
         }
       ]
@@ -278,12 +290,12 @@
           "en": [
             "Reverb-slot menu",
             "Hold TRACK + REVERB SIZE",
-            "Top to bottom: GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
+            "Top to bottom: GATED, HALL, ROOM, PS1, REVERB, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel."
           ],
           "fr": [
             "Menu reverb",
             "Maintenir TRACK + REVERB SIZE",
-            "De haut en bas : GATED, HALL, ROOM, PS1, REVERB, VINYL, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
+            "De haut en bas : GATED, HALL, ROOM, PS1, REVERB, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule."
           ]
         },
         {
@@ -408,18 +420,6 @@
         },
         {
           "en": [
-            "Vinyl",
-            "REVERB SEND; SIZE / FUNC + SIZE / FUNC first, then TRACK + SIZE",
-            "Vinyl Send; Crackle / Warble Amount / Warble Speed. Hold FUNC first, then TRACK for Speed. Send 0 is dry; Crackle 0 switches dust off. Bright independent pops/clicks continue through gaps. Track level, pan and mute apply."
-          ],
-          "fr": [
-            "Vinyl",
-            "REVERB SEND ; SIZE / FUNC + SIZE / FUNC puis TRACK + SIZE",
-            "Vinyl Send ; Crackle / Warble Amount / Warble Speed. Tenir FUNC puis TRACK pour Speed. Send 0 sec ; Crackle 0 coupe la poussiere. Pops/clics independants dans les pauses. Volume, pan et mute respectes."
-          ]
-        },
-        {
-          "en": [
             "Standard Delay",
             "DELAY SEND / TIME / FUNC + TIME",
             "Per-track Delay Send / native Time / native Feedback."
@@ -476,6 +476,30 @@
             "Reglages et sauvegarde FX",
             "Sauvegarder le projet",
             "Chaque pattern garde ses types FX, commandes ajoutées et envois supplémentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutées par défaut. Les FX d’un pattern en attente s’appliquent au début de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutées ; locks disponibles sur les envois natifs."
+          ]
+        },
+        {
+          "en": [
+            "Per-track FX routing",
+            "Tap SETTINGS + TRACK > Global > FX > MST / TRK",
+            "MST shares effect selection. TRK makes the existing effect gestures follow the selected track; native heavy reverbs and delays remain shared. Release TRACK to apply an effect; BACK cancels. Effect-menu movement takes two encoder events per selection. Save Project preserves pattern choices."
+          ],
+          "fr": [
+            "Routage FX par piste",
+            "Appui bref SETTINGS + TRACK > Global > FX > MST / TRK",
+            "MST partage les choix. TRK applique les gestes FX a la piste selectionnee ; reverbs/delays lourds natifs restent partages. Relacher TRACK valide ; BACK annule. Deux evenements encodeur par choix. Save Project conserve les choix du pattern."
+          ]
+        },
+        {
+          "en": [
+            "Stop effect tails",
+            "Press STOP twice",
+            "First STOP preserves tails. Double STOP invokes All Sound Off and clears reverb/delay tails, including PS1. This is a repaired stock gesture, not a new shortcut."
+          ],
+          "fr": [
+            "Couper les queues FX",
+            "Appuyer deux fois sur STOP",
+            "Premier STOP : queues conservees. Double STOP : All Sound Off coupe les queues, PS1 compris. Geste stock corrige, pas nouveau raccourci."
           ]
         }
       ]
@@ -629,489 +653,17 @@
             "Choisir PUNCH avant MIDI Out",
             "SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR règle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP règle entre les ratios. CONTOUR et DECAY façonnent le son. Moteur de100demons, MIT. Valeurs de depart : Color 64, KIK, ratio 4:1, Contour 40, Decay 50."
           ]
-        }
-      ]
-    },
-    {
-      "title": {
-        "en": "LEGACY machine",
-        "fr": "Machine LEGACY"
-      },
-      "rows": [
-        {
-          "en": [
-            "LEGACY / selection",
-            "MACHINES: before RETROSYN and MIDI Out",
-            "Dexed MSFA six-operator FM with all 32 algorithms; one voice per track. MIDI Out remains last. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Native locks/CC/LFO mappings; Voice and Velocity are captured on the next trigger."
-          ],
-          "fr": [
-            "LEGACY / selection",
-            "MACHINES : avant RETROSYN et MIDI Out",
-            "FM six operateurs Dexed MSFA, 32 algorithmes ; une voix par piste. MIDI Out toujours dernier. COLOR = Velocity, SHAPE = Voice, SWEEP = Brightness, CONTOUR = EG Time. Locks/CC/LFO natifs ; Voice et Velocity sont pris au prochain trigger."
-          ]
         },
         {
           "en": [
-            "Voice library",
-            "SHAPE: slots 0-31",
-            "32 bundled voices selected with SHAPE. The complete indexed factory voice library follows. Import a cartridge to replace the active bank."
+            "ESTUS advanced controls",
+            "SETTINGS + COLOR / SHAPE / SWEEP / CONTOUR",
+            "Waveform / FM Ratio / Drive / Transient. Works during playback. Hold a step with the same gesture to parameter-lock the advanced setting. Some controls are unused by particular engines. SETTINGS + MACHINES + SWEEP still selects filter type."
           ],
           "fr": [
-            "Banque de voix",
-            "SHAPE : slots 0-31",
-            "32 voix incluses, choisies avec SHAPE. La liste complète des voix d’usine indexées suit. Importez une cartouche pour remplacer la banque active."
-          ]
-        },
-        {
-          "en": [
-            "Velocity / brightness",
-            "COLOR / SWEEP",
-            "Velocity 0-127 controls the cartridge operators response at each trigger; default 100. Brightness 64 preserves the patch. Lower softens modulation; higher adds bite."
-          ],
-          "fr": [
-            "Velocity / brillance",
-            "COLOR / SWEEP",
-            "Velocity 0-127 agit sur les operateurs a chaque trigger ; defaut 100. Brightness 64 conserve la voix. Plus bas adoucit la modulation ; plus haut ajoute du mordant."
-          ]
-        },
-        {
-          "en": [
-            "Envelope time",
-            "CONTOUR / DECAY",
-            "EG Time 64 preserves the patch envelope timing; lower is faster, higher slower. DECAY and gate still set the native amplitude envelope. PITCH and FINETUNE transpose the voice; fixed-frequency operators follow their cartridge settings."
-          ],
-          "fr": [
-            "Duree des enveloppes",
-            "CONTOUR / DECAY",
-            "EG Time 64 conserve les durees de la voix ; plus bas accelere, plus haut ralentit. DECAY et gate conservent l enveloppe d amplitude native. PITCH/FINETUNE transposent ; operateurs a frequence fixe selon la cartouche."
-          ]
-        },
-        {
-          "en": [
-            "Import a DX7 bank",
-            "Flasher > WAV / DX7 bank importers",
-            "Stop playback. Choose a Yamaha 32-voice .syx bank, connect Model:Cycles USB MIDI, choose slot 1-16 and send. Wait for LEGACY BANK SAVED. Reusing a slot replaces it. Importing does not change the active sound."
-          ],
-          "fr": [
-            "Importer une banque DX7",
-            "Flasheur > Importateurs WAV / DX7",
-            "Arretez la lecture. Choisissez une banque Yamaha .syx de 32 voix, connectez le MIDI USB Model:Cycles, choisissez 1-16 et envoyez. Attendez LEGACY BANK SAVED. Le meme emplacement est remplace. Le son actif ne change pas."
-          ]
-        },
-        {
-          "en": [
-            "Load a stored bank",
-            "LEGACY: FUNC + MACHINES; DATA; BACK",
-            "Hold FUNC while pressing MACHINES to open the bank library. Turn DATA to choose; press DATA to load; BACK cancels. Factory restores the included voices. One active 32-voice bank is shared by every LEGACY track. Banks persist after reboot and are separate from Elektron project backups."
-          ],
-          "fr": [
-            "Charger une banque",
-            "LEGACY : FUNC + MACHINES ; DATA ; BACK",
-            "Maintenez FUNC et appuyez MACHINES. Tournez DATA pour choisir, appuyez DATA pour charger ; BACK annule. Factory restaure les voix incluses. Une banque active de 32 voix est partagee par toutes les pistes LEGACY. Banques conservees apres redemarrage, hors sauvegarde de projet Elektron."
-          ]
-        },
-        {
-          "en": [
-            "Credits and load",
-            "Dexed / Google MSFA",
-            "Based on Dexed/MSFA by Google, Pascal Gauthier and contributors. Six-operator patches can use substantial CPU."
-          ],
-          "fr": [
-            "Credits et charge",
-            "Dexed / Google MSFA",
-            "Basé sur Dexed/MSFA par Google, Pascal Gauthier et contributeurs. Les voix six opérateurs peuvent demander beaucoup de calcul."
-          ]
-        }
-      ]
-    },
-    {
-      "title": {
-        "en": "LEGACY voice library",
-        "fr": "Banque de voix LEGACY"
-      },
-      "rows": [
-        {
-          "en": [
-            "0",
-            "Tooropulse",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "0",
-            "Tooropulse",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "1",
-            "Delicho",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "1",
-            "Delicho",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "2",
-            "EinstofPia",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "2",
-            "EinstofPia",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "3",
-            "Overcast P",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "3",
-            "Overcast P",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "4",
-            "STRINGS 1",
-            "ROM1A"
-          ],
-          "fr": [
-            "4",
-            "STRINGS 1",
-            "ROM1A"
-          ]
-        },
-        {
-          "en": [
-            "5",
-            "PWMfuzzy",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "5",
-            "PWMfuzzy",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "6",
-            "Sharpieblo",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "6",
-            "Sharpieblo",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "7",
-            "RoboticSeq",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "7",
-            "RoboticSeq",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "8",
-            "SplitStran",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "8",
-            "SplitStran",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "9",
-            "PIANO   1",
-            "ROM1A"
-          ],
-          "fr": [
-            "9",
-            "PIANO   1",
-            "ROM1A"
-          ]
-        },
-        {
-          "en": [
-            "10",
-            "Heimwave",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "10",
-            "Heimwave",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "11",
-            "CLAV    1",
-            "ROM1A"
-          ],
-          "fr": [
-            "11",
-            "CLAV    1",
-            "ROM1A"
-          ]
-        },
-        {
-          "en": [
-            "12",
-            "Synthotape",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "12",
-            "Synthotape",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "13",
-            "Wavesply",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "13",
-            "Wavesply",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "14",
-            "Poldermood",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "14",
-            "Poldermood",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "15",
-            "FelineSaw",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "15",
-            "FelineSaw",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "16",
-            "Aguirio",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "16",
-            "Aguirio",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "17",
-            "E.PIANO 1",
-            "ROM1A"
-          ],
-          "fr": [
-            "17",
-            "E.PIANO 1",
-            "ROM1A"
-          ]
-        },
-        {
-          "en": [
-            "18",
-            "E.ORGAN 1",
-            "ROM1A"
-          ],
-          "fr": [
-            "18",
-            "E.ORGAN 1",
-            "ROM1A"
-          ]
-        },
-        {
-          "en": [
-            "19",
-            "Pinkcookie",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "19",
-            "Pinkcookie",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "20",
-            "ObieSplash",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "20",
-            "ObieSplash",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "21",
-            "MARIMBA",
-            "ROM1A"
-          ],
-          "fr": [
-            "21",
-            "MARIMBA",
-            "ROM1A"
-          ]
-        },
-        {
-          "en": [
-            "22",
-            "Garudaydre",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "22",
-            "Garudaydre",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "23",
-            "VillageOrg",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "23",
-            "VillageOrg",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "24",
-            "BASS    1",
-            "ROM1A"
-          ],
-          "fr": [
-            "24",
-            "BASS    1",
-            "ROM1A"
-          ]
-        },
-        {
-          "en": [
-            "25",
-            "Litehouze",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "25",
-            "Litehouze",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "26",
-            "NostroSpli",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "26",
-            "NostroSpli",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "27",
-            "Velobleepb",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "27",
-            "Velobleepb",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "28",
-            "DimPacific",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "28",
-            "DimPacific",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "29",
-            "SequenceMe",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "29",
-            "SequenceMe",
-            "Cartouche Legowelt Magic"
-          ]
-        },
-        {
-          "en": [
-            "30",
-            "BRASS   1",
-            "ROM1A"
-          ],
-          "fr": [
-            "30",
-            "BRASS   1",
-            "ROM1A"
-          ]
-        },
-        {
-          "en": [
-            "31",
-            "Swissynth",
-            "Legowelt Magic cart"
-          ],
-          "fr": [
-            "31",
-            "Swissynth",
-            "Cartouche Legowelt Magic"
+            "Commandes ESTUS avancees",
+            "SETTINGS + COLOR / SHAPE / SWEEP / CONTOUR",
+            "Forme d onde / ratio FM / Drive / transitoire. Disponible en lecture. Maintenir un pas avec ce geste pour un lock avance. Certains moteurs ignorent certaines commandes. SETTINGS + MACHINES + SWEEP choisit toujours le filtre."
           ]
         }
       ]
@@ -1125,12 +677,12 @@
         {
           "en": [
             "Select SPEAK",
-            "MACHINES: after Shadow, before LEGACY",
+            "MACHINES: after Shadow, after Shadow",
             "128-word speech engine. Start around Vol+Dist 60, Punch off."
           ],
           "fr": [
             "Choisir SPEAK",
-            "MACHINES : apres Shadow, avant LEGACY",
+            "MACHINES : apres Shadow, apres Shadow",
             "Moteur vocal de 128 mots. Commencez vers Vol+Dist 60, Punch coupé."
           ]
         },
@@ -1206,24 +758,24 @@
           "en": [
             "LFO polarity and mode",
             "LFO menu > Pol. / Mode",
-            "Bi is bipolar; Uni is unipolar and follows signed depth, including square pulses. Mode: FRE, TRG, HLD (Hold), ONE (One-shot), HLF. LFO1/2 polarity is global per track; sound-copy persistence is pending."
+            "Bi = bipolar; Uni = unipolar, following signed depth. Modes FRE, TRG, HLD, ONE and HLF. All enabled LFO banks participate in sound copy, clear and sound Undo."
           ],
           "fr": [
             "Polarite et mode LFO",
             "Menu LFO > Pol. / Mode",
-            "Bi bipolaire ; Uni unipolaire, Depth signee et impulsions carrees. Mode : FRE, TRG, HLD, ONE, HLF. Polarite LFO1/2 globale par piste ; copie en cours."
+            "Bi = bipolaire ; Uni = unipolaire selon la profondeur signee. Modes FRE, TRG, HLD, ONE et HLF. Toutes les banques LFO participent a la copie, a l effacement et a Undo du son."
           ]
         },
         {
           "en": [
             "LFO saving",
             "Stop playback; Save Project for native sound settings",
-            "LFO2 speed/multiplier/waveform/destination/depth use native sounds (8-bit saved speed/depth); fade/phase/mode reset on sound load. LFO3/4 save separately per project/pattern/track while stopped, outside ordinary Elektron sound exports and native parameter locks."
+            "Save Project preserves the added per-pattern/track LFO banks, including the full LFO2 setup. Extra bank data is stored alongside the project; ordinary Elektron sound/SysEx exports do not carry every added LFO setting. Stop playback and allow saving to finish before powering off."
           ],
           "fr": [
             "Sauvegarde LFO",
             "Arreter ; Save Project pour les sons natifs",
-            "LFO2 : vitesse/multiplicateur/forme/destination/profondeur dans le son (vitesse/profondeur 8 bits) ; fade/phase/mode remis aux defauts. LFO3/4 par projet/pattern/piste, sauvegarde separee a l arret, hors SysEx de sons et locks natifs."
+            "Save Project conserve les banques LFO ajoutees par pattern/piste, configuration LFO2 complete comprise. Donnees supplementaires a cote du projet ; les exports son/SysEx Elektron ne portent pas tous les reglages LFO ajoutes. Arreter et attendre la fin de sauvegarde avant extinction."
           ]
         },
         {
@@ -1322,12 +874,12 @@
           "en": [
             "Permanent quick save",
             "Hold FUNC + SETTINGS",
-            "Save the project permanently using the stock quick-save action."
+            "Open the stock permanent pattern-save action. This is an existing stock shortcut; do not confuse it with the short temporary save or a full Save Project."
           ],
           "fr": [
             "Sauvegarde rapide permanente",
             "Maintenir FUNC + SETTINGS",
-            "Sauvegarde permanente du projet par l’action native."
+            "Ouvrir la sauvegarde permanente native du pattern. Raccourci stock ; distinct de la sauvegarde temporaire breve et de Save Project."
           ]
         },
         {
@@ -1340,6 +892,18 @@
             "Copie temporaire / rappel",
             "Bref FUNC+SETTINGS / FUNC+PATTERN",
             "Copie temporaire native / rappel,y compris pendant le verrou retrig."
+          ]
+        },
+        {
+          "en": [
+            "Resample",
+            "On Sample Wizard: SETTINGS + REC",
+            "Open the Resample menu. Select the recording options and save the resulting take from that menu."
+          ],
+          "fr": [
+            "Reechantillonnage",
+            "Sur Sample Wizard : SETTINGS + REC",
+            "Ouvrir le menu Resample. Choisir les options d enregistrement et sauvegarder la prise depuis ce menu."
           ]
         }
       ]
@@ -1409,6 +973,66 @@
             "CONFIG → MIDI → PORTS → OUT/THRU : THR ; puis FUNC + clic DATA",
             "Bascule la sortie MIDI propre du Cycles en conservant le MIDI Thru entrant."
           ]
+        },
+        {
+          "en": [
+            "External keyboard recording",
+            "CONFIG > MIDI: enable note reception; use track receive channel or auto channel",
+            "Track Setup Channel selects OUTPUT, not reception. Incoming notes use the chosen Output. Live record captures notes, velocity and length. Step Recorder: stop, double-press REC, then play and release notes to advance."
+          ],
+          "fr": [
+            "Enregistrer un clavier externe",
+            "CONFIG > MIDI : activer reception ; canal de piste ou canal auto",
+            "Channel dans Track Setup est le canal de SORTIE, pas de reception. Notes entrantes vers Output. Live : notes, velocite et duree. Step Recorder : arret, double REC, jouer puis relacher pour avancer."
+          ]
+        },
+        {
+          "en": [
+            "CC recording details",
+            "SETTINGS + one of nine CC knobs; hold TRIG + assigned knob",
+            "Assignments: OFF or CC0-127; values0-127. Empty steps become lock-only. Each lock retains CC number and value. Chance/Swing keep stock controls; LFO Speed controls the open MIDI LFO."
+          ],
+          "fr": [
+            "Details enregistrement CC",
+            "SETTINGS + un des neuf potards CC ; TRIG tenu + potard assigne",
+            "OFF ou CC0-127 ; valeurs0-127. Pas vides convertis en locks seuls. Numero et valeur conserves. Chance/Swing restent natifs ; LFO Speed regle le LFO MIDI ouvert."
+          ]
+        },
+        {
+          "en": [
+            "MIDI LFO destination editing",
+            "LFO > DATA to choose; click to edit; BACK to leave",
+            "Destination is OFF or CC0-127. Editing destination suspends that LFO output until you leave the field. Other assigned knobs still send CC."
+          ],
+          "fr": [
+            "Destination du LFO MIDI",
+            "LFO > DATA pour choisir ; clic pour modifier ; BACK pour sortir",
+            "Destination OFF ou CC0-127. Edition de destination suspend la sortie de ce LFO jusqu a la sortie du champ. Autres potards CC actifs."
+          ]
+        },
+        {
+          "en": [
+            "Keyboard arpeggiator",
+            "FUNC + RETRIG > Arp; enable A. On or hold RETRIG",
+            "Play incoming MIDI notes through the chosen arpeggiator mode."
+          ],
+          "fr": [
+            "Arpege clavier",
+            "FUNC + RETRIG > Arp ; activer A. On ou maintenir RETRIG",
+            "Jouer les notes MIDI entrantes via le mode d arpege choisi."
+          ]
+        },
+        {
+          "en": [
+            "Returning to audio",
+            "Choose an audio machine in MACHINES",
+            "Held/sequenced MIDI notes are released on their original channel and port. Normal audio-machine controls resume."
+          ],
+          "fr": [
+            "Retour audio",
+            "Choisir une machine audio dans MACHINES",
+            "Notes MIDI tenues/sequencees fermees sur leur canal et port initial. Commandes de la machine audio disponibles."
+          ]
         }
       ]
     },
@@ -1422,7 +1046,7 @@
           "en": [
             "Global / Track",
             "DATA enters; BACK returns",
-            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root."
+            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX. Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root."
           ],
           "fr": [
             "Global / Track",
@@ -1446,7 +1070,7 @@
           "en": [
             "Pad",
             "Stk / SIL Default: Stk",
-            "Stk keeps the original track-pad behavior: a pad selects and plays its track. Silent selects the track without sounding it; hold TRACK and press a track pad to select and play. ChordKeys tracks still require TRACK + track pad to leave the track."
+            "Stk keeps the original track-pad behavior: a pad selects and plays its track. Silent selects the track without sounding it; hold TRACK and press a track pad to select and play."
           ],
           "fr": [
             "Pad",
@@ -1633,6 +1257,18 @@
             "Global > LFOs",
             "1/2/3/4 par piste audio ; 2 par defaut. Sauvegarde globale a l arret. LFO inactifs arretes, reglages conserves."
           ]
+        },
+        {
+          "en": [
+            "FX mode",
+            "Global > FX > MST / TRK",
+            "MST uses shared effect selection; TRK follows the selected track for light FX choices. Heavy native reverbs and delays stay shared. Use the same TRACK + SIZE/TIME gestures in either mode."
+          ],
+          "fr": [
+            "Mode FX",
+            "Global > FX > MST / TRK",
+            "MST utilise les choix partages ; TRK suit la piste selectionnee pour les FX legers. Reverbs/delays lourds natifs restent partages. Memes gestes TRACK + SIZE/TIME."
+          ]
         }
       ]
     },
@@ -1652,6 +1288,62 @@
             "Forme d onde et volume",
             "Ecran principal Sample Wizard",
             "Nom en haut ; grande forme d onde ; piste, duree et rectangles de volume en bas. Volume de la piste, pas un vumetre audio. Navigateur, Pitch/Fine et saisie des notes gardent leurs commandes. Marqueur Start/Position si applicable."
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
+        "en": "Machine Optional extras only",
+        "fr": "Extras Machine Optional uniquement"
+      },
+      "rows": [
+        {
+          "en": [
+            "Edition availability",
+            "Main Full / Lite versus Machine Optional",
+            "Main excludes Legacy, ChordKeys and Vinyl. The controls below require Machine Optional with the relevant machine enabled; they are not extra main-edition features."
+          ],
+          "fr": [
+            "Disponibilite",
+            "Full / Lite principal et Machine Optional",
+            "Le principal exclut Legacy, ChordKeys et Vinyl. Commandes suivantes reservees a Machine Optional avec la machine activee."
+          ]
+        },
+        {
+          "en": [
+            "LEGACY bank library",
+            "LEGACY: FUNC + MACHINES",
+            "Turn DATA to choose a stored DX7 bank; click to load, BACK to cancel. One active32-voice bank is shared by all Legacy tracks. Import banks using the optional flasher bank importer."
+          ],
+          "fr": [
+            "Banques LEGACY",
+            "LEGACY : FUNC + MACHINES",
+            "DATA choisit une banque DX7 ; clic charge, BACK annule. Une banque32voix partagee par toutes les pistes Legacy. Importer via le flasheur Optional."
+          ]
+        },
+        {
+          "en": [
+            "ChordKeys",
+            "CHORD: FUNC + RETRIG > Keys ON",
+            "Outside grid record, TRIG1-16 play scale-based chord voicings. TRACK + track pad changes track. Grid record: hold TRIG + T1-T6 to lock harmony; repeat the same pad to restore base harmony."
+          ],
+          "fr": [
+            "ChordKeys",
+            "CHORD : FUNC + RETRIG > Keys ON",
+            "Hors grid record, TRIG1-16 jouent les accords de la gamme. TRACK + pad change de piste. Grid : TRIG tenu + T1-T6 verrouille l harmonie ; meme pad a nouveau restaure l harmonie de base."
+          ]
+        },
+        {
+          "en": [
+            "Vinyl",
+            "SIZE / FUNC + SIZE / hold FUNC first, then TRACK + SIZE",
+            "Crackle / Warble Amount / Warble Speed. REVERB SEND sets Vinyl amount. Vinyl is absent from main Full/Lite."
+          ],
+          "fr": [
+            "Vinyl",
+            "SIZE / FUNC + SIZE / FUNC avant TRACK + SIZE",
+            "Crackle / intensite Warble / vitesse Warble. REVERB SEND dose Vinyl. Absent du principal Full/Lite."
           ]
         }
       ]
