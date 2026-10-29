@@ -7,7 +7,7 @@ let mask=O.ALL,revision=0,os=null,context=null,current=null,pending=null;
 window.MCFirmwareImages={...base};window.MCFixedMainImageMeta=base.full;
 window.MCFixedMainImageReady=Promise.resolve();window.MCOptionalBusy=false;
 async function load(meta){
- const urls=[new URL(meta.file,document.baseURI).href,'https://raw.githubusercontent.com/AveyCole/Modded-Cycles/0d9177469d937f9362165d7dfd97a16f360cc26e/docs/flasher/'+meta.file];let error;
+ const urls=[new URL(meta.file,document.baseURI).href,'https://raw.githubusercontent.com/AveyCole/Supermodel/a887e15ff60b1e3c4be453af4155d6319c852756/docs/flasher/'+meta.file];let error;
  for(const url of urls)try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error('Could not load verified base');const raw=new Uint8Array(await r.arrayBuffer());if(B.hex(B.sha256(raw))!==meta.syxSha256)throw Error('Base firmware checksum mismatch');window.MCFlasher.verify(raw);return raw}catch(e){error=e}throw error;
 }
 let sources;function sourceFiles(){if(!sources)sources=Promise.all([load(base.full),load(base.lite)]).catch(e=>{sources=null;throw e});return sources}
@@ -19,17 +19,17 @@ function schedule(){
  const app=window.MCFlasherApp;if(!app||app.state.sending)return;
  const id=++revision,choice=mask,raw=app.state.os?.raw;
  window.MCOptionalFailed=null;
- if(!raw||!app.state.os.stock){status('Load official Cycles OS 1.13 below to build this selection.','Chargez ci-dessous l’OS officiel Cycles 1.13 pour construire ce choix.');return}
+ if(!raw||!app.state.os.stock){status('Load official Cycles OS 1.13 below to build this selection.','Chargez ci-dessous lâ€™OS officiel Cycles 1.13 pour construire ce choix.');return}
  window.MCOptionalBusy=true;app.state.fw=null;app.state.buildKey=null;app.state.building=true;app.render();
- status('Preparing your machine selection…','Préparation de votre sélection…');
+ status('Preparing your machine selectionâ€¦','PrÃ©paration de votre sÃ©lectionâ€¦');
  pending=(async()=>{await new Promise(r=>setTimeout(r,30));const [full,lite]=await sourceFiles();if(id!==revision)return;
   if(!context)context=O.prepare(full,lite,raw,window.MCOptionalRecipe);
   const result=context.build(choice);if(id!==revision)return;
   current=result;const edition=result.edition,hex=choice.toString(16).padStart(5,'0');
-  window.MCFirmwareImages={...base,[edition]:{...base[edition],syxSha256:result.syxSha256,mainOsSha:result.mainOsSha,requiresSyntakt:choice!==0,productName:choice===0?'Supermodel Lite':'Supermodel Machine Optional',downloadName:choice===0?'Supermodel_Lite_2.56.syx':`Supermodel_Optional_2.56_${hex}.syx`}};
+  window.MCFirmwareImages={...base,[edition]:{...base[edition],syxSha256:result.syxSha256,mainOsSha:result.mainOsSha,requiresSyntakt:choice!==0,productName:choice===0?'Supermodel Lite':'Supermodel Machine Optional',downloadName:choice===0?`Supermodel_Lite_${base.lite.release}.syx`:`Supermodel_Optional_${base.full.release}_${hex}.syx`}};
   window.MCOptionalBusy=false;pending=null;app.state.cache={};app.setEdition(edition);
   const count=machines.filter(([id])=>choice&(1<<(id-6))).length;
-  status(`${count} added machines · firmware ready`,`${count} machines ajoutées · firmware prêt`);
+  status(`${count} added machines Â· firmware ready`,`${count} machines ajoutÃ©es Â· firmware prÃªt`);
  })().catch(e=>{if(id!==revision)return;pending=null;window.MCOptionalBusy=false;window.MCOptionalFailed=e.message;app.state.fw=null;app.state.building=false;app.state.fwError=e.message;status(e.message,e.message);app.render()});
 }
 window.MCOptionalSync=st=>{if(st.os?.raw!==os){os=st.os?.raw;context=null;schedule()}};

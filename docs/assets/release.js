@@ -1,38 +1,52 @@
 window.MC_RELEASES=[
   {
-  "version": "2.56",
-  "date": "2026-10-28",
-  "changes": [
-    {
-      "en": "Full fixes the remaining retired-effect entry in the stacked FX menu and skips unnecessary processing when no track effect is active. Menu and startup checks pass in emulation; physical-device testing remains pending.",
-      "fr": "Full corrige l’entrée d’effet retiré encore visible dans le menu FX superposé et évite les calculs inutiles lorsqu’aucun effet par piste n’est actif. Les contrôles des menus et du démarrage passent en émulation ; les essais sur machine restent à effectuer."
-    },
-    {
-      "en": "Full and Lite add distinct Punch attacks, per-track FX and LFO/filter performance improvements. Full offers 23 sound machines plus MIDI Out; Lite keeps the six stock machines.",
-      "fr": "Full et Lite ajoutent des attaques Punch propres à chaque machine, des effets par piste et des optimisations LFO/filtre. Full propose 23 machines sonores plus MIDI Out ; Lite conserve les six machines d’origine."
-    },
-    {
-      "en": "Emulator checks cover default Punch audio, unchanged Punch-off audio, LFO/filter state, USB duplex, startup and recovery. The reported held-step Punch/Gate lock issue remains unreproduced; rhythmic Chord/filter clicking still needs device confirmation. No new hardware verification is claimed.",
-      "fr": "Les contrôles en émulation couvrent les sons Punch par défaut, le son inchangé avec Punch désactivé, les LFO/filtres, l’USB duplex, le démarrage et la récupération. Le problème de locks Punch/Gate sur pas maintenus reste non reproduit ; les clics rythmiques Chord/filtre demandent une confirmation sur machine. Aucun nouveau test matériel n’est annoncé."
-    },
-    {
-      "en": "Choose Supermodel Full or Supermodel Lite in the main flasher. Full now serves the approved v215 with complete LFO pattern storage, playable LFO menus, TINY sustain/PUNCH and clipboard fixes. Lite now serves the approved v216, adding the LFO pattern storage, playable LFO menus and clipboard fixes to its six stock machines.",
-      "fr": "Choisissez Supermodel Full ou Supermodel Lite dans le flasheur principal. Full sert le v215 approuvé : réglages LFO par pattern, commandes musicales dans les menus LFO, sustain/PUNCH TINY et correction du presse-papiers. Lite sert maintenant le v216 approuvé : réglages LFO par pattern, commandes musicales dans les menus LFO et correction du presse-papiers, avec ses six machines d’origine."
-    },
-    {
-      "en": "Lite includes Kick, Snare, Metal, Perc, Tone and Chord with all shared Supermodel quality-of-life features, including Sequence Genie, Scramble, four LFOs, filters, FX, sidechain and PTN/TRK Page Len/Warp. No Syntakt OS file is needed for Lite.",
-      "fr": "Lite inclut Kick, Snare, Metal, Perc, Tone et Chord avec toutes les fonctions communes Supermodel : Sequence Genie, Scramble, quatre LFO, filtres, effets, sidechain et Page Len/Warp en PTN/TRK. Aucun fichier OS Syntakt requis pour Lite."
-    },
-    {
-      "en": "New and cleared audio sounds start with a fully open LOW filter and zero resonance. Existing loaded sounds keep their settings. Native Undo restores the previous filter type and cutoff. Both startup screens display release 2.56.",
-      "fr": "Les sons audio neufs et effacés commencent avec un filtre LOW ouvert et une résonance nulle. Les sons chargés conservent leurs réglages. Undo natif restaure le type et la coupure précédents. Les deux écrans de démarrage affichent la version2.56."
-    },
-    {
-      "en": "Lite defers added preference writes until controls have been idle for a second. Changes stay live in RAM and save afterward. Every delivered image has separate immutable URLs, checksum verification and native Model:Samples layout/capacity checks.",
-      "fr": "Lite diffère les sauvegardes des préférences ajoutées après une seconde sans geste. Les changements restent actifs en RAM puis se sauvegardent. Chaque image dispose d’URL immuables, d’une vérification SHA et de contrôles natifs de layout/capacité Model:Samples."
-    }
-  ]
-},
+    "version": "2.57",
+    "date": "2026-10-29",
+    "changes": [
+      {
+        "en": "Release 2.57: startup screens and flasher versions now match. Full retains the inactive track-FX bypass and the corrected effect selector in every menu view. Lite keeps its existing audio behavior with an updated startup number.",
+        "fr": "Version 2.57 : les ecrans de demarrage et les flasheurs affichent le meme numero. Full conserve le bypass des effets par piste inactifs et le selecteur corrige dans chaque vue. Lite conserve son comportement audio avec un numero de demarrage actualise."
+      },
+      {
+        "en": "Machine Optional gains per-track FX, pattern/project FX persistence, the later LFO/filter and audio-path fixes, and the inactive-FX optimization while retaining its extra machine choices, Legacy, ChordKeys and Vinyl. Validation is by emulation; hardware timing and every mixed selection are not verified.",
+        "fr": "Machine Optional ajoute les effets par piste, leur memorisation par pattern/projet, les corrections LFO/filtre et audio recentes et le bypass des effets inactifs, tout en conservant ses choix supplementaires, Legacy, ChordKeys et Vinyl. Validation en emulation ; le timing materiel et tous les choix mixtes ne sont pas verifies."
+      }
+    ]
+  },
+  {
+    "version": "2.56",
+    "date": "2026-10-28",
+    "changes": [
+      {
+        "en": "Full fixes the remaining retired-effect entry in the stacked FX menu and skips unnecessary processing when no track effect is active. Menu and startup checks pass in emulation; physical-device testing remains pending.",
+        "fr": "Full corrige l’entrée d’effet retiré encore visible dans le menu FX superposé et évite les calculs inutiles lorsqu’aucun effet par piste n’est actif. Les contrôles des menus et du démarrage passent en émulation ; les essais sur machine restent à effectuer."
+      },
+      {
+        "en": "Full and Lite add distinct Punch attacks, per-track FX and LFO/filter performance improvements. Full offers 23 sound machines plus MIDI Out; Lite keeps the six stock machines.",
+        "fr": "Full et Lite ajoutent des attaques Punch propres à chaque machine, des effets par piste et des optimisations LFO/filtre. Full propose 23 machines sonores plus MIDI Out ; Lite conserve les six machines d’origine."
+      },
+      {
+        "en": "Emulator checks cover default Punch audio, unchanged Punch-off audio, LFO/filter state, USB duplex, startup and recovery. The reported held-step Punch/Gate lock issue remains unreproduced; rhythmic Chord/filter clicking still needs device confirmation. No new hardware verification is claimed.",
+        "fr": "Les contrôles en émulation couvrent les sons Punch par défaut, le son inchangé avec Punch désactivé, les LFO/filtres, l’USB duplex, le démarrage et la récupération. Le problème de locks Punch/Gate sur pas maintenus reste non reproduit ; les clics rythmiques Chord/filtre demandent une confirmation sur machine. Aucun nouveau test matériel n’est annoncé."
+      },
+      {
+        "en": "Choose Supermodel Full or Supermodel Lite in the main flasher. Full now serves the approved v215 with complete LFO pattern storage, playable LFO menus, TINY sustain/PUNCH and clipboard fixes. Lite now serves the approved v216, adding the LFO pattern storage, playable LFO menus and clipboard fixes to its six stock machines.",
+        "fr": "Choisissez Supermodel Full ou Supermodel Lite dans le flasheur principal. Full sert le v215 approuvé : réglages LFO par pattern, commandes musicales dans les menus LFO, sustain/PUNCH TINY et correction du presse-papiers. Lite sert maintenant le v216 approuvé : réglages LFO par pattern, commandes musicales dans les menus LFO et correction du presse-papiers, avec ses six machines d’origine."
+      },
+      {
+        "en": "Lite includes Kick, Snare, Metal, Perc, Tone and Chord with all shared Supermodel quality-of-life features, including Sequence Genie, Scramble, four LFOs, filters, FX, sidechain and PTN/TRK Page Len/Warp. No Syntakt OS file is needed for Lite.",
+        "fr": "Lite inclut Kick, Snare, Metal, Perc, Tone et Chord avec toutes les fonctions communes Supermodel : Sequence Genie, Scramble, quatre LFO, filtres, effets, sidechain et Page Len/Warp en PTN/TRK. Aucun fichier OS Syntakt requis pour Lite."
+      },
+      {
+        "en": "New and cleared audio sounds start with a fully open LOW filter and zero resonance. Existing loaded sounds keep their settings. Native Undo restores the previous filter type and cutoff. Both startup screens display release 2.56.",
+        "fr": "Les sons audio neufs et effacés commencent avec un filtre LOW ouvert et une résonance nulle. Les sons chargés conservent leurs réglages. Undo natif restaure le type et la coupure précédents. Les deux écrans de démarrage affichent la version2.56."
+      },
+      {
+        "en": "Lite defers added preference writes until controls have been idle for a second. Changes stay live in RAM and save afterward. Every delivered image has separate immutable URLs, checksum verification and native Model:Samples layout/capacity checks.",
+        "fr": "Lite diffère les sauvegardes des préférences ajoutées après une seconde sans geste. Les changements restent actifs en RAM puis se sauvegardent. Chaque image dispose d’URL immuables, d’une vérification SHA et de contrôles natifs de layout/capacité Model:Samples."
+      }
+    ]
+  },
   {
     "version": "2.55",
     "date": "2026-10-27",

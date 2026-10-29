@@ -198,5 +198,13 @@
         "hardware_tested": false
       }
     }
+  },
+  "main_samples_native_boot_signature_and_python_js_parity": {
+    "full": true,
+    "lite": true
+  },
+  "native_startup_rendered_frames": {
+    "full": 90,
+    "lite": 90
   }
 }

@@ -1,5 +1,19 @@
 window.MC_RELEASES=[
   {
+    "version": "2.57",
+    "date": "2026-10-29",
+    "changes": [
+      {
+        "en": "Release 2.57: startup screens and flasher versions now match. Full retains the inactive track-FX bypass and the corrected effect selector in every menu view. Lite keeps its existing audio behavior with an updated startup number.",
+        "fr": "Version 2.57 : les ecrans de demarrage et les flasheurs affichent le meme numero. Full conserve le bypass des effets par piste inactifs et le selecteur corrige dans chaque vue. Lite conserve son comportement audio avec un numero de demarrage actualise."
+      },
+      {
+        "en": "Machine Optional gains per-track FX, pattern/project FX persistence, the later LFO/filter and audio-path fixes, and the inactive-FX optimization while retaining its extra machine choices, Legacy, ChordKeys and Vinyl. Validation is by emulation; hardware timing and every mixed selection are not verified.",
+        "fr": "Machine Optional ajoute les effets par piste, leur memorisation par pattern/projet, les corrections LFO/filtre et audio recentes et le bypass des effets inactifs, tout en conservant ses choix supplementaires, Legacy, ChordKeys et Vinyl. Validation en emulation ; le timing materiel et tous les choix mixtes ne sont pas verifies."
+      }
+    ]
+  },
+  {
     "version": "2.56",
     "date": "2026-10-27",
     "changes": [

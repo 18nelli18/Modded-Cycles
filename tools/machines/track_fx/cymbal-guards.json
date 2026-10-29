@@ -1,0 +1,27 @@
+{
+  "cymbal": {
+    "address": 1182054816,
+    "size": 840,
+    "sha256": "4cfa43bdb111d49d5facab5dcd286e97223a3bc7ec90c8551d5d87ca56cf3914"
+  },
+  "svf": {
+    "address": 1182051928,
+    "size": 384,
+    "sha256": "d98c9702e67fe5b16f38601a2957356f2a9e32095a12e3ef7e7e000da18bf168"
+  },
+  "increments": {
+    "address": 1182105376,
+    "size": 388,
+    "sha256": "8266dd7ac938ed100d79aca35d6b53af6d33f515ff6365967f174c847aff7c31"
+  },
+  "damp": {
+    "address": 1182112162,
+    "size": 514,
+    "sha256": "6451113bf5cc9f349bcbf92ea01f1ae2345619d24d2f1bfcc802a31544c3002d"
+  },
+  "cutoff": {
+    "address": 1182112676,
+    "size": 514,
+    "sha256": "66fb331bdc5379e008c16aaba9eeea6efafd4f335fb7e3d59e429d52557d60dc"
+  }
+}

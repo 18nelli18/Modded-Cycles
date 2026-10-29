@@ -17,7 +17,7 @@ def flasher_release(root):
  _,version,path=max(found)
  return version,path
 
-def apply(root,build,prefix,patch,version,lite=False):
+def apply(root,build,prefix,patch,version,lite=False,previous=None):
  from gen_governor_recovery_test import BASE
  import gen_boot_supermodel as G
  assert re.fullmatch(r'v?\d+(?:\.\d+)*',version),version
@@ -43,6 +43,11 @@ def apply(root,build,prefix,patch,version,lite=False):
  subprocess.run([cross+'as.exe','-march=cfv4e','-I',str(build),str(root/'tools/machines/boot_supermodel/boot_supermodel.S'),'-o',str(obj)],check=True)
  subprocess.run([cross+'ld.exe','-T',str(root/'tools/machines/boot_anim/boot_anim.ld'),'--no-warn-rwx-segments','-o',str(elf),str(obj)],check=True)
  subprocess.run([cross+'objcopy.exe','-O','binary','-j','.anim',str(elf),str(binary)],check=True);code=binary.read_bytes();assert len(code)<=G.BODY_END-G.BODY,(len(code),G.BODY_END-G.BODY)
- profile=json.loads((root/'build/volume-pan-toggle/volume-pan-toggle-test.json').read_text());previous=next(t for t in profile['composedTweaks'] if t['id']=='supermodel-startup')['writes'][0];old=bytes.fromhex(previous['new']);assert previous['off']==G.BODY-BASE and prefix[G.BODY-BASE:G.BODY-BASE+len(old)]==old
+ if previous is None:
+  profile=json.loads((root/'build/volume-pan-toggle/volume-pan-toggle-test.json').read_text());entry=next(t for t in profile['composedTweaks'] if t['id']=='supermodel-startup')['writes'][0];old=bytes.fromhex(entry['new']);assert entry['off']==G.BODY-BASE and prefix[G.BODY-BASE:G.BODY-BASE+len(old)]==old
+ else:
+  assert previous['code']==G.BODY
+  old=bytes(prefix[G.BODY-BASE:G.BODY-BASE+previous['code_bytes']])
+  assert hashlib.sha256(old).hexdigest()==previous['sha256'],'Ancien titre non conforme aux metadonnees'
  patch(G.BODY,bytes(prefix[G.BODY-BASE:G.BODY-BASE+len(code)]),code,prefix)
  return dict(name='Supermodel Lite' if lite else 'Supermodel',version=version,edition=edition,code=G.BODY,code_bytes=len(code),sha256=hashlib.sha256(code).hexdigest(),native_os_protocol_version_unchanged=True,hardware_tested=False)

@@ -1,50 +1,68 @@
-/* 2026-10-28-main256-fx-menu-fix : images verifiees par edition, caches et sources independants. */
+/* 2026-10-29-main257-trackfx : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
   "full": {
     "id": "full",
     "productName": "Supermodel",
-    "release": "2.56",
-    "file": "Supermodel_2.56_63c6b399e0e4.syx",
-    "syxSha256": "63c6b399e0e4fffd678042e7ed98e7288fecad0642f0060dd52dc5cee538399d",
-    "mainOsSha": "8f429d40da9d326a26f8d12724634cbb17717026d4939d1470280fd3b932d2ec",
+    "release": "2.57",
+    "file": "Supermodel_2.57_c7f9ca576591.syx",
+    "syxSha256": "c7f9ca5765910ed6f3276664f71540c93d307572ca018318596ff6f2155fcc9b",
+    "mainOsSha": "0eedf8953cb2ccdbafac05f43b13dfe48ecd67ac12f0f7241f94ee3c8ef3cd32",
     "requiresSyntakt": true,
     "source_build": 215,
     "new_clear_filter_defaults": true,
     "ui_idle_saves": true,
     "hardware_verified": false,
+    "status": "experimental",
+    "per_track_fx": true,
+    "inactive_fx_zero_bypass": true,
+    "startup_title": {
+      "name": "Supermodel",
+      "version": "2.57",
+      "edition": "2.57",
+      "code": 1074084460,
+      "code_bytes": 794,
+      "sha256": "c459a0d47c223131da9633287057930d6bee96cfedc944b81eb57c0821cf08b5",
+      "native_os_protocol_version_unchanged": true,
+      "hardware_tested": false
+    },
     "legacy_removed": true,
     "vinyl_removed": true,
     "chordkeys_removed": true,
     "unique_machine_punch": true,
-    "unassigned_secondary_lfos_pause": true,
-    "visible_machine_count": 24,
-    "publication_user_report": "okay go ahead and push to main",
-    "status": "experimental",
-    "inactive_fx_zero_bypass": true,
-    "fx_menu_stack_helper_fixed": true
+    "unassigned_secondary_lfos_pause": true
   },
   "lite": {
     "id": "lite",
     "productName": "Supermodel Lite",
-    "release": "2.56",
-    "file": "Supermodel_Lite_2.56_b5220ffdcf54.syx",
-    "syxSha256": "b5220ffdcf541a9109c389de4d6a9a38eba4539f173ee2ba960603221926f563",
-    "mainOsSha": "d38cc90b677d57865d20dc64310cb1c0803fc66f0aa4a46fa4b52aea031e41e3",
+    "release": "2.57",
+    "file": "Supermodel_Lite_2.57_4bc535b78454.syx",
+    "syxSha256": "4bc535b78454601abd66352a9e4e78b52ae637eb64aec786ce9159ac07d02488",
+    "mainOsSha": "f587c56075c182b8135808a91ddbe1dc9d9fa40e4d10b8237e04d92b3e8a5299",
     "requiresSyntakt": false,
     "source_build": 216,
     "new_clear_filter_defaults": true,
     "ui_idle_saves": true,
     "hardware_verified": false,
+    "status": "experimental",
+    "per_track_fx": true,
+    "inactive_fx_zero_bypass": false,
+    "startup_title": {
+      "name": "Supermodel Lite",
+      "version": "2.57",
+      "edition": "LITE 2.57",
+      "code": 1074084460,
+      "code_bytes": 856,
+      "sha256": "3f1819eba2df10378bf7e48e63ca0c6584bba362157f0584c476ac424ee8a190",
+      "native_os_protocol_version_unchanged": true,
+      "hardware_tested": false
+    },
     "legacy_removed": true,
     "vinyl_removed": true,
     "chordkeys_removed": true,
     "unique_machine_punch": true,
-    "unassigned_secondary_lfos_pause": true,
-    "visible_machine_count": 6,
-    "publication_user_report": "Push these to main and keep the machine optional flasher the same.",
-    "status": "experimental"
+    "unassigned_secondary_lfos_pause": true
   }
 };
  for(const meta of Object.values(catalogue))Object.freeze(meta);
@@ -52,7 +70,7 @@
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Supermodel/58cef0fade692b623e96d8e0c94888acce31bbbf/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Supermodel/a887e15ff60b1e3c4be453af4155d6319c852756/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});

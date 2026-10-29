@@ -193,3 +193,6 @@ Main2.52 serves the exact user-supplied v186 (`5ec78631f29a4ffcaedac2d940eb6c7d8
 
 
 Main2.53 serves exact user-confirmed v189: clearing all four audio LFOs with a track sound/full pattern, correct LFO1 destination names, and ESTUS SETTINGS controls during playback. [Release notes](docs/flasher/release-notes-2.53.html).
+
+
+Release 2.57 (2026-10-29): startup screens and flasher versions advance together. Full retains the inactive-FX bypass and repaired effect menu. Machine Optional adds the current per-track FX and audio fixes while retaining Legacy, ChordKeys, Vinyl and all nineteen machine choices. [Release notes](docs/flasher/release-notes-2.57.html) and [Optional validation](docs/flasher-optional/validation257.json) describe the emulator checks and remaining hardware limits.

@@ -29,8 +29,8 @@ function safePack(packed,maskPos=-100){
 function unpack(raw){const transport=B.unwrap(raw),container=B.parseContainer(transport.stream);return {transport,container,main:B.aplibDepack(section(container,3),{bootLayout:true}).data}}
 function validateMask(mask){if(!Number.isInteger(mask)||mask<0||mask>ALL)throw Error('Invalid machine selection')}
 function prepare(fullRaw,liteRaw,cyclesRaw,recipe){
- if(hash(fullRaw)!==recipe.source_sha256)throw Error('Full v215 checksum mismatch');
- if(hash(liteRaw)!=='0a6e67c552c3a799cb4090357ebe8018503efdebaae9ad3aaa3e68b5f3bd4e0e')throw Error('Lite v216 checksum mismatch');
+ if(hash(fullRaw)!==recipe.source_sha256)throw Error('Optional Full base checksum mismatch');
+ if(hash(liteRaw)!==recipe.lite_sha256)throw Error('Optional Lite base checksum mismatch');
  if(hash(cyclesRaw)!=='44fe586269631a0ca7da25a3383fc6733c314809505fc3cc52f1e0ed9800640c')throw Error('Official Cycles OS 1.13 required');
  const full=unpack(fullRaw),lite=unpack(liteRaw),stock=unpack(cyclesRaw),end=be(full.main,0x40195ad0-BASE)-BASE;
  const prefix=full.main.slice(0,START),rtDecoded=B.aplibDepack(stored(full.main.subarray(START,end))),rt=rtDecoded.data.slice(),tail=full.main.slice(end);

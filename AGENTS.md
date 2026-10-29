@@ -411,3 +411,17 @@ keyboard, crackle effect and six-operator machine, and retaining bank import onl
 in Machine Optional. This authorizes editing the protected description; its new
 SHA256 is `0427d0a2b828f098b818ebce1507e9ad5076f21e24bd8fcb078602c11fbd00a4`. Firmware bytes remain exact. Optional converter and old
 guide/release dependencies are isolated before cleaning shared main pages.
+
+## Release numbers and Optional updates (2026-10-29)
+
+The user requires the startup-screen release number and flasher release number
+to advance together on every release push. Do not reuse 2.56 for new firmware.
+Verify the compiled title against its metadata and verify each delivered edition
+matches the flasher release before pushing. Internal asset-staging commits belong
+to the same release and are pushed together with its final loader update.
+
+The user authorizes updating Machine Optional with per-track FX and subsequent
+fixes and explicitly requests keeping its extra Legacy/ChordKeys choices.
+Preserve all nineteen optional machine choices and Optional's extra features;
+do not inherit the main edition's feature removals. Mark new validation accurately
+and do not carry old hardware or exhaustive-combination results onto new binaries.

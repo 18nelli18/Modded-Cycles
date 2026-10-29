@@ -1,0 +1,210 @@
+[
+  {
+    "at": "0x400075f0",
+    "native": "4eb940076be4",
+    "name": "ck_chord_display_dirty",
+    "current": "4eb9401549aa",
+    "current_target": "0x401549aa",
+    "expected_chordkeys": "0x401549aa"
+  },
+  {
+    "at": "0x4008e622",
+    "native": "4fefffd848d71c7c",
+    "name": "ck_chord_display_hook",
+    "current": "4ef94018a6864e71",
+    "current_target": "0x4018a686",
+    "expected_chordkeys": "0x4018a686"
+  },
+  {
+    "at": "0x4007746c",
+    "native": "4fefffc048d70c04",
+    "name": "ck_ui_pad_dispatch_hook",
+    "current": "4ef94018772e4e71",
+    "current_target": "0x4018772e",
+    "expected_chordkeys": "0x4018772e"
+  },
+  {
+    "at": "0x400aae88",
+    "native": "4fefffe448d71c3c",
+    "name": "chord_audio_update",
+    "current": "4ef9401c50484e71",
+    "current_target": "0x401c5048",
+    "expected_chordkeys": "0x46794220"
+  },
+  {
+    "at": "0x400ab0e4",
+    "native": "d1fc4012142c",
+    "name": "chord_audio_ratios",
+    "current": "4ef9401875b8",
+    "current_target": "0x401875b8",
+    "expected_chordkeys": "0x401875b8"
+  },
+  {
+    "at": "0x4001a0d2",
+    "native": "4fefffd448d77cfc",
+    "name": "ck_ui_key",
+    "current": "4ef94016616c4e71",
+    "current_target": "0x4016616c",
+    "expected_chordkeys": "0x4016616c"
+  },
+  {
+    "at": "0x40081734",
+    "native": "2e2e001c2c2e0020",
+    "name": "ck_tg_note_on_hook",
+    "current": "4ef9401640844e71",
+    "current_target": "0x40164084",
+    "expected_chordkeys": "0x40164084"
+  },
+  {
+    "at": "0x4008146c",
+    "native": "262e000c2a2e0010",
+    "name": "ck_tg_note_off_hook",
+    "current": "4ef94016268a4e71",
+    "current_target": "0x4016268a",
+    "expected_chordkeys": "0x4016268a"
+  },
+  {
+    "at": "0x4010025c",
+    "native": "4001d180",
+    "name": "ck_ui_pad",
+    "current": "4018d5a8",
+    "current_target": "0x4018d5a8",
+    "expected_chordkeys": "0x4018d5a8"
+  },
+  {
+    "at": "0x401002b0",
+    "native": "4001d3d4",
+    "name": "ck_ui_pad_thunk",
+    "current": "401c5614",
+    "current_target": "0x401c5614",
+    "expected_chordkeys": "0x401c5614"
+  },
+  {
+    "at": "0x400fd170",
+    "native": "4000a70e",
+    "name": "ck_shape_format",
+    "current": "4018bb48",
+    "current_target": "0x4018bb48",
+    "expected_chordkeys": "0x4018bb48"
+  },
+  {
+    "at": "0x400fd174",
+    "native": "4000a66a",
+    "name": "ck_shape_draw",
+    "current": "4016aa28",
+    "current_target": "0x4016aa28",
+    "expected_chordkeys": "0x4016aa28"
+  },
+  {
+    "at": "0x4001e4ca",
+    "native": "4eb94000b22a",
+    "name": "ck_shape_name",
+    "current": "4eb94018d038",
+    "current_target": "0x4018d038",
+    "expected_chordkeys": "0x4018d038"
+  },
+  {
+    "at": "0x4001cb3e",
+    "native": "4eb94002d138",
+    "name": "ck_ui_menu_ctor",
+    "current": "4eb9401c543c",
+    "current_target": "0x401c543c",
+    "expected_chordkeys": "0x401c543c"
+  },
+  {
+    "at": "0x4005b4a8",
+    "native": "7001156b001c001c",
+    "name": "ck_storage_load_hook",
+    "current": "4ef9401c4b444e71",
+    "current_target": "0x401c4b44",
+    "expected_chordkeys": "0x401c4b44"
+  },
+  {
+    "at": "0x40061564",
+    "native": "1140001b48780010",
+    "name": "ck_storage_init_hook",
+    "current": "4ef9401c4b6e4e71",
+    "current_target": "0x401c4b6e",
+    "expected_chordkeys": "0x401c4b6e"
+  },
+  {
+    "at": "0x4005b9c6",
+    "native": "16b5480317420001",
+    "name": "ck_plock_save_hook",
+    "current": "4eb94017985c4e71",
+    "current_target": "0x4017985c",
+    "expected_chordkeys": "0x40190334"
+  },
+  {
+    "at": "0x4005bad2",
+    "native": "28713c0070ff",
+    "name": "ck_plock_partial_hook",
+    "current": "4eb940179876",
+    "current_target": "0x40179876",
+    "expected_chordkeys": "0x401c456a"
+  },
+  {
+    "at": "0x4005aa1a",
+    "native": "2f027406222f0008",
+    "name": "ck_plock_decode_hook",
+    "current": "4ef9401c53ec4e71",
+    "current_target": "0x401c53ec",
+    "expected_chordkeys": "0x401c53ec"
+  },
+  {
+    "at": "0x40012274",
+    "native": "4eb9400cfd0e",
+    "name": "ck_plock_note_hook",
+    "current": "4ef9401c4af0",
+    "current_target": "0x401c4af0",
+    "expected_chordkeys": "0x401c4af0"
+  },
+  {
+    "at": "0x40058ec6",
+    "native": "222a0028028100000081",
+    "name": "ck_plock_sequence_hook",
+    "current": "4ef9401c4a984e714e71",
+    "current_target": "0x401c4a98",
+    "expected_chordkeys": "0x401c4a98"
+  },
+  {
+    "at": "0x40019ee2",
+    "native": "4e922f004eb94000f208",
+    "name": "ck_midi_key_on_hook",
+    "current": "4ef94678e29c4e714e71",
+    "current_target": "0x4678e29c",
+    "expected_chordkeys": "0x4018cc72"
+  },
+  {
+    "at": "0x40019cba",
+    "native": "2f044eb940016e90",
+    "name": "ck_midi_key_off_hook",
+    "current": "4ef94678e34c4e71",
+    "current_target": "0x4678e34c",
+    "expected_chordkeys": "0x401c4f68"
+  },
+  {
+    "at": "0x4001d094",
+    "native": "45f9400cf866",
+    "name": "ck_midi_pad_on_hook",
+    "current": "4ef94678e2f6",
+    "current_target": "0x4678e2f6",
+    "expected_chordkeys": "0x40190a1c"
+  },
+  {
+    "at": "0x4001d120",
+    "native": "45f9400cf866",
+    "name": "ck_midi_pad_off_hook",
+    "current": "4ef94678e3a0",
+    "current_target": "0x4678e3a0",
+    "expected_chordkeys": "0x401c4fb6"
+  },
+  {
+    "at": "0x4005919e",
+    "native": "42b940a78e18",
+    "name": "ck_midi_sequence_hook",
+    "current": "4ef9467905c8",
+    "current_target": "0x467905c8",
+    "expected_chordkeys": "0x401908cc"
+  }
+]
