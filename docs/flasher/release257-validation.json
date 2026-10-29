@@ -1,0 +1,202 @@
+{
+  "release": "2.57",
+  "hardware_tested": false,
+  "editions": {
+    "main_full": {
+      "sha256": "c7f9ca5765910ed6f3276664f71540c93d307572ca018318596ff6f2155fcc9b",
+      "title": {
+        "source_sha256": "63c6b399e0e4fffd678042e7ed98e7288fecad0642f0060dd52dc5cee538399d",
+        "sha256": "c7f9ca5765910ed6f3276664f71540c93d307572ca018318596ff6f2155fcc9b",
+        "version": "2.57",
+        "title": {
+          "name": "Supermodel",
+          "version": "2.57",
+          "edition": "2.57",
+          "code": 1074084460,
+          "code_bytes": 794,
+          "sha256": "c459a0d47c223131da9633287057930d6bee96cfedc944b81eb57c0821cf08b5",
+          "native_os_protocol_version_unchanged": true,
+          "hardware_tested": false
+        },
+        "only_startup_code_changed": true,
+        "changed_main_bytes": 5,
+        "recovery_updater_unchanged": true,
+        "flash_bytes": 1610656,
+        "packing": {
+          "original_bytes": 1563188,
+          "stored_bytes": 1563188,
+          "bootstrap_gap": 2096128,
+          "margin": 64,
+          "added_literal_bytes": 0,
+          "split_matches": 0,
+          "main_unchanged": true
+        },
+        "hardware_tested": false
+      },
+      "boot": {
+        "sha256": "c7f9ca5765910ed6f3276664f71540c93d307572ca018318596ff6f2155fcc9b",
+        "native_payload_boot": true,
+        "code_copied_exact": true,
+        "all_packaged_hooks_verified": true,
+        "bss_zero": true,
+        "recovery_updater_sections_identical": true,
+        "flash_bytes": 1610656,
+        "runtime_bytes": 3145728,
+        "hardware_tested": false
+      }
+    },
+    "main_lite": {
+      "sha256": "4bc535b78454601abd66352a9e4e78b52ae637eb64aec786ce9159ac07d02488",
+      "title": {
+        "source_sha256": "b5220ffdcf541a9109c389de4d6a9a38eba4539f173ee2ba960603221926f563",
+        "sha256": "4bc535b78454601abd66352a9e4e78b52ae637eb64aec786ce9159ac07d02488",
+        "version": "2.57",
+        "title": {
+          "name": "Supermodel Lite",
+          "version": "2.57",
+          "edition": "LITE 2.57",
+          "code": 1074084460,
+          "code_bytes": 856,
+          "sha256": "3f1819eba2df10378bf7e48e63ca0c6584bba362157f0584c476ac424ee8a190",
+          "native_os_protocol_version_unchanged": true,
+          "hardware_tested": false
+        },
+        "only_startup_code_changed": true,
+        "changed_main_bytes": 5,
+        "recovery_updater_unchanged": true,
+        "flash_bytes": 1638416,
+        "packing": {
+          "original_bytes": 1590952,
+          "stored_bytes": 1590952,
+          "bootstrap_gap": 2096128,
+          "margin": 64,
+          "added_literal_bytes": 0,
+          "split_matches": 0,
+          "main_unchanged": true
+        },
+        "hardware_tested": false
+      },
+      "boot": {
+        "sha256": "4bc535b78454601abd66352a9e4e78b52ae637eb64aec786ce9159ac07d02488",
+        "native_payload_boot": true,
+        "code_copied_exact": true,
+        "all_packaged_hooks_verified": true,
+        "bss_zero": true,
+        "recovery_updater_sections_identical": true,
+        "flash_bytes": 1638416,
+        "runtime_bytes": 3145728,
+        "hardware_tested": false
+      }
+    },
+    "optional_full": {
+      "sha256": "22cd7e050bd996929727de877ec903277a4a057695925ccfad2317e9787b32b3",
+      "title": {
+        "source_sha256": "ecaf399998e593f2860ae05ae2212f9cb6102b3b03c164c47812caf10f030e50",
+        "sha256": "22cd7e050bd996929727de877ec903277a4a057695925ccfad2317e9787b32b3",
+        "version": "2.57",
+        "title": {
+          "name": "Supermodel",
+          "version": "2.57",
+          "edition": "2.57",
+          "code": 1074084460,
+          "code_bytes": 794,
+          "sha256": "c459a0d47c223131da9633287057930d6bee96cfedc944b81eb57c0821cf08b5",
+          "native_os_protocol_version_unchanged": true,
+          "hardware_tested": false
+        },
+        "only_startup_code_changed": true,
+        "changed_main_bytes": 5,
+        "recovery_updater_unchanged": true,
+        "flash_bytes": 1663472,
+        "packing": {
+          "original_bytes": 1616014,
+          "stored_bytes": 1616014,
+          "bootstrap_gap": 2096128,
+          "margin": 64,
+          "added_literal_bytes": 0,
+          "split_matches": 0,
+          "main_unchanged": true
+        },
+        "hardware_tested": false
+      },
+      "boot": {
+        "sha256": "22cd7e050bd996929727de877ec903277a4a057695925ccfad2317e9787b32b3",
+        "native_payload_boot": true,
+        "code_copied_exact": true,
+        "all_packaged_hooks_verified": true,
+        "bss_zero": true,
+        "recovery_updater_sections_identical": true,
+        "flash_bytes": 1663472,
+        "runtime_bytes": 3145728,
+        "hardware_tested": false
+      },
+      "audio": {
+        "base": "c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6",
+        "module_sha256": "a017150f7a52947f9e0f5c29a4f7f790c1869f1b04b0959abc4bb57c5482adef",
+        "checks": [
+          "selected-track selectors12",
+          "independent patterns",
+          "project sidecar save/cold context load",
+          "Global MST/TRK10rows",
+          "MST48 native EMAC blocks"
+        ],
+        "hardware_tested": false
+      }
+    },
+    "optional_lite": {
+      "sha256": "e5fad4eaec7bfca69ff84e315b7765c907875180629aceefca2655730bdda59a",
+      "title": {
+        "source_sha256": "7d788de9ff728227201f98468012d86ce529f83b7e951819a55c34f4721613c9",
+        "sha256": "e5fad4eaec7bfca69ff84e315b7765c907875180629aceefca2655730bdda59a",
+        "version": "2.57",
+        "title": {
+          "name": "Supermodel Lite",
+          "version": "2.57",
+          "edition": "LITE 2.57",
+          "code": 1074084460,
+          "code_bytes": 856,
+          "sha256": "3f1819eba2df10378bf7e48e63ca0c6584bba362157f0584c476ac424ee8a190",
+          "native_os_protocol_version_unchanged": true,
+          "hardware_tested": false
+        },
+        "only_startup_code_changed": true,
+        "changed_main_bytes": 5,
+        "recovery_updater_unchanged": true,
+        "flash_bytes": 1638432,
+        "packing": {
+          "original_bytes": 1590966,
+          "stored_bytes": 1590966,
+          "bootstrap_gap": 2096128,
+          "margin": 64,
+          "added_literal_bytes": 0,
+          "split_matches": 0,
+          "main_unchanged": true
+        },
+        "hardware_tested": false
+      },
+      "boot": {
+        "sha256": "e5fad4eaec7bfca69ff84e315b7765c907875180629aceefca2655730bdda59a",
+        "native_payload_boot": true,
+        "code_copied_exact": true,
+        "all_packaged_hooks_verified": true,
+        "bss_zero": true,
+        "recovery_updater_sections_identical": true,
+        "flash_bytes": 1638432,
+        "runtime_bytes": 3145728,
+        "hardware_tested": false
+      },
+      "audio": {
+        "base": "0a6e67c552c3a799cb4090357ebe8018503efdebaae9ad3aaa3e68b5f3bd4e0e",
+        "module_sha256": "1b24945b1e23526da552b95eaaf3539b2a37d4d8b456e5a0481752ab6f3dc08a",
+        "checks": [
+          "selected-track selectors12",
+          "independent patterns",
+          "project sidecar save/cold context load",
+          "Global MST/TRK10rows",
+          "MST48 native EMAC blocks"
+        ],
+        "hardware_tested": false
+      }
+    }
+  }
+}
