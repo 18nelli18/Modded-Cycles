@@ -15,16 +15,19 @@ MAIN OS sans le tweak (« origine » : l'OS d'origine, ou la combinaison --with)
   2. LFO 2, 3, 4 : sortie = la fonction des LFO de l'OS réglée pareil (FADE, SPH, MODE de LFO 1), 3 tirages de 400
      blocs (toutes formes, mult synchro et libres, 5 modes, retrigs) ; LFO 1 inchangé ; même destination que LFO 1 :
      ignoré ; deux LFO de plus sur la même destination s'ajoutent, bornés 0..0x7f00 ; LFO 2 -> vitesse de LFO 1 :
-     appliqué avant LFO 1 ; destination > 32 : rien ; jeu sans destination : pas calculé ; k = 31 recopié brut.
+     appliqué avant LFO 1 ; destination > 32 : rien ; jeu sans destination : pas calculé ; k = 31 recopié brut ;
+     WAVE de LFO 2 lu dans le mot k = 0 des cibles, pas dans obj k = 0, k 30 jamais écrit.
   3. Interface : id -> k (0x4005a4e8) pour tous les identifiants sur les 4 pages, aucun descripteur sur k = 28..32 ;
-     touche [LFO] ; get/set des pages 3-4 ; page 2 : le vrai get/set de l'OS écrit les mots k = 28..32 du son ;
+     touche [LFO] ; get/set des pages 3-4 ; page 2 : le vrai get/set de l'OS écrit SPD, MULT, DEST, DEP en
+     k = 28, 29, 31, 32 du son et WAVE en k = 0 ;
      rappels coupés pages 3-4 ; création/destruction de la vue ; dessin du chiffre ; molette DEST (vraie fonction
      de la vtable [20] -> 0x4000c140, vraie liste) : même liste sur les 4 pages, destinations prises sautées.
   4. Son : sauvegarde (formats 2 et 1) -> chargement par les vraies fonctions de l'OS : LFO 2 relu (SPD et DEP au
-     multiple de 0x80), tout le reste identique à l'origine ; ancien son -> défauts ; son neuf (0x40061866) ->
+     multiple de 0x80) avec WAVE en k = 0 et k = 30 remis à 0, tout le reste identique à l'origine ; enregistrement
+     de l'ancienne disposition (WAVE en +88) relu de même ; ancien son -> défauts ; son neuf (0x40061866) ->
      défauts ; un OS sans le mod relit un son sauvé avec comme le sien.
   5. p-locks : identifiant de rangée -> k (0x4005aa1a) pour toutes les pistes et tous les identifiants ; aller-retour
-     complet 0x4005b95c -> 0x4005b766 de p-locks sur k = 1..32.
+     complet 0x4005b95c -> 0x4005b766 de p-locks sur k = 0..32, WAVE par la rangée 29, k 30 jamais sauvé.
   6. Coût : instructions par bloc (appel des LFO) : origine, sans LFO de plus, LFO 2 seul, les trois.
   7. Accroches au milieu d'une fonction : de l'adresse accrochée à la fin des instructions remplacées, mêmes
      registres (hors ceux que la suite réécrit, dits à chacune), même pile, même mémoire que l'origine.
@@ -212,15 +215,19 @@ class Rig:
                 FAIL.append(check_fail)
         return self.uc.reg_read(D[0])
 
-    def block(self, tg, tempo, mask, smooth=True):
+    def block(self, tg, tempo, mask, smooth=True, obj0=None):
         """Un bloc audio : lissage des cibles tg (ou obj = tg), puis l'appel des LFO tel que la fonction audio le
         fait (0x400597ba..0x400597cc, a2 = obj, a3 = l'argument : (a3) = cibles, 4(a3) = masque des retrigs).
-        Rend (registres et pile rendus, instructions)."""
+        obj0 : valeur forcée dans le mot k = 0 de obj après le lissage (modulation de LFO 1 / vélocité), les cibles
+        k = 0 (WAVE de LFO 2) ne bougent pas. Rend (registres et pile rendus, instructions)."""
         self.uc.mem_write(TGT, tg)
         if smooth:
             self.call(SMOOTH, TGT)
         else:
             self.uc.mem_write(OBJ, tg)
+        if obj0 is not None:
+            for t in range(6):
+                self.w16(OBJ + 14 + 66 * t, obj0)
         self.w32(ARG, TGT)
         self.w32(ARG + 4, mask)
         self.w32(TEMPO, tempo)
@@ -255,7 +262,8 @@ def lfo(spd=0x7000, mult=4, fade=0x4000, dest=0, wave=0, sph=0, mode=0, dep=0x40
 
 
 def tracks(lfo1, lfo2=None, base=None):
-    """Cibles (14 o + 7 pistes × 66 o) : LFO 1 en k = 1..8, LFO 2 en k = 28..32, base : {k: mot}."""
+    """Cibles (14 o + 7 pistes × 66 o) : LFO 1 en k = 1..8 ; LFO 2 en k = 28, 29, 31, 32 (SPD, MULT, DEST, DEP),
+    son WAVE dans le mot k = 0 des cibles (notes/86 §3 ; k 30 reste à Lo-Fi Bits) ; base : {k: mot}."""
     b = bytearray(14 + 7 * 66)
     for t in range(6):
         p = 14 + 66 * t
@@ -267,8 +275,8 @@ def tracks(lfo1, lfo2=None, base=None):
         struct.pack_into(">8H", b, p + 2, *words)
         if lfo2:
             M = lfo2[t]
-            struct.pack_into(">5H", b, p + 56, M["spd"], M["mult"] << 8, M["wave"] << 8, (M["dest"] & 0xff) << 8,
-                             M["dep"])
+            struct.pack_into(">H", b, p, M["wave"] << 8)
+            struct.pack_into(">5H", b, p + 56, M["spd"], M["mult"] << 8, 0, (M["dest"] & 0xff) << 8, M["dep"])
     return bytes(b)
 
 
@@ -427,12 +435,12 @@ def audio_identity(base_img, img, rt, syms):
 
 # --------------------------------------------------------------------------------- 2. LFO 2, 3, 4 -------------
 
-def run(r, tg, sched, ks, n, syms=None, l34=None, after=None):
+def run(r, tg, sched, ks, n, syms=None, l34=None, after=None, obj0=None):
     out = []
     for blk in range(n):
         if l34 is not None:
             r.uc.mem_write(syms["lfo34"], l34)
-        ok = r.block(tg, 14400, sched[blk], smooth=False)
+        ok = r.block(tg, 14400, sched[blk], smooth=False, obj0=obj0)
         out.append([words(r, t, ks) for t in range(6)])
         if after:
             after(blk)
@@ -595,6 +603,26 @@ def rules(S, P, base, syms):
     check(out[S] == {(0x0a80, 0x4000)} and out[P] == {(0x0b00, 0x4000)} and moved > 0,
           "k = 31 (destination de LFO 2) recopié brut des cibles comme k = 4 : 0x0a80 en cours de lissage -> 0x0b00, "
           f"LFO 2 module k = 11 et jamais k = 10 ({moved} mots modulés) ; l'origine n'y touche pas")
+
+    # WAVE de LFO 2 lu dans les CIBLES k = 0 ; une valeur dans obj k = 0 (LFO 1 / vélocité vers None) n'y change rien
+    l2w = [lfo(spd=0x6000, mult=5, wave=3, dest=11, dep=0x7f00) for _ in range(6)]
+    tgw = tracks(l1, l2w, base)
+    P.reset_lfo(syms)
+    refw = run(P, tgw, sched, [11], n, syms, table34(none, none), obj0=0)
+    P.reset_lfo(syms)
+    junkw = run(P, tgw, sched, [11], n, syms, table34(none, none), obj0=0x0500)
+    movingw = len({tuple(x[0] for x in b) for b in refw})
+    check(refw == junkw and movingw > 1,
+          f"WAVE de LFO 2 lu dans les cibles k = 0 : même sortie k = 11 ({movingw} valeurs) avec 0x0000 ou 0x0500 "
+          "dans obj k = 0 (modulation de LFO 1 / vélocité)")
+    b30 = {k: 0x4000 for k in range(9, 23)}
+    tg30 = bytearray(tracks(l1, l2w, b30))
+    for t in range(6):
+        struct.pack_into(">H", tg30, 14 + 66 * t + 60, 0x1234)       # k = 30 : Lo-Fi Bits, hors LFO 2
+    P.reset_lfo(syms)
+    got30 = run(P, bytes(tg30), sched, [30], n, syms, table34(none, none))
+    check(all(g[t][0] == 0x1234 for g in got30 for t in range(6)),
+          "k = 30 (Lo-Fi Bits) jamais écrit par LFO 2, 3, 4 : 0x1234 des cibles gardé")
     check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
 
 
@@ -610,11 +638,12 @@ def ui(base_img, img, rt, syms):
         P.w8(page, pg)
         for i in range(bound + 8):
             ks, kp = s32(S.call(ID2K, i)), s32(P.call(ID2K, i, check="id -> k"))
-            exp = ks if pg == 0 or i not in OWN else (28 + OWN[i] if pg == 1 else -1)
+            exp = ks if pg == 0 or i not in OWN else ((28, 29, 0, 31, 32)[OWN[i]] if pg == 1 else -1)
             ok[pg] &= kp == exp
     P.w8(page, 0)
     check(ok[0], f"page LFO 1 : id -> k = l'origine pour les {bound + 8} identifiants (borne {bound})")
-    check(ok[1], "page LFO 2 : SPD, MULT, WAVE, DEST, DEP -> k = 28, 29, 30, 31, 32 ; tout le reste = l'origine")
+    check(ok[1], "page LFO 2 : SPD, MULT, WAVE, DEST, DEP -> k = 28, 29, 0, 31, 32 (WAVE en k 0, notes/86 §3) ; "
+                 "tout le reste = l'origine")
     check(ok[2] and ok[3], "pages LFO 3/4 : ces 5 identifiants -> -1 (aucun mot du son) ; tout le reste = l'origine")
     ks = {s32(S.call(ID2K, i)) for i in range(bound + 1)}
     k2i = {S.call(K2ID, k, m) for k in range(28, 33) for m in range(24)}
@@ -781,15 +810,15 @@ def ui(base_img, img, rt, syms):
             good &= sw == ref and P.log == S.log
         else:
             exp = list(ref)
-            for k, src in zip(range(28, 33), (1, 2, 5, 4, 8)):
+            for k, src in zip((28, 29, 0, 31, 32), (1, 2, 5, 4, 8)):
                 exp[k], exp[src] = ref[src], 0
-            good &= sw == exp and [x[2] for x in P.log] == [28, 29, 3, 31, 30, 6, 7, 32]
+            good &= sw == exp and [x[2] for x in P.log] == [28, 29, 3, 31, 0, 6, 7, 32]
             good &= [s32(P.call(P.r32(P_GET), THIS, i)) for i in (0x1d, 0x1e, 0x21, 0x20, 0x24, 0x1f)] == \
                 [0x5a00, 0x0b00, 0x0300, 0x0e00, 0x2380, 0x3100]
     P.w8(page, 0)
-    check(good, "page LFO 2 : le get/set de l'OS (0x4000ae20, 0x4000ba7a) lit et écrit k = 28..32 du son "
-                "(SPD, MULT, WAVE, DEST, DEP) et notifie ces k ; FADE, SPH, MODE restent ceux de LFO 1 ; page "
-                "LFO 1 = l'origine")
+    check(good, "page LFO 2 : le get/set de l'OS (0x4000ae20, 0x4000ba7a) lit et écrit k = 28, 29, 0, 31, 32 du son "
+                "(SPD, MULT, WAVE, DEST, DEP), WAVE dans le mot k = 0, et notifie ces k ; FADE, SPH, MODE restent ceux "
+                "de LFO 1 ; page LFO 1 = l'origine")
 
     # dessin
     P.stub(ORIG_DRAW, P.logged("draw"))
@@ -918,7 +947,8 @@ def sound_bytes(rnd, lfo2):
                          rnd.randrange(0x7f01))
     struct.pack_into(">H", b, 38, rnd.randrange(6) << 8)               # k = 9 : machine (octet fort)
     struct.pack_into(">H", b, 28, rnd.randrange(33) << 8)              # k = 4 : destination de LFO 1
-    struct.pack_into(">5H", b, 76, *lfo2)
+    struct.pack_into(">H", b, 20, lfo2[2])                             # k = 0 : WAVE de LFO 2 (notes/86 §3)
+    struct.pack_into(">5H", b, 76, lfo2[0], lfo2[1], 0x0f00, lfo2[3], lfo2[4])   # k 30 : Lo-Fi Bits, leurre
     struct.pack_into(">IHBBI", b, 88, rnd.randrange(23), 0x4000, rnd.randrange(24), rnd.randrange(128), 0x7f)
     return bytes(b)
 
@@ -939,7 +969,7 @@ def sound(base_img, img, rt, syms, david=None):
              [0x5aff, 0x0b7f, 0x03ff, 0x0eff, 0x23ff], [0x7f00, 0x1700, 0x0600, 0x2000, 0x7f00], [0, 0, 0, 0, 0]]
     cases += [[rnd.randrange(0x7f01), rnd.randrange(24) << 8, rnd.randrange(7) << 8, rnd.randrange(33) << 8,
                rnd.randrange(0x7f01)] for _ in range(20)]
-    save_ok = load_ok = old_ok = back_ok = True
+    save_ok = load_ok = old_ok = back_ok = legacy_ok = True
     for c in cases:
         snd = sound_bytes(rnd, c)
         for fn in (SND_SAVE2, SND_SAVE1):
@@ -961,16 +991,39 @@ def sound(base_img, img, rt, syms, david=None):
                 r.call(SND_LOAD, SOUND2, REC, check="chargement du son")
                 outs.append(r.rd(SOUND2, 100))
             ls, lp, ls_new, lp_old = outs
-            got = list(struct.unpack(">5H", lp[76:86]))
-            load_ok &= ls[:76] == lp[:76] and ls[86:] == lp[86:] and got == unpacked(packed(c))
-            old_ok &= ls[:76] == lp_old[:76] and ls[86:] == lp_old[86:] and list(struct.unpack(">5H", lp_old[76:86])) == DEFAULTS
+            u = unpacked(packed(c))
+            # l'OS sans le mod garde l'ancienne disposition (WAVE en k 30) ; k 0 reçoit la case 18 du son, comme avant
+            load_ok &= ls[:20] == lp[:20] and ls[22:76] == lp[22:76] and ls[86:] == lp[86:] \
+                and ls[20:22] == rs[64:66] and ls_new[20:22] == rp[64:66] \
+                and ls[76:86] == bytes(10) \
+                and lp[20:22] == struct.pack(">H", u[2]) \
+                and list(struct.unpack(">2H", lp[76:80])) == u[:2] and lp[80:82] == bytes(2) \
+                and list(struct.unpack(">2H", lp[82:86])) == u[3:]
+            old_ok &= ls[:20] == lp_old[:20] and ls[22:76] == lp_old[22:76] and ls[86:] == lp_old[86:] \
+                and list(struct.unpack(">5H", lp_old[76:86])) == DEFAULTS and lp_old[20:22] == bytes(2) \
+                and lp_old[80:82] == bytes(2)
             back_ok &= ls_new == ls
+            # (a) enregistrement de l'ANCIENNE disposition (WAVE empaqueté en +88, p-lock en rangée 29) : relu ici
+            legacy = bytearray(rs)
+            legacy[88:92] = struct.pack(">I", packed(c))
+            P.uc.mem_write(REC, bytes(legacy))
+            P.uc.mem_write(SOUND2, b"\x55" * 100)
+            P.call(SND_LOAD, SOUND2, REC, check="chargement d'un ancien son")
+            lq = P.rd(SOUND2, 100)
+            legacy_ok &= lq[20:22] == struct.pack(">H", u[2]) \
+                and list(struct.unpack(">2H", lq[76:80])) == u[:2] and lq[80:82] == bytes(2) \
+                and list(struct.unpack(">2H", lq[82:86])) == u[3:]
     check(save_ok, f"sauvegarde (formats 2 et 1), {len(cases)} sons : enregistrement = l'origine sauf +88..+91 = LFO 2 "
-                   "empaqueté (marque 10, SPD>>7, MULT, WAVE, DEST, DEP>>7)")
+                   "empaqueté (marque 10, SPD>>7, MULT, WAVE, DEST, DEP>>7) ; WAVE pris en k 0, k 30 (Lo-Fi Bits) "
+                   "ignoré")
     check(load_ok, "chargement (0x4005aecc, enregistrements au format 2, le seul qu'il relit) : son = l'origine sauf "
-                   "k = 28..32 = LFO 2 relu (SPD, DEP au multiple de 0x80 près : 0x5aff -> 0x5a80)")
-    check(old_ok, "son sauvé sans le mod (+88 = 0) : LFO 2 aux défauts (0x7000, 4, TRI, None, 0), le reste = l'origine")
+                   "k = 28, 29, 31, 32 = SPD, MULT, DEST, DEP et k = 0 = WAVE, k = 30 laissé à 0 (SPD et DEP au "
+                   "multiple de 0x80 près : 0x5aff -> 0x5a80) ; l'OS sans le mod ne relit pas +88 (k = 28..32 à 0)")
+    check(old_ok, "son sauvé sans le mod (+88 = 0) : LFO 2 aux défauts (0x7000, 4, TRI, None, 0), k = 0 et k = 30 "
+                  "à 0, le reste = l'origine")
     check(back_ok, "OS sans le mod : relit un son sauvé avec le mod comme le sien (+88..+91 ignorés)")
+    check(legacy_ok, "enregistrement de l'ancienne disposition (WAVE empaqueté en +88, comme avant notes/86) : "
+                     "WAVE relu en k = 0, k = 30 remis à 0, SPD, MULT, DEST, DEP en k = 28, 29, 31, 32")
     good = True
     for tag in (0x00000000, 0x40ffffff, 0xc0ffffff, 0x3fffffff):
         snd = sound_bytes(rnd, cases[1])
@@ -979,8 +1032,9 @@ def sound(base_img, img, rt, syms, david=None):
         P.w32(REC + 88, tag)
         P.uc.mem_write(SOUND2, b"\x55" * 100)
         P.call(SND_LOAD, SOUND2, REC)
-        good &= list(struct.unpack(">5H", P.rd(SOUND2 + 76, 10))) == DEFAULTS
-    check(good, "marque autre que 10 en +88 : défauts")
+        good &= list(struct.unpack(">5H", P.rd(SOUND2 + 76, 10))) == DEFAULTS and P.rd(SOUND2 + 20, 2) == bytes(2) \
+            and P.rd(SOUND2 + 80, 2) == bytes(2)
+    check(good, "marque autre que 10 en +88 : défauts (k = 28..32), WAVE en k = 0 à 0, k = 30 à 0")
     good = True
     for m in range(6):
         outs = []
@@ -989,23 +1043,33 @@ def sound(base_img, img, rt, syms, david=None):
             r.call(SND_INIT, SOUND2, M32, m, check="son aux défauts")
             outs.append(r.rd(SOUND2, 100))
         good &= outs[0][:76] == outs[1][:76] and outs[0][86:] == outs[1][86:] \
-            and list(struct.unpack(">5H", outs[1][76:86])) == DEFAULTS and outs[0][76:86] == bytes(10)
-    check(good, "son neuf (0x40061866, machines 0..5) : = l'origine, sauf LFO 2 aux défauts (l'origine y met 0)")
+            and list(struct.unpack(">5H", outs[1][76:86])) == DEFAULTS and outs[0][76:86] == bytes(10) \
+            and outs[1][80:82] == bytes(2)
+    check(good, "son neuf (0x40061866, machines 0..5) : = l'origine, sauf LFO 2 aux défauts (l'origine y met 0), "
+                "k = 30 (Lo-Fi Bits) à 0")
     if david:
         Dv = Rig(david)
         good = True
         for c in cases[:6]:
-            snd = sound_bytes(rnd, c)
-            Dv.uc.mem_write(SOUND, snd)
+            # l'ancien .syx lit WAVE en k = 30 : on lui donne un son à l'ancienne disposition
+            snd = bytearray(sound_bytes(rnd, c))
+            snd[20:22] = bytes(2)
+            struct.pack_into(">H", snd, 80, c[2])
+            Dv.uc.mem_write(SOUND, bytes(snd))
             Dv.uc.mem_write(REC, bytes(100))
             Dv.call(SND_SAVE2, REC, SOUND)
             rec = Dv.rd(REC, 100)
             P.uc.mem_write(REC, rec)
             P.uc.mem_write(SOUND2, b"\x55" * 100)
             P.call(SND_LOAD, SOUND2, REC)
-            good &= list(struct.unpack(">5H", P.rd(SOUND2 + 76, 10))) == unpacked(packed(c)) \
+            u = unpacked(packed(c))
+            got = P.rd(SOUND2, 100)
+            good &= got[20:22] == struct.pack(">H", u[2]) and got[80:82] == bytes(2) \
+                and list(struct.unpack(">2H", got[76:80])) == u[:2] \
+                and list(struct.unpack(">2H", got[82:86])) == u[3:] \
                 and int.from_bytes(rec[88:92], "big") == packed(c)
-        check(good, "son sauvé par le .syx de DavidCaruso : même +88..+91, relu ici avec le même LFO 2")
+        check(good, "son sauvé par le .syx de DavidCaruso : même +88..+91, relu ici avec le même LFO 2 (WAVE en k = 0, "
+                    "k = 30 à 0)")
     check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
 
 
@@ -1013,14 +1077,14 @@ def sound(base_img, img, rt, syms, david=None):
 
 def plocks(base_img, img, rt):
     S, P = Rig(base_img, rt), Rig(img, rt)
-    plk_k = [23, 24, 25, 28, 29, 30, 31, 32]
+    plk_k = [23, 24, 25, 28, 29, 0, 31, 32]
     good = True
     for t in range(8):
         for i in range(48):
             ks, kp = s32(S.call(PLK_K, t, i)), s32(P.call(PLK_K, t, i, check="identifiant -> k"))
             good &= kp == (plk_k[i - 24] if t <= 5 and 24 <= i <= 31 else ks)
-    check(good, "identifiant de rangée -> k : pistes 0..5, identifiants 24..31 -> k = 23, 24, 25, 28..32 ; tout le "
-                "reste (piste FX comprise) = l'origine")
+    check(good, "identifiant de rangée -> k : pistes 0..5, identifiants 24..31 -> k = 23, 24, 25, 28, 29, 0, 31, 32 "
+                "(rangée 29 = WAVE de LFO 2, k 0) ; tout le reste (piste FX comprise) = l'origine")
     rnd = random.Random(4)
     src = bytearray(6 * 4385)
     for t in range(6):
@@ -1029,7 +1093,7 @@ def plocks(base_img, img, rt):
                 struct.pack_into(">H", src, t * 4385 + s * 68 + 2 * k, 0xffff)
     locked = {}
     for t in (0, 5):
-        for k in range(1, 33):
+        for k in range(33):
             src[t * 4385 + 4352 + k] = 1
             for s in range(64):
                 if rnd.random() < 0.3:
@@ -1053,16 +1117,29 @@ def plocks(base_img, img, rt):
                         back[(t, k, s)] = v
         ids = sorted({r.r8(ROWS + 130 * i) for i in range(64)})
         res[name] = (a, b, back, ids)
-    exp = {key: v for key, v in locked.items() if key[1] not in (26, 27)}
+    exp = {key: v for key, v in locked.items() if key[1] not in (26, 27, 30)}
     a, b, back, ids = res["modifié"]
     check(a == b == 1 and back == exp,
-          f"aller-retour 0x4005b95c -> 0x4005b766, 2 pistes, k = 1..32 ({len(exp)} p-locks) : tous relus au même k "
-          f"et au même pas ; k = 26, 27 (état du Sampler de Model-TG) ignorés ; identifiants {ids}")
+          f"aller-retour 0x4005b95c -> 0x4005b766, 2 pistes, k = 0..32 ({len(exp)} p-locks) : tous relus au même k "
+          f"et au même pas, WAVE (k 0) par la rangée 29 ; k = 26, 27 (état du Sampler de Model-TG) et k = 30 "
+          f"(Lo-Fi Bits, rangée 0xff) ignorés ; identifiants {ids}")
     a, b, back, ids = res["origine"]
     lost = {k for (t, k, s) in locked if back.get((t, k, s)) != locked[(t, k, s)]}
-    check(lost == set(range(1, 10)) | set(range(23, 33)),
+    check(lost == set(range(0, 10)) | set(range(23, 33)),
           "origine, pour mémoire : les rangées de k = 23..32 reviennent sur k = 0..9 et les écrasent (k perdus : "
           f"{sorted(lost)}) ; k = 10..22 relus")
+    # (a) p-locks de l'ancienne disposition : WAVE était p-locké en k 30, donc rangée 29 ; relu sur k 0
+    rows = bytearray(10400)
+    for i in range(64):
+        rows[130 * i:130 * i + 2] = b"\xff\xff"
+    struct.pack_into(">BBH", rows, 0, 29, 3, 0x0600)
+    P.uc.mem_write(ROWS, bytes(rows))
+    P.uc.mem_write(PDST, bytes(6 * 4385))
+    b = P.call(PLK_LOAD, PDST, ROWS, check="ancien p-lock")
+    dst = P.rd(PDST, 6 * 4385)
+    check(b == 1 and struct.unpack_from(">H", dst, 3 * 4385)[0] == 0x0600
+          and struct.unpack_from(">H", dst, 3 * 4385 + 2 * 30)[0] == 0xffff,
+          "p-lock de WAVE de l'ancienne disposition (rangée 29, k 30) : relu sur k = 0, k = 30 laissé libre")
     check(not (S.bad or P.bad), "aucun accès hors mémoire")
 
 
@@ -1108,11 +1185,12 @@ def sites(base_img, img, rt, syms):
     bound = img[0x4005a4e9 - BASE]
     PC = mk.UC_M68K_REG_PC
 
-    def one(start, stop, frame=(), regs=None, clobber=(), page=0, view=0, rec=None, differ=(), extra=None):
+    def one(start, stop, frame=(), regs=None, clobber=(), page=0, view=0, rec=None, differ=(), extra=None,
+            snd2=b"\x77" * 100):
         """De start à stop (les instructions remplacées), origine et modifié, mêmes registres au départ (au hasard,
         sauf regs) : mêmes registres à l'arrivée hors clobber, même pile, mêmes REC / SOUND2 / ROWS
         hors differ ; extra(origine, modifié) en plus. La pile comparée est celle au-dessus de sp (en dessous, la place
-        libre où un jsr met son adresse de retour)."""
+        libre où un jsr met son adresse de retour). snd2 : contenu de SOUND2 au départ."""
         init = {k: rnd.getrandbits(32) for k in D + A[:7]}
         init.update(regs or {})
         stack = bytes(rnd.getrandbits(8) for _ in range(128))
@@ -1124,7 +1202,7 @@ def sites(base_img, img, rt, syms):
             r.uc.mem_write(STACK - 0x80, stack)
             r.uc.mem_write(STACK - 0x40, b"".join(struct.pack(">I", w & M32) for w in frame))
             r.uc.mem_write(REC, rec or bytes(range(100)))
-            r.uc.mem_write(SOUND2, b"\x77" * 100)
+            r.uc.mem_write(SOUND2, snd2)
             r.uc.mem_write(ROWS, b"\xee" * 130)
             for k, v in init.items():
                 r.uc.reg_write(k, v)
@@ -1142,7 +1220,7 @@ def sites(base_img, img, rt, syms):
         return s[m][:lo] + s[m][hi:] == p[m][:lo] + p[m][hi:]
 
     out = {}
-    ids = [24, 25, 26, 0xff, 0xff, 27, 28, 29, 30, 31]
+    ids = [24, 25, 26, 0xff, 0xff, 27, 28, 0xff, 30, 31]
     # les indicateurs (CCR) de la comparaison remplacée servent à l'instruction suivante : on va jusqu'au retour de
     # la fonction (adresse de retour 0x400a0a0a) pour qu'elle s'en serve
     out["0x4005a4ea id -> k jusqu'au retour, page LFO 1 (tous les identifiants), page LFO 2 (hors LFO) (rien)"] = all(
@@ -1152,9 +1230,14 @@ def sites(base_img, img, rt, syms):
         one(0x4005aa22, 0x400a0a0a, (0x0d0d0d0d, 0x400a0a0a, t, i), {D[1]: t, D[2]: 6})
         for t, i in ((6, 25), (7, 24), (2, 5), (0, 23), (0, 32), (5, 40), (3, 0), (0, M32), (6, 31), (9, 0),
                      (6, 0), (6, 4), (6, 5)))
-    out["0x4005b9c6 rangée de p-locks, k = 0..22 (rien)"] = all(
+    out["0x4005b9c6 rangée de p-locks, k = 1..22 (rien)"] = all(
         one(0x4005b9c6, 0x4005b9ce, (), {A[5]: 0x4010ee4c, D[4]: 4 * k, D[0]: k, D[2]: t, A[3]: ROWS})
-        for k in range(23) for t in (0, 5))
+        for k in range(1, 23) for t in (0, 5))
+    out["0x4005b9c6 rangée de p-locks, k = 0 (WAVE de LFO 2 -> rangée 29)"] = all(
+        one(0x4005b9c6, 0x4005b9ce, (), {A[5]: 0x4010ee4c, D[4]: 0, D[0]: 0, D[2]: t, A[3]: ROWS},
+            differ=("ROWS",), extra=lambda s, p, t=t: p["ROWS"][:2] == bytes([29, t])
+            and s["ROWS"][1:] == p["ROWS"][1:])
+        for t in (0, 5))
     out["0x4005b9c6 rangée de p-locks, k = 23..32 (rien ; identifiant de plk_id)"] = all(
         one(0x4005b9c6, 0x4005b9ce, (), {A[5]: 0x4010ee4c, D[4]: 4 * k, D[0]: k, D[2]: t, A[3]: ROWS},
             differ=("ROWS",), extra=lambda s, p, k=k, t=t: p["ROWS"][:2] == bytes([ids[k - 23], t])
@@ -1169,12 +1252,22 @@ def sites(base_img, img, rt, syms):
     recs = [bytes(range(100))] + [bytes(100)] + [bytes(rnd.getrandbits(8) for _ in range(88)) + struct.pack(
         ">I", packed([rnd.randrange(0x7f01), rnd.randrange(24) << 8, rnd.randrange(7) << 8,
                       rnd.randrange(33) << 8, rnd.randrange(0x7f01)])) + bytes(8) for _ in range(6)]
-    out["0x4005af1c chargement du son (d0, d1, a1 ; k = 28..32 du son)"] = all(
+    out["0x4005af1c chargement du son (d0, d1, a1 ; k = 28, 29, WAVE en k 30, 31, 32 du son)"] = all(
         one(0x4005af1c, 0x4005af22, (), {A[2]: SOUND2, A[3]: REC}, clobber=(D[0], D[1], A[1]), rec=rec,
             differ=("SOUND2",), extra=lambda s, p, rec=rec: outside(s, p, "SOUND2", 76, 86)
             and s["regs"][A[0]] == 0x4010eea8 and list(struct.unpack(">5H", p["SOUND2"][76:86])) ==
             (unpacked(int.from_bytes(rec[88:92], "big")) if rec[88] >> 6 == 2 else DEFAULTS))
         for rec in recs)
+    tail = bytearray(b"\x77" * 100)
+    tail[20:22] = b"\x11\x11"                              # k 0 : la case 18 du son, que l'OS vient d'y mettre
+    tail[80:82] = b"\x06\x00"                              # k 30 : WAVE, posée par upk5
+    out["0x4005af3e fin du chargement du son (a1, a2 ; k 30 -> k 0, k 30 remis à 0)"] = all(
+        one(0x4005af3e, 0x4005af46, (), {A[2]: SOUND2, A[1]: 0x4010eea8}, clobber=(D[0],), snd2=bytes(tail),
+            differ=("SOUND2",), extra=lambda s, p: s["SOUND2"] == bytes(tail)
+            and p["SOUND2"][20:22] == bytes(tail[80:82]) and p["SOUND2"][80:82] == bytes(2)
+            and s["SOUND2"][:20] + s["SOUND2"][22:80] + s["SOUND2"][82:]
+            == p["SOUND2"][:20] + p["SOUND2"][22:80] + p["SOUND2"][82:])
+        for _ in range(4))
     out["0x400618e2 son aux défauts (d0, d1, a0, a1 ; k = 28..32 du son)"] = all(
         one(0x400618e2, 0x400618e8, (), {A[2]: SOUND2, D[3]: m}, clobber=(D[0], D[1], A[0], A[1]),
             differ=("SOUND2",), extra=lambda s, p: outside(s, p, "SOUND2", 76, 86)
@@ -1268,16 +1361,17 @@ def kit_bytes(rnd):
 
 
 def no_lfo2(b, rec):
-    """Kit (rec = False) ou son enregistrement (rec = True) sans les octets de LFO 2 de ses 70 sons (mots k = 28..32 du
-    son, +88..+91 de son enregistrement), que le mod écrit déjà (§4)."""
+    """Kit (rec = False) ou son enregistrement (rec = True) sans les octets de LFO 2 de ses 70 sons (mots k = 0 et
+    28..32 du son, +88..+91 de son enregistrement), que le mod écrit déjà (§4)."""
     b = bytearray(b)
     for i in range(70):
         if rec:
             at = (32 + 100 * i if i < 6 else 712 + 100 * (i - 6)) + 88
             b[at:at + 4] = bytes(4)
         else:
-            at = (28 + 100 * i if i < 6 else 694 + 100 * (i - 6)) + 76
-            b[at:at + 10] = bytes(10)
+            at = 28 + 100 * i if i < 6 else 694 + 100 * (i - 6)
+            b[at + 20:at + 22] = bytes(2)                       # k 0 : WAVE de LFO 2
+            b[at + 76:at + 86] = bytes(10)                      # k 28..32
     return bytes(b)
 
 

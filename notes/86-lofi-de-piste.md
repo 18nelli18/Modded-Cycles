@@ -50,11 +50,32 @@ changement de la seule moitié basse ; changement de machine : étiquette 0x7 et
 `test_sample_preview`, `test_tempo_sync` (avec tout `os.json`) TOUT OK ; `test_lfo_plus` combiné : les mêmes 9
 échecs qu'avant (préexistants, handoff §5).
 
-## 3. k 30 : WAVE de LFO 2 dans l'octet bas de k 29 `[À FAIRE]`
+## 3. k 30 : WAVE de LFO 2 dans le mot k 0 `[FAIT en émulation]`
 
-MULT (0..23) garde l'octet haut de k 29, WAVE (0..6) passe dans l'octet bas. P-locks indépendants : le mot de lock
-de k 29 porte le lock de MULT en octet haut et celui de WAVE en octet bas, **0xFF = pas de lock** pour cet octet
-(0xFFFF reste « pas de lock » de l'OS). Accroches relevées (rapport DSH §6) : application `0x40058458`, affichage
-`0x4001e0f2`, pose `0x4000df3c`, effacement `0x4000dd7c`, écriture du son `0x4000bae2`, bascule `0x40021360` ; trois
-tests de signe à rendre exacts (`0x4000dbcc`, `0x4000dcb2`, `0x4005b852`) ; migration de l'ancienne rangée 29 (WAVE
-sur k 30).
+**Pourquoi pas l'octet bas de k 29.** Le relevé de l'OS (rapport DSH §6) montre que des p-locks indépendants pour
+MULT et WAVE dans un même mot demandent une douzaine d'accroches (pose, effacement, affichage, présence, application
+dans la boucle des événements, écriture du son, bascule de pas) et trois tests de signe de l'OS à rendre exacts
+(`0x4000dbcc`, `0x4000dcb2`, `0x4005b852` : un mot `0xFFxx` y passe pour « pas de lock »).
+
+**Le mot k 0.** C'est le « None » de l'OS : aucun descripteur ne le règle (ni potard, ni CC), le chargement du son
+y met la case 18 (inutilisée), une destination None vaut k 0. Il est déjà un vrai mot de paramètre partout : p-lock
+(bornes 0..32 ; rangée `0x4010ee4c[0]` = 0, relue en k 0), lissage, copies. WAVE y est donc un paramètre à part
+entière : **p-locks de MULT et de WAVE indépendants par la mécanique de l'OS**, sans accroche. Relevé (DSH §7) :
+
+- LFO 1 (`0x40091d1c`) et la vélocité (`0x40056e88`) avec la destination None **ajoutent** leur modulation au mot
+  k 0 de obj (le miroir lissé ; seule une destination > 32 est refusée). Le moteur de LFO 2 lit donc WAVE dans le
+  mot k 0 des **cibles** (`(a3)` de la fonction audio, `0x800015a0`), où n'écrivent que la base et les p-locks ;
+- le chargement du son écrit k 0 deux fois (case 0 puis case 18) : `lfo_tail` (`0x4005af3e`, après la boucle des
+  cases) y replace WAVE, que `upk5` a déposé en k 30, et remet k 30 à 0.
+
+Changements de lfo-plus : `lfo_id2k` (page 2 : WAVE → k 0), la table de LFO 2 construite sur la pile pour
+`run_set` (SPD, MULT, DEST, DEP de obj ; WAVE des cibles), `lfo_pack` (WAVE pris en k 0, même format +88..+91,
+compatible avec les sons de DavidCaruso), `lfo_tail`, p-locks : k 0 → rangée **29** (celle qu'avait WAVE : les
+fichiers restent lisibles dans les deux sens), rangée 29 → k 0, k 30 non rangé (Lo-Fi Bits viendra). Place : un 13e
+masque 34×34 (`0x4018ff64`, le dernier libre).
+
+**Preuve** `tools/emu/test_lfo_plus.py` (mis à jour par l'agent DSH, relu) : id → k 28, 29, 0, 31, 32 ; sauvegarde
+(WAVE pris en k 0, k 30 ignoré) ; chargement (WAVE en k 0, k 30 = 0) ; enregistrement de l'ancienne disposition
+relu avec WAVE en k 0 ; aller-retour de 1 148 p-locks k 0..32 (WAVE par la rangée 29) ; p-lock WAVE ancien (rangée
+29) relu sur k 0 ; sortie de LFO 2 inchangée par une valeur ajoutée au mot k 0 de obj ; les accroches gardent pile,
+registres et mémoire. Seul : TOUT OK ; combiné avec tout `os.json` : les mêmes 9 échecs préexistants.

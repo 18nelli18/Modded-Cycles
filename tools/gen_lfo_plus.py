@@ -48,7 +48,8 @@ OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "60-lfo-plus.json"
 BASE = gx.BASE
 # Les masques 34x34 (272 o) réservés à ce mod, remplis dans cet ordre ; ceux qui restent vides ne sont pas touchés.
 MASKS = (0x4016f8c8, 0x40173848, 0x401780a8, 0x401784e8, 0x401835b8,
-         0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88, 0x4018b1a8)
+         0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88, 0x4018b1a8,
+         0x4018ff64)                   # 13e : WAVE de LFO 2 en k 0 (notes/86), le dernier 34x34 libre
 ROOM = 272
 # Sections mises d'office dans un masque (ajouts après coup : les autres restent à leur place, leurs adresses ne
 # bougent pas) : [LFO] + potard et la diode de la destination (notes/56 §3.13).
@@ -80,6 +81,9 @@ HOOKS = (
      "sauvegarde du son, format 1 (0x4005b054) : move.w 94(a3),92(a2) -> jsr lfo_pack"),
     (0x4005af1c, "41f94010eea8", "lfo_unpack", 0x4eb9,
      "chargement du son (0x4005aecc) : lea 0x4010eea8,a0 -> jsr lfo_unpack"),
+    (0x4005af3e, "712a001c20310c00", "lfo_tail", 0x4eb9,
+     "fin du chargement du son (0x4005aecc) : mvs.b 28(a2),d0 ; move.l (a1,d0.l*4),d0 -> jsr lfo_tail ; nop "
+     "(WAVE de LFO 2 en k 0, notes/86)"),
     (0x400618e2, "e18b35430026", "lfo_init", 0x4eb9,
      "son aux défauts (0x40061866) : lsl.l #8,d3 ; move.w d3,38(a2) -> jsr lfo_init"),
     (0x40025e10, "4feffff02f0a", "lfo_gate", 0x4ef9,
@@ -112,7 +116,7 @@ PTRS = (
 SYMBOLS = ("lfo_audio", "lfo_id2k", "lfo_get", "lfo_set", "lfo_key", "lfo_draw", "lfo_ctor", "lfo_dtor", "lfo_gate",
            "lfo_dest", "lfo_pack", "lfo_unpack", "lfo_init", "lfo_plk_save", "lfo_plk_load", "page", "pend", "ready", "view",
            "lfo34", "kready", "cur34", "blk34", "snd34", "pk5", "upk5", "kit_save", "kit_load", "kit_copy", "lfo_learn",
-           "lfo_led", "m5")
+           "lfo_led", "m5", "lfo_tail")
 
 
 CONFLICTS = ["track-filter"]   # mêmes k 28..31 et mêmes octets +88..+91 du son (notes/56 §3.6, notes/47 §4)

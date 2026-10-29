@@ -58,7 +58,7 @@
 	.equ	K28, 56				/* octet du mot k = 28 dans une piste (2k) */
 
 	.globl	lfo_audio, lfo_id2k, lfo_get, lfo_set, lfo_key, lfo_draw, lfo_ctor, lfo_dtor, lfo_gate, lfo_dest
-	.globl	lfo_pack, lfo_unpack, lfo_init, lfo_plk_save, lfo_plk_load
+	.globl	lfo_pack, lfo_unpack, lfo_init, lfo_plk_save, lfo_plk_load, lfo_tail
 	.globl	page, pend, ready, kready, view, lfo34, slots, sel_track, slot_of_id, copy192, run_set, taken, audio_sets
 	.globl	audio_done, cur34, blk34, snd34, pk5, upk5, dflt5, kit_save, kit_load, kit_copy, buf_find, buf_put
 	.globl	lfo_learn, lfo_led
@@ -140,10 +140,32 @@ audio_sets:
 	move.l	%a6, %d0
 	btst	#0, %d0
 	beq.s	7f
-	lea	14+K28(%a4), %a0		/* LFO 2 : mots k = 28..32 des pistes */
-	moveq	#66, %d0
+	/* LFO 2 : SPD, MULT, DEST, DEP dans les mots k = 28, 29, 31, 32 de obj ; WAVE dans le mot k = 0 des CIBLES
+	 * (notes/86 §3) : k 30 est à Lo-Fi Bits, et dans obj le mot k 0 reçoit la modulation de LFO 1 et de la
+	 * vélocité quand leur destination est None (0x40091d1c, 0x40056e88). Table de 6 × 10 o sur la pile, au format
+	 * de LFO 3/4 ; les cibles = (a3) de la fonction audio, a3 empilé par lfo_audio en 28(sp). */
+	movea.l	28(%sp), %a2
+	movea.l	(%a2), %a2
+	lea	14(%a2), %a2			/* cibles, mot k = 0 de la piste 0 */
+	lea	-60(%sp), %sp
+	lea	14+K28(%a4), %a0
+	movea.l	%sp, %a1
+	moveq	#6, %d0
+9:	move.w	(%a0), (%a1)			/* SPD */
+	move.w	2(%a0), 2(%a1)			/* MULT */
+	move.w	(%a2), 4(%a1)			/* WAVE */
+	move.w	6(%a0), 6(%a1)			/* DEST */
+	move.w	8(%a0), 8(%a1)			/* DEP */
+	lea	66(%a0), %a0
+	lea	66(%a2), %a2
+	lea	10(%a1), %a1
+	subq.l	#1, %d0
+	bne.s	9b
+	movea.l	%sp, %a0
+	moveq	#10, %d0
 	lea	S_ST2, %a5
 	jsr	run_set
+	lea	60(%sp), %sp
 7:	move.l	%a6, %d0
 	btst	#1, %d0
 	beq.s	8f
@@ -256,8 +278,13 @@ lfo_id2k:
 	move.b	page, %d1
 	subq.l	#1, %d1
 	bne.s	1f
+	moveq	#2, %d1				/* WAVE : mot k = 0 (notes/86 §3), k 30 est à Lo-Fi Bits */
+	cmp.l	%d1, %d0
+	beq.s	2f
 	moveq	#28, %d1
 	add.l	%d1, %d0
+	rts
+2:	moveq	#0, %d0
 	rts
 1:	moveq	#-1, %d0
 	rts
@@ -701,8 +728,13 @@ lfo_pack:
 	move.w	94(%a3), 92(%a2)
 	move.l	%d1, -(%sp)
 	move.l	%a1, -(%sp)
-	lea	76(%a3), %a1
+	lea	-12(%sp), %sp			/* LFO 2 : k 28, 29, puis WAVE du mot k 0, puis k 31, 32 */
+	movea.l	%sp, %a1
+	move.l	76(%a3), (%a1)
+	move.w	20(%a3), 4(%a1)
+	move.l	82(%a3), 6(%a1)
 	bsr.s	pk5
+	lea	12(%sp), %sp
 	move.l	%d0, 88(%a2)
 	movea.l	(%sp)+, %a1
 	move.l	(%sp)+, %d1
@@ -749,6 +781,17 @@ lfo_unpack:
 	lea	76(%a2), %a1
 	bsr.s	upk5
 	lea	0x4010eea8, %a0
+	rts
+
+/* 0x4005af3e, après la boucle des cases du chargement du son (0x4005aecc ; a1 = table 0x4010eea8, a2 = le son,
+ * a3 = l'enregistrement) : jsr lfo_tail ; nop à la place de mvs.b 28(a2),d0 ; move.l (a1,d0.l*4),d0. La boucle a
+ * mis la case 18 dans k 0 (inutilisé par l'OS) : WAVE de LFO 2, que upk5 a posé en k 30, y passe, et k 30 (Lo-Fi
+ * Bits, notes/86) repart de zéro. a1 et d0 rendus comme les deux instructions. */
+lfo_tail:
+	mvs.b	28(%a2), %d0
+	move.l	(%a1, %d0.l*4), %d0
+	move.w	80(%a2), 20(%a2)
+	clr.w	80(%a2)
 	rts
 
 /* d0 = un long au format de pk5 -> les 5 mots d'un LFO en a1 ; marque autre que 10 : les défauts (dflt5). Détruit
@@ -812,7 +855,11 @@ lfo_init:
  * table suivante (Model-TG : un p-lock d'Attack, Filtre, Résonance revenait en None, LFO Speed, Multiplier). Ici
  * k = 23..32 -> plk_id. Garde tout. */
 lfo_plk_save:
-	cmpi.l	#22, %d0
+	tst.l	%d0				/* k 0 : WAVE de LFO 2, rangée 29 comme avant (notes/86 §3) */
+	bne.s	3f
+	move.b	#29, (%a3)
+	bra.s	2f
+3:	cmpi.l	#22, %d0
 	bhi.s	1f
 	move.b	3(%a5, %d4.l), (%a3)
 	bra.s	2f
@@ -821,7 +868,7 @@ lfo_plk_save:
 	rts
 /* identifiant de rangée pour k = 23..32 (0xff : rangée ignorée à la relecture ; k = 26, 27 : état du Sampler de
  * Model-TG, jamais p-locké) */
-plk_id:	.byte	24, 25, 26, 0xff, 0xff, 27, 28, 29, 30, 31
+plk_id:	.byte	24, 25, 26, 0xff, 0xff, 27, 28, 0xff, 30, 31
 
 /* 0x4005aa22, identifiant de rangée -> k (0x4005aa1a(piste, id) ; d2 empilé puis = 6, d1 = piste) : jmp
  * lfo_plk_load à la place de move.l 12(sp),d0 ; cmp.l d1,d2. Pistes 0..5, identifiants 24..31 (que l'OS n'écrit
@@ -841,7 +888,7 @@ lfo_plk_load:
 1:	moveq	#6, %d2
 	cmp.l	%d1, %d2
 	jmp	0x4005aa28
-plk_k:	.byte	23, 24, 25, 28, 29, 30, 31, 32
+plk_k:	.byte	23, 24, 25, 28, 29, 0, 31, 32
 
 /* ================================================================== LFO 3/4 par pattern ===================== */
 
