@@ -200,3 +200,5 @@ Release 2.57 (2026-10-29): startup screens and flasher versions advance together
 Release 2.58 fixes late new-sound filter initialization and double-STOP FX tail clearing, and removes the added ACID Punch transient. Full/Lite and Machine Optional share these fixes; Optional retains its extra choices. Validation is by emulation; hardware confirmation is pending.
 
 Release 2.60 adds a globally saved ACID envelope selector under Mod Setup > Global: A / F / AF. F remains the default. Lite retains the shared features and excludes added-machine controls.
+
+Release 2.61 adds durchgemacht/model27 POTS delay (MIT) to Full, Lite and Machine Optional. Delay menu: PHASER, DUCK, DUB, POTS, PING PONG, DELAY, CRUSH 1, CRUSH 2. Native Time/Feedback, project selection saving and double-STOP tail reset; native emulation verified, device confirmation pending.

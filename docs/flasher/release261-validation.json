@@ -1,0 +1,489 @@
+{
+  "release": "2.61",
+  "hardware_tested": false,
+  "legacy_checks": {"overlaps": "passed", "gen_flasher_tweaks_check": "pre-existing stale output; generator/tweak inputs unchanged", "registry_check": "pre-existing stale output; generator/tweak inputs unchanged"},
+  "asset_source_commit": "fc181fdd17044282435ed4830f853b660595eafa",
+  "pots": {
+    "main-full": {
+      "sha256": "2eb4b07f45ee24b7d9f198b09094db358b1d995fa8111b80daf6e114f9fac5c6",
+      "menu_positions": 16,
+      "project_save_cold_reload": true,
+      "shared_TRK": true,
+      "native_time_feedback": true,
+      "dsp_blocks": 360,
+      "peak": 141320590,
+      "first_echo_block": 23,
+      "double_stop_clears": true,
+      "first_stop_preserves": true,
+      "ring_canaries": true,
+      "native_delay_transition_blocks": 1050,
+      "hardware_tested": false
+    },
+    "main-lite": {
+      "sha256": "7f000ba151c24b77e40d92fa8a640910e375ffd4eee2064f677eeb7697012c51",
+      "menu_positions": 16,
+      "project_save_cold_reload": true,
+      "shared_TRK": true,
+      "native_time_feedback": true,
+      "dsp_blocks": 360,
+      "peak": 141320590,
+      "first_echo_block": 23,
+      "double_stop_clears": true,
+      "first_stop_preserves": true,
+      "ring_canaries": true,
+      "native_delay_transition_blocks": 1050,
+      "hardware_tested": false
+    },
+    "optional-full": {
+      "sha256": "ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0",
+      "menu_positions": 16,
+      "project_save_cold_reload": true,
+      "shared_TRK": true,
+      "native_time_feedback": true,
+      "dsp_blocks": 360,
+      "peak": 141320590,
+      "first_echo_block": 23,
+      "double_stop_clears": true,
+      "first_stop_preserves": true,
+      "ring_canaries": true,
+      "native_delay_transition_blocks": 1050,
+      "hardware_tested": false
+    },
+    "optional-lite": {
+      "sha256": "6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692",
+      "menu_positions": 16,
+      "project_save_cold_reload": true,
+      "shared_TRK": true,
+      "native_time_feedback": true,
+      "dsp_blocks": 360,
+      "peak": 141320590,
+      "first_echo_block": 23,
+      "double_stop_clears": true,
+      "first_stop_preserves": true,
+      "ring_canaries": true,
+      "native_delay_transition_blocks": 1050,
+      "hardware_tested": false
+    }
+  },
+  "Full_Lite_shared_features": {
+    "full": "2eb4b07f45ee24b7d9f198b09094db358b1d995fa8111b80daf6e114f9fac5c6",
+    "lite": "7f000ba151c24b77e40d92fa8a640910e375ffd4eee2064f677eeb7697012c51",
+    "shared_boolean_features": [
+      "hardware_tested",
+      "shared_reverb_delay",
+      "native_exports_include_sidecar",
+      "track_release_commit_guard",
+      "selection_track_latched",
+      "lfo_idle_copy_optimization",
+      "governor_thresholds_unchanged",
+      "governor_original_limits_restored",
+      "governor_fade_end_zero",
+      "irq_budget_includes_prelude",
+      "irq_budget_previous_tail",
+      "dx_near_complete_irq",
+      "irq_immediate_overload_guard",
+      "governor_spike_hysteresis_restored",
+      "fx_native_idle_pipeline_restored",
+      "fx_dma_prepare_before_voices",
+      "fx_idle_respects_sends",
+      "ui_masked_word_capture",
+      "fx_startup_asleep_before_first_send",
+      "fx_post_send_tail_guard_preserved",
+      "native_osc_zero_modulation_fast_path",
+      "filter_exact_q30_division_reduction",
+      "filter_shared_coefficient_cache",
+      "master_mode_skips_track_scan",
+      "lfo_stable_bank_sync_optimization",
+      "shared_chorus_crusher_code_independent_state",
+      "fx_tail_scan_fused",
+      "ring_exact_endpoint_paths",
+      "fx_output_duplicate_setup_removed",
+      "fx_sleep_skips_ring_and_dma_writeback",
+      "hardware_click_fix_verified",
+      "native_send_zero_gain_fast_path",
+      "filter_new_sound_deferred_low",
+      "filter_saved_load_cancels_pending",
+      "pots_delay",
+      "pots_native_time_feedback",
+      "pots_shared_heavy_delay",
+      "retrig_idle_history_packed",
+      "retrig_active_and_fades_original",
+      "lfo_direct_collection",
+      "unassigned_secondary_banks_pause",
+      "macro_eco_only",
+      "chord_exact_delta_interpolation",
+      "legacy_removed",
+      "unique_machine_punch",
+      "vinyl_removed",
+      "chordkeys_audio_disabled",
+      "chordkeys_ui_midi_removed",
+      "eco24",
+      "firmware_hooks_installed"
+    ],
+    "machine_only_exceptions": [
+      "cymbal_fixed_filter_path",
+      "harmonics_exact_target_cache",
+      "harmonics_zero_trailing_partials",
+      "macro_fold_steady_parameter"
+    ],
+    "shared_subsystems": 10,
+    "filter_and_FX_choices_equal": true,
+    "ACID_Full_only": true,
+    "hardware_tested": false
+  },
+  "existing_PS1_tail_reset": {
+    "cases": [
+      {
+        "scope": "test-main",
+        "first_stop_preserves_tail": true,
+        "all_sound_off_clears_ps1": true,
+        "silent_blocks_after_panic": 160,
+        "new_input_recovers": true,
+        "repeated_panic_count": 4,
+        "settings_preserved": true,
+        "reset_instructions": 2165
+      },
+      {
+        "scope": "test-main",
+        "first_stop_preserves_tail": true,
+        "all_sound_off_clears_ps1": true,
+        "silent_blocks_after_panic": 160,
+        "new_input_recovers": true,
+        "repeated_panic_count": 4,
+        "settings_preserved": true,
+        "reset_instructions": 2165
+      },
+      {
+        "scope": "test-optional",
+        "first_stop_preserves_tail": true,
+        "all_sound_off_clears_ps1": true,
+        "silent_blocks_after_panic": 160,
+        "new_input_recovers": true,
+        "repeated_panic_count": 4,
+        "settings_preserved": true,
+        "reset_instructions": 2184
+      },
+      {
+        "scope": "test-optional",
+        "first_stop_preserves_tail": true,
+        "all_sound_off_clears_ps1": true,
+        "silent_blocks_after_panic": 160,
+        "new_input_recovers": true,
+        "repeated_panic_count": 4,
+        "settings_preserved": true,
+        "reset_instructions": 2184
+      }
+    ],
+    "hardware_tested": false
+  },
+  "filter_startup": {
+    "cases": [
+      {
+        "build": "..\\pots-delay-test\\test-main\\full",
+        "sha256": "2eb4b07f45ee24b7d9f198b09094db358b1d995fa8111b80daf6e114f9fac5c6",
+        "six_tracks_root_missing": true,
+        "six_tracks_handles_missing": true,
+        "saved_load_cancels_pending": true,
+        "ui_frame_resolves": true,
+        "native_clear_undo_and_saved_startup": true
+      },
+      {
+        "build": "..\\pots-delay-test\\test-main\\lite",
+        "sha256": "7f000ba151c24b77e40d92fa8a640910e375ffd4eee2064f677eeb7697012c51",
+        "six_tracks_root_missing": true,
+        "six_tracks_handles_missing": true,
+        "saved_load_cancels_pending": true,
+        "ui_frame_resolves": true,
+        "native_clear_undo_and_saved_startup": true
+      }
+    ],
+    "hardware_tested": false
+  },
+  "global_ACID_UI": {
+    "sha256": "2eb4b07f45ee24b7d9f198b09094db358b1d995fa8111b80daf6e114f9fac5c6",
+    "default_F": true,
+    "display_order": [
+      "A",
+      "F",
+      "AF"
+    ],
+    "eleven_native_global_menu_rows": [
+      "Pad",
+      "USB",
+      "Num",
+      "Mute",
+      "Dly",
+      "DX",
+      "QntM",
+      "Grv",
+      "LFOs",
+      "FX",
+      "ACID"
+    ],
+    "displayed_values": [
+      "A",
+      "F",
+      "AF"
+    ],
+    "data_edit_back_navigation": true,
+    "single_global_choice": true,
+    "save_deferred_during_playback": true,
+    "reload_preserves_choices": true,
+    "invalid_files_rejected": 4,
+    "preload_changes_preserved": true,
+    "legacy_migration": true,
+    "original_track_menu_restored": true,
+    "FX_edit_preserved": true,
+    "hardware_tested": false
+  },
+  "delivery": {
+    "release": "2.61",
+    "experimental": true,
+    "hardware_tested": false,
+    "builds": [
+      {
+        "scope": "main",
+        "edition": "full",
+        "file": "Supermodel_2.61_POTS_Full_Cycles_Experimental.syx",
+        "sha256": "2eb4b07f45ee24b7d9f198b09094db358b1d995fa8111b80daf6e114f9fac5c6",
+        "recovery_updater_identical_to_260": true,
+        "HMAC_valid": true,
+        "title": "2.61"
+      },
+      {
+        "scope": "main",
+        "edition": "lite",
+        "file": "Supermodel_2.61_POTS_Lite_Cycles_Experimental.syx",
+        "sha256": "7f000ba151c24b77e40d92fa8a640910e375ffd4eee2064f677eeb7697012c51",
+        "recovery_updater_identical_to_260": true,
+        "HMAC_valid": true,
+        "title": "LITE 2.61"
+      },
+      {
+        "scope": "optional",
+        "edition": "full",
+        "file": "Supermodel_2.61_POTS_Optional_Full_Cycles_Experimental.syx",
+        "sha256": "ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0",
+        "recovery_updater_identical_to_260": true,
+        "HMAC_valid": true,
+        "title": "2.61"
+      },
+      {
+        "scope": "optional",
+        "edition": "lite",
+        "file": "Supermodel_2.61_POTS_Optional_Lite_Cycles_Experimental.syx",
+        "sha256": "6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692",
+        "recovery_updater_identical_to_260": true,
+        "HMAC_valid": true,
+        "title": "LITE 2.61"
+      }
+    ]
+  },
+  "browser": {
+    "release": "2.61",
+    "main_and_optional_displayed": true,
+    "machine_choices": 19,
+    "all_none_legacy_only": true,
+    "sending_locked": true,
+    "page_errors": [],
+    "hardware_tested": false
+  },
+  "optional_native": {
+    "boots": [
+      {
+        "mask": 0,
+        "sha256": "6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 1,
+        "sha256": "9cb1680b18179aa8d6888eb6c4c0ed9b9607aa0b61d23ae6ea3b15f46f669f28",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 320,
+        "sha256": "f55a7299acf2ed629cf15be6faeb05445f6667bee4cc3a82fdc561fce325bf3a",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 2048,
+        "sha256": "758c4d49d960af0457b462036f04fd0e459264c46512fe891358c23eb93a9cf2",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 32768,
+        "sha256": "88d895c980396948ff823b520fd88e153bcf439facbc99ef8bcfb18a7839415e",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 349525,
+        "sha256": "01fce4ba12a28e695dacbf342fb440fe60623ac0ebadad05481686aed0feee9a",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 491519,
+        "sha256": "06cb8503563ec52273b50065ca03cb3f140e95e6c819b40fb7a651ce4306135a",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 524287,
+        "sha256": "ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      }
+    ],
+    "selector_masks": 65,
+    "selector_checks": 5265,
+    "native_dispatches": 1625,
+    "extra_choices_preserved": true,
+    "hardware_tested": false
+  },
+  "optional_samples": {
+    "cases": [
+      {
+        "mask": 0,
+        "sha256": "1898ba404d6b6857d41f0e89985922b6a85ec1ce622e2cd234383e348a9eaa1f",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 32768,
+        "sha256": "7dbc2c2e913060a9bedf0b620cdb5abc4f768040544e39bf59cf7adf65424432",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 320,
+        "sha256": "acf02ed56f6fa619fc5b2a1d58f4f44747c61ae0b84576847ec608842fc56f72",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 524287,
+        "sha256": "2c112a42596218211157a34202d92b1b43ce5d80452c542d4d27f1c58fb68c41",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      }
+    ],
+    "hardware_tested": false
+  },
+  "optional_variants": {
+    "release": "2.61",
+    "variants": [
+      {
+        "mask": 0,
+        "sha256": "6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692",
+        "main_sha256": "893680dc77d51a093b6ee60335fd61880375d12090934778dccfc745cdf96e69",
+        "flash_bytes": 1638432,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 524287,
+        "sha256": "ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0",
+        "main_sha256": "2062a706bc55d78789ee3a3eac640b2c758a1e0e0ecb592964ca1880ebaf97bf",
+        "flash_bytes": 1674624,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 1,
+        "sha256": "9cb1680b18179aa8d6888eb6c4c0ed9b9607aa0b61d23ae6ea3b15f46f669f28",
+        "main_sha256": "db43a42684f1ff809a2cd81cf0eb362c5dc3238c727f9ea63e76a12ce2ada1ba",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 32768,
+        "sha256": "88d895c980396948ff823b520fd88e153bcf439facbc99ef8bcfb18a7839415e",
+        "main_sha256": "88ae23712e32a3a96a5cbbbf43154e026c06f8f32083fe5966388995d02cb379",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 2048,
+        "sha256": "758c4d49d960af0457b462036f04fd0e459264c46512fe891358c23eb93a9cf2",
+        "main_sha256": "a21283cb25b483c2c877226825c7428e39db7c5ff5884af87e40602b556701f5",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 320,
+        "sha256": "f55a7299acf2ed629cf15be6faeb05445f6667bee4cc3a82fdc561fce325bf3a",
+        "main_sha256": "156655150bab5251165fb84e592c84490f8a5be23648fd978b3c30dd21e6a8c4",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 491519,
+        "sha256": "06cb8503563ec52273b50065ca03cb3f140e95e6c819b40fb7a651ce4306135a",
+        "main_sha256": "2f2f21cb914295a73e0fdefb4086d53003b2d42f1e8be2ad44d33b246df674e3",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 349525,
+        "sha256": "01fce4ba12a28e695dacbf342fb440fe60623ac0ebadad05481686aed0feee9a",
+        "main_sha256": "5c9ca2043a2c75900f4e8591fb7fb8363a7fa0a059ffc5eccab3b0347f972934",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      }
+    ],
+    "template_mask_literals": [
+      1534733,
+      1534734,
+      1534735,
+      1534737
+    ],
+    "hardware_tested": false
+  },
+  "main_samples_native_boots": [
+    "full",
+    "lite"
+  ],
+  "guide": {
+    "version": "2.61",
+    "pages": 8,
+    "POTS_controls_and_order": true,
+    "visual_review_pages": [
+      1,
+      2,
+      8
+    ]
+  },
+  "upstream": {
+    "repository": "durchgemacht/model27",
+    "revision": "5badf6ad27d956e86d32ff331c480a84ef74db92",
+    "license": "MIT",
+    "credit": "durchgemacht and Claude"
+  }
+}

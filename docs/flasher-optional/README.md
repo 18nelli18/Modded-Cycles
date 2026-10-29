@@ -1,10 +1,10 @@
-# Supermodel Machine Optional 2.60
+# Supermodel Machine Optional 2.61
 
 The updated Optional Full and Lite bases include per-track FX, Global FX
 MST/TRK controls, per-pattern/project FX persistence, the later LFO/filter and
 native audio/DMA fixes, packed repeat-history writes, distinct Punch attacks
 and the inactive-FX zero bypass. Both startup screens and this flasher display
-2.60. Optional retains Legacy, ChordKeys, Vinyl and all nineteen machine choices.
+2.61. Optional retains Legacy, ChordKeys, Vinyl and all nineteen machine choices.
 Legacy keeps its original full-rate processing; only MACRO's existing supported
 models receive the selective ECO behavior used by main Full.
 
@@ -29,7 +29,7 @@ requires explicitly pinned Full/Lite hashes for a new release. Run
 `tools/check_release_versions.py --base origin/main` before each release push
 to verify the new release number, image hashes and actual compiled title bytes.
 
-Fresh 2.60 checks cover both base bootstraps, per-track controls and storage,
+Fresh 2.61 checks cover both base bootstraps, per-track controls and storage,
 96 native mixer comparisons, eight signed selections on Cycles and both Samples
 transports, eight native payload boots, 65 native selector masks, 5265 selector
 comparisons and 1625 native dispatch checks. The browser checks all nineteen

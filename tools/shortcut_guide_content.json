@@ -1,6 +1,6 @@
 {
-  "release": "2.60",
-  "stamp": "2026-10-29-guide260",
+  "release": "2.61",
+  "stamp": "2026-10-29-guide261",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod and two Choruses; DUCK, DUB, Ping Pong, Phaser and two Crushers."
+        "Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod and two Choruses; DUCK, DUB, POTS, Ping Pong, Phaser and two Crushers."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtre résonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, Ping Pong, Phaser et deux Crushers."
+        "Filtre résonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers."
       ]
     },
     {
@@ -302,12 +302,12 @@
           "en": [
             "Delay-slot menu",
             "Hold TRACK + DELAY TIME",
-            "Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels."
+            "Top to bottom: PHASER, DUCK, DUB, POTS, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels."
           ],
           "fr": [
             "Menu delay",
             "Maintenir TRACK + DELAY TIME",
-            "De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule."
+            "De haut en bas : PHASER, DUCK, DUB, POTS, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule."
           ]
         },
         {
@@ -440,6 +440,18 @@
             "Delay DUB",
             "DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME",
             "Delay Send par piste / Time natif / Feedback. Echos stereo fortement filtres, de plus en plus etroits dans la boucle. Une source centree joue sur les deux canaux des le premier echo, meme sans feedback."
+          ]
+        },
+        {
+          "en": [
+            "POTS delay",
+            "DELAY SEND / TIME / FUNC + TIME",
+            "Telephone-style mono echoes from durchgemacht/model27 (MIT). Native send amount / Time / Feedback. Shared heavy delay in MST and TRK; Save Project preserves its selection. One STOP preserves the tail; double STOP clears it."
+          ],
+          "fr": [
+            "Delay POTS",
+            "DELAY SEND / TIME / FUNC + TIME",
+            "Echos mono de telephone de durchgemacht/model27 (MIT). Envoi natif / Time / Feedback. Delay lourd partage en MST et TRK ; Save Project conserve le choix. Un STOP conserve la queue ; double STOP la coupe."
           ]
         },
         {

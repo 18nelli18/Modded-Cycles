@@ -1,6 +1,6 @@
 """Guide imprime avec page Mod Setup, issu du guide HTML canonique."""
 from pathlib import Path
-import argparse,copy
+import argparse,copy,json
 from html import escape
 from html.parser import HTMLParser
 from reportlab.platypus import SimpleDocTemplate,Paragraph,Spacer,Table,TableStyle,CondPageBreak
@@ -100,7 +100,7 @@ def table(node,compact=False):
  t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e7ede4')),('LINEBELOW',(0,0),(-1,0),.6,accent),('LINEBELOW',(0,1),(-1,-1),.35,line),('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),('TOPPADDING',(0,0),(-1,-1),1 if compact else 4),('BOTTOMPADDING',(0,0),(-1,-1),1 if compact else 4)]))
  if words:t.setStyle(TableStyle([('TOPPADDING',(0,1),(-1,-1),0),('BOTTOMPADDING',(0,1),(-1,-1),0)]))
  return t
-flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel 2.60 - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
+flow=[Paragraph('Supermodel Edition',styles['title']),Paragraph('Model:Cycles | '+('MIDI-input test '+args.test_version+' - no-filter / P-O-N' if args.test else 'Supermodel '+json.loads((ROOT/'tools/shortcut_guide_content.json').read_text())['release']+' - Features and shortcut guide'),styles['sub']),para(soup.select_one('main > p')),Spacer(1,7)]
 cards=soup.select('.grid .card');grid=[]
 for i in range(0,len(cards),2):grid.append([para(n) for n in cards[i:i+2]])
 ct=Table(grid,colWidths=[276,276]);ct.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,-1),colors.HexColor('#f0f3ed')),('BOX',(0,0),(-1,-1),.4,line),('INNERGRID',(0,0),(-1,-1),.3,line),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),6),('BOTTOMPADDING',(0,0),(-1,-1),6)]));flow.append(ct)

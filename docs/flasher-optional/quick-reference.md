@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.60 - 29 October 2026
+Supermodel 2.61 - 29 October 2026
 
-Main 2.60. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
+Main 2.61. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
 
 ## Included features
 
@@ -10,7 +10,7 @@ Main 2.60. Hold the first button while pressing the next button or turning the n
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0 and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching and quantized mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists.
 
-**Filters and effects:** Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod and two Choruses; DUCK, DUB, Ping Pong, Phaser and two Crushers.
+**Filters and effects:** Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod and two Choruses; DUCK, DUB, POTS, Ping Pong, Phaser and two Crushers.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -43,7 +43,7 @@ Main 2.60. Hold the first button while pressing the next button or turning the n
 | Feature | Controls | Behavior |
 |---|---|---|
 | Reverb-slot menu | Hold TRACK + REVERB SIZE | Top to bottom: GATED, HALL, ROOM, PS1, REVERB, CHORUS 1, CHORUS 2, RING MOD. Turn left to move up, right to move down. Browse without changing sound; release TRACK to apply, BACK to cancel. |
-| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
+| Delay-slot menu | Hold TRACK + DELAY TIME | Top to bottom: PHASER, DUCK, DUB, POTS, PING PONG, DELAY, CRUSH 1, CRUSH 2. From DELAY, left/up selects Ping Pong; right/down selects Crush 1 then Crush 2. Release TRACK to apply; BACK cancels. |
 | Standard Reverb | REVERB SEND / SIZE / FUNC + SIZE | Per-track Send / Size, including INF at maximum / Tone -64 through 0 to +63. |
 | GATED reverb | REVERB SEND / SIZE; FUNC + SIZE; SETTINGS + SIZE | Gated Send / Gate Time; Pre-delay; Tone. Gate Time: about 40 ms–6.7 s after input falls quiet. Pre-delay: 0–568 ms. Try Gate Time 16–32 and Pre-delay 25–40 ms on a snare. |
 | HALL reverb | REVERB SEND / SIZE / FUNC + SIZE or SETTINGS + SIZE | Hall Send per track / Decay / Tone. Wide stereo tail with longer reflections than ROOM; maximum SIZE gives a long damped tail. |
@@ -55,6 +55,7 @@ Main 2.60. Hold the first button while pressing the next button or turning the n
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send per track / Speed / Depth. Speed and Depth 0-127. Replaces reverb in this slot. |
 | Standard Delay | DELAY SEND / TIME / FUNC + TIME | Per-track Delay Send / native Time / native Feedback. |
 | DUB delay | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track Delay Send / native Time / Feedback. Strongly filtered stereo echoes, progressively narrowing in the feedback loop. Centered input plays on both channels from the first echo, even with zero feedback. |
+| POTS delay | DELAY SEND / TIME / FUNC + TIME | Telephone-style mono echoes from durchgemacht/model27 (MIT). Native send amount / Time / Feedback. Shared heavy delay in MST and TRK; Save Project preserves its selection. One STOP preserves the tail; double STOP clears it. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME or SETTINGS + TIME | Per-track send / Time / Feedback. Stereo echoes alternate left and right; listen through headphones or both outputs. |
 | Crusher Rate / Bits | CRUSH 1 or 2: TIME / FUNC + TIME | Rate 0-127, about 750 Hz-48 kHz / Bits 2-16. Lower Rate or Bits is rougher. CRUSH 1 keeps the direct signal clean; CRUSH 2 blends direct clean/crushed. DELAY SEND is labeled Crush Send; no delay echoes in Crush modes. |
 | Effect settings and save | Save Project | Each pattern remembers its selected FX types, added controls and extra sends. Save the project to keep them after reloading. Blank patterns use standard Delay/Reverb and default added controls. A queued pattern applies its FX when it begins playing. Added FX controls have no p-lock/LFO destinations; native track sends support locks. |

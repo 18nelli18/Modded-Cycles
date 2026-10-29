@@ -323,3 +323,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [200 - Page Warp et grille](200-page-warp-grille.md) : v199 confirme, principal2.55 ; ISR complete et livraison Samples verifiees.
 
 - [201 - Editions Full et Lite](201-editions-full-lite.md) : publication2.56, code204/206, changement du titre uniquement ; demarrage206 confirme, conversions Samples natives et choix navigateur verifies.
+
+- [202 - Delay POTS](202-delay-pots.md) : DSP MIT model27 epingle, huit choix de delay dans Full/Lite/Optional ; integration privee experimentale2.61, preuves natives, confirmation appareil en attente.

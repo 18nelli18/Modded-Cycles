@@ -1,0 +1,223 @@
+{
+  "release": "2.61",
+  "hardware_tested": false,
+  "native": {
+    "boots": [
+      {
+        "mask": 0,
+        "sha256": "6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 1,
+        "sha256": "9cb1680b18179aa8d6888eb6c4c0ed9b9607aa0b61d23ae6ea3b15f46f669f28",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 320,
+        "sha256": "f55a7299acf2ed629cf15be6faeb05445f6667bee4cc3a82fdc561fce325bf3a",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 2048,
+        "sha256": "758c4d49d960af0457b462036f04fd0e459264c46512fe891358c23eb93a9cf2",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 32768,
+        "sha256": "88d895c980396948ff823b520fd88e153bcf439facbc99ef8bcfb18a7839415e",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 349525,
+        "sha256": "01fce4ba12a28e695dacbf342fb440fe60623ac0ebadad05481686aed0feee9a",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 491519,
+        "sha256": "06cb8503563ec52273b50065ca03cb3f140e95e6c819b40fb7a651ce4306135a",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      },
+      {
+        "mask": 524287,
+        "sha256": "ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0",
+        "native_payload_boot": true,
+        "track_fx_code_exact": true,
+        "track_fx_bss_zero": true
+      }
+    ],
+    "selector_masks": 65,
+    "selector_checks": 5265,
+    "native_dispatches": 1625,
+    "extra_choices_preserved": true,
+    "hardware_tested": false
+  },
+  "samples": {
+    "cases": [
+      {
+        "mask": 0,
+        "sha256": "1898ba404d6b6857d41f0e89985922b6a85ec1ce622e2cd234383e348a9eaa1f",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 32768,
+        "sha256": "7dbc2c2e913060a9bedf0b620cdb5abc4f768040544e39bf59cf7adf65424432",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 320,
+        "sha256": "acf02ed56f6fa619fc5b2a1d58f4f44747c61ae0b84576847ec608842fc56f72",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      },
+      {
+        "mask": 524287,
+        "sha256": "2c112a42596218211157a34202d92b1b43ce5d80452c542d4d27f1c58fb68c41",
+        "native_samples_boot": true,
+        "ram_exact": true,
+        "native_cycles_update_accepts": true,
+        "native_samples_install_accepts": true
+      }
+    ],
+    "hardware_tested": false
+  },
+  "browser": {
+    "release": "2.61",
+    "main_and_optional_displayed": true,
+    "machine_choices": 19,
+    "all_none_legacy_only": true,
+    "sending_locked": true,
+    "page_errors": [],
+    "hardware_tested": false
+  },
+  "pots": {
+    "optional-full": {
+      "sha256": "ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0",
+      "menu_positions": 16,
+      "project_save_cold_reload": true,
+      "shared_TRK": true,
+      "native_time_feedback": true,
+      "dsp_blocks": 360,
+      "peak": 141320590,
+      "first_echo_block": 23,
+      "double_stop_clears": true,
+      "first_stop_preserves": true,
+      "ring_canaries": true,
+      "native_delay_transition_blocks": 1050,
+      "hardware_tested": false
+    },
+    "optional-lite": {
+      "sha256": "6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692",
+      "menu_positions": 16,
+      "project_save_cold_reload": true,
+      "shared_TRK": true,
+      "native_time_feedback": true,
+      "dsp_blocks": 360,
+      "peak": 141320590,
+      "first_echo_block": 23,
+      "double_stop_clears": true,
+      "first_stop_preserves": true,
+      "ring_canaries": true,
+      "native_delay_transition_blocks": 1050,
+      "hardware_tested": false
+    }
+  },
+  "variants": {
+    "release": "2.61",
+    "variants": [
+      {
+        "mask": 0,
+        "sha256": "6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692",
+        "main_sha256": "893680dc77d51a093b6ee60335fd61880375d12090934778dccfc745cdf96e69",
+        "flash_bytes": 1638432,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 524287,
+        "sha256": "ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0",
+        "main_sha256": "2062a706bc55d78789ee3a3eac640b2c758a1e0e0ecb592964ca1880ebaf97bf",
+        "flash_bytes": 1674624,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 1,
+        "sha256": "9cb1680b18179aa8d6888eb6c4c0ed9b9607aa0b61d23ae6ea3b15f46f669f28",
+        "main_sha256": "db43a42684f1ff809a2cd81cf0eb362c5dc3238c727f9ea63e76a12ce2ada1ba",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 32768,
+        "sha256": "88d895c980396948ff823b520fd88e153bcf439facbc99ef8bcfb18a7839415e",
+        "main_sha256": "88ae23712e32a3a96a5cbbbf43154e026c06f8f32083fe5966388995d02cb379",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 2048,
+        "sha256": "758c4d49d960af0457b462036f04fd0e459264c46512fe891358c23eb93a9cf2",
+        "main_sha256": "a21283cb25b483c2c877226825c7428e39db7c5ff5884af87e40602b556701f5",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 320,
+        "sha256": "f55a7299acf2ed629cf15be6faeb05445f6667bee4cc3a82fdc561fce325bf3a",
+        "main_sha256": "156655150bab5251165fb84e592c84490f8a5be23648fd978b3c30dd21e6a8c4",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 491519,
+        "sha256": "06cb8503563ec52273b50065ca03cb3f140e95e6c819b40fb7a651ce4306135a",
+        "main_sha256": "2f2f21cb914295a73e0fdefb4086d53003b2d42f1e8be2ad44d33b246df674e3",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 349525,
+        "sha256": "01fce4ba12a28e695dacbf342fb440fe60623ac0ebadad05481686aed0feee9a",
+        "main_sha256": "5c9ca2043a2c75900f4e8591fb7fb8363a7fa0a059ffc5eccab3b0347f972934",
+        "flash_bytes": 1676048,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      }
+    ],
+    "template_mask_literals": [
+      1534733,
+      1534734,
+      1534735,
+      1534737
+    ],
+    "hardware_tested": false
+  }
+}

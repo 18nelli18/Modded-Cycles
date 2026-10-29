@@ -29,7 +29,7 @@ static u32 uuid(u32 r){return r>=0x40000400u&&r<0x42400000u-0x37615cu?*(const u3
 static u32 rev_light(u32 m){return m==1?1:m==2?2:m==3?3:m==9?4:0;}
 static u32 del_light(u32 m){return m==1?1:m==2?2:m==11?3:0;}
 static u32 rev_ok(u32 m){return m==0||m==1||m==2||m==3||m==7||m==8||m==9||m==10||m==11;}
-static u32 del_ok(u32 m){return m==0||m==1||m==2||m==5||m==9||m==10||m==11;}
+static u32 del_ok(u32 m){return m==0||m==1||m==2||m==5||m==9||m==10||m==11||m==12;}
 static void retired_effects(void){
 #ifdef MF_NO_VINYL
  if(ch_mode==3)ch_mode=0;
@@ -65,6 +65,7 @@ static void seed(void){
  mf_live[36]=r;mf_live[37]=d;mf_live[38]=rev_light(r)?0:r;mf_live[39]=del_light(d)?0:d;
  for(u32 t=0;t<6;t++){mf_live[t]=rev_light(r);mf_live[6+t]=del_light(d);}import_params();mf_live[40]=1;dirty=1;
 }
+void mf_seed_pots(void){seed();}
 /* Comparaison par mots seulement lorsque toutes les IRQ sont deja masquees.
  * Hors section critique, garder les lectures volatiles historiques par octet. */
 typedef u32 capture_word __attribute__((may_alias));

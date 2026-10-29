@@ -10,8 +10,8 @@ assert(html.includes('Only some combinations have been tested on hardware. Use t
 assert(html.includes('Seules certaines combinaisons ont été testées sur matériel. Utilisez cette version à vos risques et périls.'));
 assert(html.includes('<base href="../flasher/">'));assert(!html.includes('../../../machine-optional/'));
 assert.equal(Object.keys(descriptions).length,19);for(const d of Object.values(descriptions))assert(d.en.length>20&&d.fr.length>20);
-assert.equal(editions.full.syxSha256,'2a61e86e0cd4f9802cece1057d2f3806fe01490fea50b0a354d51885afbb462c');assert.equal(editions.lite.syxSha256,'a0163f84dbb7ace11e91a232013e435ea037abb20d5d4b73af5605a60fa288cd');
-assert.equal(metadata.release,'2.60');assert(metadata.per_track_fx);for(const m of Object.values(editions)){assert.equal(m.startup_title.version,metadata.release);assert(m.per_track_fx);assert.equal(m.legacy_removed,false);assert.equal(m.chordkeys_removed,false);assert.equal(m.vinyl_removed,false);}
+assert.equal(editions.full.syxSha256,'ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0');assert.equal(editions.lite.syxSha256,'6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692');
+assert.equal(metadata.release,'2.61');assert(metadata.per_track_fx);for(const m of Object.values(editions)){assert.equal(m.startup_title.version,metadata.release);assert(m.per_track_fx);assert.equal(m.legacy_removed,false);assert.equal(m.chordkeys_removed,false);assert.equal(m.vinyl_removed,false);}
 const [cycles]=process.argv.slice(2);assert(cycles,'official Cycles OS 1.13 path required');
 const prepared=O.prepare(fs.readFileSync(path.join(root,'docs/flasher',editions.full.file)),fs.readFileSync(path.join(root,'docs/flasher',editions.lite.file)),fs.readFileSync(cycles),recipe);
 for(const mask of [0,0x40001,0x7ffff]){const result=prepared.build(mask);assert.equal(B.hex(B.sha256(result.raw)),mask===0?editions.lite.syxSha256:mask===0x7ffff?editions.full.syxSha256:result.syxSha256);assert(result.flashBytes<=0x1c0000);}

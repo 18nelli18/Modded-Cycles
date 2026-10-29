@@ -1,5 +1,23 @@
 window.MC_RELEASES=[
 {
+  "version": "2.61",
+  "date": "2026-10-29",
+  "changes": [
+    {
+      "en": "POTS by durchgemacht joins the delay menu in Full, Lite and Machine Optional: telephone-style mono echoes with native Time, Feedback and Delay Send controls. Hold TRACK + turn DELAY TIME, choose POTS and release TRACK.",
+      "fr": "POTS de durchgemacht rejoint le menu delay dans Full, Lite et Machine Optional : echos mono de telephone avec Time, Feedback et Delay Send natifs. Maintenez TRACK et tournez DELAY TIME, choisissez POTS puis relachez TRACK."
+    },
+    {
+      "en": "The delay list is PHASER, DUCK, DUB, POTS, PING PONG, DELAY, CRUSH 1 and CRUSH 2. POTS remains one shared heavy delay in FX TRK mode. Save Project preserves its selection; double STOP clears its tail. Optional keeps its extra choices.",
+      "fr": "La liste delay contient PHASER, DUCK, DUB, POTS, PING PONG, DELAY, CRUSH 1 et CRUSH 2. POTS reste un delay lourd partage en mode FX TRK. Save Project conserve son choix ; double STOP coupe sa queue. Optional conserve ses choix supplementaires."
+    },
+    {
+      "en": "Startup screens, both flashers and the downloadable guide are updated to 2.61. Native emulation verifies menu controls, save/reload, audio, transitions and tail reset; this integration still awaits device confirmation. POTS DSP is MIT licensed, copyright durchgemacht and Claude.",
+      "fr": "Les ecrans de demarrage, les deux flasheurs et le guide telechargeable passent a2.61. L emulation native verifie menus, sauvegarde/chargement, audio, transitions et reset des queues ; cette integration attend une confirmation sur appareil. DSP POTS sous licence MIT, copyright durchgemacht and Claude."
+    }
+  ]
+},
+{
   "version": "2.60",
   "date": "2026-10-29",
   "changes": [

@@ -6,7 +6,8 @@ typedef unsigned int u32;typedef int s32;typedef unsigned char u8;
 extern volatile u32 mf_mode,mf_requested,ch_mode,cr_mode,menu,row,gc_level,gc_tree_cursor,sx_submenu,du_page,mq_page,gc_page;
 extern volatile u8 mf_live[48];
 extern u32 fx_menu_open,fx_menu_slot,fx_menu_cursor;
-extern const u32 fx_rev_order[9],fx_del_order[7];
+extern volatile u32 fx_dirty;
+extern const u32 fx_rev_order[9],pots_del_order[8];
 #ifdef MF_NO_VINYL
 extern const u32 nv_rev_order[8];extern volatile u32 fx_dirty;
 #define MF_REV_ORDER nv_rev_order
@@ -19,12 +20,16 @@ extern u32 mf_old_fx_key(u32*),mf_old_fx_encoder(u32,const u32*),mf_old_gc_key(c
 extern void mf_old_commit(void),mf_old_value(u32,u32*,const char**,const char**),mf_show(u32),mf_redraw(void),mf_global_draw(u32,u32),mf_frame(void),mf_commit(void),mf_legacy_capture(void),mf_touch(void),mf_mode_set(u32),mf_choose(u32,u32,u32),mf_config_set(u32,u32,u32);
 extern u32 mf_choice(u32,u32);
 extern volatile u32 mf_wf_api[];
+extern void mf_seed_pots(void);
 static u32 global_edit,owned_data,owned_back,popup_type,popup_field,popup_index,menu_track=6;
 static s32 motion;
 static u32 held(u32 key){return !!N(0x4007faf4)(key);}
 static u32 child(void){return sx_submenu||du_page||mq_page||gc_page;}
 static u32 global(void){return menu&&gc_level==1&&!child();}
 static s32 clamp(s32 x,s32 lo,s32 hi){return x<lo?lo:x>hi?hi:x;}
+/* Les handlers historiques ne connaissent pas encore le nouvel ID12. Leur
+ * presenter Delay garde les vrais Time/Fdbk et tous les autres gestes FX. */
+static u32 old_fx_encoder(u32 view,const u32*e){u32 mode=cr_mode;if(mode==12)cr_mode=0;u32 r=mf_old_fx_encoder(view,e);if(mode==12&&cr_mode==0)cr_mode=12;mf_legacy_capture();return r;}
 u32 mf_tree_edit(void){return global()&&gc_tree_cursor==9?global_edit:mf_old_tree_edit();}
 void mf_global_value(u32 a,u32 b,u32 canvas,u32 x,u32 y){(void)a;(void)b;(void)x;u32 font[2];N(0x40072260)(font,0x40140ab0);N(0x40071a04)(canvas,font,122,y,4,"%s",mf_mode?"TRK":"MST");N(0x40072080)(font);}
 u32 mf_gc_key(const u32*e){
@@ -51,25 +56,19 @@ u32 mf_gc_encoder(const u32*e){
 }
 u32 mf_gc_draw(u32 view,u32 canvas){if(global()){mf_global_draw(view,canvas);return 1;}return mf_old_gc_draw(view,canvas);}
 u32 mf_fx_encoder(u32 view,const u32*e){
-#ifdef MF_NO_VINYL
- if(!e||e[0]!=0x400fbebc||menu){popup_type=0;u32 r=mf_old_fx_encoder(view,e);mf_legacy_capture();return r;}
-#else
- if(!mf_mode||!e||e[0]!=0x400fbebc||menu){popup_type=0;u32 r=mf_old_fx_encoder(view,e);mf_legacy_capture();return r;}
-#endif
- u32 knob=e[3],track=mf_fx_selected();if(track>5||(knob!=14&&knob!=15)||held(8)){popup_type=0;return mf_old_fx_encoder(view,e);}
+ if(!e||e[0]!=0x400fbebc||menu){popup_type=0;return old_fx_encoder(view,e);}
+ u32 knob=e[3],track=mf_fx_selected();if(track>5||(knob!=14&&knob!=15)||held(8)){popup_type=0;return old_fx_encoder(view,e);}
  u32 func=held(1),tr=held(2),settings=held(13),slot=knob==15;
  if(tr&&!func&&!settings){
-  s32 delta=(s32)N(0x4006f73a)(e,1,1);u32 count=slot?7:MF_REV_COUNT,current=mf_mode?mf_choice(slot,track):slot?cr_mode:ch_mode;const u32*order=slot?fx_del_order:MF_REV_ORDER;
+  s32 delta=(s32)N(0x4006f73a)(e,1,1);u32 count=slot?8:MF_REV_COUNT,current=mf_mode?mf_choice(slot,track):slot?cr_mode:ch_mode;const u32*order=slot?pots_del_order:MF_REV_ORDER;
   if(!fx_menu_open||fx_menu_slot!=slot||menu_track!=track){fx_menu_open=1;fx_menu_slot=slot;menu_track=track;fx_menu_cursor=0;for(u32 i=0;i<count;i++)if(order[i]==current)fx_menu_cursor=i;motion=0;}
   if(delta){s32 sign=delta>0?1:-1;if(motion*sign<0)motion=0;motion+=sign;if(motion>=2||motion<=-2){motion=0;fx_menu_cursor=(u32)clamp((s32)fx_menu_cursor+sign,0,(s32)count-1);}}
   mf_redraw();return 1;
  }
  if(fx_menu_open)return 1;
-#ifdef MF_NO_VINYL
- if(!mf_mode){popup_type=0;u32 r=mf_old_fx_encoder(view,e);mf_legacy_capture();return r;}
-#endif
+ if(!mf_mode){popup_type=0;return old_fx_encoder(view,e);}
  u32 type=slot?mf_live[6+track]:mf_live[track],index=0,field=0;
- if(!type){popup_type=0;return mf_old_fx_encoder(view,e);}
+ if(!type){popup_type=0;return old_fx_encoder(view,e);}
  if(!slot){
   if(type==1||type==2){index=func||settings;field=index?4:3;}
   else if(type==3){index=func&&tr?2:func||settings?1:0;field=6+index;}
@@ -89,19 +88,11 @@ u32 mf_fx_key(u32*e){
  /* Une release longue/consommee peut manquer au compteur evenementiel DX.
   * Reconciler uniquement ses bits deja actifs avec les touches physiques. */
  if(e&&e[3]==1&&dx_other_keys){u32 mask=dx_other_keys;for(u32 key=2;key<32;key++)if((mask&(1u<<key))&&!fx_query_original(key))mask&=~(1u<<key);dx_other_keys=mask;}
- if((mf_mode
-#ifdef MF_NO_VINYL
- ||1
-#endif
- )&&e&&e[3]==2&&!(e[4]&1)&&fx_menu_open)mf_commit();return mf_old_fx_key(e);
+ if(e&&e[3]==2&&!(e[4]&1)&&fx_menu_open)mf_commit();return mf_old_fx_key(e);
 }
 void mf_commit(void){
-#ifdef MF_NO_VINYL
- if(!mf_mode){if(!fx_menu_open)return;u32 slot=fx_menu_slot,count=slot?7:MF_REV_COUNT;if(fx_menu_cursor<count){u32 value=(slot?fx_del_order:MF_REV_ORDER)[fx_menu_cursor];if(slot)cr_mode=value;else ch_mode=value;fx_dirty=1;}fx_menu_open=0;mf_redraw();mf_legacy_capture();return;}
-#else
- if(!mf_mode){mf_old_commit();mf_legacy_capture();return;}
-#endif
- if(!fx_menu_open)return;u32 slot=fx_menu_slot,count=slot?7:MF_REV_COUNT,cursor=fx_menu_cursor,track=menu_track<6?menu_track:mf_fx_selected();if(cursor<count&&track<6)mf_choose(slot,track,(slot?fx_del_order:MF_REV_ORDER)[cursor]);fx_menu_open=0;mf_redraw();
+ if(!mf_mode){if(!fx_menu_open)return;u32 slot=fx_menu_slot,count=slot?8:MF_REV_COUNT;if(fx_menu_cursor<count){u32 value=(slot?pots_del_order:MF_REV_ORDER)[fx_menu_cursor];if(slot){cr_mode=value;if(value==12)mf_seed_pots();}else ch_mode=value;fx_dirty=1;}fx_menu_open=0;mf_redraw();mf_legacy_capture();return;}
+ if(!fx_menu_open)return;u32 slot=fx_menu_slot,count=slot?8:MF_REV_COUNT,cursor=fx_menu_cursor,track=menu_track<6?menu_track:mf_fx_selected();if(cursor<count&&track<6)mf_choose(slot,track,(slot?pots_del_order:MF_REV_ORDER)[cursor]);fx_menu_open=0;mf_redraw();
 }
 void mf_value(u32 field,u32*value,const char**type,const char**label){
  if(!mf_mode||!popup_type||field!=popup_field){mf_old_value(field,value,type,label);return;}

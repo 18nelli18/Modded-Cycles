@@ -12,6 +12,7 @@ from mtlib import aplib,container
 from mtlib.syx import wrap,BYTES_PER_MSG
 import aplib_grow
 CODE=0x46900000;BSS=0x46910000;END=0x46920000
+POTS_LINE=0x46980000;POTS_LINE_BYTES=0x40000
 SOURCE=ROOT/'output/firmware/staging/all-features-polivoks-cpu-trim-test-v215.syx'
 SHA='c00942b054d0478e117ee889ee80761e91c77b30d3a0465122d5dec000f912e6'
 
@@ -62,6 +63,8 @@ def main():
  aliases.update(_ZN6braids25lut_oscillator_incrementsE=0x46757f20,_ZN6braids12lut_svf_dampE=0x467599a2,_ZN6braids14lut_svf_cutoffE=0x46759ba4)
  aliases.update(_ZN6braids11ws_tri_foldE=0x46755174,_ZN6braids12ws_sine_foldE=0x46755376,_ZN6braids8wav_sineE=0x4675779a)
  fx=meta['fx_menu']['symbols'];gc=meta['groove_strum']['symbols'];fp=meta['fx_project']['symbols'];xp=meta['lfo_reload']['symbols']
+ assert meta['fx_menu']['gate_buffer_address']+0x40000<=POTS_LINE and POTS_LINE+POTS_LINE_BYTES<=meta['wave_starter']['custom_buffer']
+ aliases.update(fx_line=POTS_LINE,pots_native=fx['fx_delay_previous'])
  aliases.update(mf_shared_fx_reset=fx['fx_vinyl_reset'],mf_shared_ch_state=fx['ch_state'])
  aliases.update({name:meta['beat_repeat_symbols'][name] for name in ('br_keys','br_valid','br_wet','br_lane_wet','br_side','br_side_on','br_active','br_history')})
  aliases.update(idle_rev_active=fx['active'],idle_del_active=fx['nd_active']);aliases.update(gb_enabled=meta['dx_symbols']['dx_enabled'],gb_peak=meta['dx_symbols']['dx_peak'],gb_over=meta['dx_symbols']['dx_over'],gb_mask=meta['dx_symbols']['dx_before_mask'],gb_sum=meta['recovery_symbols']['gr_diag_sum'],gb_blocks=meta['recovery_symbols']['gr_diag_blocks']);aliases.update(mf_old_tree_edit=gc['gc_tree_edit'],mf_fx_selected=fx['fx_selected'],mf_show=fx['fx_show'],mf_redraw=fx['fx_redraw'],mf_wf_api=meta['symbols']['wf_api'],mf_side=fx['fx_side'],mf_side_on=fx['fx_side_on'],mf_crc=fp['fxp_crc'])
@@ -72,6 +75,7 @@ def main():
  cs=Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_040);tramp='.text\n';hooks=[]
  entries=[('filter_low',meta['recovery_symbols']['pf_coeff'],'fast_pf_coeff'),('filter_modes',meta['filter_modes']['symbols']['fc_coeff'],'fast_fc_coeff'),('native_delay',0x40057488,'idle_delay'),('native_reverb',0x400579c4,'idle_reverb'),('irq_start',0x40058ca0,'gb_irq_start'),('irq_end',0x400594ca,'gb_irq_end'),('audio_end',0x8000e6e0,'gb_audio_end'),('dx_before',meta['dx_symbols']['dx_before'],'gb_dx_before'),('lfo_dispatch',xp['xp_old_dispatch'],'li_dispatch'),('sum6',0x40056716,'mf_sum6'),('sum7',0x40056698,'mf_sum7'),('post',fx['fx_post'],'mf_post'),('fx_encoder',fx['fx_encoder'],'mf_fx_encoder'),('commit',fx['fx_commit'],'mf_commit'),('fx_key',fx['fx_key'],'mf_fx_key'),('value',fx['fx_value'],'mf_value'),('gc_key',gc['gc_key'],'mf_gc_key'),('gc_encoder',gc['gc_encoder'],'mf_gc_encoder'),('gc_draw',gc['gc_draw'],'mf_gc_draw'),('frame',xp['xp_frame'],'mf_frame'),('project_encode',fp['fxp_encode'],'mf_project_encode'),('pattern_copy',fp['fxs_copy'],'mf_pattern_copy'),('pattern_init',fp['fxs_init'],'mf_pattern_init')]
  entries.append(('repeat_render',meta['recovery_symbols']['rr_render'],'rt_render'))
+ entries += [('pots_delay',fx['fx_delay'],'pots_slot_delay'),('fx_overlay',fx['fx_overlay'],'nv_overlay'),('fx_overlay_canvas',fx['fx_overlay.part.0'],'nv_overlay_canvas')]
  entries += [('panic_set',0x40058c04,'mf_panic_set'),('panic_transport',0x40059692,'mf_panic_transport')]
  aliases['mf_filter_set']=0x468d0120
  entries += [('filter_init',0x400618f2,'mf_filter_init'),('filter_new',meta['filter_modes']['symbols']['fc_new_sound'],'mf_filter_new'),('filter_get',0x468d0110,'mf_filter_get'),('filter_frame',0x468d0020,'mf_filter_frame')]
@@ -79,7 +83,7 @@ def main():
   entries=[(name,at,{'gc_key':'ae_key','gc_encoder':'ae_encoder','gc_draw':'ae_draw','frame':'ae_frame'}.get(name,target)) for name,at,target in entries]
   entries += [('acid_update',meta['fundamentals']['symbols']['acid_update'],'ae_update'),('acid_render',meta['fundamentals']['symbols']['acid_render'],'ae_render')]
  if args.remove_legacy or args.unique_punch:entries.append(('voice_playability',0x400a7d4a,'pp_voice_loop'))
- if args.no_vinyl:entries += [('fx_overlay',fx['fx_overlay'],'nv_overlay'),('fx_overlay_canvas',fx['fx_overlay.part.0'],'nv_overlay_canvas'),('vinyl_bypass',fx['fx_vinyl'],'nv_bypass')]
+ if args.no_vinyl:entries += [('vinyl_bypass',fx['fx_vinyl'],'nv_bypass')]
  if args.remove_legacy:
   import no_legacy
   extra_aliases,extra_entries=no_legacy.setup(meta);aliases.update(extra_aliases);entries+=extra_entries
@@ -127,12 +131,21 @@ def main():
  command=[sys.executable,str(WORK/'build_light_lab.py'),'--code',hex(CODE),'--bss',hex(BSS),'--output',str(output),'--aliases',str(output/'aliases.json'),'--roots',str(output/'roots.json')]
  for source in ('slot-state.c','slot-controls.c','firmware-bridge.c','repeat-idle.c','lfo-idle.c','sparse.S','governor.c','governor-hooks.S','irq-budget.c','irq-budget.S','fx-idle.c','fx-idle.S','fx-panic.c','filter-startup.c','native-osc.S','filter-low.c','filter-modes.c','lfo-sync.c')+(() if lite else ('macro-fold.cc','macro-harmonics.cc','macro-cymbal.cc')):command+=['--extra',str(WORK/source)]
  for source in ('tramp.S','global.S'):command+=['--extra',str(output/source)]
+ for source in (WORK/'pots-slot.c',WORK.parent/'pots/pots.c'):command+=['--extra',str(source)]
+ order=list(struct.unpack('>7I',peek(fx['fx_del_order'],28)));assert order==[11,10,9,5,0,1,2]
+ order.insert(3,12);labels=[]
+ for i in range(12):
+  ptr=int.from_bytes(peek(fx['fx_del_names']+4*i,4),'big');labels.append(peek(ptr,64).split(b'\0',1)[0].decode('ascii'))
+ labels.append('POTS');(output/'pots-menu.c').write_text('const unsigned int pots_del_order[8]={'+','.join(map(str,order))+'};\nconst char*const pots_del_names[13]={'+','.join(json.dumps(s) for s in labels)+'};\n')
+ command+=['--extra',str(output/'pots-menu.c')]
+ (output/'no-vinyl.c').write_text(('#define MF_NO_VINYL 1\n' if args.no_vinyl else '')+(WORK/'no-vinyl.c').read_text())
+ command+=['--extra',str(output/'no-vinyl.c')]
  if not lite:
   for source in ('acid-envelope.c','acid-envelope-dsp.c'):command+=['--extra',str(WORK/source)]
  if args.no_vinyl:
   order=list(struct.unpack('>9I',peek(fx['fx_rev_order'],36)));assert order.count(3)==1
   order.remove(3);(output/'no-vinyl-order.c').write_text('const unsigned int nv_rev_order[8]={'+','.join(map(str,order))+'};\n')
-  command+=['--extra',str(WORK/'no-vinyl.c'),'--extra',str(output/'no-vinyl-order.c')]
+  command+=['--extra',str(output/'no-vinyl-order.c')]
   for name in ('slot-state.c','slot-controls.c'):
    (output/name).write_text('#define MF_NO_VINYL 1\n'+(WORK/name).read_text().replace('"Vinyl"','""'))
    command[command.index(str(WORK/name))]=str(output/name)
@@ -193,6 +206,7 @@ def main():
  proof.update(fx_output_duplicate_setup_removed=True,fx_sleep_skips_ring_and_dma_writeback=True,hardware_click_fix_verified=False)
  proof.update(native_send_zero_gain_fast_path=True)
  proof.update(filter_new_sound_deferred_low=True,filter_saved_load_cancels_pending=True)
+ proof.update(pots_delay=True,pots_upstream='durchgemacht/model27',pots_revision='5badf6ad27d956e86d32ff331c480a84ef74db92',pots_loop_rate=12000,pots_line=POTS_LINE,pots_line_bytes=POTS_LINE_BYTES,pots_effect_id=12,pots_delay_order=[11,10,9,12,5,0,1,2],pots_native_time_feedback=True,pots_shared_heavy_delay=True)
  if not lite:proof.update(acid_envelope_modes=['A','F','AF'],acid_envelope_default='F',acid_envelope_storage='one global setting /AcidEnv.cfg',acid_envelope_menu='Mod Setup > Global > ACID')
  proof.update(retrig_idle_history_packed=True,retrig_active_and_fades_original=True)
  proof.update(lfo_direct_collection=args.runtime_headroom,unassigned_secondary_banks_pause=args.runtime_headroom,filter_fractional_divisions=4)
@@ -224,6 +238,7 @@ def main():
  delivery=args.destination/args.edition;delivery.mkdir(parents=True,exist_ok=True);name='Supermodel_CPU_'+args.edition.title()+('_Punch_No_Legacy_No_Vinyl_No_ChordKeys_Experimental.syx' if args.unique_punch and args.remove_legacy and args.no_vinyl and args.remove_chordkeys else '_LFO_Headroom_ECO12_No_ChordKeys_Experimental.syx' if args.runtime_headroom and args.legacy12 else '_ECO_No_ChordKeys_Experimental.syx' if args.eco24 and args.remove_chordkeys else '_No_ChordKeys_Experimental.syx' if args.remove_chordkeys else '_ChordKeys_Audio_Off_Diagnostic.syx' if args.chordkeys_audio_off else '_Machine_Experimental.syx');(delivery/name).write_bytes(syx)
  proof.update(sha256=hashlib.sha256(syx).hexdigest(),main_sha256=hashlib.sha256(newmain).hexdigest(),packing=packing,flash_bytes=len(rebuilt),syx_bytes=len(syx),firmware_hooks_installed=True)
  candidate={**meta,'governor_thresholds_unchanged':True,'irq_budget221':dict(original_limits_restored=True,fade_end_zero=True,irq_prelude_and_previous_tail_budget=True,dx_near_complete_irq=True,irq_immediate_overload_guard=False,governor_spike_hysteresis_restored=True,hardware_tested=False),'sha256':proof['sha256'],'main_os_sha256':proof['main_sha256'],'hardware_tested':False,'per_track_fx':proof}
+ candidate['fx_menu']={**candidate['fx_menu'],'delay_selector_order':proof['pots_delay_order'],'delay_selector_count':8}
  if args.remove_chordkeys:
   # Do not export obsolete feature symbols/availability in the new manifest.
   def clean(value):
