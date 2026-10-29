@@ -641,13 +641,8 @@ def ui(base_img, img, rt, syms):
         (8, 3, 0, 0x77, 1, 0, True, False),             # FUNC + [LFO] : l'original
         (8, 1, 0, 0x77, 1, 1, True, False), (8, 0, 0, 1, 2, 0, False, True),       # LFO 3
         (8, 1, 0, 0x77, 2, 1, True, False), (8, 0, 0, 1, 3, 0, False, True),       # LFO 4
-        (8, 1, 0, 0x77, 3, 0, True, False), (8, 0, 0, 0x77, 3, 0, True, False),   # sur LFO 4 : l'original (ferme)
-        # MACHINES sur la page LFO : avalée, elle n'ouvre plus l'écran des machines (0x40075822) ; l'état « tenue »
-        # que lisent atk_watch / KEY_BITS reste celui des touches
-        (5, 1, 0, 1, 3, 0, False, False),               # appui MACHINES : prise, l'original n'est pas appelé
-        (5, 9, 0, 1, 3, 0, False, False),               # répétition : idem
-        (5, 0, 0, 1, 3, 0, False, False),               # relâchement : idem (l'original ne ferme pas la page)
-        (5, 3, 0, 1, 3, 0, False, False)]               # FUNC + MACHINES : idem
+        (8, 1, 0, 0x77, 3, 0, True, False), (8, 0, 0, 0x77, 3, 0, True, False)]   # sur LFO 4 : l'original (ferme)
+        # (MACHINES a son propre bloc plus bas : avalée pendant [LFO] tenue seulement)
     good = True
     for code, flags, flag, ret, pg, pend, orig, redraw in seq:
         P.uc.mem_write(EVT, struct.pack(">5I", 0, 0, 0, code, flags))
@@ -661,17 +656,41 @@ def ui(base_img, img, rt, syms):
     check(good, "touche [LFO] : appui -> l'original (noté) ; relâchement d'un appui bref (drapeau tenue de la vue à "
                 "0) -> LFO 2, 3, 4 (redessin) ; potard tourné [LFO] tenue (drapeau mis) ou autre touche entre-temps "
                 "-> l'original, la page reste ; répétition / FUNC / relâchement de l'appui d'ouverture / LFO 4 -> "
-                "l'original (il ferme la page au relâchement) ; MACHINES -> prise sur les 4 pages (l'original ne la "
-                "voit jamais)")
-    # MACHINES annule un appui bref de [LFO] en cours, comme toute autre touche (page 1 : l'appui bref y existe)
-    P.w8(page, 0)
-    P.w8(syms["pend"], 1)
-    P.uc.mem_write(EVT, struct.pack(">5I", 0, 0, 0, 5, 1))
-    P.log.clear()
-    r = P.call(P.r32(P_KEY), view, EVT, check="touche")
-    check(r == 1 and P.r8(syms["pend"]) == 0 and P.r8(page) == 0 and "orig" not in [x[0] for x in P.log],
-          "MACHINES sur la page LFO, appui bref de [LFO] en cours : la touche est prise et l'appui bref annulé "
-          "(pend = 0, page inchangée, l'original pas appelé)")
+                "l'original (il ferme la page au relâchement)")
+    # MACHINES : avalée seulement pendant le geste [LFO] tenue + potard (et son relâchement avec elle) ; posée
+    # seule sur la page LFO, elle passe à l'original, qui ouvre l'écran des machines (0x40075822)
+    P.w8(page, 1)
+
+    def ev(code, down):
+        P.uc.mem_write(EVT, struct.pack(">5I", 0, 0, 0, code, 1 if down else 0))
+        P.w8(held, 0)
+        P.log.clear()
+        return P.call(P.r32(P_KEY), view, EVT, check="touche"), [x[0] for x in P.log]
+
+    P.w8(syms["pend"], 1)                       # appui bref de [LFO] en cours
+    P.w8(KEY_BITS, 0x08)                        # [LFO] tenue : bit 3 de KEY_BITS (0x4010ae5c[8])
+    r1, log1 = ev(5, True)                      # appui de MACHINES : avalé
+    ok_held = r1 == 1 and "orig" not in log1 and P.r8(syms["pend"]) == 0 and P.r8(page) == 1
+    r2, log2 = ev(5, False)                     # relâchement : avalé aussi
+    ok_held &= r2 == 1 and "orig" not in log2 and P.r8(syms["m5"]) == 0
+    check(ok_held, "MACHINES pendant [LFO] tenue : la touche est prise (l'original ne la voit pas), son relâchement "
+                   "aussi, l'appui bref de [LFO] est annulé, la page ne bouge pas")
+    P.w8(syms["pend"], 0)
+    P.w8(KEY_BITS, 0)                           # [LFO] relâchée
+    r3, log3 = ev(5, True)                      # appui de MACHINES seul : à l'original
+    r4, log4 = ev(5, False)
+    check(r3 == 0x77 and r4 == 0x77 and "orig" in log3 and "orig" in log4 and P.r8(page) == 1,
+          "MACHINES seule sur la page LFO : appui et relâchement à l'original, qui ouvre l'écran des machines "
+          "(0x40075822) ; la page ne bouge pas")
+    # un appui avalé avale son relâchement même si [LFO] est lâchée entre-temps : l'OS ne voit jamais un
+    # relâchement sans appui
+    P.w8(KEY_BITS, 0x08)
+    r5, log5 = ev(5, True)
+    P.w8(KEY_BITS, 0)
+    r6, log6 = ev(5, False)
+    check(r5 == 1 and r6 == 1 and "orig" not in log5 + log6 and P.r8(syms["m5"]) == 0 and P.r8(page) == 1,
+          "appui de MACHINES avalé puis [LFO] lâchée : le relâchement est avalé avec lui (m5 retombé)")
+    P.w8(KEY_BITS, 0)
     P.w8(page, 3)
 
     # création / destruction de la vue

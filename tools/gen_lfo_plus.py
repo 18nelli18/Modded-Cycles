@@ -48,7 +48,7 @@ OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "60-lfo-plus.json"
 BASE = gx.BASE
 # Les masques 34x34 (272 o) réservés à ce mod, remplis dans cet ordre ; ceux qui restent vides ne sont pas touchés.
 MASKS = (0x4016f8c8, 0x40173848, 0x401780a8, 0x401784e8, 0x401835b8,
-         0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88)
+         0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88, 0x4018b1a8)
 ROOM = 272
 # Sections mises d'office dans un masque (ajouts après coup : les autres restent à leur place, leurs adresses ne
 # bougent pas) : [LFO] + potard et la diode de la destination (notes/56 §3.13).
@@ -112,7 +112,7 @@ PTRS = (
 SYMBOLS = ("lfo_audio", "lfo_id2k", "lfo_get", "lfo_set", "lfo_key", "lfo_draw", "lfo_ctor", "lfo_dtor", "lfo_gate",
            "lfo_dest", "lfo_pack", "lfo_unpack", "lfo_init", "lfo_plk_save", "lfo_plk_load", "page", "pend", "ready", "view",
            "lfo34", "kready", "cur34", "blk34", "snd34", "pk5", "upk5", "kit_save", "kit_load", "kit_copy", "lfo_learn",
-           "lfo_led")
+           "lfo_led", "m5")
 
 
 CONFLICTS = ["track-filter"]   # mêmes k 28..31 et mêmes octets +88..+91 du son (notes/56 §3.6, notes/47 §4)
@@ -221,8 +221,9 @@ def build_tweak(stock):
             "MACRO) sur toutes les machines ; la destination choisie peut être libre ou déjà prise par un autre LFO "
             "(le cumul s'additionne). La diode de la destination s'allume aussi pour Attack, Filtre, Résonance "
             "(potards DECAY, SWEEP, CONTOUR) et le lo-fi (PITCH), réglés sous MACHINES (notes/56 §3.13).",
-            "Sur la page LFO, MACHINES sert de modificateur au geste [LFO] + MACHINES + potard : elle n'ouvre plus "
-            "l'écran des machines par-dessus la page (notes/56 §3.14).",
+            "Pendant le geste [LFO] tenue + MACHINES + potard, MACHINES n'ouvre plus l'écran des machines par-dessus "
+            "la page : elle est le modificateur du geste. Posée seule sur la page LFO, elle ouvre l'écran des "
+            "machines comme d'origine (notes/56 §3.14).",
             "Corrige au passage les p-locks d'Attack, Filtre et Résonance de Model-TG dans le pattern (relus en None, "
             "LFO Speed, Multiplier).",
             "D'après le Model-TG-VA-DR-v1 de DavidCaruso (octobre 2026), réécrit ; s'installe avec ou sans Model-TG.",

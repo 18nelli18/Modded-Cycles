@@ -360,12 +360,25 @@ lfo_key:
 	move.l	8(%sp), -(%sp)
 	jsr	KEY_CODE
 	addq.l	#4, %sp
-	cmp.l	#5, %d0			/* MACHINES sur la page LFO : la touche est un modificateur, elle ne doit pas
-						   ouvrir l'écran des machines (0x40075822) ; atk_watch/KEY_BITS lit l'état physique */
+	cmp.l	#5, %d0			/* MACHINES : modificateur du geste [LFO] tenue + potard, mais seulement dans ce
+						   geste. Posée seule sur la page LFO, elle ouvre l'écran des machines (0x40075822)
+						   comme d'origine. Un appui avalé avale aussi son relâchement (m5) : l'OS ne voit
+						   jamais un relâchement sans appui. atk_watch/KEY_BITS lit l'état physique */
 	bne.s	0f
-	clr.b	pend			/* prise, comme une touche que la vue traite ; l'original ne la voit jamais.
-					   Traitée ici et non par un saut vers un bloc commun : celui-ci tombait dans la
-					   branche de l'appui de [LFO], qui n'atteignait donc plus l'original */
+	tst.b	m5
+	bne.s	7f			/* déjà avalée : son relâchement l'est aussi */
+	move.b	KEY_BITS, %d1
+	btst	#3, %d1			/* [LFO] tenue : bit 3 de KEY_BITS (table 0x4010ae5c[8]) */
+	beq.w	9f			/* [LFO] pas tenue : l'original, qui ouvre les machines */
+7:	movea.l	8(%sp), %a0
+	move.l	16(%a0), %d1		/* indicateurs : mot long (bit 0 enfoncée, bit 1 FUNC, bit 3 répétition) */
+	btst	#0, %d1
+	bne.s	8f
+	clr.b	m5			/* relâchement (aussi après le lâcher de [LFO]) */
+	bra.s	6f
+8:	moveq	#1, %d1
+	move.b	%d1, m5
+6:	clr.b	pend			/* comme toute autre touche : plus d'appui bref */
 	moveq	#1, %d0
 	rts
 0:	moveq	#8, %d1
@@ -1119,6 +1132,7 @@ buf_put:
 view:	.long	0				/* la vue LFO ouverte (objet + 56), 0 sinon */
 page:	.byte	0				/* 0..3 : LFO 1..4 affiché */
 pend:	.byte	0				/* appui de [LFO] passé à l'original : bref ou tenu ? */
+m5:	.byte	0				/* appui de MACHINES avalé (geste [LFO] tenue + potard) : son relâchement aussi */
 ready:	.byte	0				/* états de SCR mis à zéro depuis le démarrage */
 kready:	.byte	0				/* blocs de T34 aux défauts depuis le démarrage */
 /* id 0x1d..0x24 -> rang du réglage : SPD, MULT, (FADE), DEST, WAVE, (SPH), (MODE), DEP */
