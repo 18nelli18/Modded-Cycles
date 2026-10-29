@@ -33,8 +33,8 @@ SEL_TRACK = 0x40012412
 LOOP_MODE = 0x401b2404
 OTHER_DESCR = 0x401abf32
 SAMPLER_DESCR_ATK = 0x401abee6
-GC_CONT = 0x401bac0a
-GC_STORE = 0x401bac78
+GC_CONT = 0x401bac2a                  # lo-fi de piste : ST_SPLIT_PATCHES de gen_model_tg.py (notes/86)
+GC_STORE = 0x401bac98                 # ajoute 0x20 o avant gflt_coef (ailleurs : 0x401bac0a / 0x401bac78)
 
 NOTE = ("Filtre et Résonance de piste pour le Sampler en modes Granular/Stretch/Pluck/Wave "
         "(tools/sampler_mode_filter.py, notes/83) : filtre de piste sous MACHINES+SWEEP/CONTOUR "

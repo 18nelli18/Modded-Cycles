@@ -343,6 +343,66 @@ MC_PATCHES = (
      "audio USB multipiste : une piste mutée ou au volume 0 n'est plus coupée net sur sa piste USB (voice_quiet)"),
 )
 MC_PATCHES += RES_PATCHES
+# --- l'état du Sampler sur k 26 + sound+86 (notes/86) ---
+# Le Sampler range ses modes dans UN long en sound+72, c'est-à-dire sur les mots k 26 et 27. Le lo-fi de piste prend
+# k 27 (Lo-Fi Rate) : la moitié basse de l'état passe en sound+86..+87, deux octets du son en mémoire que ni l'OS (aucun
+# accès @(86) dans son code), ni Model-TG, ni nos mods ne touchent, hors du miroir lissé de 66 o (k 0..32). Sur le
+# disque rien ne change : moitié haute en +84, basse en +86, comme le long d'avant. Au passage, le test « ce son a déjà
+# un état » du changement de machine regardait le bit 7 de l'étiquette, que seule l'ancienne (0xF) a : l'actuelle (0x7)
+# passait pour « pas d'état », et un Sampler quitté puis repris perdait ses modes. Les deux étiquettes ont 0x70.
+ST_SPLIT_PATCHES = (
+    ("src/model_tg.s",
+     '    orl     #ST_TAG,%d3\n    movel   %d3,%a2@(72)\n',
+     '    orl     #ST_TAG,%d3\n    movew   %d3,%a2@(86)          | Modded-Cycles: low half at +86 (k27 = Lo-Fi Rate)\n'
+     '    swap    %d3\n    movew   %d3,%a2@(72)          | high half (the tag) on k26\n',
+     "état du Sampler : moitié basse en sound+86, k 27 libre pour Lo-Fi Rate (state_store)"),
+    ("src/model_tg.s",
+     'st_apply_c:\n    movel   %a2@(72),%d0\n',
+     'st_apply_c:\n    movew   %a2@(72),%d0          | Modded-Cycles: the state is k26 (high) + sound+86 (low)\n'
+     '    swap    %d0\n    movew   %a2@(86),%d0\n',
+     "état du Sampler : relu de k 26 + sound+86 (st_apply_c)"),
+    ("src/model_tg.s",
+     '    movel   %a2@(72),%d3\n    movel   %d3,%d0\n    andil   #ST_TAGMASK,%d0\n',
+     '    movew   %a2@(72),%d3          | Modded-Cycles: k26 (high) + sound+86 (low)\n    swap    %d3\n'
+     '    movew   %a2@(86),%d3\n    movel   %d3,%d0\n    andil   #ST_TAGMASK,%d0\n',
+     "état du Sampler : relu de k 26 + sound+86 (st_apply)"),
+    ("src/model_tg.s",
+     '    movel   %a1@(72),%d1          | the Sample machine\'s packed state (k=26/27,\n'
+     '    movel   %d1,%a0@(84)          | see state_store) -> slots 28 and 29\n',
+     '    movew   %a1@(72),%d1          | the Sample machine\'s packed state: k26 (high)\n'
+     '    movew   %d1,%a0@(84)          | -> slot 28, sound+86 (low) -> slot 29 (Modded-Cycles)\n'
+     '    movew   %a1@(86),%d1\n    movew   %d1,%a0@(86)\n',
+     "état du Sampler : enregistré de k 26 + sound+86 dans les mêmes cases 28/29 (snd_save_post)"),
+    ("src/model_tg.s",
+     '    movel   %a0@(84),%d1          | packed state; zero in older records, which\n'
+     '    movel   %d1,%a1@(72)          | then fall back to the name token\n',
+     '    movew   %a0@(84),%d1          | packed state; zero in older records, which\n'
+     '    movew   %d1,%a1@(72)          | then fall back to the name token. High half\n'
+     '    movew   %a0@(86),%d1          | on k26, low half at sound+86 (Modded-Cycles)\n'
+     '    movew   %d1,%a1@(86)\n',
+     "état du Sampler : relu dans k 26 + sound+86 (snd_load_post)"),
+    ("src/model_tg.s",
+     '    tstb    %a0@(72)\n    bmis    mch_hasst\n    movel   %d1,%sp@-\n    movel   #ST_DEFAULT,%d1\n'
+     '    movel   %d1,%a0@(72)\n    movel   %sp@+,%d1\n',
+     '    movel   %d1,%sp@-             | Modded-Cycles: a state is a tag 0x7 or 0xF,\n'
+     '    moveb   %a0@(72),%d1          | both have 0x70 (bit 7 alone missed 0x7)\n'
+     '    andil   #0x70,%d1\n    cmpil   #0x70,%d1\n    beqs    mch_hasst_r\n'
+     '    movel   #ST_DEFAULT,%d1\n    movew   %d1,%a0@(86)          | low half at +86, high on k26\n'
+     '    swap    %d1\n    movew   %d1,%a0@(72)\nmch_hasst_r:\n    movel   %sp@+,%d1\n',
+     "changement de machine : l'état existant est reconnu (étiquette 0x7 ou 0xF) et le défaut s'écrit en deux "
+     "moitiés (k 26 + sound+86) ; corrige la perte des modes d'un Sampler quitté puis repris"),
+)
+MC_PATCHES += ST_SPLIT_PATCHES
+# Son build vérifie que chaque branchement 16 bits tombe sur une étiquette, en désassemblant tout le bloc ; les tables
+# de .long dans le code sont sautées par leur étiquette (_DATA_LABELS). rtg_names (pointeurs vers les noms du retrig)
+# n'y était pas : décalée de quelques octets par ST_SPLIT_PATCHES, un pointeur 0x401b6d00 s'y lit « bltw » et le build
+# refuse. C'est une table, pas du code.
+MC_PATCHES += (
+    ("build.py",
+     "_DATA_LABELS={'st_fields','st_fields_end','st_reset','key_value_strings',\n",
+     "_DATA_LABELS={'st_fields','st_fields_end','st_reset','key_value_strings','rtg_names',\n",
+     "build : rtg_names (table de pointeurs) parmi les tables de données que la vérification des branchements saute"),
+)
 # --- version combinée (notes/31 §4) ---
 # Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)
 # s'arrête 1 Mo plus bas, pour nos moteurs du Syntakt (gen_syntakt_engines.PAY_TG = 0x46700000). Tout ce qu'il y
@@ -362,6 +422,8 @@ ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_e
 # Symboles dont l'écoute des samples a besoin (tools/gen_sample_preview.py, notes/46), dans les deux tweaks : son code
 # appelle ces fonctions et lit ces variables de Model-TG, aux mêmes adresses dans les deux builds.
 PV_SYMBOLS = ("tok_of", "sound_obj", "ensure_loaded", "slot_hash", "pd_mode", "ld_busy", "pad_load_hook")
+# Symboles de l'état du Sampler (k 26 + sound+86), que tools/emu/test_sampler_state.py appelle (notes/86).
+SS_SYMBOLS = ("state_store", "st_apply", "st_apply_c", "st_fields", "mc_commit_hook", "mch_hasst")
 # Symboles du filtre en échelle que tools/emu/test_model_tg_res.py appelle directement (notes/85) : ils n'ont pas bougé
 # avec RES_PATCHES, la preuve s'en sert aussi sur le tweak d'avant.
 FLT_SYMBOLS = ("ladder_run", "filt_coef", "filt_fbmax", "filt_mkt", "filt_mk", "filt_y1", "gflt_run", "gflt_f",
@@ -444,7 +506,7 @@ def adapt_st(tw, stock, syms):
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
         "conflicts": others,
-        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS + tuple(n for n in PV_SYMBOLS + TS_SYMBOLS
+        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS + tuple(n for n in PV_SYMBOLS + TS_SYMBOLS + SS_SYMBOLS
                                                                     if n not in ST_SYMBOLS)},
     })
     return out
@@ -452,7 +514,7 @@ def adapt_st(tw, stock, syms):
 
 def adapt(tw, stock, syms):
     """Format et métadonnées de ce dépôt ; vérifie que le tweak redonne l'image exportée."""
-    missing = [n for n in PV_SYMBOLS + FLT_SYMBOLS + TS_SYMBOLS if n not in syms]
+    missing = [n for n in PV_SYMBOLS + FLT_SYMBOLS + TS_SYMBOLS + SS_SYMBOLS if n not in syms]
     if missing:
         raise SystemExit(f"!! symboles absents du build de Model-TG : {missing}")
     patched, _ = build.apply_writes(stock, [tw])
@@ -503,7 +565,7 @@ def adapt(tw, stock, syms):
         "conflicts": others,
         "writes": writes,
         "append": tw["append"],
-        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS + FLT_SYMBOLS + TS_SYMBOLS},
+        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS + FLT_SYMBOLS + TS_SYMBOLS + SS_SYMBOLS},
     }
 
 

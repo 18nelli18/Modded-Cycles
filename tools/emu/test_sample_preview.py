@@ -107,15 +107,17 @@ UIS_PTR = 0x40fe4218              # état de l'interface (live rec : octet +359,
 EV_LOOP, EV_END = 0x40058d46, 0x400591e4
 # --- Model-TG v1.1.0 : adresses absentes de « symbols », les mêmes dans les deux versions ; le code de sp_lock est
 # vérifié (empreinte SP_LOCK_SHA) dans la charge utile de chacune, avec ses références absolues à cet état.
+# Adresses de Model-TG avec ST_SPLIT_PATCHES (gen_model_tg.py, notes/86) : pl_dirty +0x14, les données d'après
+# +0x34 (avant : 0x401b3b84, 0x401be3a0, 0x401be3b8, 0x401befcc, slot_hash 0x401be4a0).
 SP_LOCK = 0x401ad958              # le son de la note (CUR_SNDS) nomme-t-il un sample en mémoire ?
 TRACK_LOCK = 0x401ada36           # octet par piste : cette note joue le sample d'un son verrouillé
-TRACK_HASH = 0x401be3a0           # sample de chaque piste ; track_slot juste après
-TRACK_SLOT = 0x401be3b8           # case jouée par chaque piste (-1 : silence)
-KIT_OK = 0x401befcc
-PL_DIRTY = 0x401b3b84             # sp_lock n'a pas trouvé le sample nommé : le préchargeur est relancé
-SP_LOCK_SHA = "724c8066261e528536b015ca2e331a5e4140bb63aecd1b6cacc093f748032a2d"   # sp_lock .. track_lock + 8
-SP_LOCK_REFS = {"kit_ok": "b0b9401befcc", "track_slot": "41f9401be3b8", "track_hash": "41f9401be3a0",
-                "pl_dirty": "23c0401b3b84", "slot_hash": "41f9401be4a0", "CUR_SNDS": "0680800017ec",
+TRACK_HASH = 0x401be3d4           # sample de chaque piste ; track_slot juste après
+TRACK_SLOT = 0x401be3ec           # case jouée par chaque piste (-1 : silence)
+KIT_OK = 0x401bf000
+PL_DIRTY = 0x401b3b98             # sp_lock n'a pas trouvé le sample nommé : le préchargeur est relancé
+SP_LOCK_SHA = "d2f442c9ef0adf48476ad6bfa8ec02dc20ccb1622122096e88a987686a176877"   # sp_lock .. track_lock + 8
+SP_LOCK_REFS = {"kit_ok": "b0b9401bf000", "track_slot": "41f9401be3ec", "track_hash": "41f9401be3d4",
+                "pl_dirty": "23c0401b3b98", "slot_hash": "41f9401be4d4", "CUR_SNDS": "0680800017ec",
                 "CUR_KIT": "203940a78888"}
 # --- le banc ------------------------------------------------------------------------------------------------------
 STOP = 0x40780000                 # mcengine.STOP
@@ -595,7 +597,7 @@ def writes_tests(stock, v):
     span = rt[SP_LOCK - d:TRACK_LOCK + 8 - d]
     refs = {n: span.find(bytes.fromhex(p)) for n, p in SP_LOCK_REFS.items()}
     check(hashlib.sha256(span).hexdigest() == SP_LOCK_SHA and all(k >= 0 for k in refs.values())
-          and v.tgs["slot_hash"] == 0x401be4a0,
+          and v.tgs["slot_hash"] == 0x401be4d4,
           f"{tg['id']} : sp_lock ({SP_LOCK:#x}) est le code attendu (empreinte), avec kit_ok, track_slot, "
           f"track_hash, pl_dirty, slot_hash, CUR_SNDS et CUR_KIT aux adresses du banc")
     uses = G.tg_uses(rt, d, v.tgs)
