@@ -576,6 +576,22 @@ def text(base, img, engines=False):
     check(not drawn or box(wide)[1] - box(wide)[0] + 1 <= CELL[1] - CELL[0] + 1,
           f"SYNC: le texte le plus large fait {box(wide)[1] - box(wide)[0] + 1} px pour une plaque de "
           f"{CELL[1] - CELL[0] + 1} px (grande police : 65 px pour « 1 BAR », 82 px pour « -16 BAR », dès x 38)")
+    # 5c. les cinq points sous la valeur (0x4001d8ee..0x4001d98c : le point allumé = valeur x 5 / 32513). DELAY
+    # TIME en SYNC garde la formule de l'OS sur son mot (octet fort = la valeur FREE la plus proche) ; LFO SPEED en SYNC
+    # suit la course du potard (-1/128 .. -16 BAR, +16 BAR .. +1/128 : p = 0..47) au lieu de son mot brut, où le point
+    # sautait (constat sur la machine, 29/10 : 1/128 tout à gauche, -16 BAR au 4e, -1/4 .. -1/128 au centre).
+    def dot(fb):
+        on = [k for k in range(5) if lofi_ui.pix(fb, 78 + 9 * k, 25)]
+        return on[0] if len(on) == 1 else tuple(on)
+    if drawn:
+        dl = [dot(shots[(ID_DTIME, dword(i))][0]) for i in range(NDLY)]
+        wl = [dword(i) * 5 // 32513 for i in range(NDLY)]
+        check(dl == wl, f"SYNC: DELAY TIME, les points suivent son mot comme l'OS : {dl}")
+        ll = [dot(shots[(ID_LSPD, lword(i, r))][0]) for r in (1, 0) for i in (range(NLFO) if r else
+                                                                              range(NLFO - 1, -1, -1))]
+        wp = [(q * 32512 // 47) * 5 // 32513 for q in range(48)]
+        check(ll == wp, f"SYNC: LFO SPEED, les points suivent le potard, -1/128 .. -16 BAR | +16 BAR .. +1/128 : "
+                        f"{''.join(map(str, ll[:24]))} | {''.join(map(str, ll[24:]))}")
     if drawn:
         print("      fenêtre de valeur, DELAY TIME SYNC « 3/16 » (1/8 pointée) :")
         print(lofi_ui.ascii_popup(shots[(ID_DTIME, dword(9))][0]))

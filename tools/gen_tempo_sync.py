@@ -60,9 +60,11 @@ HOOKS = (
      "value window font (0x4001d818): move.l sp,d4 ; add.l #60,d4 -> jsr ts_face ; nop (police 6x10 grasse en SYNC)"),
     (0x4001d8d6, "4eb940071a04", "ts_draw", 0x4eb9,
      "value window text (0x4001d818): jsr 0x40071a04 (DRAW_TEXT) -> jsr ts_draw (centre la ligne de 10 px)"),
+    (0x4001d91c, "2045e78ced8891c1", "ts_dots", 0x4eb9,
+     "value window dots (0x4001d818): movea.l d5,a0 ; lsl.l #3,d4 ; lsl.l #6,d0 ; suba.l d1,a0 -> jsr ts_dots ; nop"),
 )
 SYMBOLS = ("ts_audio", "ts_smooth", "ts_lfo", "ts_hook", "ts_dfmt", "ts_lfmt", "lu", "names", "tsf",
-           "ts_face", "ts_draw", "small")
+           "ts_face", "ts_draw", "ts_dots", "small")
 TG_SYMBOLS = ("set_held", "mod_used")
 
 

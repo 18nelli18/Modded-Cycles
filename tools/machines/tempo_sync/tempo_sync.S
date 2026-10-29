@@ -27,7 +27,7 @@
 	ID_LMULT = 0x1e
 	FACE_SMALL = 0x40143d28		/* police 6x10 grasse de l'OS (une face, comme 0x401429ec : 16x22) ; 5x9 trop petite */
 
-	.globl	ts_audio, ts_smooth, ts_lfo, ts_hook, ts_dfmt, ts_lfmt, lu, names, tsf, ts_face, ts_draw, small
+	.globl	ts_audio, ts_smooth, ts_lfo, ts_hook, ts_dfmt, ts_lfmt, lu, names, tsf, ts_face, ts_draw, ts_dots, small
 
 /* ---- audio: 0x400581ae, jsr ts_audio ; nop ; nop in place of mvs.w 428(a0),d0 ; lea TEMPO,a0 (a0 = smoothed
  * parameters). FREE: both instructions, back to the stock formula at 0x400581b8. SYNC: d0 = the length, clamped,
@@ -571,6 +571,43 @@ ts_draw:
 	addq.l	#6, 16(%sp)			/* le y empilé par pea 0x22 */
 1:	clr.b	small
 	jmp	0x40071a04
+
+/* ---- les cinq points de la fenêtre de valeur : 0x4001d91c, dans 0x4001d818, à la place de movea.l d5,a0 ; lsl.l #3,d4 ;
+ * lsl.l #6,d0 ; suba.l d1,a0 (le point allumé = (valeur - min) x 5 / (max - min + 1)). Le mot de LFO SPEED en SYNC
+ * porte (sens << 6 | idx) << 8 : pris tel quel, le point sautait (1/128 tout à gauche, -16 BAR au 4e, -1/4 .. -1/128
+ * au centre). En SYNC, la valeur des points devient la place de la note sur la course du potard, -1/128 .. -16 BAR,
+ * +16 BAR .. +1/128 (p = 0..47), ramenée à 0..32512 : à gauche vite en arrière, au centre lent, à droite vite en
+ * avant, comme la vitesse d'origine. DELAY TIME garde son mot : son octet fort est déjà la valeur FREE la plus proche.
+ * d6 et d7 sont libres ici (écrasés juste après) ; d0, d1, d4 sont rendus comme le stock les fait. */
+	.section .text.dots, "ax"
+ts_dots:
+	movea.l	%d5, %a0
+	moveq	#ID_LSPD, %d7
+	cmp.l	%d7, %d2
+	bne.s	2f
+	btst	#7, %d5
+	beq.s	2f
+	move.l	%d5, %d7
+	lsr.l	#8, %d7
+	andi.l	#0x3f, %d7		/* idx */
+	moveq	#NLFO - 1, %d6
+	cmp.l	%d6, %d7
+	bls.s	1f
+	move.l	%d6, %d7
+1:	btst	#14, %d5		/* sens inverse : p = idx */
+	bne.s	3f
+	moveq	#2 * NLFO - 1, %d6	/* en avant : p = 47 - idx */
+	sub.l	%d7, %d6
+	move.l	%d6, %d7
+3:	move.l	#32512, %d6
+	mulu.l	%d6, %d7
+	moveq	#2 * NLFO - 1, %d6
+	divu.l	%d6, %d7
+	movea.l	%d7, %a0
+2:	lsl.l	#3, %d4
+	lsl.l	#6, %d0
+	suba.l	%d1, %a0
+	rts
 
 	.section .data.flag, "aw"
 small:	.byte	0				/* 1 : la fenêtre de valeur affiche une valeur de note (petite police) */

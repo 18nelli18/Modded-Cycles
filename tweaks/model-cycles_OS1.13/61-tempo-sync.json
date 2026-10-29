@@ -7,7 +7,7 @@
   "Gardé dans le mot du paramètre (kit, son, LFO 2, LFO 3/4) : bit 7 = SYNC. Le délai suit le tempo et reste borné à 8 s par l'OS ; « > » à côté de la valeur quand il l'est. Le LFO fait un cycle par valeur de note, quel que soit MULT.",
   "La fenêtre de valeur affiche les valeurs de note dans la police 6x10 grasse de l'OS, centrée : elles ne tiennent pas dans la grande (« 3/16 » 48 px, « 1 BAR » 65 px, « -16 BAR » 82 px mesurés pour une plaque de 60 px) ; en FREE, la fenêtre reste celle de l'OS, pixel pour pixel.",
   "Lit et écrit SETTINGS tenu et « accord utilisé » de Model-TG (set_held, mod_used, symboles de 30-model-tg-st.json) : demande model-tg-st.",
-  "Code et données : 1708 o dans 12 masques de sprites 48x22 libérés (0x401829b8, 0x40183408, 0x40184808, 0x40184af8, 0x40184c78, 0x4018b9c8, 0x4018bb48, 0x4018cbc8, 0x4018d038, 0x40190334, 0x4019089c, 0x40192a24). Généré par tools/gen_tempo_sync.py, notes/82."
+  "Code et données : 1778 o dans 12 masques de sprites 48x22 libérés (0x401829b8, 0x40183408, 0x40184808, 0x40184af8, 0x40184c78, 0x4018b9c8, 0x4018bb48, 0x4018cbc8, 0x4018d038, 0x40190334, 0x4019089c, 0x40192a24). Généré par tools/gen_tempo_sync.py, notes/82."
  ],
  "device": "Model:Cycles",
  "os": "1.13",
@@ -27,6 +27,7 @@
   "tsf": "0x40192ab4",
   "ts_face": "0x40192ab8",
   "ts_draw": "0x4019092c",
+  "ts_dots": "0x4018d0b2",
   "small": "0x40192ad4"
  },
  "writes": [
@@ -44,6 +45,11 @@
    "off": 120022,
    "old": "4eb940071a04",
    "new": "4eb94019092c"
+  },
+  {
+   "off": 120092,
+   "old": "2045e78ced8891c1",
+   "new": "4eb94018d0b24e71"
   },
   {
    "off": 318426,
@@ -172,8 +178,8 @@
   },
   {
    "off": 1625144,
-   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00ffff",
-   "new": "2001e080660870014a816a0270ff4e75202f000c222f00104ab9401b235c67064ef940184c780800000766064ef9401848ae02800000007f2f0061c4d09f6a0270007214b0816f0220012f0241f940192a2473f00a005c8182fc000c73c1747fb2826302220253816a027200e1890081000000808081241f4e75"
+   "old": "fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00fffffc00",
+   "new": "2001e080660870014a816a0270ff4e75202f000c222f00104ab9401b235c67064ef940184c780800000766064ef9401848ae02800000007f2f0061c4d09f6a0270007214b0816f0220012f0241f940192a2473f00a005c8182fc000c73c1747fb2826302220253816a027200e1890081000000808081241f4e7520457e1db48766360805000767302e05e08f02870000003f7c17be8663022e060805000e66067c2f9c872e062c3c00007f004c0670007c2f4c4670072047e78ced8891c14e75"
   },
   {
    "off": 1638196,

@@ -289,3 +289,14 @@ Choix du propriétaire : **6×10 grasse** (`FACE_SMALL`). Le `y + 6` de `ts_draw
 (34..43) devient 40..49, centrée sur la ligne de la grande (34..55). Tous les glyphes utilisés (`0-9 / - B A R >`)
 existent dans cette face. Preuve : `test_tempo_sync.py` `TOUT OK` seul (69 valeurs, 10 px, y 40..49, dans x 64..124,
 le plus large 48 px pour 61) et avec tout `os.json` (fenêtre `SKIP` comme plus haut).
+
+**Les cinq points sous la valeur (29/10, après `os-full6`).** Sur la machine, en SYNC, le point de LFO SPEED sautait :
+1/128 tout à gauche, -16 BAR au 4e, de -1/4 à -1/128 au centre. La fenêtre allume le point `(valeur − min) × 5 /
+(max − min + 1)` (`0x4001d8ee..0x4001d98c`) **avant** d'appeler le formateur, sur le mot brut : pour LFO SPEED en SYNC,
+`(sens << 6 | idx) << 8 | 0x80`, sans rapport avec la position. Accroche `ts_dots` en `0x4001d91c` (`movea.l d5,a0 ;
+lsl.l #3,d4 ; lsl.l #6,d0 ; suba.l d1,a0` → `jsr ts_dots ; nop`) : pour LFO SPEED en SYNC, la valeur des points
+devient la place sur la course du potard (−1/128 .. −16 BAR, +16 BAR .. +1/128, p = 0..47, ramenée à 0..32512) :
+à gauche vite en arrière, au centre lent, à droite vite en avant, comme la vitesse d'origine. DELAY TIME n'est pas
+touché : l'octet fort de son mot est déjà la valeur FREE la plus proche (bon sur la machine). Preuve : points relevés
+dans le vrai `0x4001d818` — DELAY `[0×11, 1×3, 2, 3, 3, 4×4]` = formule de l'OS ; LFO `0000000000111111111 22222 |
+22222 333333333 4444444444` ; FREE pixel pour pixel ; avec tout `os.json` `TOUT OK`.
