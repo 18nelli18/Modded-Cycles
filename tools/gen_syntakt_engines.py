@@ -94,7 +94,7 @@ HW_TESTED = set()
 # l'arpégiateur, construite par build.py (même MAIN OS que le flasher), « c bon ça fonctionne nickel » ; l'utilisateur
 # a demandé l'étiquette sans attendre un essai depuis le flasher.
 HW_TESTED_TG = {("sd", "cp", "toy", "bits", "swarm")}
-MAX_EXTRA = 7                # 5 moteurs, MACRO et ACID (notes/54 §11)
+MAX_EXTRA = 8                # 5 moteurs, MACRO, ACID et RETROSYN (notes/84)
 
 # --- Syntakt : fermeture et plages copiées -----------------------------------------------------------------
 # La copie dépend du DERNIER moteur coché (ordre du catalogue) : elle contient tout ce qu'il faut aux moteurs du
@@ -191,6 +191,11 @@ LAYOUT = dict(
 # descripteurs (14 x 32 o chacune avec Model-TG, jusqu'à 0x35be0 < RECS). Jusqu'à 6 machines, rien ne bouge : les
 # firmwares déjà testés gardent leurs octets.
 ROWS7 = dict(ROWSN=0x35860, CCROWSN=0x35a20)
+# 8 machines ajoutées (… et RETROSYN, notes/84) : 116 descripteurs (0x1960 o) recouvriraient ROWS7, et rien ne reste
+# libre jusqu'à TABLES_AT. Les rangées (15 x 32 o chacune avec Model-TG) passent alors dans la fin de la zone DATA
+# (noms, tables update/render, chaînes : 0x2c0 o environ pour 15 machines), entre DATA et DESCN ; et les détours, qui
+# dépassent 0x800 o (0x84c avec Model-TG), repoussent DATA de 0x100 o. La passerelle des moteurs ne lit pas DATA.
+ROWS8 = dict(ROWSN=0x33c00, CCROWSN=0x33e00, DATA=0x33900)
 
 
 def set_base(pay):
@@ -203,20 +208,22 @@ def set_base(pay):
 
 
 def set_rows(n):
-    """Rangées de l'écran des paramètres pour n machines ajoutées (ROWS7 au-delà de 6)."""
-    for k in ROWS7:
-        globals()[k] = PAY + (ROWS7[k] if n > 6 else LAYOUT[k])
+    """Rangées de l'écran des paramètres (et DATA) pour n machines ajoutées (ROWS7 au-delà de 6, ROWS8 au-delà de 7)."""
+    for k in ROWS8:
+        globals()[k] = PAY + (ROWS8[k] if n > 7 else ROWS7.get(k, LAYOUT[k]) if n > 6 else LAYOUT[k])
 
 
 def check_room(n, nm):
     """Les tables de n machines ajoutées (nm machines en tout) tiennent à leur place."""
     ndesc = g7.NDESC + 5 * n
-    for what, end, limit in (("descripteurs", DESCN + ndesc * g7.DSTRIDE, ROWSN), ("rangées", ROWSN + 32 * nm, CCROWSN),
-                             ("rangées CC", CCROWSN + 32 * nm, RECS), ("enregistrements", RECS + 0x60 * n, REC_ATK)):
+    low = ROWSN < DESCN                         # ROWS8 : les rangées sous les descripteurs
+    for what, end, limit in (("descripteurs", DESCN + ndesc * g7.DSTRIDE, RECS if low else ROWSN),
+                             ("rangées", ROWSN + 32 * nm, CCROWSN), ("rangées CC", CCROWSN + 32 * nm, DESCN if low else RECS),
+                             ("enregistrements", RECS + 0x60 * n, REC_ATK)):
         if end > limit:
             raise SystemExit(f"!! {what} jusqu'à {end:#x}, au-delà de {limit:#x}")
-    if nm > 2 * MARKS_ROW:
-        raise SystemExit(f"!! {nm} machines : les repères de l'écran MACHINES n'ont que 2 lignes de {MARKS_ROW}")
+    if nm > 2 * marks_row(nm):
+        raise SystemExit(f"!! {nm} machines : les repères de l'écran MACHINES n'ont que 2 lignes de {marks_row(nm)}")
 
 
 set_base(PAY_ALONE)
@@ -466,8 +473,21 @@ def subsets():
 # x que les 7 d'origine, à y = 11..15 puis 4..8, entre le bord et la petite image (et son cadre, y = 17..50).
 # L'axe y de cet écran monte (essai de l'utilisateur, 02/10/2026 : la 1re version, 4..8 puis 11..15, montrait les
 # machines 8 et suivantes au-dessus des 7 premières) : la 1re ligne est celle du plus grand y.
+# Au-delà de 14 machines (15 avec RETROSYN, notes/84), 8 repères par ligne : la ligne commence un pas plus à gauche
+# (x = 73, le 1er de 69 à 73, toujours dans la moitié droite), le dernier reste à x = 122. Jusqu'à 14 machines, rien
+# ne bouge : les firmwares déjà testés gardent leurs octets.
 MARKS_ROW = 7
 MARKS = dict(x=80, dx=7, y=(11, 4), w=4, h=4)
+
+
+def marks_row(nm):
+    """Repères par ligne pour nm machines."""
+    return MARKS_ROW if nm <= 2 * MARKS_ROW else MARKS_ROW + 1
+
+
+def marks_x(nm):
+    """x (bord droit) du 1er repère de chaque ligne pour nm machines."""
+    return MARKS["x"] - MARKS["dx"] * (marks_row(nm) - MARKS_ROW)
 
 
 def marks_asm(a, ins, lab, nm):
@@ -476,10 +496,10 @@ def marks_asm(a, ins, lab, nm):
     a.append("\t.globl\tmarks"); lab("marks")
     ins("lea 0x40070c4e, %a2"); ins("lea 0x40070efc, %a3"); ins("clr.l %d5")                 # creux, plein
     lab("1"); ins("move.l %d5, %d4"); ins(f"moveq #{MARKS['y'][0]}, %d1")
-    ins(f"moveq #{MARKS_ROW}, %d0"); ins("cmp.l %d0, %d4"); ins("blt.s 2f")
+    ins(f"moveq #{marks_row(nm)}, %d0"); ins("cmp.l %d0, %d4"); ins("blt.s 2f")
     ins("sub.l %d0, %d4"); ins(f"moveq #{MARKS['y'][1]}, %d1")
     lab("2"); ins("move.l %d4, %d0"); ins("lsl.l #3, %d0"); ins("sub.l %d4, %d0")             # 7 x colonne
-    ins(f"add.l #{MARKS['x']}, %d0")
+    ins(f"add.l #{marks_x(nm)}, %d0")
     ins("move.l %d1, %d4"); ins(f"addq.l #{MARKS['h']}, %d4")
     ins("pea 0x1"); ins("move.l %d4, -(%sp)"); ins("move.l %d0, -(%sp)"); ins("move.l %d1, -(%sp)")
     ins(f"subq.l #{MARKS['w']}, %d0"); ins("move.l %d0, -(%sp)"); ins("move.l %d2, -(%sp)")
@@ -1149,7 +1169,7 @@ def assemble_detours(tmp, machines, syms, rnd_at, tg, text=None):
     ssyms = {p[-1]: int(p[0], 16) for p in (l.split() for l in gx.run([gx.CROSS + "nm", str(e)]).splitlines()) if len(p) == 3}
     stubs = b.read_bytes()
     if STUBS + len(stubs) > DATA:
-        raise SystemExit("!! détours trop grands")
+        raise SystemExit(f"!! détours trop grands ({len(stubs):#x} o)")
     return stubs, ssyms
 
 
@@ -1280,7 +1300,7 @@ def build_tweak(img, st_img, codes, generic=False, meter=False, tg=None, own=Non
         data += s_.encode("ascii") + b"\0"
     if meter:
         data += b"--/--\0\0\0" * nm
-    if DATA + len(data) > DESCN:
+    if DATA + len(data) > min(DESCN, ROWSN):            # ROWS8 : les rangées dans la fin de DATA
         raise SystemExit("!! données")
 
     new = bytearray()
