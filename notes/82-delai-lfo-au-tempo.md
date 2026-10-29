@@ -224,3 +224,51 @@ qu'on lui donne est vérifiée), les p-locks et le MIDI (ils écrivent des valeu
    MULT ne change rien ; pages LFO 2, 3, 4 pareil.
 5. Sauver le pattern, en charger un autre, revenir : les valeurs de notes reviennent. Un ancien projet : identique.
 6. Vérifier que la case de la page des paramètres affiche « 1 BAR », « 3/16 », « -16 BAR » sans déborder.
+
+## 8. Mise à jour du 29/10/2026 : la typographie des valeurs de note (petite police)
+
+**Le problème, mesuré et non plus à l'œil.** La fenêtre de valeur (`0x4001d818`, slot 144 de `ParameterPageView`)
+dessine son texte avec la grande police 16×22 de l'OS (`0x401429ec`) : elle n'a que ~60 px de plaque (x 64..124) et
+les valeurs de note débordent. Largeurs relevées à l'écran, texte seul, x 0x60 centré, dans le vrai `DRAW_TEXT`
+(`0x40071a04`) :
+
+| texte | grande 16×22 | petite 5×9 (`0x40140ab0`) |
+|---|---|---|
+| `3/16` | 48 px | 23 px |
+| `1 BAR` | 65 px | 29 px |
+| `-16 BAR` | 82 px (dès x 38, hors plaque) | 39 px |
+
+D'où, sur la machine, « 1 BAR » et « -16 BAR » qui débordent de la case (constat du propriétaire).
+
+**Ce qui a été fait.** La petite police 5×9 de l'OS (`0x40140ab0`, une *face* du même format que la grande : `0x40072260`
+en construit l'objet en 8 octets) est utilisée **en SYNC seulement** ; en FREE la fenêtre reste exactement celle de
+l'OS. Deux accroches dans la fenêtre, et un drapeau :
+
+- `0x4001d8ae` (`move.l sp,d4 ; add.l #60,d4` → `jsr ts_face ; nop`) : la face a été empilée juste avant
+  (`pea 0x401429ec` en `0x4001d8a8`) ; `ts_face` la remplace **en 4(sp)** — l'adresse de retour du `jsr` est en 0(sp),
+  erreur qui a coûté un plantage pendant la mise au point — par la petite, puis refait `d4 = sp + 4 + 60` comme le
+  stock.
+- `0x4001d8d6` (`jsr 0x40071a04` → `jsr ts_draw`) : la ligne de 9 px se poserait en haut de la case de 22 px ;
+  `ts_draw` fait `y + 6` (`pea 0x22` empilé en 16(sp)), soit y 40..48, centré sur la ligne de la grande (34..55).
+- Le drapeau `small` est posé par `ts_dfmt` / `ts_lfmt` (1 en SYNC, 0 en FREE) : ces formateurs sont ceux que la
+  fenêtre appelle juste avant (vt[60] du descripteur, `0x4001d8a2`), donc il est toujours frais, et `ts_draw` le
+  remet à zéro pour la fenêtre suivante. Aucun autre paramètre ne change de police.
+
+Place : +81 o, tous dans les 12 masques déjà réservés par le mod (1708 o au total, 12 masques de 192 o).
+
+**Preuve `[FAIT en émulation]`** — `tools/emu/test_tempo_sync.py`, `TOUT OK` seul et avec les quatorze autres tweaks
+de `os.json` :
+- les 69 valeurs de note (21 du délai, 48 du LFO) sont tirées par le vrai `0x4001d818` et comparées à ce que l'OS
+  dessine du même texte, petite police, `y + 6` : chaque pixel du texte attendu est là, 9 px de haut, y 40..48, dans
+  x 64..124 ; le plus large fait 39 px pour une plaque de 61 ;
+- en FREE, la fenêtre est **pixel pour pixel** celle de l'OS (délai et LFO, 4 valeurs chacun) ;
+- le texte des formateurs, les caractères, le potard, le stockage, le coût : inchangés et verts.
+
+**Point ouvert, à vérifier sur la machine** : avec les moteurs Syntakt, la fenêtre de valeur passe par
+`0x4000a6b0` → `0x4004df40`, qui cherche un enregistrement d'interface par la valeur (`0x40a71754 + 100 × min(valeur,
+76)`) puis lit les champs de cet enregistrement ; pour un mot de note (`0x8000 | idx`) ou une grande valeur FREE
+(`0x7f00`) l'OS lit alors de la RAM qui se trouve être celle de la charge utile des moteurs (`0x46700000`, nulle au
+démarrage) : l'émulateur d'interface ne la projette pas, la lecture y échoue, et la vérification de la fenêtre est
+donc `SKIP` dans la passe combinée. Ce chemin existait avant cette mise à jour (même échec avec le tweak du 26/10) ;
+sur la machine il lit des zéros. À contrôler : la case de DELAY TIME en SYNC avec tout l'OS doit afficher la valeur de
+note, sans jauge parasite.

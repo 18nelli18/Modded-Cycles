@@ -486,7 +486,7 @@ def knob(base, img, rt, tg):
 
 # ------------------------------------------------------------------------------------------------ 5. text -----
 
-def text(base, img):
+def text(base, img, engines=False):
     a = lofi_ui.UI(base, end=BASE + len(base))
     b = lofi_ui.UI(img, end=BASE + len(img))
     check(a.init_ok and b.init_ok, "UI records built by the OS (0x400de244)")
@@ -509,6 +509,76 @@ def text(base, img):
     chars = sorted(set("".join(got50 + gl)) - {" "})
     missing = [c for c in chars if not b.glyph(c)]
     check(not missing, f"every character ({''.join(chars)}) exists in the value window's big font {missing}")
+    # 5b. la fenêtre de valeur elle-même (vrai 0x4001d818, slot 144) : en FREE pixel pour pixel celle de l'OS ; en
+    # SYNC la petite police 5x9 de l'OS, centrée, et le texte dedans la plaque au lieu de déborder (avant : « 1 BAR »
+    # 65 px et « -16 BAR » 82 px dans une plaque de 60 px, dès x = 38).
+    CELL = (64, 124)                            # la plaque de la valeur, en x (le grand texte déborde jusqu'à 38)
+    SMALL = 0x40140ab0                          # la petite police 5x9 de l'OS (une face, comme 0x401429ec : 16x22)
+
+    def draw(s, face, dy=0):
+        """Ce que l'OS dessinerait d'un texte seul : (police, x 0x60, y 0x22 + dy, centré), pixels (x, y)."""
+        S = lofi_ui.SCRATCH + 0x4000
+        bmp, fb, font, txt = S, S + 0x100, S + 0x600, S + 0x700
+        b.uc.mem_write(fb, bytes(0x400))
+        b.call(lofi_ui.BITMAP, bmp, 128, 64, fb, 0)
+        b.call(0x40072260, font, face)
+        b.uc.mem_write(txt, s.encode() + b"\0")
+        b.call(lofi_ui.DRAW_TEXT, bmp, font, 0x60, 0x22 + dy, 2, lofi_ui.FMT_S, txt)
+        fb_bytes = b.uc.mem_read(fb, 0x400)
+        return {(x, y) for x in range(128) for y in range(64) if lofi_ui.pix(fb_bytes, x, y)}
+
+    def ink(fb):
+        return {(x, y) for x in range(CELL[0] - 8, CELL[1] + 1) for y in range(64) if lofi_ui.pix(fb, x, y)}
+
+    def box(px):
+        xs = [p[0] for p in px]; ys = [p[1] for p in px]
+        return (min(xs), max(xs), min(ys), max(ys))
+
+    if engines:
+        print("      SKIP fenêtre de valeur : avec les moteurs Syntakt, l'OS lit la RAM de leur charge utile "
+              "(0x46700000) pour la valeur d'un paramètre (0x4000a6b0 -> 0x4004df40 : enregistrement 100 x valeur) ; "
+              "l'émulateur d'interface ne projette pas cette RAM, la lecture y échoue. Vérifié sans les moteurs "
+              "ci-dessous ; à revoir sur la machine (note 82).")
+        return
+    same = [(d, hex(v)) for d, v in ((d_, v_) for d_ in (ID_DTIME, ID_LSPD)
+                                     for v_ in (0x0000, 0x2000, 0x6000, 0x7f00)) if b.popup(d, v) != a.popup(d, v)]
+    check(not same, f"FREE: the value window (0x4001d818) is the base's, pixel for pixel {same[:3]}")
+    # En SYNC, la base ne sait pas dessiner un mot de note (sa jauge de DELAY TIME lit une table indexée par la
+    # valeur, 0x80 en sort) : on compare le tirage à ce que l'OS dessine du même texte, petite police, y + 6.
+    sync = [(ID_DTIME, dword(i)) for i in range(NDLY)] + [(ID_LSPD, lword(i, r)) for r in (0, 1) for i in range(NLFO)]
+    bad, shots, drawn = [], {}, True
+    for d, v in sync:
+        try:
+            shot = b.popup(d, v)
+        except Exception as e:      # voir le SKIP plus bas : l'OS lit hors image pour un mot de note
+            print(f"      SKIP fenêtre de valeur en SYNC : {e} — l'OS cherche l'enregistrement de la valeur "
+                  f"(0x4000a6b0 -> 0x4004df40 : base + 100 x valeur) et lit hors de l'image ; en émulation cette "
+                  f"RAM des moteurs Syntakt n'est pas projetée, sur la machine c'est de la mémoire à zéro. "
+                  f"À vérifier sur la machine (note 82).")
+            drawn = False
+            break
+
+        want = draw(b.text(d, v), SMALL, 6)
+        if shot is None or not want:
+            bad.append((d, hex(v), "pas de dessin"))
+            continue
+        missing = want - ink(shot[0])               # le texte de la petite police que la fenêtre n'a pas dessiné
+        b_ = box(want)
+        if missing or b_[0] < CELL[0] or b_[1] > CELL[1] or b_[2] < 40 or b_[3] > 48:
+            bad.append((d, hex(v), len(missing), b_))
+        shots[(d, v)] = (shot[0], want)
+    if drawn:
+        check(not bad,
+              f"SYNC: la fenêtre de valeur dessine ses {len(shots)} valeurs de note avec la petite police 5x9 de l'OS "
+              f"({SMALL:#x}) : 9 px de haut, centrée sur la ligne de la grande (y 40..48), toute dans la plaque "
+              f"x {CELL[0]}..{CELL[1]} {bad[:3]}")
+    wide = max(shots.values() or [(None, {(0, 0)})], key=lambda r: box(r[1])[1] - box(r[1])[0])[1] if drawn else None
+    check(not drawn or box(wide)[1] - box(wide)[0] + 1 <= CELL[1] - CELL[0] + 1,
+          f"SYNC: le texte le plus large fait {box(wide)[1] - box(wide)[0] + 1} px pour une plaque de "
+          f"{CELL[1] - CELL[0] + 1} px (grande police : 65 px pour « 1 BAR », 82 px pour « -16 BAR », dès x 38)")
+    if drawn:
+        print("      fenêtre de valeur, DELAY TIME SYNC « 3/16 » (1/8 pointée) :")
+        print(lofi_ui.ascii_popup(shots[(ID_DTIME, dword(9))][0]))
 
 
 # --------------------------------------------------------------------------------------------- 6. storage -----
@@ -599,7 +669,7 @@ def main():
              (2, "smoothing", lambda: smoothing(base, img, rt)),
              (3, "LFO (audio)", lambda: lfo(base, img, rt, plus)),
              (4, "knob", lambda: knob(base, img, rt, tg)),
-             (5, "text", lambda: text(base, img)),
+             (5, "text", lambda: text(base, img, any(t["id"].startswith("syntakt-tg") for t in others))),
              (6, "storage", lambda: storage(base, img, rt, plus)),
              (7, "cost", lambda: cost(base, img, rt)))
     for n, name, fn in steps:

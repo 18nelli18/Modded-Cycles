@@ -25,8 +25,9 @@
 	ID_DTIME = 0x25
 	ID_LSPD	= 0x1d
 	ID_LMULT = 0x1e
+	FACE_SMALL = 0x40140ab0		/* petite police 5x9 de l'OS (une face, comme 0x401429ec : 16x22) */
 
-	.globl	ts_audio, ts_smooth, ts_lfo, ts_hook, ts_dfmt, ts_lfmt, lu, names, tsf
+	.globl	ts_audio, ts_smooth, ts_lfo, ts_hook, ts_dfmt, ts_lfmt, lu, names, tsf, ts_face, ts_draw, small
 
 /* ---- audio: 0x400581ae, jsr ts_audio ; nop ; nop in place of mvs.w 428(a0),d0 ; lea TEMPO,a0 (a0 = smoothed
  * parameters). FREE: both instructions, back to the stock formula at 0x400581b8. SYNC: d0 = the length, clamped,
@@ -480,15 +481,19 @@ lfo_len:
 	rts
 
 /* ---- value text: 0x4004dfda (DELAY TIME, (functor, value, buf)): jmp ts_dfmt in place of move.l #256,d0. FREE:
- * the stock text. SYNC: the note value, and " >" when the OS clamps it at this tempo. */
+ * the stock text. SYNC: the note value, and " >" when the OS clamps it at this tempo. In SYNC the value window
+ * draws with the small face (ts_face) : the note values do not fit the big one. */
 	.section .text.fmt, "ax"
 ts_dfmt:
 	move.l	8(%sp), %d0
 	btst	#7, %d0
 	bne.s	1f
+	clr.b	small
 	move.l	#256, %d0
 	jmp	0x4004dfe0
-1:	andi.l	#0x7f, %d0
+1:	moveq	#1, %d1			/* d1 libre ici : le formateur le pose plus bas */
+	move.b	%d1, small
+	andi.l	#0x7f, %d0
 	moveq	#NDLY - 1, %d1
 	cmp.l	%d1, %d0
 	bls.s	2f
@@ -516,9 +521,12 @@ ts_lfmt:
 	move.l	8(%sp), %d0
 	btst	#7, %d0
 	bne.s	1f
+	clr.b	small
 	move.l	#-16384, %d0
 	jmp	0x4004e014
-1:	movea.l	12(%sp), %a1
+1:	moveq	#1, %d1			/* d1 libre ici : le formateur le pose plus bas */
+	move.b	%d1, small
+	movea.l	12(%sp), %a1
 	lsr.l	#8, %d0
 	btst	#6, %d0
 	beq.s	2f
@@ -536,6 +544,36 @@ name:
 	bne.s	1b
 	subq.l	#1, %a1
 	rts
+
+/* ---- la police de la fenêtre de valeur : 0x4001d8ae, dans 0x4001d818 (slot 144 de ParameterPageView), à la place
+ * de move.l sp,d4 ; add.l #60,d4. La fenêtre vient de formater sa valeur par vt[60] (notre ts_dfmt / ts_lfmt), qui
+ * met small à 1 pour une valeur de note : celles-ci ne tiennent pas dans la grande police (« 3/16 » 48 px, « 1 BAR »
+ * 65 px, « -16 BAR » 82 px mesurés, pour une plaque de 60 px ; aussi, deux glyphes de large en plus débordent sur le
+ * bord). La face a été empilée en 0x4001d8a8 (pea 0x401429ec) : elle est remplacée sur place, puis d4 = sp + 60
+ * comme le code stock (l'objet police se construit là). */
+	.section .text.face, "ax"
+ts_face:
+	tst.b	small
+	beq.s	1f
+	move.l	#FACE_SMALL, %d4		/* d4 est de toute façon écrasé, comme par le stock */
+	move.l	%d4, 4(%sp)			/* la face empilée est sous l'adresse de retour du jsr */
+1:	move.l	%sp, %d4
+	add.l	#64, %d4			/* sp + 4 (retour) + 60 : le sp + 60 du stock */
+	rts
+
+/* ---- même fenêtre, 0x4001d8d6 : jsr 0x40071a04 (DRAW_TEXT) -> jsr ts_draw. La ligne de 9 px se poserait en haut
+ * de la case de 22 px : +6 la centre sur la ligne de la grande police (34..55 -> 34..42 devient 40..48). Et le
+ * drapeau est remis à zéro : la fenêtre suivante (un autre paramètre, ou FREE) reprend la grande police. */
+	.section .text.draw2, "ax"
+ts_draw:
+	tst.b	small
+	beq.s	1f
+	addq.l	#6, 16(%sp)			/* le y empilé par pea 0x22 */
+1:	clr.b	small
+	jmp	0x40071a04
+
+	.section .data.flag, "aw"
+small:	.byte	0				/* 1 : la fenêtre de valeur affiche une valeur de note (petite police) */
 
 	.section .data.tab, "aw"
 	.balign	2

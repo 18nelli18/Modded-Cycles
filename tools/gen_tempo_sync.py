@@ -56,8 +56,13 @@ HOOKS = (
      "DELAY TIME text: move.l #256,d0 -> jmp ts_dfmt"),
     (0x4004e00e, "203cffffc000", "ts_lfmt", 0x4ef9,
      "LFO SPEED text: move.l #-16384,d0 -> jmp ts_lfmt"),
+    (0x4001d8ae, "280f06840000003c", "ts_face", 0x4eb9,
+     "value window font (0x4001d818): move.l sp,d4 ; add.l #60,d4 -> jsr ts_face ; nop (petite police 5x9 en SYNC)"),
+    (0x4001d8d6, "4eb940071a04", "ts_draw", 0x4eb9,
+     "value window text (0x4001d818): jsr 0x40071a04 (DRAW_TEXT) -> jsr ts_draw (centre la ligne de 9 px)"),
 )
-SYMBOLS = ("ts_audio", "ts_smooth", "ts_lfo", "ts_hook", "ts_dfmt", "ts_lfmt", "lu", "names", "tsf")
+SYMBOLS = ("ts_audio", "ts_smooth", "ts_lfo", "ts_hook", "ts_dfmt", "ts_lfmt", "lu", "names", "tsf",
+           "ts_face", "ts_draw", "small")
 TG_SYMBOLS = ("set_held", "mod_used")
 
 
@@ -158,6 +163,9 @@ def build_tweak(stock):
             "Gardé dans le mot du paramètre (kit, son, LFO 2, LFO 3/4) : bit 7 = SYNC. Le délai suit le tempo et "
             "reste borné à 8 s par l'OS ; « > » à côté de la valeur quand il l'est. Le LFO fait un cycle par valeur "
             "de note, quel que soit MULT.",
+            "La fenêtre de valeur affiche les valeurs de note dans la petite police 5x9 de l'OS, centrée : elles ne "
+            "tiennent pas dans la grande (« 3/16 » 48 px, « 1 BAR » 65 px, « -16 BAR » 82 px mesurés pour une plaque "
+            "de 60 px) ; en FREE, la fenêtre reste celle de l'OS, pixel pour pixel.",
             "Lit et écrit SETTINGS tenu et « accord utilisé » de Model-TG (set_held, mod_used, symboles de "
             "30-model-tg-st.json) : demande model-tg-st.",
             f"Code et données : {used} o dans {len(placed)} masques de sprites 48x22 libérés ({masks}). "
