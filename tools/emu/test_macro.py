@@ -39,6 +39,7 @@ Durée : environ 45 min (les 47 modèles, seule et avec Model-TG), 25 min avec -
 """
 import argparse
 import json
+import os
 import pathlib
 import struct
 import subprocess
@@ -214,8 +215,9 @@ class Ref:
 
     def __init__(self, tmp, repo):
         self.exe = tmp / "braids_ref"
+        env = dict(os.environ, PATH="/usr/bin:" + os.environ.get("PATH", ""))
         subprocess.run(["g++", "-O2", "-I", str(repo), str(HERE / "braids_ref.cc"),
-                        *[str(repo / s) for s in gm.SOURCES], "-o", str(self.exe)], check=True)
+                        *[str(repo / s) for s in gm.SOURCES], "-o", str(self.exe)], env=env, check=True)
 
     def run(self, lines):
         """lines : (rendu, modèle, hauteur, timbre, color, frappe, mode, k, taille) par bloc ; les int16 rendus."""

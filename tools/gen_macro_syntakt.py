@@ -141,7 +141,7 @@ def build_tweak(img, st_img, repo, codes, tg=None, macro=True, acid=None):
     machines, parts, end = [], list(br["extra"]), 0
     if macro:
         blob, syms, end = compile_macro(repo, pay)
-        machines.append(dict(gm.MACHINE, label="MACRO", update=syms["macro_update"], render=syms["macro_render"]))
+        machines.append(dict(gm.machine(syms), label="MACRO"))
         parts.append({"dest": f"{pay + MACRO_AT:#x}", "hex": blob.hex()})
     if acid:
         if end > acid["at"]:

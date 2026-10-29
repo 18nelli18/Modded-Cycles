@@ -439,3 +439,33 @@ pas fini dans le temps alloué. `gen_acid_combos.py --check` à jour (126 fichie
 Sur la machine, la combinaison 5 moteurs + MACRO + ACID a été testée par Maxime le 12/10/2026 (notes/54 §11) avant
 cette correction ; le lo-fi qu'elle reçoit est le code testé avec MACRO seule et avec les moteurs (§8.4), à une autre
 place : son statut « testé » est gardé, à confirmer à son prochain essai.
+
+## 8.9 Le lo-fi passe sous MACHINES + PITCH (28/10/2026)
+
+Rapport d'un utilisateur : sur une piste MACRO, `MACHINES` + `PITCH` ne faisait rien et le lo-fi restait sur
+`FUNC` + `PITCH`, où il volait les demi-tons de l'OS. Demande : le lo-fi sous `MACHINES` + `PITCH`, appelé
+**Lo-Fi** dans la fenêtre de valeur, et `FUNC` + `PITCH` rendu au pitch de l'OS.
+
+**Comment.** `knob_vec` (détours) testait le drapeau `FUNC` de l'appelant. Il lit maintenant l'état de la touche
+`MACHINES` (code 5, octet `0x40f95744`, bit 0 — l'état que lit `0x4007faf4`, comme `atk_watch` de Model-TG).
+`FUNC` + `PITCH` n'est plus intercepté : l'OS applique ses demi-tons.
+
+**La place.** La vérification coûtait 10 octets de plus que l'ancienne et la plus grosse combinaison
+(Model-TG + cinq moteurs + MACRO + ACID) ne tenait plus dans les détours (`STUBS..DATA`). Le code du lo-fi
+(`lofi_knob`, `lofi_step`, `lofi_fmt`, `lofi_draw`, `lofi_name`) est donc **lié avec MACRO**
+(`gen_macro.compile_machine`) au lieu d'être écrit dans les détours, qui n'en gardent qu'un saut de 12 octets :
+58 o -> 12 o, et il reste 768 o libres. La solution vient de la comparaison demandée à `agy` (variante d,
+risque nul) ; `claude` a implémenté le déplacement.
+
+**Le nom.** `lofi_name` (« Lo-Fi ») est écrit dans le pointeur de nom du descripteur `FTUN` (`+0x2c`), donc la
+plaque affiche `Lo-Fi` au lieu de `Pitch`.
+
+**Preuve** (`tools/emu/test_macro.py`, `lofi_ui.check_lofi`) : piste MACRO, `MACHINES` + `PITCH` -> FINE (43) ;
+`PITCH` seul -> PITCH (42) ; **`FUNC` + `PITCH` -> PITCH (42)** ; les potards 3 à 13 inchangés ; les autres
+machines identiques à la base. Génération : `25-macro.json`, `32-macro-tg.json`, les combinaisons de moteurs
+(`24-*`, `31-*`) et `REGISTRY.md` régénérés ; `--check`, `check_overlaps` et `registry --check` verts.
+
+**Rapport d'un utilisateur (28/10/2026, sa propre machine)** : `MACHINES` + `PITCH` donne le lo-fi avec les mêmes valeurs (`46K` … `OFF` … `12B`) et la plaque affiche bien **`Lo-Fi`** ; `FUNC` + `PITCH` rend les demis-tons de l'OS ; régression vérifiée (Attack/Filtre/Résonance sous `MACHINES`, navigateur sans doublons de LOCKS, `Res` sur la plaque).
+
+**Reste à faire** : l'essai sur la machine (Maxime) — `MACHINES` + `PITCH` doit afficher `Lo-Fi` avec
+`OFF` au centre, `46K..4K` à gauche, `12B..2B` à droite ; `FUNC` + `PITCH` doit redevenir les demi-tons.
