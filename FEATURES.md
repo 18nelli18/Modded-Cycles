@@ -430,7 +430,7 @@ NES and SNES, with a pitch sweep and chord arpeggios.
 | Knob | Name on screen | What it does |
 |---|---|---|
 | SHAPE | Shape (SHAP) | 6 waves: pulse, NES triangle, Game Boy wavetable, long noise (15-bit), short metallic noise (7-bit), SNES loop |
-| COLOR | Color (COLR) | depends on the wave: pulse width (12.5/25/50/75 %), one of 8 wavetables or 8 SNES loops, noise rate |
+| COLOR | Color (COLR) | depends on the wave: pulse width, continuous from 12.5 % to 75 % (an LFO on COLOR gives PWM), one of 8 wavetables or 8 SNES loops, noise rate (continuous over 3 octaves) |
 | SWEEP | Sweep (SWEP) | pitch sweep on each note, Game Boy style: 64 is off, right sweeps up, left down; a note swept past C9 goes silent |
 | CONTOUR | Contour (CONT) | 8 chords played as a 60 Hz arpeggio (unison, octave, major, minor, fifth + octave, major and minor with octave, two octaves) |
 | DECAY | — | the amp decay, as on Tone; GATE holds the note |

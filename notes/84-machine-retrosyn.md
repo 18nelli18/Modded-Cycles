@@ -14,7 +14,8 @@ l'OS 1.13, charge utile à `PAY_TG = 0x46700000` (avec Model-TG).
   MACRO et ACID gardent leurs octets et leur place ; RETROSYN est lié au-dessus. 8e machine ajoutée :
   `gs.MAX_EXTRA` passe de 7 à 8.
 - **Potards** : SHAPE choisit l'onde (0 PULSE, 1 TRI NES, 2 WAVE Game Boy, 3 bruit LFSR 15 bits, 4 bruit LFSR 7 bits,
-  5 boucle SNES à interpolation gaussienne) ; COLOR le rapport cyclique / la table / la boucle / la cadence du bruit ;
+  5 boucle SNES à interpolation gaussienne) ; COLOR le rapport cyclique (continu, 12,5 à 75 %) / la table / la boucle
+  / la cadence du bruit (continue, 3 octaves) — voir §9 ;
   SWEEP le balayage de hauteur (64 : rien ; cadence 128 Hz ; au-delà de C9 la note se tait) ; CONTOUR un des 8
   accords joués en arpège à 60 Hz ; PUNCH écrase la sortie à 4 bits ; DECAY et GATE : l'enveloppe de TONE.
 - **5 descripteurs** comme les autres machines ajoutées : Color (COLR, 0), Shape (SHAP, 0, plage 0..5), Sweep (SWEP,
@@ -28,7 +29,8 @@ l'OS 1.13, charge utile à `PAY_TG = 0x46700000` (avec Model-TG).
 ## 1. Le cœur et la passerelle
 
 `retrosyn_dsp.h` (cœur), `retrosyn.c` (passerelle, contrat `update` / `render` de MACRO), `retrosyn_tables.h`
-(écrit par `gen_retrosyn_tables.py`, vérifié par `gen_retrosyn.py --check`) : inchangés depuis l'étape 1.
+(écrit par `gen_retrosyn_tables.py`, vérifié par `gen_retrosyn.py --check`) : inchangés depuis l'étape 1, sauf le
+PULSE et le bruit de `retrosyn_dsp.h` (§9).
 
 - `retrosyn_update(pmod, v, p)` : une fois par bloc de 32 échantillons. Marque `'RSY1'` (`0x52535931`) en
   `voix + 0x2c` : absente, le cœur de la piste est remis à zéro (changement de machine, verrou MACHINE). Au trig
@@ -107,9 +109,9 @@ installables ensemble, hors cas prévus.
 | | sans RETROSYN | avec RETROSYN |
 |---|---|---|
 | charge utile | 492 288 o | 504 168 o |
-| rangée (aPLib) | 247 441 o | 252 238 o (+4 797) |
-| fin de l'image | `0x401fbf51` | `0x401fd20e` |
-| libre sous `END_LIMIT 0x40200000` | 16 559 o | **11 762 o** |
+| rangée (aPLib) | 247 441 o | 252 372 o (+4 931) |
+| fin de l'image | `0x401fbf51` | `0x401fd294` |
+| libre sous `END_LIMIT 0x40200000` | 16 559 o | **11 628 o** |
 | descripteurs | 111 | 116 |
 
 - `gen_retrosyn.py --check` : tables et tweak à jour (toolchain exacte, conteneur `dsh-ru`).
@@ -143,6 +145,43 @@ ajoutées.
   DECAY/GATE, retrigs, 6 pistes ensemble, l'écran MACHINES à 15 repères).
 - Licence **MIT** (`LICENSE-Punch.txt` du dépôt amont, vérifié le 28/10/2026 ; le dépôt s'appelle désormais AveyCole/Supermodel, l'ancien nom redirige).
 - Section du guide (`docs/guide/`) : pas encore écrite, d'où l'absence de `guide` dans `os.json`.
+
+## 9. PWM et cadence continue du bruit (29/10/2026)
+
+Avant : COLOR choisissait l'un de quatre paliers (`COLOR x 4 >> 15`) — PULSE 12,5 / 25 / 50 / 75 %, horloge du bruit
+= hauteur x 2^4..2^7. Un LFO sur COLOR sautait donc d'un palier à l'autre. Maintenant les deux sont continus, sur une
+droite qui passe par les **centres** des anciens paliers (COLOR 4096 / 12288 / 20480 / 28672 en interne) :
+
+- **PULSE** (`rs_duty`) : seuil de phase `2^29 + (c - 4096) << 16` jusqu'à 12288, puis `2^30 + (c - 12288) << 17`,
+  COLOR borné à 4096..28672. Aux centres, le seuil vaut exactement l'ancien `{1, 2, 4, 6} << 29` : même son, bit pour
+  bit. Calculé une fois par bloc ; dans la boucle, une seule comparaison `ph < thr`. Ni division, ni 64 bits.
+- **Bruit** : horloge = hauteur x 2^nk x 2^f, nk = 4..7, f la fraction d'octave (8192 pas par octave de COLOR).
+  2^f est une parabole en entiers (`32768 + f(21512 + 11256 f)`, écart < 0,4 %, croissante, 2^0 exact) ; l'incrément
+  est recalculé seulement quand la hauteur change (début de bloc, pas d'arpège, tick de balayage). Pour f = 0 le
+  calcul rend l'ancien incrément tel quel : aux centres, le bruit est identique bit pour bit, dans les deux modes
+  (15 et 7 bits). Débordement : `inc >> 15` x 65534 < 2^32 pour la note 127 (`RS_INC[127] = 1 122 405 052`).
+- Pas de nouveau mode S&H : le format des paramètres (5 descripteurs, 0..32767) et TRI / WAVE / SNES ne changent pas.
+
+Sur la machine, COLOR passe par `knob()` (COLOR x 258) : 0..15 donne 12,5 % et 112..127 donne 75 % comme avant ;
+entre les deux, la valeur suit la droite. Les anciennes positions 32 / 64 / 96 (début des paliers 25 / 50 / 75 %)
+donnent maintenant 18,9 / 37,9 / 63,1 % ; 48 / 80 / 111 donnent 25,3 / 50,5 / 74,9 %.
+
+Échec précédent (agy, 29/10, non commité) : droites ancrées au **début** des paliers (COLOR 0 = 12,5 %) et une branche
+« lente » du bruit fausse — 12,5 % devenait 18,69 %, 25 % → 37,21 %, 50 % → 56,08 %, 75 % → 68,69 %, bruit long
+déséquilibré à 66,7 %.
+
+Preuves :
+
+- `tools/machines/retrosyn/test_retrosyn.py` : 24 → 35 contrôles, tous verts. Nouveaux : PULSE aux anciens centres et
+  à COLOR 0 / 32767 identique au modèle Python de l'ancien PULSE à quatre paliers (3 notes) ; rapports
+  intermédiaires 18,75 / 21,88 / 37,50 / 62,50 / 68,75 % mesurés exactement ; rapport croissant de 12,5 à 75 % ;
+  bruit aux anciens centres identique au modèle de l'ancien bruit (2 modes x 6 COLOR x 3 notes) ; deux niveaux et
+  équilibre entre les centres (pire écart 2,0 %) ; cadence croissante (939 → 8 270 basculements sur 3 octaves) ;
+  demi-octave x1,46, octave x2,11 (attendu 1,41 / 2).
+- Taille : RETROSYN text 2 652 → 2 752 o, rodata 3 056 → 3 052 o (la table `thr` disparaît), 5 708 → **5 804 o
+  (+96)** ; image rangée +134 o, **11 628 o** libres sous `0x40200000`.
+- `gen_retrosyn.py --check` : à jour (tweak régénéré). Preuve d'OS `tools/emu/test_retrosyn.py --quick` : voir le
+  commit.
 
 ## Rapport d'un utilisateur (28/10/2026, sa propre machine)
 

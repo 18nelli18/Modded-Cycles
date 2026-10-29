@@ -2,11 +2,15 @@
  * Origin: AveyCole fork (https://github.com/AveyCole/Modded-Cycles), MIT License.
  * RETROSYN : le coeur du son (voix Game Boy / SNES), en entiers 32 bits, sans FPU, sans division dans la boucle.
  *
- * Formes (SHAPE) : 0 PULSE (rapport 12,5 / 25 / 50 / 75 %), 1 TRI (32 pas de 4 bits, comme la NES), 2 WAVE (table de
- * 32 pas de 4 bits, canal « wave » du Game Boy, 8 tables), 3 NOISE-L (LFSR 15 bits), 4 NOISE-S (LFSR 7 bits, son
- * métallique), 5 SNES (boucle de 16 échantillons de 4 bits lue avec une interpolation gaussienne à 4 points, 8 boucles).
- * COLOR : rapport / table / boucle / cadence du bruit. SWEEP : balayage de hauteur à chaque note (centre = rien,
- * droite = monte, gauche = descend ; cadence 128 Hz, comme le Game Boy ; une note qui dépasse le haut se tait).
+ * Formes (SHAPE) : 0 PULSE (rapport continu de 12,5 à 75 %, modulable par un LFO), 1 TRI (32 pas de 4 bits, comme la
+ * NES), 2 WAVE (table de 32 pas de 4 bits, canal « wave » du Game Boy, 8 tables), 3 NOISE-L (LFSR 15 bits), 4 NOISE-S
+ * (LFSR 7 bits, son métallique), 5 SNES (boucle de 16 échantillons de 4 bits lue avec une interpolation gaussienne à
+ * 4 points, 8 boucles).
+ * COLOR : rapport / table / boucle / cadence du bruit (continue sur 3 octaves). Rapport et cadence suivent une droite
+ * entre les centres des quatre anciens paliers (COLOR 4096 / 12288 / 20480 / 28672 : 12,5 / 25 / 50 / 75 %, horloge
+ * du bruit = hauteur x 2^4..2^7) : à ces valeurs le son est identique, bit pour bit, à l'ancien. SWEEP : balayage de
+ * hauteur à chaque note (centre = rien, droite = monte, gauche = descend ; cadence 128 Hz, comme le Game Boy ; une
+ * note qui dépasse le haut se tait).
  * CONTOUR : arpège (accords), un pas tous les 1/60 s comme les macros d'arpège de la NES. PUNCH : sortie écrasée à 4 bits.
  *
  * L'enveloppe d'amplitude, DECAY et GATE sont ceux de l'OS (comme MACRO) : ce coeur ne fait que l'oscillateur. Le
@@ -70,6 +74,12 @@ static inline u32 rs_lfsr(u32 l, s32 bits)               /* un pas du registre d
 	return (l >> 1) | (fb << (bits - 1));
 }
 
+static inline u32 rs_duty(s32 c)                         /* COLOR -> seuil de phase du PULSE (2^29 = 12,5 %) */
+{
+	c = c < 4096 ? 4096 : (c > 28672 ? 28672 : c);
+	return c < 12288 ? (1u << 29) + ((u32)(c - 4096) << 16) : (1u << 30) + ((u32)(c - 12288) << 17);
+}
+
 static inline u32 rs_inc(s32 pitch)                       /* demi-tons << 16 -> increment de phase */
 {
 	s32 i = pitch >> 16;
@@ -85,7 +95,8 @@ static inline void retrosyn_block(retrosyn_t *s, const retrosyn_in_t *in, s32 *o
 	s32 shape = (in->shape * 6) >> 15, ci = in->contour >> 12, n, sh, up;
 	s32 d = in->sweep - 16384;
 	s32 color = in->color;
-	u32 ph, nph, lfsr, inc = 0;
+	u32 ph, nph, lfsr, inc = 0, thr = rs_duty(color), nfi = 0;
+	s32 nk, nm, nclk = 0;
 
 	if (shape > 5) shape = 5;
 	if (ci > 7) ci = 7;
@@ -100,6 +111,11 @@ static inline void retrosyn_block(retrosyn_t *s, const retrosyn_in_t *in, s32 *o
 	d = (d < 0 ? -d : d) - 1024;
 	sh = d <= 0 ? 0 : 7 - (d * 6) / 15360;
 	if (sh < 2 && d > 0) sh = 2;
+	/* bruit : horloge = hauteur x 2^nk x nm / 2^15, nk 4..7, nm = 2^f (f = fraction d'octave, parabole, ecart < 0,4 %) */
+	nk = color < 4096 ? 0 : (color > 28672 ? 24576 : color - 4096);
+	nm = (nk & 8191) << 2;
+	nm = 32768 + ((nm * (21512 + ((nm * 11256) >> 15))) >> 15);
+	nk = 4 + (nk >> 13);
 
 	ph = s->ph; nph = s->nph; lfsr = s->lfsr;
 	for (n = 0; n < RS_BLOCK; n++) {
@@ -123,13 +139,18 @@ static inline void retrosyn_block(retrosyn_t *s, const retrosyn_in_t *in, s32 *o
 		if (!inc || n == 0) {
 			s32 p = in->note + (RS_CHORD[ci][s->arp_i] << 16) + s->sweep;
 			inc = rs_inc(p < 0 ? 0 : (p > (127 << 16) ? 127 << 16 : p));
+			if (shape == RS_NOISEL || shape == RS_NOISES) {
+				/* inc < 2^30,1 : (inc >> 15) x nm < 2^32 ; nm = 32768 rend inc tel quel */
+				u32 b = (inc >> 15) * (u32)nm + (((inc & 0x7fff) * (u32)nm) >> 15);
+				nclk = (s32)(b >> (32 - nk));
+				nfi = b << nk;
+			}
 		}
 		ph += inc;
 		switch (shape) {
-		case RS_PULSE: {
-			static const s8 thr[4] = {1, 2, 4, 6};
-			w = (((ph >> 29) < (u32)thr[(color * 4) >> 15]) ? 7 : -8) * 16;
-		} break;
+		case RS_PULSE:
+			w = (ph < thr ? 7 : -8) * 16;
+			break;
 		case RS_TRI: {
 			s32 k = ph >> 27;
 			w = ((k < 16 ? k : 31 - k) - 8) * 16;
@@ -140,12 +161,9 @@ static inline void retrosyn_block(retrosyn_t *s, const retrosyn_in_t *in, s32 *o
 		case RS_NOISEL:
 		case RS_NOISES: {
 			s32 bits = shape == RS_NOISES ? 7 : 15;
-			s32 k = 4 + ((color * 4) >> 15);                  /* 4..7 : horloge = hauteur x 2^k */
-			s32 clocks = (s32)(inc >> (32 - k));
-			u32 fi = inc << k;
-			s32 c;
-			nph += fi;
-			if (nph < fi) clocks++;
+			s32 clocks = nclk, c;
+			nph += nfi;
+			if (nph < nfi) clocks++;
 			if (clocks > 8) clocks = 8;
 			for (c = 0; c < clocks; c++)
 				lfsr = rs_lfsr(lfsr, bits);

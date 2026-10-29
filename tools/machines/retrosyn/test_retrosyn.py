@@ -78,6 +78,29 @@ for i, want in enumerate((0.125, 0.25, 0.5, 0.75)):
     frac = (x > 0).mean()
     check("pulse duty %.1f%%" % (want * 100), abs(frac - want) < 0.01, "measured %.2f%%" % (frac * 100))
 
+M32 = 0xFFFFFFFF
+
+
+def old_pulse(blocks, note, color):
+    """The four-step pulse before PWM: (phase >> 29) < {1, 2, 4, 6}[COLOR / 8192]."""
+    inc, thr, ph, out = L.rs_inc_c(int(note * 65536)), (1, 2, 4, 6)[(color * 4) >> 15], 0, []
+    for _ in range(blocks * 32):
+        ph = (ph + inc) & M32
+        out.append((112 if (ph >> 29) < thr else -128) << SH)
+    return np.array(out, dtype=np.int64)
+
+
+# 2b. PWM: the old step values are bit-exact, the knob in between is a straight line, the ends hold 12.5 / 75 %
+okb = all((render(300, shape=shape_v(0), color=c, note=n) == old_pulse(300, n, c)).all()
+          for c in [duty_v(i) for i in range(4)] + [0, 32767] for n in (45, 69, 100))
+check("pulse: old COLOR steps (and 0 / 32767) bit-exact to the 4-step pulse", okb)
+for c, want in ((8192, 0.1875), (10240, 0.21875), (16384, 0.375), (24576, 0.625), (26624, 0.6875)):
+    frac = (render(1500, shape=shape_v(0), color=c, note=45) > 0).mean()
+    check("pulse PWM COLOR %d -> %.2f%%" % (c, want * 100), abs(frac - want) < 0.005, "measured %.2f%%" % (frac * 100))
+dut = [(render(300, shape=shape_v(0), color=c, note=45) > 0).mean() for c in range(0, 32768, 512)]
+check("pulse PWM: duty never falls as COLOR rises, 12.5..75 %", all(b >= a - 0.002 for a, b in zip(dut, dut[1:]))
+      and abs(dut[0] - 0.125) < 0.005 and abs(dut[-1] - 0.75) < 0.005, "%.2f..%.2f%%" % (dut[0] * 100, dut[-1] * 100))
+
 # 3. triangle: 16 stepped levels, symmetric
 x = render(400, shape=shape_v(1), note=57)
 lv = sorted(set((x >> SH).tolist()))
@@ -99,6 +122,44 @@ for shp, nm in ((3, "long"), (4, "short")):
     x = render(1500, shape=shape_v(shp), color=idx8_v(2), note=60)
     check("noise %s: two levels, balanced" % nm, len(set(x.tolist())) == 2 and abs((x > 0).mean() - 0.5) < 0.06,
           "high %.1f%%" % ((x > 0).mean() * 100))
+
+
+
+def old_noise(blocks, note, color, bits):
+    """The noise before the continuous rate: clock = pitch x 2^(4 + COLOR / 8192)."""
+    inc, k = L.rs_inc_c(int(note * 65536)), 4 + ((color * 4) >> 15)
+    lfsr, nph, out = (0x7f if bits == 7 else 0x7fff), 0, []
+    for _ in range(blocks * 32):
+        clocks, fi = inc >> (32 - k), (inc << k) & M32
+        nph = (nph + fi) & M32
+        clocks = min(clocks + (nph < fi), 8)
+        for _ in range(clocks):
+            lfsr = (lfsr >> 1) | (((lfsr ^ (lfsr >> 1)) & 1) << (bits - 1))
+        out.append((-128 if lfsr & 1 else 112) << SH)
+    return np.array(out, dtype=np.int64)
+
+
+# 5b. continuous noise rate: old steps bit-exact, two levels and balance everywhere, rate = 2^(COLOR / 8192)
+okn = all((render(300, shape=shape_v(shp), color=c, note=n) == old_noise(300, n, c, b)).all()
+          for shp, b in ((3, 15), (4, 7)) for c in [duty_v(i) for i in range(4)] + [0, 32767] for n in (30, 60, 110))
+check("noise: old COLOR steps (and 0 / 32767) bit-exact, both modes", okn)
+okb, worst = True, 0.0
+for shp in (3, 4):
+    for c in (6000, 10240, 15000, 22000, 27000):
+        x = render(1500, shape=shape_v(shp), color=c, note=60)
+        hi = (x > 0).mean()
+        worst = max(worst, abs(hi - 0.5))
+        okb &= len(set(x.tolist())) == 2
+check("noise between steps: two levels, balanced (both modes)", okb and worst < 0.06, "worst %.1f%% off 50%%" % (worst * 100))
+def flips(c, shp=3):
+    x = render(1500, shape=shape_v(shp), color=c, note=48)
+    return np.count_nonzero(np.diff(x))
+fl = [flips(c) for c in range(4096, 28673, 1024)]
+check("noise rate rises with COLOR between the ends", all(b >= a * 0.97 for a, b in zip(fl, fl[1:])) and fl[-1] > fl[0] * 6,
+      "%d .. %d flips" % (fl[0], fl[-1]))
+r_half, r_oct = flips(8192) / flips(4096), flips(12288) / flips(4096)
+check("noise rate: half a step = x1.41, a step = x2", abs(r_half - 2 ** 0.5) < 0.1 and abs(r_oct - 2) < 0.15,
+      "x%.2f, x%.2f" % (r_half, r_oct))
 
 # 6. arpeggio: major arp from A4 steps 440 / 554 / 659 every 800 samples
 x = render(160, shape=shape_v(1), contour=contour_v(2), note=69).astype(float)
