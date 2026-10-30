@@ -32,3 +32,18 @@ Les cinq editions sont construites et testees separement. Rapports et images :
 changements de projet, sauvegarde native complete, son et charge polyphonique.
 Les longueurs infinies suivent la politique native et peuvent retenir une ligne.
 Les flasheurs publics restent2.62 ; aucune publication2.63 autorisee ici.
+
+## Correction du dessin et de l'entree
+
+AveyCole signale que le MenuView ne ressemble pas a sa photo et coupe le
+texte. Il demande Song au premier niveau de Mod Setup. Le rendu Song devient
+une grille128x64 explicite : bandeau SONG/STOP ou PLAY, quatre lignes,
+numero, pattern encadre, repetitions et six cases. Police5x7 bornee ; aucun
+long texte concatene. Le premier niveau contient Global, Track et Song ;
+Global utilise son handler precedent et ne contient plus l'entree Song.
+
+`render_song_grid.py` execute le vrai remplissage Bitmap40070dea dans Unicorn,
+sans le stub graphique du banc de controles.657rectangles verifies dans
+les limites128x64 ; PNG inspecte visuellement avec F16 et x64. Le primitive
+40070efc est un contour avec interieur ; il ne convient pas aux pixels1x1.
+Preuves et livraisons corrigees : `../song-grid-test/`.

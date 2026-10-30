@@ -45,7 +45,7 @@ def main():
  chain_at=0x40055cd6;assert image[chain_at-BASE:chain_at-BASE+8]==stock[chain_at-BASE:chain_at-BASE+8]
  (O/'chain.S').write_text('.text\n.globl sg_chain_original\nsg_chain_original:\n.byte '+','.join(map(str,stock[chain_at-BASE:chain_at-BASE+8]))+'\njmp 0x40055cde\n')
  objects=[]
- for src in [S/'articulation.c',S/'articulation-ui.c',S/'articulation-dsp.c',O/'coefficients.c',R/'tools/machines/song/song.c',R/'tools/machines/song/storage.c',R/'tools/machines/song/playback.c',R/'tools/machines/song/ui.c',R/'tools/machines/song/hooks.S',O/'song-root.S',O/'song-editor.S',O/'song-values.c',O/'chain.S']:
+ for src in [S/'articulation.c',S/'articulation-ui.c',S/'articulation-dsp.c',O/'coefficients.c',R/'tools/machines/song/song.c',R/'tools/machines/song/storage.c',R/'tools/machines/song/playback.c',R/'tools/machines/song/ui.c',R/'tools/machines/song/hooks.S',R/'tools/machines/song/grid.c',O/'song-root.S',O/'song-editor.S',O/'song-values.c',O/'chain.S']:
   if src.stem=='articulation-dsp' and not full:continue
   obj=O/(src.stem+'.o');run('gcc','-mcpu=54418','-O3' if src.stem=='articulation-dsp' else '-Os','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-fwrapv','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',f'-DSONG_ROW={songrow}','-c',src,'-o',obj);objects.append(obj)
  (O/'module.ld').write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) *(.data*) }} .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) aa_end = .; }} }}\n'+''.join(f'PROVIDE({k} = {v:#x});\n' for k,v in aliases.items()))
@@ -76,12 +76,3 @@ def main():
  else:target.write_bytes(result)
  m.update(sha256=sha(result),main_os_sha256=sha(image),acid_articulation=dict(code=CODE,code_bytes=len(blob),bss=BSS,bss_end=sy['aa_end'],symbols=sy,hooks=hooks,flash_bytes=len(rebuilt),hardware_tested=False,full=full,song_row=songrow));(O/'BUILD.json').write_text(json.dumps(m,indent=2)+'\n');print('BUILT experimental ACID',len(blob),'code bytes',len(rebuilt),'flash bytes',flush=True)
 if __name__=='__main__':main()
-
-
-
-
-
-
-
-
-

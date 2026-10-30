@@ -9,6 +9,7 @@ typedef song_u32 u32;typedef int s32;
 extern song sg_song;extern volatile u32 sg_active,sg_current,sg_end;
 extern volatile u32 menu,row,gc_level,gc_tree_cursor,gc_page,sx_submenu,du_page,mq_page;
 extern u32 jp_key(const u32*),jp_encoder(const u32*),jp_draw(u32,u32),jp_edit(void),sg_start(void);
+extern void sg_grid_draw(u32,u32),sg_top_draw(u32,u32);
 extern void sg_cancel(void),sg_sync(void),sg_global_draw(u32,u32),sg_editor_draw(u32,u32),fx_notice(const char*);
 volatile u32 sg_page,sg_cursor;
 static u32 owned;
@@ -27,8 +28,8 @@ u32 sg_key(const u32*e){
  if(!e)return jp_key(e);u32 code=e[3],flags=e[4],press=(flags&9)==1;
  if(!menu)sg_page=0;
  if(!sg_page){
-  if(global()&&gc_tree_cursor==SONG_ROW&&code==32){if(press)owned=1;if((flags&16)&&owned){owned=0;sg_sync();if(!sg_song.count){sg_song.count=1;sg_song.rows[0]=(song_row){0,1,0,0};}sg_page=1;sg_cursor=0;redraw();}return 1;}
-  if(global()&&gc_tree_cursor==SONG_ROW)return delegate(e);return jp_key(e);
+  if(menu&&!gc_level&&gc_tree_cursor==2&&code==32){if(press)owned=1;if((flags&16)&&owned){owned=0;sg_sync();if(!sg_song.count){sg_song.count=1;sg_song.rows[0]=(song_row){0,1,0,0};}sg_page=1;sg_cursor=0;redraw();}return 1;}
+  return jp_key(e);
  }
  if(code==12){if(press){sg_page=0;redraw();}return 1;}
  if(code==10){if(press&&!playing()&&!sg_active&&!sg_start()){fx_notice("Song: 64 plays max");return 1;}return delegate(e);}
@@ -39,13 +40,13 @@ u32 sg_key(const u32*e){
  return delegate(e);
 }
 u32 sg_encoder(const u32*e){
- if(!e||!global()||e[0]!=0x400fbebc)return jp_encoder(e);s32 d=(s32)N(0x4006f73a)(e,1,1);if(!d)return 1;
+ if(!e||!menu||e[0]!=0x400fbebc)return jp_encoder(e);s32 d=(s32)N(0x4006f73a)(e,1,1);if(!d)return 1;
  if(sg_page){
   if(e[3]==1){s32 n=(s32)sg_cursor+(d>0?1:-1);if(n<0)n=0;if(n>=(s32)sg_song.count)n=sg_song.count-1;sg_cursor=n;}
   else if((e[3]==2||e[3]==3)&&!playing()&&!sg_active){song_row*r=&sg_song.rows[sg_cursor];s32 n=(e[3]==2?r->pattern:r->repeats)+d,lo=e[3]==2?0:1,hi=e[3]==2?95:64;if(n<lo)n=lo;if(n>hi)n=hi;if(e[3]==2)r->pattern=n;else r->repeats=n;}
   else return 1;redraw();return 1;
  }
- if(e[3]==1&&!sg_edit()){static const unsigned char rows[13]={0,1,2,3,4,5,8,9,10,11,12,13,14};gc_tree_cursor=(gc_tree_cursor+(d>0?1:SONG_ROW))%(SONG_ROW+1);row=rows[gc_tree_cursor];redraw();return 1;}return jp_encoder(e);
+ if(!gc_level&&!gc_page&&!sx_submenu&&!du_page&&!mq_page&&e[3]==1){gc_tree_cursor=(gc_tree_cursor+(d>0?1:2))%3;row=0;redraw();return 1;}return jp_encoder(e);
 }
-u32 sg_draw(u32 view,u32 canvas){if(global()){if(sg_page)sg_editor_draw(view,canvas);else sg_global_draw(view,canvas);return 1;}return jp_draw(view,canvas);}
+u32 sg_draw(u32 view,u32 canvas){if(menu&&sg_page){sg_grid_draw(view,canvas);return 1;}if(menu&&!gc_level&&!gc_page&&!sx_submenu&&!du_page&&!mq_page){u32 saved=gc_tree_cursor;gc_tree_cursor=0;jp_draw(view,canvas);gc_tree_cursor=saved;sg_top_draw(view,canvas);return 1;}return jp_draw(view,canvas);}
 
