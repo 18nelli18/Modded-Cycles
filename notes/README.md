@@ -331,3 +331,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [204 - Saut pattern global](204-saut-pattern-global.md) : PPPCCC Direct Jump MIT, Global JUMP OFF/ON sauvegarde, cinq editions privees2.62 ; preuves natives sequenceur, touches, menu et preference.
 
 - [205 - Selection trigs](205-selection-trigs.md) : PPPCCC MIT, TRACK + PAGE choisi par AveyCole ; masque tenu natif, all/none, pages, LEDs et Page Len preserves ; candidat combine prive2.62, confirmation appareil en attente.
+
+- [206 - Song et articulation ACID](206-song-et-articulation-acid.md) : investigation et proposition ; chaine native64 entrees, glide existant, arrangement et controles explicites a implementer.
