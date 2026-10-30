@@ -15,7 +15,7 @@
 
 	.globl	tl_save, tl_load, tl_dh, tl_atk
 	.globl	tl_s_rate, tl_s_rte, tl_s_bits, tl_s_bts
-	.globl	tl_step, tl_fmt_r, tl_fmt_b, tl_draw_r, tl_draw_b, tl_post, tl_trk, tl_st, tl_inc
+	.globl	tl_draw_f, tl_fmt_f, tl_s_ftune, tl_step, tl_fmt_r, tl_fmt_b, tl_draw_r, tl_draw_b, tl_post, tl_trk, tl_st, tl_inc
 
 	.equ	UI_REC, 0x40a71754		/* objets d'interface des descripteurs, 100 o chacun (0x4004df40) */
 	.equ	UI_RATE, UI_REC + 100 * 1
@@ -90,6 +90,10 @@ tl_atk:
 tl_ui:
 	move.l	#tl_step, %d1
 	move.l	%d1, UI_FTUN + 0x50
+	move.l	#tl_fmt_f, %d1
+	move.l	%d1, UI_FTUN + 0x20
+	move.l	#tl_draw_f, %d1
+	move.l	%d1, UI_FTUN + 0x30
 	move.l	#tl_fmt_r, %d1
 	move.l	%d1, UI_RATE + 0x20
 	move.l	#tl_fmt_b, %d1
@@ -397,3 +401,120 @@ tl_step:
 	ble.s	4f
 	move.l	20(%sp), %d0
 4:	rts
+
+	.section .text.tl_fine, "ax"
+
+/* La fenêtre de valeur de FINE (+0x30 de son objet d'interface ; demande du propriétaire, os-lofi6) : l'OS n'y
+ * mettait que cinq points (sa jauge), sans le nombre. Ici, comme PITCH : le nombre (-64..+63) en grande police à
+ * droite, à la place des points (tl_draw, le chemin texte de l'OS) ; à gauche, là où PITCH a son diapason, une barre
+ * horizontale bipolaire : ligne de base y 19 de x 8 à 56, repère du centre x 32 (y 15..23), barre y 17..21 du centre
+ * à 32 + v x 24 / 64. (fonction, valeur, bitmap, x, y, drapeau). */
+tl_draw_f:
+	moveq	#5, %d1
+1:	move.l	24(%sp), -(%sp)			/* une copie des six arguments pour tl_draw */
+	subq.l	#1, %d1
+	bpl.s	1b
+	lea	tl_fmt_f, %a1
+	jsr	tl_draw
+	lea	24(%sp), %sp
+	lea	-20(%sp), %sp
+	movem.l	%d2-%d5/%a2, (%sp)
+	movea.l	32(%sp), %a0			/* l'écran (Bitmap) : pixels +16, colonnes de +12 mots */
+	movea.l	16(%a0), %a2
+	move.l	12(%a0), %d2
+	lsl.l	#2, %d2				/* octets par colonne */
+	move.l	28(%sp), %d0
+	jsr	tl_fv				/* d0 = -64..63 */
+	moveq	#24, %d1
+	muls.l	%d1, %d0
+	asr.l	#6, %d0
+	moveq	#32, %d5
+	add.l	%d0, %d5			/* bout de la barre */
+	moveq	#8, %d3				/* ligne de base */
+2:	move.l	%d3, %d0
+	moveq	#19, %d1
+	jsr	tl_px
+	addq.l	#1, %d3
+	moveq	#56, %d0
+	cmp.l	%d3, %d0
+	bcc.s	2b
+	moveq	#15, %d4			/* repère du centre */
+3:	moveq	#32, %d0
+	move.l	%d4, %d1
+	jsr	tl_px
+	addq.l	#1, %d4
+	moveq	#23, %d0
+	cmp.l	%d4, %d0
+	bcc.s	3b
+	moveq	#32, %d3			/* la barre, du centre au bout */
+	cmp.l	%d5, %d3
+	ble.s	4f
+	move.l	%d3, %d0
+	move.l	%d5, %d3
+	move.l	%d0, %d5
+4:	moveq	#17, %d4
+5:	move.l	%d3, %d0
+	move.l	%d4, %d1
+	jsr	tl_px
+	addq.l	#1, %d4
+	moveq	#21, %d0
+	cmp.l	%d4, %d0
+	bcc.s	5b
+	addq.l	#1, %d3
+	cmp.l	%d5, %d3
+	ble.s	4b
+	movem.l	(%sp), %d2-%d5/%a2
+	lea	20(%sp), %sp
+	rts
+
+	.section .text.tl_fine2, "ax"
+
+/* allume le point (d0 = x, d1 = y) : a2 = pixels, d2 = octets par colonne ; mot y / 32, bit 31 - y % 32. Détruit
+ * d0, d1, a0. */
+tl_px:
+	movea.l	%d1, %a0
+	lsr.l	#5, %d1
+	lsl.l	#2, %d1
+	mulu.l	%d2, %d0
+	add.l	%d1, %d0
+	move.l	%a0, %d1
+	not.l	%d1
+	andi.l	#31, %d1			/* bit 31 - y % 32 */
+	lea	(%a2, %d0.l), %a0
+	move.l	(%a0), %d0
+	bset	%d1, %d0
+	move.l	%d0, (%a0)
+	rts
+
+/* d0 = mot -> -64..63 (arrondi, borné) */
+tl_fv:
+	addi.l	#0x80, %d0
+	asr.l	#8, %d0
+	bpl.s	1f
+	moveq	#0, %d0
+1:	moveq	#127, %d1
+	cmp.l	%d1, %d0
+	ble.s	2f
+	move.l	%d1, %d0
+2:	moveq	#64, %d1
+	sub.l	%d1, %d0
+	rts
+
+/* (fonction, valeur, tampon) : le texte de FINE, signé (+5, 0, -12) */
+tl_fmt_f:
+	move.l	8(%sp), %d0
+	bsr.s	tl_fv
+	lea	tl_s_d, %a0
+	tst.l	%d0
+	ble.s	1f
+	lea	tl_s_pd, %a0
+1:	move.l	%d0, -(%sp)
+	move.l	%a0, -(%sp)
+	move.l	20(%sp), -(%sp)
+	jsr	SPRINTF
+	lea	12(%sp), %sp
+	rts
+
+tl_s_d:		.asciz	"%d"
+tl_s_pd:	.asciz	"+%d"
+tl_s_ftune:	.asciz	"FTUNE"

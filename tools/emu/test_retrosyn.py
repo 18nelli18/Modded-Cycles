@@ -9,8 +9,8 @@ without RETROSYN (31-syntakt-tg-sd-cp-toy-bits-swarm-macro-acid.json). The OS's 
      OS without RETROSYN); RETROSYN's code at gen_retrosyn.RS_AT, its variables at RS_BSS, above ACID's.
   2. Interface (test_model_tg_syntakt.interface): RETROSYN in MACHINES (machine 15, index 14), its name, its image,
      its 5 descriptors (COLOR, SHAPE 0..5, SWEEP, CONTOUR, DECAY) and their defaults, the knobs, the parameter rows
-     (gs.ROWS8), the machine switch, the MACHINES screen with 15 marks on 2 rows of 8 at most. MACRO's lo-fi still
-     under FUNC + PITCH.
+     (gs.ROWS8), the machine switch, the MACHINES screen with 15 marks on 2 rows of 8 at most. FINE under
+     MACHINES + PITCH (notes/86 §8).
   3. Sound, the voice loop alone (mcengine), DMA timer 0 one block further at each block:
      - before the amp chain, RETROSYN is exactly the same core compiled for the computer (retrosyn_ref.c): the 6
        waves, duty cycles, wavetables, SNES loops, PUNCH, SWEEP up and down, chords, knobs that move; a quiet voice is
@@ -514,7 +514,7 @@ def main():
         tac.interface(stock, fw, tw, tgs, make())
         lofi_ui.check_lofi(ref_eng.img, fw.img, fw.payload, fw.views["macro"].index, f"MACRO in {tw['id']}", check,
                            end=fw.blob_end, base_end=ref_eng.blob_end, base_payload=ref_eng.payload,
-                           base="the same mods without MACRO, ACID, RETROSYN", after=2)
+                           base="the same mods without MACRO, ACID, RETROSYN", after=2, tg=tgs)
         print("sound")
         gs.set_base(fw.dest)
         exact(rs, ref, cases(args.quick), label)

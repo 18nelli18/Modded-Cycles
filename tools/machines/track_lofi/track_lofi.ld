@@ -1,4 +1,4 @@
-/* Lo-fi de piste (notes/86), dans huit masques de sprite 48x22 libérés (tools/sprites.py) : 192 o chacun. */
+/* Lo-fi de piste (notes/86), dans dix masques de sprite 48x22 libérés (tools/sprites.py) : 192 o chacun. */
 SECTIONS
 {
   .cave 0x4015943c : {
@@ -24,6 +24,12 @@ SECTIONS
   }
   .cave8 0x40171a48 : {
     *(.text.tl_step)
+  }
+  .cave9 0x40172a68 : {
+    *(.text.tl_fine)
+  }
+  .cave10 0x40172be8 : {
+    *(.text.tl_fine2)
   }
   /DISCARD/ : { *(.comment) *(.note*) *(.eh_frame*) }
 }

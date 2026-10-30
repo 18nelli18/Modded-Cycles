@@ -522,11 +522,11 @@ def run_set(stock, ctx, codes, macro, tg, others, quick, label_extra=""):
     if not others:
         print("interface")
         interface(stock, fw, tw, tgs, make() if tg else None)
-    if macro:                     # le lo-fi de MACRO sous FUNC + PITCH (notes/55 §8), ACID après elle
+    if macro:                     # FINE sous MACHINES + PITCH (notes/86 §8), ACID après MACRO
         lref = ref_eng or make()
         lofi_ui.check_lofi(lref.img, fw.img, fw.payload, macro_v.index, f"MACRO dans {tw['id']}{label_extra}", check,
                            end=fw.blob_end, base_end=lref.blob_end, base_payload=lref.payload,
-                           base="les mêmes mods sans MACRO ni ACID", after=1)
+                           base="les mêmes mods sans MACRO ni ACID", after=1, tg=tgs)
     print("son")
     gs.set_base(fw.dest)
     todo = ta.cases(True)

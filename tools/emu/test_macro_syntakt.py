@@ -12,8 +12,8 @@ seule (25-macro.json, 32-macro-tg.json).
      Model-TG : boot_extra_hook), pile et registres intacts. La charge utile en mémoire est celle des moteurs seuls
      octet pour octet (sauf les tables, détours, données et descripteurs, qui comptent MACRO), plus MACRO.
   2. Interface : les vérifications de test_syntakt_machines.py (seul) et de test_model_tg_syntakt.py (avec
-     Model-TG), pour les moteurs et MACRO après eux ; le lo-fi de MACRO sous FUNC + PITCH (lofi_ui.py, notes/55 §8),
-     aussi avec les autres mods.
+     Model-TG), pour les moteurs et MACRO après eux ; FINE sous MACHINES + PITCH (lofi_ui.py, notes/86 §8), aussi
+     avec les autres mods.
   3. Son :
      - avant la chaîne d'ampli, MACRO est exactement Braids compilé pour l'ordinateur (test_macro.py) : quelques
        modèles et variantes ;
@@ -285,15 +285,15 @@ def engines_like(fw, ref, codes, first, label):
                    f"{first + 1}..{first + len(codes)}) identique aux moteurs seuls {bad}")
 
 
-# lo-fi (notes/55), FINE : modèle allégé rendu plus lentement, modèle à 96 kHz échantillonné-bloqué, BITS
-LOFI = ((38, 16), (9, 40), (25, 30), (0, 100))
+# FINE (accord fin, notes/86 §8) : les modèles allégés ou non, l'accord à gauche et à droite du centre
+FINES = ((38, 16), (9, 40), (25, 30), (0, 100))
 
 
-def macro_like(fw, alone, label, models=(0, 9, 21, 25, 28, 34, 37, 41, 44), lofi=LOFI):
+def macro_like(fw, alone, label, models=(0, 9, 21, 25, 28, 34, 37, 41, 44), fines=FINES):
     """La piste MACRO, sortie finale : identique à MACRO seule (à l'arrêt de la voix muette près), FINE au centre
-    puis avec le lo-fi."""
+    puis décalé."""
     bad, cut = [], []
-    for m, fine in [(m, 64) for m in models] + list(lofi):
+    for m, fine in [(m, 64) for m in models] + list(fines):
         kw = dict(BASE_KW, shape=m, decay=40, finetune=fine)
         a, _, _ = tm.play(alone, alone.index, kw, 400, (1, 300))
         b, _, unm = tm.play(fw, fw.index, kw, 400, (1, 300))
@@ -301,9 +301,9 @@ def macro_like(fw, alone, label, models=(0, 9, 21, 25, 28, 34, 37, 41, 44), lofi
         cut.append(f)
         if not ok or unm or not b.any():
             bad.append(tm.NAMES[m] + ("" if fine == 64 else f" FINE {fine}"))
-    check(not bad, f"{label} : piste MACRO identique à MACRO seule, {len(models)} modèles, plus {len(lofi)} avec le "
-                   f"lo-fi (FINE {', '.join(f'{f} sur {tm.NAMES[m]}' for m, f in lofi)}) (voix muette arrêtée par le "
-                   f"régulateur aux blocs {cut}, la référence sous le seuil jusqu'au trig suivant) {bad}")
+    check(not bad, f"{label} : piste MACRO identique à MACRO seule, {len(models)} modèles, plus {len(fines)} avec "
+                   f"FINE décalé ({', '.join(f'{f} sur {tm.NAMES[m]}' for m, f in fines)}) (voix muette arrêtée par "
+                   f"le régulateur aux blocs {cut}, la référence sous le seuil jusqu'au trig suivant) {bad}")
 
 
 def together(fw, ref, alone, codes, first, label, sampler=False):
@@ -461,7 +461,8 @@ def run_set(stock, ctx, codes, tg_ctx, others, label_extra=""):
     else:
         print("interface")
     lofi_ui.check_lofi(ref.img, fw.img, fw.payload, fw.index, f"MACRO avec {names}{label_extra}", check,
-                       end=fw.blob_end, base_end=ref.blob_end, base_payload=ref.payload, base="les moteurs sans MACRO")
+                       end=fw.blob_end, base_end=ref.blob_end, base_payload=ref.payload,
+                       base="les moteurs sans MACRO", tg=tgs)
     print("son")
     gs.set_base(fw.dest)
     if not others:

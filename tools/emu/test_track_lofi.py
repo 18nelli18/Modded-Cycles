@@ -210,6 +210,32 @@ def main():
     check(got == steps, f"FUNC + un cran sur FINE : un pas (0x100) par cran, borné, au lieu du retour au centre de l'OS "
                        f"{[hex(x) if x is not None else None for x in got]}")
 
+    # 2c. FINE : la plaque dit FTUNE (son nom long était « Pitch »), le texte est signé, et la fenêtre a le nombre à
+    # droite et la barre bipolaire à gauche (x 8..56 sur y 19, repère x 32 sur y 15..23, barre y 17..21 du centre à
+    # 32 + v x 24 / 64), sans la jauge de l'OS (aucun sprite)
+    name = u.cstr(struct.unpack(">I", u.uc.mem_read(lofi_ui.PARAM_TABLE + 56 * 43 + 0x2c, 4))[0])
+    texts = {n: u.text(43, n << 8) for n in (0, 32, 63, 64, 65, 96, 127)}
+    want_t = {0: "-64", 32: "-32", 63: "-1", 64: "0", 65: "+1", 96: "+32", 127: "+63"}
+    bad = []
+    for n in (0, 32, 64, 69, 96, 127):
+        r = u.popup(43, n << 8)
+        if r is None or r[1]:
+            bad.append((n, "pas de fenêtre" if r is None else f"sprites {r[1]}"))
+            continue
+        fb = r[0]
+        v = n - 64
+        end = 32 + v * 24 // 64 if v >= 0 else 32 - (-v * 24 // 64)
+        lo, hi = min(32, end), max(32, end)
+        bar = all(lofi_ui.pix(fb, x, y) for x in range(lo, hi + 1) for y in range(17, 22))
+        base_ = all(lofi_ui.pix(fb, x, 19) for x in range(8, 57))
+        tick = all(lofi_ui.pix(fb, 32, y) for y in range(15, 24))
+        clear = not any(lofi_ui.pix(fb, x, 17) for x in range(8, 57) if not lo <= x <= hi)
+        digits = sum(lofi_ui.pix(fb, x, y) for x in range(64, 128) for y in range(30, 50))
+        if not (bar and base_ and tick and clear and digits > 40):
+            bad.append((n, bar, base_, tick, clear, digits))
+    check(name == "FTUNE" and texts == want_t and not bad,
+          f"FINE : plaque {name!r}, texte {texts}, fenêtre = nombre + barre bipolaire, sans jauge {bad[:3]}")
+
     # 3. le descripteur du Sampler sous MACHINES : tl_atk, et l'appel à sa place dans sampler_pre
     S = lofi_ui.SCRATCH + 0x9000
     u.uc.mem_write(S, b"\x55" * 76)

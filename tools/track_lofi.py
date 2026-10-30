@@ -6,7 +6,7 @@ le build.py de Model-TG comme ses Attack, Filtre et Résonance (MC_PATCHES de ge
 la case 18 de l'enregistrement (+64/+65, un octet chacun) par la fin de snd_save_post / snd_load_post, qui saute ici ;
 réglés par MACHINES + COLOR / SHAPE sur toutes les machines (dh_pass et le descripteur du Sampler sous MACHINES, qui
 sautent ici), affichés « OFF », « 46K » .. « 4K », « 12B » .. « 2B » comme le lo-fi de MACRO. Chaque saut remplace des
-instructions de Model-TG à taille égale : aucun symbole ne bouge. Le code et les noms vont dans huit masques de sprite
+instructions de Model-TG à taille égale : aucun symbole ne bouge. Le code et les noms vont dans dix masques de sprite
 48x22 libérés (tools/sprites.py), écrits avec Model-TG comme sampler_mode_filter.
 """
 import pathlib
@@ -21,7 +21,8 @@ SRC = HERE / "machines" / "track_lofi"
 BASE = 0x40000400
 CAVES = {".cave": 0x4015943c, ".cave2": 0x4015f38c, ".cave3": 0x40165fec,    # masques 48x22 libérés (192 o)
          ".cave4": 0x40168da4, ".cave5": 0x4016dab8, ".cave6": 0x4016fae8, ".cave7": 0x40170c48,
-         ".cave8": 0x40171a48}
+         ".cave8": 0x40171a48, ".cave9": 0x40172a68,
+         ".cave10": 0x40172be8}
 # sx_side de Model-TG (le côté d'une piste Sampler stéréo, 6 x 128 o comme 0x80001858) et sx_on (stéréo dans ce
 # bloc, par piste) : écrits en dur, comparé à sa
 # table de symboles par check_syms (appelé par gen_model_tg.py) dans les deux variantes
@@ -117,4 +118,7 @@ def build_rows():
         "        f\"param id 0x{_id:02x} is not the Error placeholder any more\"\n"
         "    d[_E-BASE:_E-BASE+56]=struct.pack('>14I', 7, _k, 0, 32512, 0, 0,\n"
         "        0xffffffff, 0xffffffff, 0, 0x600, _sort, _ln, 0x40129882, _sn)\n"
-        "    print(f\"  param id 0x{_id:02x} -> k={_k} (track lo-fi)\")\n")
+        "    print(f\"  param id 0x{_id:02x} -> k={_k} (track lo-fi)\")\n"
+        "# FINE (id 43): its long name was PITCH's (\"Pitch\"), so the plate said PITCH under MACHINES + PITCH\n"
+        f"d[0x4010dce0+43*56+44-BASE:0x4010dce0+43*56+48-BASE]=struct.pack('>I',0x{SYMS['tl_s_ftune']:08x})\n"
+        "print(\"  param id 0x2b (FINE) -> long name FTUNE\")\n")
