@@ -1,5 +1,5 @@
-/* A Model:Cycles front panel in SVG, after the panel drawing of the Elektron manual (§3.1).
- * Coordinates: the panel is 1000 × 667 (the unit is 270 × 180 mm).
+/* A Model:Cycles front panel in SVG, after the panel drawing of the Elektron manual (Â§3.1).
+ * Coordinates: the panel is 1000 Ã— 667 (the unit is 270 Ã— 180 mm).
  *
  *   MCDevice.render(el, { seq, lcd, lit })   -> device
  *   device.light(["func", "track"])           lights these controls (keys turn red, knobs get a ring)
@@ -22,7 +22,7 @@ const GROUPS = {
 };
 const MACHINES = ["Kick", "Snare", "Metal", "Perc", "Tone", "Chord", "SDVtg", "CPVtg", "SYToy", "SYBit", "SYSwm"];
 
-// small key icons, drawn in a 20 × 20 box centred on the key
+// small key icons, drawn in a 20 Ã— 20 box centred on the key
 const ICON = {
   back: '<path d="M6 7h6a4 4 0 0 1 0 8H8"/><path d="M8.5 4.5 6 7l2.5 2.5"/>',
   settings: '<path d="M7 4.5v3.5a3 3 0 0 0 6 0V4.5M10 11v5"/><path d="M8 16h4"/>',
@@ -78,7 +78,7 @@ function render(host, opts) {
   text(svg, 79, 222, "LEVEL / DATA", "lb", { "text-anchor": "middle" });
   text(svg, 79, 234, "TRIG / PAN", "lb2", { "text-anchor": "middle" });
 
-  // screen (128 × 64 LCD)
+  // screen (128 Ã— 64 LCD)
   g = part("lcd", "lcd");
   el("rect", { x: 137, y: 163, width: 135, height: 78, rx: 8, class: "lcd-bezel" }, g);
   el("rect", { x: 145, y: 170, width: 119, height: 64, rx: 2, class: "lcd-glass" }, g);
@@ -191,7 +191,12 @@ function render(host, opts) {
     lcdTimer = null;
     spec = (spec || "logo").trim();
     lcd.innerHTML = "";
-    if (spec === "logo") {
+    if (spec.startsWith("capture:")) {
+      el("image", { x: 145, y: 170, width: 119, height: 64,
+        href: spec.slice(8), preserveAspectRatio: "none",
+        style: "image-rendering:pixelated",
+        "aria-label": "Supermodel 2.64 native firmware screen" }, lcd);
+    } else if (spec === "logo") {
       text(lcd, 204.5, 209, "elektron", "lcd-logo", { "text-anchor": "middle" });
     } else if (spec === "menu") {
       let sel = 6;
