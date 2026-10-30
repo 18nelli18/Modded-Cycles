@@ -326,4 +326,4 @@ chk('JUMP OFF : 700 ticks identiques au socle, changement normal compris',bad==0
 for events in (FT,[(23,1),(23,0)],[(3,1),(3,0)]):
  ref,_,_=tap_seq(STOCK,events);off,_,_=tap_seq(IMG,events)
  chk('JUMP OFF : touches et fenetre comme le socle '+str(events),ref==off)
-a.output.write_text(json.dumps(dict(sha256=m['sha256'],checks=checks,hardware_tested=False),indent=2)+'\\n')
+a.output.write_text(json.dumps(dict(sha256=m['sha256'],checks=checks,hardware_tested=False),indent=2)+chr(10))
