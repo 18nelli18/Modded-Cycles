@@ -1622,8 +1622,10 @@ def learn_rig(img, rt, sel, machine, held):
     r.stub(SEL_TRACK, lambda a: sel[0])
     r.stub(KIT_OF, lambda a: KIT_OBJ)
     r.stub(ACC_OF, lambda a: THIS)
-    r.stub(TRACK_OF, lambda a: TRACK_OBJ2)
-    r.stub(MACHINE_OF, lambda a: machine[0])
+    r.stub(TRACK_OF, lambda a: TRACK_OBJ2 if a[:2] == (KIT_OBJ, sel[0]) else r.log.append(("track_of", a[:2])) or 0)
+    # 0x40014042 ne vaut que pour l'objet de la piste (0x40009c1a) : l'accesseur (0x400097f0, THIS) l'a fait planter
+    # sur l'appareil (EXCEPTION V03 en 0x40014070) ; tout autre argument est noté
+    r.stub(MACHINE_OF, lambda a: machine[0] if a[0] == TRACK_OBJ2 else r.log.append(("machine_of", a[0])) or -1)
     r.stub(KEYS_HELD, lambda a: 1 if a[0] in held else 0)
     r.stub(SEQ_STATE, lambda a: SEQ)
     r.stub(TRIG_HELD, lambda a: 0)
@@ -1818,9 +1820,11 @@ def learn_led(base_img, img, rt, syms, tg):
                 for pg in range(4):
                     for knob, k in zip((4, 5), want if on else (13, 14)):
                         clear(P)
+                        P.log.clear()
                         got = learn(P, pg, knob)
-                        if got != k:
-                            bad.append((mode, on, pg, knob, got))
+                        wrong = [x for x in P.log if x[0] in ("machine_of", "track_of")]
+                        if got != k or wrong:
+                            bad.append((mode, on, pg, knob, got, wrong[:1]))
             mod(False)
             ids = [s32(P.call(K2ID, k, 6)) for k in (24, 25, 13, 14)]
             good &= ids == ([FLT, RES] if mode >= 3 else [0, 0]) + [0x49, 0x4a]
@@ -1843,7 +1847,8 @@ def learn_led(base_img, img, rt, syms, tg):
         P.w8(page, 0)
         check(good and not bad,
               "Sampler, modes 0..6, LFO 1..4 : [LFO] + MACHINES + SWEEP / CONTOUR -> k 13/14 (son filtre) en modes 0..2, "
-              "k 24/25 (filtre de piste) en modes 3..6, k 13/14 sans MACHINES ; DST nomme 24/25 Filtre / Résonance (0x0c / "
+              "k 24/25 (filtre de piste) en modes 3..6, k 13/14 sans MACHINES, la machine lue sur l'objet de la piste "
+              "(0x40009c1a), pas sur l'accesseur ; DST nomme 24/25 Filtre / Résonance (0x0c / "
               f"0x0b) en modes 3..6 seulement ; diode SWEEP (40) / CONTOUR (41) {bad[:3]}")
     # 4. sauvegarde et rechargement : LFO 1 -> Attack, LFO 2 -> Filtre, LFO 3 -> Résonance
     if tg:

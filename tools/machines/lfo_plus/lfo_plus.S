@@ -656,7 +656,8 @@ taken:
 
 /* 0x4001eb50, dans l'affectation par potard (0x4001eaa2, [LFO] tenue + un potard ; d2 = l'identifiant sous le
  * potard, lu dans l'enregistrement de KICK que Model-TG change tant que MACHINES est tenue : Attack, Filtre, Résonance
- * en positions 1, 4, 5 ; d7 = piste, a3 = l'accesseur des réglages de la piste) : jmp lfo_learn à la place de
+ * en positions 1, 4, 5 ; d7 = piste, a3 = l'accesseur des réglages de la piste, 0x400097f0, et non l'objet de la
+ * piste, 0x40009c1a : passé à 0x40014042, il plantait l'OS, EXCEPTION V03 en 0x40014070) : jmp lfo_learn à la place de
  * move.l d2,-(sp) ; jsr 0x4005a4e8 ; addq.l #4,sp ; movea.l (a3),a0 ; move.l d0,d2 ; lsl.l #8,d2.
  *  - MACHINES tenue (bit 0 de KEY_BITS) sur PITCH (position 0) d'une piste MACRO (son enregistrement, 0x4004df76,
  *    porte FINE en entrée 16) : FINE (id 43), le lo-fi, comme MACHINES + PITCH le règle sur la page ;
@@ -689,9 +690,15 @@ lfo_learn:
 	moveq	#1, %d0
 	cmp.l	%d1, %d0
 	bcs.s	2f
-	move.l	%a3, -(%sp)
+	jsr	0x400cf866			/* projet */
+	move.l	%d0, -(%sp)
+	jsr	0x4000eb9c			/* kit joué */
+	move.l	%d7, (%sp)
+	move.l	%d0, -(%sp)
+	jsr	0x40009c1a			/* objet de la piste d7 (a3 n'est que l'accesseur, 0x400097f0) */
+	move.l	%d0, (%sp)
 	jsr	0x40014042			/* machine de la piste */
-	addq.l	#4, %sp
+	addq.l	#8, %sp
 	moveq	#6, %d1
 	cmp.l	%d0, %d1
 	bne.s	2f				/* pas le Sampler */

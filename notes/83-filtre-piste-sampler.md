@@ -113,6 +113,18 @@ CONTOUR (41). Seul avec Model-TG : TOUT OK ; avec tout `os.json` : les 9 échecs
 contrôle passe. `test_sampler_mode_filter.py` : TOUT OK (ses adresses `track_hash` / `track_slot` sont maintenant
 tirées de `slot_hash`, elles dataient d'avant le +0x34 de notes/86).
 
+**Sur l'appareil (os-lofi2, 30/10) :** FLT/RES et diode en Granular, molette DEST qui les propose : bons. Mais
+`[LFO]` + `MACHINES` + SWEEP / CONTOUR, sur toute machine, a planté l'OS (EXCEPTION V03, PC `0x40014070`, retour
+`0x4018afb8` dans `lfo_learn`) : la machine était demandée à `0x40014042` avec a3, qui est l'**accesseur** des
+réglages de la piste (`0x400097f0` : kit + 8 × (piste + 63)), pas l'objet de la piste (`0x40009c1a` : kit + 60 +
+68 × piste) ; son vtable [40] n'est pas « le son ». Le banc bouchait `0x40014042` quel que soit l'argument. Corrigé :
+l'objet de la piste d7 est pris par `0x40009c1a(0x4000eb9c(0x400cf866()), d7)` ; le bouchon du banc n'accepte plus
+que cet objet (il note tout autre argument, et l'ancienne version échoue).
+
+Reste (préexistant, sans `MACHINES`, cosmétique) : `[LFO]` + SWEEP / CONTOUR sur le Sampler affiche SWEP / CONT
+pendant que le potard tourne (nom de l'enregistrement de KICK, ids 0x30/0x31), puis FLT / RES (nom du Sampler pour
+k 13/14). Le k affecté est le bon ; l'étiquette du moment vient de la page, pas de `lfo_learn`. À traiter à part.
+
 ## 4. Retour à la machine d'origine sur l'écran des machines (30/10/2026)
 
 Signalé par le propriétaire : un Sampler réglé, passé sur une autre machine puis repris, sonnait autrement. L'OS
