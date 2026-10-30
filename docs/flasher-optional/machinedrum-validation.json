@@ -1,0 +1,422 @@
+{
+  "release": "2.62",
+  "status": "experimental",
+  "hardware_tested": false,
+  "upstream": "Talachan12/Elektron-Model-Machinedrum",
+  "revision": "70e1483535c5a6919ff170ce3b79ba4a10c066ac",
+  "existing_machine_ids_preserved": true,
+  "three_new_ids": [
+    25,
+    26,
+    27
+  ],
+  "RAM_and_flash": {
+    "source_sha256": "ff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0",
+    "flash_bytes": 1751008,
+    "flash_limit": 1835008,
+    "remaining_flash_bytes": 84000,
+    "fits_flash": true,
+    "loader": 1077352104,
+    "source": 1077352296,
+    "code": 1184628736,
+    "code_bytes": 186480,
+    "bss": 1184858112,
+    "bss_bytes": 1752,
+    "packing": {
+      "original_bytes": 1655072,
+      "stored_bytes": 1703549,
+      "bootstrap_gap": 2096128,
+      "margin": 64,
+      "added_literal_bytes": 152802,
+      "split_matches": 0,
+      "main_unchanged": true
+    },
+    "native_catalogue_installed": true,
+    "hardware_tested": false,
+    "sha256": "c803ffb0fec8e13cc437a5cb16a46266adcc54ada2bff8fb3f5622ee0ad1c4a6"
+  },
+  "native_catalogue": {
+    "native_boot": true,
+    "module_and_sine_exact": true,
+    "BSS_zero": true,
+    "native_machine_count": 28,
+    "descriptor_count": 181,
+    "MD_labels": [
+      "Distortion",
+      "Dirt",
+      "Ramp",
+      "Hold",
+      "Decay",
+      "Snap",
+      "Tone",
+      "Bump",
+      "Bump Env",
+      "Decay",
+      "Metal",
+      "High Pass",
+      "Resonance",
+      "Gap",
+      "Decay"
+    ],
+    "machine_names": [
+      "Kick",
+      "Snare",
+      "Metal",
+      "Perc",
+      "Tone",
+      "Chord",
+      "Sample Wizard",
+      "SDVtg",
+      "CPVtg",
+      "SYToy",
+      "SYBit",
+      "SYSwm",
+      "MACRO",
+      "ACID",
+      "Wave",
+      "Feral",
+      "ELDER",
+      "MIDI Out",
+      "TINY",
+      "Shadow",
+      "SPEAK",
+      "LEGACY",
+      "RETROSYN",
+      "PUNCH",
+      "ESTUS",
+      "TrxB2",
+      "TrxSD",
+      "TrxCH"
+    ],
+    "selector_checks": 5850,
+    "hardware_tested": false
+  },
+  "native_voice_loop": {
+    "cases": [
+      {
+        "machines": [
+          25,
+          25,
+          25,
+          25,
+          25,
+          25
+        ],
+        "blocks": 48,
+        "peaks": [
+          557825434,
+          557825434,
+          557825434,
+          557825434,
+          557825434,
+          557825434
+        ]
+      },
+      {
+        "machines": [
+          26,
+          26,
+          26,
+          26,
+          26,
+          26
+        ],
+        "blocks": 48,
+        "peaks": [
+          1073741824,
+          1073741824,
+          1073741824,
+          1073741824,
+          1073741824,
+          1073741824
+        ]
+      },
+      {
+        "machines": [
+          27,
+          27,
+          27,
+          27,
+          27,
+          27
+        ],
+        "blocks": 48,
+        "peaks": [
+          210137810,
+          210137810,
+          210137810,
+          210137810,
+          210137810,
+          210137810
+        ]
+      },
+      {
+        "machines": [
+          25,
+          26,
+          27,
+          0,
+          4,
+          5
+        ],
+        "blocks": 48,
+        "peaks": [
+          557825434,
+          1073741824,
+          210137810,
+          452254112,
+          268186423,
+          379073212
+        ]
+      },
+      {
+        "machines": [
+          25,
+          26,
+          27,
+          12,
+          13,
+          24
+        ],
+        "blocks": 48,
+        "peaks": [
+          557825434,
+          1073741824,
+          210137810,
+          122691584,
+          130238739,
+          1073741823
+        ]
+      }
+    ],
+    "hardware_tested": false,
+    "CPU_percent_not_measured": true
+  },
+  "actual_browser_image_voice_loop": {
+    "cases": [
+      {
+        "machines": [
+          25,
+          25,
+          25,
+          25,
+          25,
+          25
+        ],
+        "blocks": 8,
+        "peaks": [
+          547536736,
+          547536736,
+          547536736,
+          547536736,
+          547536736,
+          547536736
+        ]
+      },
+      {
+        "machines": [
+          26,
+          26,
+          26,
+          26,
+          26,
+          26
+        ],
+        "blocks": 8,
+        "peaks": [
+          882649002,
+          882649002,
+          882649002,
+          882649002,
+          882649002,
+          882649002
+        ]
+      },
+      {
+        "machines": [
+          27,
+          27,
+          27,
+          27,
+          27,
+          27
+        ],
+        "blocks": 8,
+        "peaks": [
+          138558074,
+          138558074,
+          138558074,
+          138558074,
+          138558074,
+          138558074
+        ]
+      },
+      {
+        "machines": [
+          25,
+          26,
+          27,
+          0,
+          4,
+          5
+        ],
+        "blocks": 8,
+        "peaks": [
+          547536736,
+          882649002,
+          138558074,
+          435671489,
+          267673738,
+          239806391
+        ]
+      },
+      {
+        "machines": [
+          25,
+          26,
+          27,
+          12,
+          13,
+          24
+        ],
+        "blocks": 8,
+        "peaks": [
+          547536736,
+          882649002,
+          138558074,
+          122687487,
+          130238739,
+          1073741823
+        ]
+      }
+    ],
+    "hardware_tested": false,
+    "CPU_percent_not_measured": true
+  },
+  "browser_variants": {
+    "release": "2.62",
+    "variants": [
+      {
+        "mask": 524288,
+        "sha256": "4781d33d359c1eb7bb7a1371d82022c00198de49974011799227af5ab091a8a9",
+        "main_sha256": "fa4178a3b60854e0b85757fba6740cb0b56a668c1133a81ee62e738ac5d7a770",
+        "flash_bytes": 1751008,
+        "release": "2.62"
+      },
+      {
+        "mask": 1048576,
+        "sha256": "9aef09fe28d7f52b32836df70d17166c98dcbdb0c8d592240e7511c167bcb82b",
+        "main_sha256": "06bbd983416f69468f076a9500a7aa2c11d3ddfc83921345af2b7d1519e3c7af",
+        "flash_bytes": 1751008,
+        "release": "2.62"
+      },
+      {
+        "mask": 2097152,
+        "sha256": "69547b8943a0ed83f591133dd2062ee43c866bc27d5656896d2c797b5cda9c01",
+        "main_sha256": "61274a64c6446a1a05c5949b649792e84bb8e55e52bb971d46256386f9126a05",
+        "flash_bytes": 1751008,
+        "release": "2.62"
+      },
+      {
+        "mask": 3670016,
+        "sha256": "4727112880257212328236ae19cf8a03eef549735d9e3e099e4515f684d209c9",
+        "main_sha256": "05befc3340072e490f285a4b5ec93164986801d2841d30178ba1d510cce2f75a",
+        "flash_bytes": 1751008,
+        "release": "2.62"
+      },
+      {
+        "mask": 4194303,
+        "sha256": "c803ffb0fec8e13cc437a5cb16a46266adcc54ada2bff8fb3f5622ee0ad1c4a6",
+        "main_sha256": "67fdc090e4e537bcce15c67ba752642db19d62d8554a6560855d68b4b46ecc6f",
+        "flash_bytes": 1751008,
+        "release": "2.62"
+      }
+    ],
+    "hardware_tested": false
+  },
+  "native_browser_image_boots": {
+    "cases": [
+      {
+        "file": "mask-100000.syx",
+        "mask": 1048576,
+        "native_boot": true,
+        "module_and_all_sine_entries_exact": true,
+        "BSS_zero": true,
+        "dispatches": 30,
+        "disabled_voices_silent": true
+      },
+      {
+        "file": "mask-200000.syx",
+        "mask": 2097152,
+        "native_boot": true,
+        "module_and_all_sine_entries_exact": true,
+        "BSS_zero": true,
+        "dispatches": 30,
+        "disabled_voices_silent": true
+      },
+      {
+        "file": "mask-380000.syx",
+        "mask": 3670016,
+        "native_boot": true,
+        "module_and_all_sine_entries_exact": true,
+        "BSS_zero": true,
+        "dispatches": 30,
+        "disabled_voices_silent": true
+      },
+      {
+        "file": "mask-3fffff.syx",
+        "mask": 4194303,
+        "native_boot": true,
+        "module_and_all_sine_entries_exact": true,
+        "BSS_zero": true,
+        "dispatches": 30,
+        "disabled_voices_silent": true
+      },
+      {
+        "file": "mask-80000.syx",
+        "mask": 524288,
+        "native_boot": true,
+        "module_and_all_sine_entries_exact": true,
+        "BSS_zero": true,
+        "dispatches": 30,
+        "disabled_voices_silent": true
+      }
+    ],
+    "hardware_tested": false
+  },
+  "real_browser": {
+    "choices": 22,
+    "default_19_preserved": true,
+    "MD_file_required": true,
+    "all_and_kick_only": true,
+    "None_exact_Lite": true,
+    "invalid_MD_rejected": true,
+    "startup262": true,
+    "sending_locked": true,
+    "page_errors": [],
+    "hardware_tested": false
+  },
+  "POTS_regression": {
+    "sha256": "c803ffb0fec8e13cc437a5cb16a46266adcc54ada2bff8fb3f5622ee0ad1c4a6",
+    "menu_positions": 16,
+    "project_save_cold_reload": true,
+    "shared_TRK": true,
+    "native_time_feedback": true,
+    "dsp_blocks": 360,
+    "peak": 141320590,
+    "first_echo_block": 23,
+    "double_stop_clears": true,
+    "first_stop_preserves": true,
+    "ring_canaries": true,
+    "native_delay_transition_blocks": 1050,
+    "hardware_tested": false
+  },
+  "Samples_native_boot": {
+    "native_samples_boot": true,
+    "MAIN_exact": true,
+    "both_native_signatures_accept": true,
+    "hardware_tested": false
+  },
+  "Python_browser_all22_byte_identical": true,
+  "distributed_ROM_table_regions_all_zero": true
+}

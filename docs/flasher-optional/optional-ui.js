@@ -2,8 +2,10 @@
 (()=>{
 'use strict';
 const B=window.MCBuilder,O=window.MCOptionalBuilder,base=window.MCOptionalBaseEditions,descriptions=window.MCOptionalDescriptions;
-const machines=[[6,'Sample Wizard'],[7,'SD Vintage'],[8,'CP Vintage'],[9,'SY Toy'],[10,'SY Bits'],[11,'Swarm Lite'],[12,'MACRO'],[13,'ACID'],[14,'WAVE'],[15,'Feral'],[16,'ELDER'],[18,'TINY'],[19,'Shadow'],[20,'SPEAK'],[21,'LEGACY'],[22,'RETROSYN'],[23,'PUNCH'],[24,'ESTUS'],[17,'MIDI Out']];
-let mask=O.ALL,revision=0,os=null,context=null,current=null,pending=null;
+const M=window.MCOptionalMachinedrum;
+const machines=[[6,'Sample Wizard'],[7,'SD Vintage'],[8,'CP Vintage'],[9,'SY Toy'],[10,'SY Bits'],[11,'Swarm Lite'],[12,'MACRO'],[13,'ACID'],[14,'WAVE'],[15,'Feral'],[16,'ELDER'],[18,'TINY'],[19,'Shadow'],[20,'SPEAK'],[21,'LEGACY'],[22,'RETROSYN'],[23,'PUNCH'],[24,'ESTUS'],[25,'TRX-B2'],[26,'TRX-SD'],[27,'TRX-CH'],[17,'MIDI Out']];
+Object.assign(descriptions,{25:{en:'Machinedrum bass drum with Distortion, Dirt, Ramp and Hold. Port by Talachan12. Requires Machinedrum UW OS 1.63.',fr:'Grosse caisse Machinedrum avec Distortion, Dirt, Ramp et Hold. Portage Talachan12. Necessite OS Machinedrum UW 1.63.'},26:{en:'Machinedrum snare with Snap, Tone, Bump and Bump Env. Port by Talachan12. Requires Machinedrum UW OS 1.63.',fr:'Caisse claire Machinedrum avec Snap, Tone, Bump et Bump Env. Portage Talachan12. Necessite OS Machinedrum UW 1.63.'},27:{en:'Machinedrum closed hat with Metal, High Pass, Resonance and Gap. Port by Talachan12. Requires Machinedrum UW OS 1.63.',fr:'Charleston ferme Machinedrum avec Metal, High Pass, Resonance et Gap. Portage Talachan12. Necessite OS Machinedrum UW 1.63.'}});
+let mask=O.ALL,revision=0,os=null,context=null,current=null,pending=null,mdRaw=null;
 window.MCFirmwareImages={...base};window.MCFixedMainImageMeta=base.full;
 window.MCFixedMainImageReady=Promise.resolve();window.MCOptionalBusy=false;
 async function load(meta){
@@ -14,30 +16,32 @@ let sources;function sourceFiles(){if(!sources)sources=Promise.all([load(base.fu
 function status(en,fr){const el=document.getElementById('optional-status');if(el)el.textContent=window.MCFlasherApp?.state.lang==='fr'?fr:en}
 function controls(st){for(const node of document.querySelectorAll('#optional-picker input,#optional-picker button'))node.disabled=!!st.sending}
 window.MCOptionalRender=controls;
-window.MCFirmwareImageLoad=async edition=>{if(pending)await pending;if(!current||edition!==current.edition)throw Error('Machine selection is not ready');return current.raw.slice()};
+window.MCFirmwareImageLoad=async edition=>{if(pending)await pending;if(!current||current.mask!==mask||edition!==current.edition||window.MCOptionalFailed)throw Error('Machine selection is not ready');return current.raw.slice()};
 function schedule(){
  const app=window.MCFlasherApp;if(!app||app.state.sending)return;
  const id=++revision,choice=mask,raw=app.state.os?.raw;
  window.MCOptionalFailed=null;
  if(!raw||!app.state.os.stock){status('Load official Cycles OS 1.13 below to build this selection.','Chargez ci-dessous lâ€™OS officiel Cycles 1.13 pour construire ce choix.');return}
+ if((choice&M.MD_BITS)&&!mdRaw){current=null;pending=null;window.MCOptionalBusy=false;window.MCOptionalFailed='Load Machinedrum UW OS 1.63 for the selected TRX engines.';app.state.fw=null;app.state.building=false;app.state.fwError=window.MCOptionalFailed;status('Load Machinedrum UW OS 1.63 for the selected TRX engines.','Chargez OS Machinedrum UW 1.63 pour les moteurs TRX choisis.');app.render();return}
  window.MCOptionalBusy=true;app.state.fw=null;app.state.buildKey=null;app.state.building=true;app.render();
  status('Preparing your machine selectionâ€¦','PrÃ©paration de votre sÃ©lectionâ€¦');
  pending=(async()=>{await new Promise(r=>setTimeout(r,30));const [full,lite]=await sourceFiles();if(id!==revision)return;
   if(!context)context=O.prepare(full,lite,raw,window.MCOptionalRecipe);
-  const result=context.build(choice);if(id!==revision)return;
+  const result=choice&M.MD_BITS?M.build(full,raw,mdRaw,choice,window.MCOptionalMDData,window.MCOptionalRecipe):context.build(choice);if(id!==revision)return;
   current=result;const edition=result.edition,hex=choice.toString(16).padStart(5,'0');
-  window.MCFirmwareImages={...base,[edition]:{...base[edition],syxSha256:result.syxSha256,mainOsSha:result.mainOsSha,requiresSyntakt:choice!==0,productName:choice===0?'Supermodel Lite':'Supermodel Machine Optional',downloadName:choice===0?`Supermodel_Lite_${base.lite.release}.syx`:`Supermodel_Optional_${base.full.release}_${hex}.syx`}};
+  window.MCFirmwareImages={...base,[edition]:{...base[edition],release:result.release||base[edition].release,startup_title:result.startup_title||base[edition].startup_title,syxSha256:result.syxSha256,mainOsSha:result.mainOsSha,requiresSyntakt:choice!==0,productName:choice===0?'Supermodel Lite':'Supermodel Machine Optional',downloadName:choice===0?`Supermodel_Lite_${base.lite.release}.syx`:`Supermodel_Optional_${result.release||base.full.release}_${hex}.syx`}};
   window.MCOptionalBusy=false;pending=null;app.state.cache={};app.setEdition(edition);
   const count=machines.filter(([id])=>choice&(1<<(id-6))).length;
   status(`${count} added machines Â· firmware ready`,`${count} machines ajoutÃ©es Â· firmware prÃªt`);
- })().catch(e=>{if(id!==revision)return;pending=null;window.MCOptionalBusy=false;window.MCOptionalFailed=e.message;app.state.fw=null;app.state.building=false;app.state.fwError=e.message;status(e.message,e.message);app.render()});
+ })().catch(e=>{if(id!==revision)return;current=null;pending=null;window.MCOptionalBusy=false;window.MCOptionalFailed=e.message;app.state.fw=null;app.state.building=false;app.state.fwError=e.message;status(e.message,e.message);app.render()});
 }
 window.MCOptionalSync=st=>{if(st.os?.raw!==os){os=st.os?.raw;context=null;schedule()}};
 function show(){for(const input of document.querySelectorAll('#optional-grid input'))input.checked=!!(mask&(1<<(Number(input.dataset.machine)-6)))}
-function setMask(next){if(window.MCFlasherApp.state.sending)return false;O.validateMask(next);mask=next;show();schedule();return true}
+function setMask(next){if(window.MCFlasherApp.state.sending)return false;M.validateMask(next);mask=next;show();schedule();return true}
 function init(){
- const grid=document.getElementById('optional-grid');for(const [id,name] of machines){const label=document.createElement('label'),input=document.createElement('input'),body=document.createElement('span'),title=document.createElement('strong');input.type='checkbox';input.checked=true;input.dataset.machine=id;input.addEventListener('change',()=>{if(!setMask(input.checked?mask|(1<<(id-6)):mask&~(1<<(id-6))))show()});title.textContent=name;body.append(title);for(const lang of ['en','fr']){const desc=document.createElement('small');desc.dataset.l=lang;desc.textContent=descriptions[id][lang];body.append(desc)}label.append(input,body);grid.append(label)}
- document.getElementById('optional-all').addEventListener('click',()=>setMask(O.ALL));document.getElementById('optional-none').addEventListener('click',()=>setMask(0));
+ const grid=document.getElementById('optional-grid');for(const [id,name] of machines){const label=document.createElement('label'),input=document.createElement('input'),body=document.createElement('span'),title=document.createElement('strong');input.type='checkbox';input.checked=!!(mask&(1<<(id-6)));input.dataset.machine=id;input.addEventListener('change',()=>{if(!setMask(input.checked?mask|(1<<(id-6)):mask&~(1<<(id-6))))show()});title.textContent=name;body.append(title);for(const lang of ['en','fr']){const desc=document.createElement('small');desc.dataset.l=lang;desc.textContent=descriptions[id][lang];body.append(desc)}label.append(input,body);grid.append(label)}
+ const mdBox=document.createElement('div');mdBox.id='optional-md-files';const mdLabel=document.createElement('label');mdLabel.htmlFor='optional-md-file';for(const [lang,text] of [['en','Machinedrum UW OS 1.63 — required for TRX-B2, TRX-SD and TRX-CH. Files stay in your browser.'],['fr','OS Machinedrum UW 1.63 — requis pour TRX-B2, TRX-SD et TRX-CH. Les fichiers restent dans votre navigateur.']]){const span=document.createElement('span');span.dataset.l=lang;span.textContent=text;mdLabel.append(span)}const file=document.createElement('input');file.id='optional-md-file';file.type='file';file.accept='.syx,.bin';file.addEventListener('change',async()=>{if(window.MCFlasherApp.state.sending)return;mdRaw=null;const picked=file.files[0];if(picked)mdRaw=new Uint8Array(await picked.arrayBuffer());schedule()});mdBox.append(mdLabel,file);grid.after(mdBox);
+ document.getElementById('optional-all').addEventListener('click',()=>setMask(M.ALL));document.getElementById('optional-none').addEventListener('click',()=>setMask(0));
  window.MCOptionalUI={setMask,get mask(){return mask},get result(){return current},get context(){return context},machines};schedule();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();

@@ -40,3 +40,22 @@ Experimental: hardware timing and every mixed selection remain unverified.
 The prior selector/gate patch bytes are unchanged, but earlier whole-image or
 hardware validation is not claimed for these new binaries. Held-step Punch/Gate
 behavior and rhythmic Chord/filter clicking still need device confirmation.
+# Machinedrum engine choices / Moteurs Machinedrum
+
+The experimental Machinedrum integration adds TRX-B2, TRX-SD and TRX-CH as
+three choices, credited to Talachan12's port. There are 22 optional choices;
+the original 19 remain checked initially. Selecting a TRX engine requires the
+official Machinedrum UW OS 1.63 `.syx`, or the verified 1.63 reference `.bin`.
+Files stay in the browser. These choices generate an experimental 2.62 image;
+normal selections continue using the pinned 2.61 bases until release promotion.
+Native emulation is verified; hardware confirmation is pending.
+
+L'integration experimentale ajoute TRX-B2, TRX-SD et TRX-CH, d'apres le port
+de Talachan12. Il y a22choix ; les19precedents restent coches au depart.
+Un moteur TRX exige le SYX officiel Machinedrum UW1.63 ou le BIN1.63 epingle.
+Les fichiers restent dans le navigateur. Ces choix generent une image2.62
+experimentale ; les choix ordinaires conservent les socles2.61 jusqu'a la
+promotion de release. Emulation native verifiee ; confirmation appareil attendue.
+
+Build source: `tools/gen_optional_machinedrum.py`. Proof:
+`machinedrum-validation.json`. Technical details: note203.
