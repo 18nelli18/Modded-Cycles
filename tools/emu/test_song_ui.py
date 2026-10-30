@@ -14,6 +14,7 @@ key(15);assert r.r32(s['sg_song'])==2 and r.r32(s['sg_cursor'])==1
 turn(2,1);assert r.u.mem_read(s['sg_song']+12,1)[0]==18
 key(1);key(32);key(32,16);assert r.r32(s['sg_song']+4)==1
 key(15);assert r.r32(s['sg_song'])==1 and r.r32(s['sg_cursor'])==0;key(1,0);held.clear()
+key(32);key(32,16);assert r.r32(s['sg_song']+4)==0
 key(12);assert not r.r32(s['sg_page']) and r.r32(al['gc_level'])==0
 turn(1,1);assert r.r32(al['gc_tree_cursor'])==0
 turn(1,-1);assert r.r32(al['gc_tree_cursor'])==2

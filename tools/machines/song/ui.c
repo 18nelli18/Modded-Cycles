@@ -38,7 +38,7 @@ u32 sg_key(const u32*e){
  }
  if(code==12){if(press){sg_page=0;function_down=loop_press=0;redraw();}return 1;}
  if(code==10||code==11)return sg_prepare_transport(e)?delegate(e):1;
- if(code==32){u32 click=press||(flags&16);if(click&&function()&&!playing()&&!loop_press){sg_song.loop=!sg_song.loop;loop_press=1;redraw();}if(!(flags&1))loop_press=0;return 1;}
+ if(code==32){u32 click=press||(flags&16);if(click&&!playing()&&!loop_press){sg_song.loop=!sg_song.loop;loop_press=1;redraw();}if(!(flags&1))loop_press=0;return 1;}
  if(code==15){if(press&&!playing()&&!sg_active){if(function()){if(sg_song.count>1){for(u32 i=sg_cursor;i+1<sg_song.count;i++)sg_song.rows[i]=sg_song.rows[i+1];sg_song.count--;if(sg_cursor>=sg_song.count)sg_cursor=sg_song.count-1;}}else if(sg_song.count<64){for(u32 i=sg_song.count;i>sg_cursor+1;i--)sg_song.rows[i]=sg_song.rows[i-1];sg_song.rows[sg_cursor+1]=sg_song.rows[sg_cursor];sg_song.count++;sg_cursor++;}redraw();}return 1;}
  if(code>=16&&code<22){if(press&&!playing()&&!sg_active){sg_song.rows[sg_cursor].mutes^=1u<<(code-16);redraw();}return 1;}
  return delegate(e);
@@ -52,4 +52,6 @@ u32 sg_encoder(const u32*e){
  }
  if(!gc_level&&!gc_page&&!sx_submenu&&!du_page&&!mq_page&&e[3]==1){gc_tree_cursor=(gc_tree_cursor+(d>0?1:2))%3;row=0;redraw();return 1;}return jp_encoder(e);
 }
-u32 sg_draw(u32 view,u32 canvas){if(menu&&sg_page){sg_grid_draw(view,canvas);return 1;}if(menu&&!gc_level&&!gc_page&&!sx_submenu&&!du_page&&!mq_page){u32 saved=gc_tree_cursor;gc_tree_cursor=0;jp_draw(view,canvas);gc_tree_cursor=saved;sg_top_draw(view,canvas);return 1;}return jp_draw(view,canvas);}
+u32 sg_draw(u32 view,u32 canvas){if(menu&&sg_page){sg_grid_draw(view,canvas);return 1;}if(menu&&!gc_level&&!gc_page&&!sx_submenu&&!du_page&&!mq_page){sg_top_draw(view,canvas);return 1;}return jp_draw(view,canvas);}
+
+void sg_top_no_value(u32 a,u32 b,u32 c,u32 x,u32 y){(void)a;(void)b;(void)c;(void)x;(void)y;}

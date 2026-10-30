@@ -65,3 +65,16 @@ wf_key appui/release et verifie set_held=0, puis un trig ordinaire.
 Les tests d'edition Song passent par aa_face_encoder/aa_face_key, pas
 seulement les fonctions internes. Le bandeau montre STOP/LOOP au centre et
 le transport a droite. Les images avec suffixe Controls_Fix portent ces corrections.
+
+## Global visible et DATA direct
+
+Retour appareil : Global invisible et FUNC+DATA encore sans effet. Retirer
+le dessin prealable jp_draw au premier niveau : un seul MenuView est dessine.
+Conserver les callbacks d'origine gc_top_global_value/gc_top_track_value,
+leur police et le libelle complet Global ; ajouter uniquement Song.
+render_song_top.py execute MenuView/Bitmap/polices natifs, trois selections.
+Captures Global selectionne et Song selectionne inspectees : Global complet
+et lisible dans les deux etats. Un clic DATA dans Song choisit STOP/LOOP,
+avec ou sans FUNC ; sa rotation reste reservee a la ligne. Verification
+appui+release via Application sans double bascule. Livraisons Song_Menu_Data_Fix
+sous ../song-menu-label-fix/ ; verification materielle encore attendue.
