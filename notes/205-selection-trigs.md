@@ -81,3 +81,7 @@ Full SHA256 : `c74daa751796ebf79a52bac28083ca0d36f859cfde85dce1272700f8c998a380`
 Optional MD all22 : `4829f71e6bc1cb0632de7ce37c7eb2ff2349681f2d13d54f372d12cc7fc23fa6`.
 [A FAIRE sur appareil] Maintenir TRACK, appuyer PAGE, relacher TRACK puis
 selectionner des trigs ; verifier aussi TRACK seul et sortie du mode.
+
+## 5. Publication2.62
+
+Publication Full/Lite/Optional explicitement autorisee par AveyCole. Les variantes Optional deplacent les chargeurs sparse quand la recompression change la taille du runtime ; trois pointeurs gardes sont reloges et les adresses restent alignees. Preuve native : boot et modules JUMP/Trig Select identiques sur variante mixte et MD all22. Navigateur reel :22choix, all/none/kick, rejet fichier invalide et verrou pendant envoi. Voir release262-validation.json. Confirmation appareil en attente.

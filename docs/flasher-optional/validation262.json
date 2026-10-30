@@ -1,0 +1,186 @@
+{
+  "release": "2.62",
+  "hardware_tested": false,
+  "builds": [
+    {
+      "scope": "main",
+      "edition": "full",
+      "file": "Supermodel_2.62_Main_Full_Direct_Jump_Trig_Select_Track_Release_Fix.syx",
+      "sha256": "c74daa751796ebf79a52bac28083ca0d36f859cfde85dce1272700f8c998a380",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1623968
+    },
+    {
+      "scope": "main",
+      "edition": "lite",
+      "file": "Supermodel_2.62_Main_Lite_Direct_Jump_Trig_Select_Track_Release_Fix.syx",
+      "sha256": "895058fc6391b2b3183096c0a95cd3c7b78b489b986ba4328530be5cd251a3e7",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1650960
+    },
+    {
+      "scope": "optional",
+      "edition": "full",
+      "file": "Supermodel_2.62_Optional_Full_Direct_Jump_Trig_Select_Track_Release_Fix.syx",
+      "sha256": "666fb41df056d9093396c6e031eea392a0a8a08d218e3dcb802d335b574c8569",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1677392
+    },
+    {
+      "scope": "optional",
+      "edition": "lite",
+      "file": "Supermodel_2.62_Optional_Lite_Direct_Jump_Trig_Select_Track_Release_Fix.syx",
+      "sha256": "3c4fbd44fc8222c9b392e08b068bf04f8a768b44b842df75c6b65953e34158a1",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1650960
+    },
+    {
+      "scope": "optional-md",
+      "edition": "full",
+      "file": "Supermodel_2.62_Optional_Md_Full_Direct_Jump_Trig_Select_Track_Release_Fix.syx",
+      "sha256": "4829f71e6bc1cb0632de7ce37c7eb2ff2349681f2d13d54f372d12cc7fc23fa6",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1753840
+    }
+  ],
+  "optional_variants": {
+    "release": "2.62",
+    "variants": [
+      {
+        "mask": 0,
+        "sha256": "3c4fbd44fc8222c9b392e08b068bf04f8a768b44b842df75c6b65953e34158a1",
+        "main_sha256": "b0ed7ef3229dc64763538caa05c93105ef3f0e896108901f68430e47cdc1565a",
+        "flash_bytes": 1650960,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 524287,
+        "sha256": "666fb41df056d9093396c6e031eea392a0a8a08d218e3dcb802d335b574c8569",
+        "main_sha256": "0b17f68be15808910a46b81b9f50e3a9305b9dc9124297e55dffa779f5516a04",
+        "flash_bytes": 1677392,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 1,
+        "sha256": "36ff31bce0f71737cd68b8d77db9b35179187f1165726e390968caa041b32d14",
+        "main_sha256": "522547ecda557fc54dd28c47756d92f1abbbe57694fcbcd3503bfc86c857eee9",
+        "flash_bytes": 1678832,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 32768,
+        "sha256": "1b853bf55ca60860d36f42172879cd22b07fa3e98931af0abc744fe70d70da5e",
+        "main_sha256": "dd0670a9aed795612d562360f667d5e0a1f4a7c1db229b449b407a3d247e2fcd",
+        "flash_bytes": 1678832,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 2048,
+        "sha256": "15567f4dfe49a9d39d4523274d5900b953ffc5b9070ddfb7330b8ae2e937e1b5",
+        "main_sha256": "adf2567cc865caa656b156d1b712966cfdd67c967bf50391baf19c7dcf69ba6a",
+        "flash_bytes": 1678832,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 320,
+        "sha256": "dae143647eb9481f6b88ba14b3b95baf703f7299e5eceeee222fe484970a631d",
+        "main_sha256": "21bba6541b3fa001a1b8c8a7f8cc1916a858d52481cc629a3b944464c1dad487",
+        "flash_bytes": 1678832,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 491519,
+        "sha256": "45f9db0a1de597a29c28692eecd0f2452f429f68348b7ecf3621f4c527344e9b",
+        "main_sha256": "c21c4f3b62fbd49f034b000339ac45431b7e3669496a291152938df97274d4ec",
+        "flash_bytes": 1678832,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      },
+      {
+        "mask": 349525,
+        "sha256": "eb811a7bdfcf27fdecc83cd2ed6fc232f0eaff8ae7917b02b410b8c443ee0d55",
+        "main_sha256": "86db11b54706129f906184186a5ff7d78500d5e7a85f67c2d6bbd0ea83ae2953",
+        "flash_bytes": 1678832,
+        "per_track_fx_module_unchanged": true,
+        "samples_transports": 2
+      }
+    ],
+    "template_mask_literals": [
+      1534842,
+      1534843,
+      1534845,
+      1534846
+    ],
+    "hardware_tested": false
+  },
+  "md_variants": {
+    "release": "2.62",
+    "variants": [
+      {
+        "mask": 524288,
+        "sha256": "d9e7288d854e329cc2d62f235fc5d751066d54320b78aa0e97ad13ec75639a7e",
+        "main_sha256": "99cdf0550f1d57ec64596d08f60bb95393d48a60f460487d38479ed6d1ad1de6",
+        "flash_bytes": 1753744,
+        "release": "2.62"
+      },
+      {
+        "mask": 1048576,
+        "sha256": "404d1a343135a178099753d902a07520b075acbfa52068bc2d247f0c954640b3",
+        "main_sha256": "eb260c16138df12b06fe9b9f29bfbac5d2b4f630ac52f9475061e47738ea8c53",
+        "flash_bytes": 1753744,
+        "release": "2.62"
+      },
+      {
+        "mask": 2097152,
+        "sha256": "5ba309f839bdc19ae751bfe685074034672a45d947b9ede112c2b02404ca4950",
+        "main_sha256": "16ad37ed26b5bc643f2ee7a5ab1eee9ac32c02f7d61e9899fbadbf71d872a2a1",
+        "flash_bytes": 1753744,
+        "release": "2.62"
+      },
+      {
+        "mask": 3670016,
+        "sha256": "cd1e6d2c77c13179c866575c8970c46f61326bd4d0ee912407f4eee88f5eee55",
+        "main_sha256": "59bda375552b959d514c86777606a8bcd7ae435bbb5525e2515251efd5eb58e3",
+        "flash_bytes": 1753744,
+        "release": "2.62"
+      },
+      {
+        "mask": 4194303,
+        "sha256": "97ca0af835106ce2becb4170c4fdb81d72222b87357bb29b387004758aff6222",
+        "main_sha256": "2365cd9bfd1ec684f9245fc23f52512c96658b331a5037f548e9d78451d4adb8",
+        "flash_bytes": 1753744,
+        "release": "2.62"
+      }
+    ],
+    "hardware_tested": false
+  },
+  "native_loader": [
+    {
+      "file": "mask-3fffff.syx",
+      "native_boot": true,
+      "jump_and_trig_modules_exact": true
+    },
+    {
+      "file": "mask-00001.syx",
+      "native_boot": true,
+      "jump_and_trig_modules_exact": true
+    }
+  ],
+  "browser_22_choices": true,
+  "legacy_checks": {
+    "overlaps": "pass",
+    "gen_flasher_tweaks": "existing generated output stale; unrelated to fixed-image release",
+    "registry": "existing generated output stale; unrelated to fixed-image release"
+  }
+}

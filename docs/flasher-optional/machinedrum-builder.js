@@ -47,9 +47,21 @@ function build(fullRaw,cyclesRaw,mdRaw,mask,recipe,selectionRecipe){
  put(body,recipe.symbols.md_mask-recipe.code,mask);
  const deltas=new Uint8Array(65536),sv=new DataView(sine.buffer,sine.byteOffset,sine.byteLength),dv=new DataView(deltas.buffer);let prior=0;
  for(let i=0;i<32768;i++){const value=sv.getInt32(i*4,false),delta=value-prior;if(delta<-32768||delta>32767)throw Error('Machinedrum sine delta overflow');dv.setInt16(2*i,delta,false);prior=value}
- const dirtyRt=Uint8Array.from(rt,(x,i)=>+(x!==decoded.data[i])),packedRt=B.aplibRepack(rt,decoded.ops,dirtyRt);put(prefix,0x40195ad0-BASE,BASE+START+packedRt.length-8);
+ const dirtyRt=Uint8Array.from(rt,(x,i)=>+(x!==decoded.data[i])),encodedRt=B.aplibRepack(rt,decoded.ops,dirtyRt);
+ // Aligner le deplacement des chargeurs natifs ; le depack ignore la fin apres son terminateur.
+ const pad=(4-((encodedRt.length-8-(end-START))&3))&3,packedRt=join(encodedRt,new Uint8Array(pad));
+ const shift=packedRt.length-8-(end-START);
+ for(const fix of recipe.base_loader_relocations||[]){
+  const offset=fix.at-BASE-end;
+  if(be(tail,offset)!==fix.old)throw Error('Sparse loader relocation guard mismatch');
+  put(tail,offset,fix.old+shift);
+ }
+ put(prefix,0x40195ad0-BASE,BASE+START+packedRt.length-8);
  const mainBase=join(prefix,packedRt.subarray(8),tail),alignment=new Uint8Array((-mainBase.length)&3),loaderAddress=BASE+mainBase.length+alignment.length,source=loaderAddress+recipe.loader_reserve;
  const loader=B.fromHex(recipe.loader);put(loader,recipe.loader_fixups.source,source);put(loader,recipe.loader_fixups.deltas,source+body.length+suffix.length);
+ // Conserver les chargeurs Direct Jump et Trig Select de la base.
+ if(recipe.loader_fixups.previous!==undefined)put(loader,recipe.loader_fixups.previous,be(full.main,0x40195adc-BASE)+shift);
+ if(shift&&!recipe.base_loader_relocations)throw Error('Missing sparse loader relocation map');
  put(mainBase,0x40195adc-BASE,loaderAddress);const reserve=new Uint8Array(recipe.loader_reserve);reserve.set(loader);
  const main=join(mainBase,alignment,reserve,body,suffix,deltas),stockSection=stock.container.sections.find(s=>s.id===3),stockOps=B.aplibDepack(stock.container.blob.subarray(stockSection.off,stockSection.off+stockSection.size)).ops;
  const dirty=Uint8Array.from(main,(x,i)=>i>=START?1:+(x!==stock.main[i])),packed=O.safePack(B.aplibRepack(main,stockOps,dirty,START)).packed;

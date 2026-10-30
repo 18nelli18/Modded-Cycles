@@ -64,6 +64,18 @@ def main():
  for at,target in [(fx['fx_machine_step'],'opt_fx_step'),(meta['tiny_extra']['symbols']['tiny_menu_increment'],'opt_increment'),(meta['tiny_extra']['symbols']['marks'],'opt_marks')]:jump(at,symbols[target])
  for at,label in gates:jump(at,symbols[label])
  packed=aplib.repack(bytes(rt),rtops,bytes(a!=b for a,b in zip(rt,before[1])));assert aplib.depack(packed)[0]==bytes(rt)
+ oldend=int.from_bytes(original[0x40195ad0-BASE:0x40195ad4-BASE],'big')-BASE
+ packed+=bytes((-(len(packed)-8-(oldend-START)))&3)
+ shift=len(packed)-8-(oldend-START);relocations=[]
+ if 'direct_jump' in meta:
+  first=meta['direct_jump']['loader'];last=int.from_bytes(original[0x40195adc-BASE:0x40195ae0-BASE],'big')
+  for loader in (first,last):
+   for offset in range(loader-BASE,loader-BASE+124,2):
+    value=int.from_bytes(original[offset:offset+4],'big')
+    if first<=value<BASE+len(original):
+     relocations.append(dict(at=BASE+offset,old=value));struct.pack_into('>I',tail,offset-oldend,value+shift)
+  assert len(relocations)==3
+  struct.pack_into('>I',prefix,0x40195adc-BASE,last+shift)
  struct.pack_into('>I',prefix,0x40195ad0-BASE,BASE+START+len(packed)-8)
  main=bytes(prefix)+packed[8:]+bytes(tail)
  _,_,stock,stockops=read(args.cycles);assert len(stock)==START
@@ -80,5 +92,6 @@ def main():
  key=container.find_key(plains,pkg['blob'][:-32],pkg['blob'][-32:]);assert key;rebuilt=container.rebuild(pkg,{3:section3},key);assert len(rebuilt)<=0x1c0000
  raw=wrap(container.build_stream(rebuilt,BYTES_PER_MSG),info['product'],info['start_seq']);(output/'universal-all.syx').write_bytes(raw)
  manifest=dict(source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),lite_sha256=args.lite_sha256,source_build=meta.get('per_track_fx',{}).get('source_build',215),source_release=meta.get('release','2.56'),universal_sha256=hashlib.sha256(raw).hexdigest(),main_sha256=hashlib.sha256(main).hexdigest(),code=CODE,code_bytes=len(blob),mask=MASK,mask_main_offset=START+len(packed)-8+MASK-TAIL,symbols=symbols,patches=edits,packing=packing,embedded_unselected_dsp=True,flash_bytes=len(rebuilt),selection_bits=19,variants=524288)
+ manifest['base_loader_relocations']=relocations
  (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');print('BUILT universal',len(blob),'module bytes;',len(rebuilt),'flash bytes;',manifest['universal_sha256'],flush=True)
 if __name__=='__main__':main()

@@ -1,14 +1,14 @@
-/* 2026-10-29-main261-pots : images verifiees par edition, caches et sources independants. */
+/* 2026-10-30-main262 : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
   "full": {
     "id": "full",
     "productName": "Supermodel",
-    "release": "2.61",
-    "file": "Supermodel_2.61_2eb4b07f45ee.syx",
-    "syxSha256": "2eb4b07f45ee24b7d9f198b09094db358b1d995fa8111b80daf6e114f9fac5c6",
-    "mainOsSha": "319afdd6695068b7fe72e7e8aebd6db33a37b19fbf15673b08c544b55381cbf7",
+    "release": "2.62",
+    "file": "Supermodel_Full_2.62_c74daa751796.syx",
+    "syxSha256": "c74daa751796ebf79a52bac28083ca0d36f859cfde85dce1272700f8c998a380",
+    "mainOsSha": "8be5fd5d6e8c95c9cf64a4b2d03b7cb60052a8fd013fe5810d69f19379ad8682",
     "requiresSyntakt": true,
     "source_build": 215,
     "new_clear_filter_defaults": true,
@@ -19,11 +19,11 @@
     "inactive_fx_zero_bypass": true,
     "startup_title": {
       "name": "Supermodel",
-      "version": "2.61",
-      "edition": "2.61",
+      "version": "2.62",
+      "edition": "2.62",
       "code": 1074084460,
       "code_bytes": 794,
-      "sha256": "d88777be7737709a6f943d7b292b1bcb02ed492e0b6819ffbada02f22b8b6500",
+      "sha256": "8513a594d0b59ca349703136dfadee39d93c33008524100ad91b6927be420822",
       "native_os_protocol_version_unchanged": true,
       "hardware_tested": false
     },
@@ -52,15 +52,18 @@
       "DELAY",
       "CRUSH 1",
       "CRUSH 2"
-    ]
+    ],
+    "direct_pattern_jump": true,
+    "trig_select": true,
+    "track_selection_momentary": true
   },
   "lite": {
     "id": "lite",
     "productName": "Supermodel Lite",
-    "release": "2.61",
-    "file": "Supermodel_Lite_2.61_7f000ba151c2.syx",
-    "syxSha256": "7f000ba151c24b77e40d92fa8a640910e375ffd4eee2064f677eeb7697012c51",
-    "mainOsSha": "5e5f17f509ef430597a31e88ac7dff4a5f818ff6a9fecda5430954fc72acb4c8",
+    "release": "2.62",
+    "file": "Supermodel_Lite_2.62_895058fc6391.syx",
+    "syxSha256": "895058fc6391b2b3183096c0a95cd3c7b78b489b986ba4328530be5cd251a3e7",
+    "mainOsSha": "62f97ee83948622b5b8b59286bb0e89116f828d38f3b124fcc668bb613499f82",
     "requiresSyntakt": false,
     "source_build": 216,
     "new_clear_filter_defaults": true,
@@ -71,11 +74,11 @@
     "inactive_fx_zero_bypass": true,
     "startup_title": {
       "name": "Supermodel Lite",
-      "version": "2.61",
-      "edition": "LITE 2.61",
+      "version": "2.62",
+      "edition": "LITE 2.62",
       "code": 1074084460,
       "code_bytes": 856,
-      "sha256": "fe83025fe12a8326be2c6765886590383eb828b8f89059fcf35503853c48f1a4",
+      "sha256": "29a6aecbb2f2dc4581699294db9001fa59a31e0f744854fce2527bf8686f0584",
       "native_os_protocol_version_unchanged": true,
       "hardware_tested": false
     },
@@ -98,7 +101,10 @@
       "DELAY",
       "CRUSH 1",
       "CRUSH 2"
-    ]
+    ],
+    "direct_pattern_jump": true,
+    "trig_select": true,
+    "track_selection_momentary": true
   }
 };
  for(const meta of Object.values(catalogue))Object.freeze(meta);

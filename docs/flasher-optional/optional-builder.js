@@ -35,7 +35,10 @@ function prepare(fullRaw,liteRaw,cyclesRaw,recipe){
  const full=unpack(fullRaw),lite=unpack(liteRaw),stock=unpack(cyclesRaw),end=be(full.main,0x40195ad0-BASE)-BASE;
  const prefix=full.main.slice(0,START),rtDecoded=B.aplibDepack(stored(full.main.subarray(START,end))),rt=rtDecoded.data.slice(),tail=full.main.slice(end);
  for(const patch of recipe.patches){const at=patch.at,a=at<RUNTIME?prefix:at<TAIL?rt:tail,base=at<RUNTIME?BASE:at<TAIL?RUNTIME:TAIL,p=at-base,old=B.fromHex(patch.old),next=B.fromHex(patch.new);if(!eq(a.subarray(p,p+old.length),old))throw Error('Optional patch guard mismatch: '+at.toString(16));a.set(next,p)}
- const dirtyRt=Uint8Array.from(rt,(x,i)=>+(x!==rtDecoded.data[i])),packedRt=B.aplibRepack(rt,rtDecoded.ops,dirtyRt);
+ const dirtyRt=Uint8Array.from(rt,(x,i)=>+(x!==rtDecoded.data[i])),encodedRt=B.aplibRepack(rt,rtDecoded.ops,dirtyRt);
+ const packedRt=join(encodedRt,new Uint8Array((-(encodedRt.length-8-(end-START)))&3)),shift=packedRt.length-8-(end-START);
+ for(const fix of recipe.base_loader_relocations||[]){const offset=fix.at-BASE-end;if(be(tail,offset)!==fix.old)throw Error('Sparse loader relocation guard mismatch');put(tail,offset,fix.old+shift)}
+ if(recipe.base_loader_relocations?.length)put(prefix,0x40195adc-BASE,be(full.main,0x40195adc-BASE)+shift);
  put(prefix,0x40195ad0-BASE,BASE+START+packedRt.length-8);
  const main=join(prefix,packedRt.subarray(8),tail),dirty=Uint8Array.from(main,(x,i)=>i>=START?1:+(x!==stock.main[i]));
  const stockOps=B.aplibDepack(section(stock.container,3)).ops;

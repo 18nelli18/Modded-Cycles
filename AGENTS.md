@@ -437,3 +437,7 @@ The user confirms the ACID A/F/AF prototype works, requests moving it to Global 
 ## POTS release2.61 (2026-10-29)
 
 AveyCole explicitly requests "Go ahead and push that and add it to the list of delays in all builds". This authorizes direct main release of the verified2.61 POTS firmware assets through the established fixed-image paths: Full2eb4b07f45ee24b7d9f198b09094db358b1d995fa8111b80daf6e114f9fac5c6; Lite7f000ba151c24b77e40d92fa8a640910e375ffd4eee2064f677eeb7697012c51; Optional Fullff8eddcd16d6dcc30111d2064a905eb7c142818d52f27d653696636fefe607c0; Optional Lite6cde04f1ab8bb202799c3e96b7170fac47cc90707020ff356585eba80773d692. Preserve Optional extras, protected blurb, shared Full/Lite features and single guide-download link. Startup and both flashers display2.61. POTS is emulation-verified, not yet hardware-confirmed.
+
+## Release 2.62 (2026-10-30)
+
+User explicitly authorizes "Push 2.62 to main, lite, optional". Publish the verified Direct Jump and momentary TRACK trig-selection Full/Lite and Optional bases through the established fixed-image paths, with both flashers and startup titles2.62. This authorizes the exact firmware assets and direct main push. Optional retains its extra choices and adds the three licensed TRX choices using user-supplied MD tables. Preserve the protected blurb. Song mode and additional ACID articulation remain separate experimental work, not included in2.62. Hardware confirmation is pending.
