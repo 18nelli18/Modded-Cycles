@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel2.61 - 29 octobre2026
+Supermodel2.64 - 30 octobre2026
 
-Principal2.61. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
+Principal2.64. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
 
 ## Fonctions incluses
 
@@ -13,6 +13,10 @@ Principal2.61. Maintenez le premier bouton pendant le second geste. TRIG : touch
 **Filtres et effets:** Filtre résonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif.
+
+**Song et navigation:** Les lignes Song combinent patterns, repetitions et mutes. Direct Pattern Jump et selection de trigs servent le jeu.
+
+**Articulation ACID et locks:** Glide/legato ACID par piste, enveloppes A/F/AF et relance par arpege ; p-locks Wizard prioritaires sur CTRL-ALL.
 
 ## Pistes, pas et performance
 
@@ -37,6 +41,21 @@ Principal2.61. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Page Len / Warp | FUNC + PAGE > Page Len / Warp | Page Len :1-16 pas actifs par page. Warp ON les repartit sur la duree normale ; OFF conserve la vitesse des pas. Portee PTN ou TRK. Warp est OFF par defaut et se sauvegarde avec le pattern. |
 | Type de filtre commun | Maintenir SETTINGS, puis MACHINES + tourner SWEEP | HIGH / LOW / BAND / LO/HI. Relachez pour valider. Sons neufs/effaces : LOW, coupure127, resonance0, meme si la piste est initialisee tard. Choix sauvegardes conserves au demarrage. Sample Wizard garde son filtre interne. |
 | Filtre par piste | MACHINES + SWEEP / CONTOUR | Coupure / resonance de la piste selectionnee. Ajouter TRACK pour les pistes incluses dans Control All. |
+| Selection de trigs | TRACK + PAGE | Active/desactive la selection. Touchez les trigs existants pour les selectionner ; ils clignotent. Relachez TRACK pour editer les pas : la selection de piste reste momentanee. Les pas vides ne sont pas crees. |
+| Tous / aucun | Selection active : FUNC + PAGE | Selectionne tous les trigs accessibles ou efface la selection. PAGE change de page en la conservant. Les pas hors Page Len sont exclus. TRACK + PAGE quitte et efface la selection. |
+| Direct Pattern Jump | Global > JUMP > On ; PATTERN, puis FUNC + TRIG | Avec JUMP On, saute immediatement vers le pattern choisi en conservant la position. Off suit le changement natif. Preference globale sauvegardee ; Off par defaut. |
+
+## Mode Song
+
+| Fonction | Commandes | Comportement |
+|---|---|---|
+| Ouvrir Song | SETTINGS + TRACK > Song > DATA | Song est au premier niveau, a cote de Global et Track. PLAY depuis l editeur lance la premiere ligne. |
+| Choisir une ligne | Tourner DATA | Quatre lignes visibles. Editez a l arret, Song inactif ; double STOP annule le morceau actif avant edition. |
+| Pattern / repetitions | PITCH / DECAY | Choisit A01-F16 et1-64 repetitions pour la ligne. Le morceau entier doit tenir dans64 lectures de patterns developpees. |
+| Mutes de pistes | TRIG1-6 | Bascule le mute de chaque piste pour la ligne. Les mutes du morceau se combinent aux mutes existants. |
+| Inserer / supprimer | PAGE / FUNC + PAGE | PAGE insere une copie apres la ligne. FUNC + PAGE la supprime ; une ligne reste toujours. |
+| Fin du morceau | Appuyer sur DATA | Choisit STOP ou LOOP. FUNC + DATA fonctionne aussi. STOP arrete apres la derniere ligne ; LOOP repete l arrangement. |
+| Transport, sortie, sauvegarde | PLAY / STOP / double STOP / BACK / Save Project | PLAY joue ; STOP suspend via le transport natif ; double STOP annule Song et coupe les queues FX. BACK quitte. Save Project conserve Song et glide/legato ACID. Une longueur de chaine infinie peut retenir une ligne. |
 
 ## Effets
 
@@ -66,19 +85,21 @@ Principal2.61. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Defilement machines | MACHINES + tourner DATA | Tournez DATA pour choisir une machine. MIDI Out est en dernier. Le passage par MIDI Out conserve vos réglages audio précédents. |
+| Defilement machines | Appuyer sur MACHINES, puis tourner DATA | Tournez DATA pour choisir une machine. MIDI Out est en dernier. Le passage par MIDI Out conserve vos réglages audio précédents. |
 | Points de depart des machines ajoutees | Verifier la commande nommee | Les commandes numeriques comme Tone/Excite de TINY, Color/Contour de PUNCH et Wave/Warp/Noise/Motion de Elder vont de 0 au minimum a 127 au maximum ; 64 est le milieu. Les valeurs de depart ne sont pas forcement nulles. PITCH et FINE sont centres : 0 affiche signifie aucune transposition. Les selecteurs de modele SHAPE et les ratios PUNCH ont leurs propres echelles. Le minimum n est pas un reglage universel de son neutre. |
 | Commandes Elder | Choisir Elder dans MACHINES | COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors. Valeurs de depart : Wave 0, Warp 0, Noise 0, Motion 0, Decay 50. |
 | Commandes TINY | Choisir TINY dans MACHINES | COLOR : Tone ; SHAPE : Model 0–51 ; SWEEP : Mod ; CONTOUR : Excite. Valeurs de depart : Tone 64, Model 0, Mod 64, Excite 32, Decay 60. |
 | Commandes Shadow | Choisir Shadow apres TINY dans MACHINES | COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : distorsion et attaque répétée. Pitch, Fine, Decay et Gate disponibles. Synthé pulsar/bruit inspiré de Opal Dust de Fors. |
 | Table initiale WAVE | Choisir WAVE et jouer | AV-WAVE-Morph est deja chargee : 16trames a parcourir, aucun import initial requis. COLOR choisit la position ; SHAPE ajoute le mouvement d enveloppe. Une table importee remplace la table initiale sur sa piste. |
 | Dossiers WAVE | BACK dans le navigateur WAVE | BACK remonte d’un dossier ; à /Wavetables, il ferme le sélecteur. |
-| DECAY du filtre ACID | DECAY | DECAY règle la décroissance de l’enveloppe du filtre. Volume tenu jusqu’au note-off, puis relâchement court. |
+| ACID Decay et enveloppe | DECAY ; Global > ACID > A / F / AF | DECAY regle le declin du filtre. A choisit l ampli, F le filtre (defaut), AF les deux. En A/AF, Gate Off permet le declin pendant le maintien ; Gate On tient jusqu au note-off. Arpege et retrig relancent l enveloppe choisie. |
 | Accent ACID | Velocite97-127 | Accent progressif du transitoire filtre et du niveau. Velocite0-96 conserve la reponse sans accent ; volume natif de velocite conserve. |
 | Detune fin SY BITS | FUNC + COLOR | Pas de 0.01 demi-ton de -24.00 à +24.00. COLOR change les demi-tons entiers ; FUNC + COLOR règle la fraction. Sauvegarde avec les sons et locks disponibles. |
 | RETROSYN | MACHINES, juste avant MIDI Out | COLOR, SHAPE (six modèles), SWEEP et CONTOUR. PITCH, DECAY, Gate et Punch disponibles. |
 | Commandes PUNCH | Choisir PUNCH avant MIDI Out | SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR règle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP règle entre les ratios. CONTOUR et DECAY façonnent le son. Moteur de100demons, MIT. Valeurs de depart : Color 64, KIK, ratio 4:1, Contour 40, Decay 50. |
 | Commandes ESTUS avancees | SETTINGS + COLOR / SHAPE / SWEEP / CONTOUR | Forme d onde / ratio FM / Drive / transitoire. Disponible en lecture. Maintenir un pas avec ce geste pour un lock avance. Certains moteurs ignorent certaines commandes. SETTINGS + MACHINES + SWEEP choisit toujours le filtre. |
+| Glide ACID | Piste ACID choisie : SETTINGS + PITCH | OFF ou1-127, environ50-360ms. Les LEN chevauchees lient les notes. Defaut : environ50ms. Sauvegarde par piste avec le projet ; pas de locks de glide par pas. |
+| Legato ACID | Piste ACID choisie : SETTINGS + DECAY | Gauche OFF, droite ON (defaut). ON : les notes ordinaires chevauchees ne relancent pas l enveloppe. Glide OFF change la hauteur immediatement. Legato OFF relance l enveloppe, meme avec glide actif. Arpege/retrig la relancent toujours. |
 
 ## Machine vocale SPEAK
 
@@ -112,6 +133,7 @@ Principal2.61. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Sauvegarde rapide permanente | Maintenir FUNC + SETTINGS | Ouvrir la sauvegarde permanente native du pattern. Raccourci stock ; distinct de la sauvegarde temporaire breve et de Save Project. |
 | Copie temporaire / rappel | Bref FUNC+SETTINGS / FUNC+PATTERN | Copie temporaire native / rappel,y compris pendant le verrou retrig. |
 | Reechantillonnage | Sur Sample Wizard : SETTINGS + REC | Ouvrir le menu Resample. Choisir les options d enregistrement et sauvegarder la prise depuis ce menu. |
+| Priorite des p-locks | Verrouiller pitch, debut, fin ou autres commandes Wizard | Pendant la lecture, la note utilise ses p-locks avant CTRL-ALL. CTRL-ALL modifie toujours le son de base pour les notes non verrouillees. |
 
 ## Machine MIDI Out
 
@@ -130,11 +152,11 @@ Principal2.61. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 ## Mod Setup
 
-Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. Maintenez la combinaison pour lancer SCRAMBLE une seule fois ; le maintien ne répète pas le tirage. Avec un TRIG tenu, un appui bref bascule sa marque Scramble. Choisissez Global ou Track. DATA choisit une ligne ; clic pour modifier, tourner, puis clic pour revenir. Stk = Stock ; SIL = Silent ; LTC = Latch.
+Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. Maintenez la combinaison pour lancer SCRAMBLE une seule fois ; le maintien ne répète pas le tirage. Avec un TRIG tenu, un appui bref bascule sa marque Scramble. Choisissez Global, Track ou Song. DATA choisit une ligne ; clic pour modifier, tourner, puis clic pour revenir. Stk = Stock ; SIL = Silent ; LTC = Latch.
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Global / Track | DATA entre ; BACK revient | Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine. |
+| Global / Track / Song | DATA entre ; BACK revient | Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID si installe, JUMP. Track : SCRM, S.Chn, Human. Song ouvre la grille d arrangement. |
 | Accès et réglage du son | Appui bref sur SETTINGS + TRACK | Disponible depuis l’écran principal ou la sélection des machines. DATA parcourt Mod Setup ; les commandes du son affichent le paramètre deux secondes puis reviennent à la même position. BACK ferme d’abord la fenêtre puis Mod Setup ; la sélection des machines reste ouverte en dessous. |
 | Pad | Stk / SIL ; défaut Stk | Stk sélectionne et joue. SIL sélectionne silencieusement ; TRACK + pad sélectionne et joue. ChordKeys exige TRACK + pad pour quitter la piste. |
 | USB | 2ch / 6ch ; défaut 2ch | 2ch : mix stéréo avec effets. 6ch : six pistes mono avant panoramique, sans retours delay/crusher/reverb/chorus. Retour ordinateur stéréo dans les deux modes. Arrêtez avant de changer ; le périphérique USB se reconnecte. |
@@ -154,6 +176,7 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 | Nombre de LFO audio | Global > LFOs | 1/2/3/4 par piste audio ; 2 par defaut. Sauvegarde globale a l arret. LFO inactifs arretes, reglages conserves. |
 | Mode FX | Global > FX > MST / TRK | MST utilise les choix partages ; TRK suit la piste selectionnee pour les FX legers. Reverbs/delays lourds natifs restent partages. Memes gestes TRACK + SIZE/TIME. |
 | Enveloppe ACID (Full / Machine Optional) | Global > ACID > A / F / AF | Un choix global sauvegarde pour toutes les pistes ACID. A = ampli ; F = filtre (defaut) ; AF = les deux. Gate OFF laisse decroitre l ampli en A/AF ; ON maintient jusqu au note-off. Sauvegarde a l arret et au repos. Lite ne contient pas ACID. |
+| JUMP | Global > JUMP > Off / On | Preference Direct Pattern Jump ; sauvegarde globale a l arret. |
 
 BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cette sauvegarde attend l’arrêt. Arrêtez et attendez la fin avant extinction. Routage/réglages Sidechain, listes Scramble et types/réglages FX ajoutés propres à chaque pattern : Save Project les conserve au chargement. Fermer un sous-menu ne sauvegarde pas le projet.
 
@@ -167,10 +190,11 @@ BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cett
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Disponibilite | Full / Lite principal et Machine Optional | Le principal exclut Legacy, ChordKeys et Vinyl. Commandes suivantes reservees a Machine Optional avec la machine activee. |
+| Disponibilite | Full / Lite principal et Machine Optional | Full et Lite utilisent les moteurs audio indiques. Les commandes LEGACY, ChordKeys et Vinyl s appliquent si ces choix sont actifs dans Machine Optional. |
 | Banques LEGACY | LEGACY : FUNC + MACHINES | DATA choisit une banque DX7 ; clic charge, BACK annule. Une banque32voix partagee par toutes les pistes Legacy. Importer via le flasheur Optional. |
 | ChordKeys | CHORD : FUNC + RETRIG > Keys ON | Hors grid record, TRIG1-16 jouent les accords de la gamme. TRACK + pad change de piste. Grid : TRIG tenu + T1-T6 verrouille l harmonie ; meme pad a nouveau restaure l harmonie de base. |
 | Vinyl | SIZE / FUNC + SIZE / FUNC avant TRACK + SIZE | Crackle / intensite Warble / vitesse Warble. REVERB SEND dose Vinyl. Absent du principal Full/Lite. |
+| TRX-B2 / TRX-SD / TRX-CH | Choisir dans Machine Optional ; fournir votre OS Machinedrum UW1.63 | Trois moteurs : grosse caisse, caisse claire et charley ferme. Le fichier MD est requis au build. Optional conserve LEGACY, ChordKeys et Vinyl. |
 
 ## Lexique SPEAK
 

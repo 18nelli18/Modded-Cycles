@@ -41,7 +41,7 @@
   "shared_display_mask_preserved": true,
   "behavior_verified_source": "all-features-usb-mod-settings-test-v3.syx",
   "layout_fix_native_verified": true,
-  "guide_version": "2026-10-29-guide261",
+  "guide_version": "2026-10-30-guide264",
   "release": "2.64",
   "approved_source": "Supermodel_Full_2.64_8d9d7df60e21.syx",
   "approved_source_sha256": "8d9d7df60e212c1c8e1848c0e3b2d015c8e9a2d91269efde5177431d4554e72f",

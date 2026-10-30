@@ -1,6 +1,6 @@
 {
-  "release": "2.61",
-  "stamp": "2026-10-29-guide261",
+  "release": "2.64",
+  "stamp": "2026-10-30-guide264",
   "cards": [
     {
       "en": [
@@ -40,6 +40,26 @@
       "fr": [
         "Routage et travail",
         "MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif."
+      ]
+    },
+    {
+      "en": [
+        "Song and pattern navigation",
+        "Song rows combine patterns, repeats and mutes. Direct Pattern Jump and persistent trig selection support live pattern work."
+      ],
+      "fr": [
+        "Song et navigation",
+        "Les lignes Song combinent patterns, repetitions et mutes. Direct Pattern Jump et selection de trigs servent le jeu."
+      ]
+    },
+    {
+      "en": [
+        "ACID articulation and sample locks",
+        "Per-track ACID glide/legato, A/F/AF envelopes and arp envelope retriggering; Wizard p-locks take priority over CTRL-ALL."
+      ],
+      "fr": [
+        "Articulation ACID et locks",
+        "Glide/legato ACID par piste, enveloppes A/F/AF et relance par arpege ; p-locks Wizard prioritaires sur CTRL-ALL."
       ]
     }
   ],
@@ -258,7 +278,7 @@
           "en": [
             "Shared filter type",
             "Hold SETTINGS, then MACHINES + turn SWEEP",
-            "HIGH / LOW / BAND / LO/HI. Release the modifiers to commit. New and cleared sounds start LOW, cutoff127, resonance0, including late track initialization. Saved filter choices survive startup. Sample Wizard keeps its internal filter."
+            "HIGH / LOW / BAND / LO/HI. Release the modifiers to commit. Default: LOW, cutoff 127, resonance 0. Saved filter choices persist with the sound. Sample Wizard uses its internal filter."
           ],
           "fr": [
             "Type de filtre commun",
@@ -276,6 +296,134 @@
             "Filtre par piste",
             "MACHINES + SWEEP / CONTOUR",
             "Coupure / resonance de la piste selectionnee. Ajouter TRACK pour les pistes incluses dans Control All."
+          ]
+        },
+        {
+          "en": [
+            "Trig selection",
+            "TRACK + PAGE",
+            "Toggle selection mode. Tap existing trigs to select or deselect them; selected steps blink. Release TRACK to return to step editing: track selection is momentary. Empty steps are not created by selection."
+          ],
+          "fr": [
+            "Selection de trigs",
+            "TRACK + PAGE",
+            "Active/desactive la selection. Touchez les trigs existants pour les selectionner ; ils clignotent. Relachez TRACK pour editer les pas : la selection de piste reste momentanee. Les pas vides ne sont pas crees."
+          ]
+        },
+        {
+          "en": [
+            "Select all / none",
+            "Trig selection active: FUNC + PAGE",
+            "Select all eligible trigs or clear the selection. PAGE changes pages while keeping the selection. Hidden steps outside Page Len are excluded. TRACK + PAGE exits and clears selection."
+          ],
+          "fr": [
+            "Tous / aucun",
+            "Selection active : FUNC + PAGE",
+            "Selectionne tous les trigs accessibles ou efface la selection. PAGE change de page en la conservant. Les pas hors Page Len sont exclus. TRACK + PAGE quitte et efface la selection."
+          ]
+        },
+        {
+          "en": [
+            "Direct Pattern Jump",
+            "Global > JUMP > On; PATTERN, then FUNC + TRIG",
+            "With JUMP On, jump to the chosen pattern immediately while keeping playback position. Off uses normal pattern-change timing. The On/Off preference saves globally; default Off."
+          ],
+          "fr": [
+            "Direct Pattern Jump",
+            "Global > JUMP > On ; PATTERN, puis FUNC + TRIG",
+            "Avec JUMP On, saute immediatement vers le pattern choisi en conservant la position. Off suit le changement natif. Preference globale sauvegardee ; Off par defaut."
+          ]
+        }
+      ]
+    },
+    {
+      "title": {
+        "en": "Song mode",
+        "fr": "Mode Song"
+      },
+      "rows": [
+        {
+          "en": [
+            "Open Song",
+            "SETTINGS + TRACK > Song > DATA",
+            "Song is beside Global and Track at the Mod Setup root. Press PLAY from the Song editor to start at the first row."
+          ],
+          "fr": [
+            "Ouvrir Song",
+            "SETTINGS + TRACK > Song > DATA",
+            "Song est au premier niveau, a cote de Global et Track. PLAY depuis l editeur lance la premiere ligne."
+          ]
+        },
+        {
+          "en": [
+            "Choose a row",
+            "Turn DATA",
+            "The grid shows four rows at a time. Edit while stopped and Song is inactive; double STOP cancels an active song before editing."
+          ],
+          "fr": [
+            "Choisir une ligne",
+            "Tourner DATA",
+            "Quatre lignes visibles. Editez a l arret, Song inactif ; double STOP annule le morceau actif avant edition."
+          ]
+        },
+        {
+          "en": [
+            "Pattern / repeats",
+            "PITCH / DECAY",
+            "Choose A01-F16 and 1-64 repeats for the selected row. The complete song must fit the native chain limit of 64 expanded pattern plays."
+          ],
+          "fr": [
+            "Pattern / repetitions",
+            "PITCH / DECAY",
+            "Choisit A01-F16 et1-64 repetitions pour la ligne. Le morceau entier doit tenir dans64 lectures de patterns developpees."
+          ]
+        },
+        {
+          "en": [
+            "Track mutes",
+            "TRIG 1-6",
+            "Toggle the row mute for each track. Song mutes combine with your existing track mutes."
+          ],
+          "fr": [
+            "Mutes de pistes",
+            "TRIG1-6",
+            "Bascule le mute de chaque piste pour la ligne. Les mutes du morceau se combinent aux mutes existants."
+          ]
+        },
+        {
+          "en": [
+            "Insert / delete row",
+            "PAGE / FUNC + PAGE",
+            "PAGE inserts a copy after the selected row. FUNC + PAGE deletes it; at least one row remains."
+          ],
+          "fr": [
+            "Inserer / supprimer",
+            "PAGE / FUNC + PAGE",
+            "PAGE insere une copie apres la ligne. FUNC + PAGE la supprime ; une ligne reste toujours."
+          ]
+        },
+        {
+          "en": [
+            "End behavior",
+            "Click DATA",
+            "Choose STOP or LOOP. FUNC + DATA also works. STOP ends playback after the last row; LOOP repeats the arrangement."
+          ],
+          "fr": [
+            "Fin du morceau",
+            "Appuyer sur DATA",
+            "Choisit STOP ou LOOP. FUNC + DATA fonctionne aussi. STOP arrete apres la derniere ligne ; LOOP repete l arrangement."
+          ]
+        },
+        {
+          "en": [
+            "Transport, exit and save",
+            "PLAY / STOP / STOP twice / BACK / Save Project",
+            "PLAY runs the song; STOP pauses using native transport; double STOP cancels Song and clears FX tails. BACK leaves the editor. Save Project stores the song and per-track ACID glide/legato. An infinite pattern chain length can hold a row."
+          ],
+          "fr": [
+            "Transport, sortie, sauvegarde",
+            "PLAY / STOP / double STOP / BACK / Save Project",
+            "PLAY joue ; STOP suspend via le transport natif ; double STOP annule Song et coupe les queues FX. BACK quitte. Save Project conserve Song et glide/legato ACID. Une longueur de chaine infinie peut retenir une ligne."
           ]
         }
       ]
@@ -525,12 +673,12 @@
         {
           "en": [
             "Machine browsing",
-            "MACHINES + turn DATA",
+            "Press MACHINES, then turn DATA",
             "Turn DATA to choose a machine. MIDI Out is last. Scrolling through MIDI Out preserves your previous audio settings."
           ],
           "fr": [
             "Defilement machines",
-            "MACHINES + tourner DATA",
+            "Appuyer sur MACHINES, puis tourner DATA",
             "Tournez DATA pour choisir une machine. MIDI Out est en dernier. Le passage par MIDI Out conserve vos réglages audio précédents."
           ]
         },
@@ -608,14 +756,14 @@
         },
         {
           "en": [
-            "ACID filter Decay",
-            "DECAY",
-            "DECAY controls filter envelope decay. Volume holds until note-off, followed by a short release."
+            "ACID Decay and envelope",
+            "DECAY; Global > ACID > A / F / AF",
+            "DECAY sets the filter envelope decay. A selects amp, F filter (default), AF both. In A/AF, Gate Off permits amp decay while held; Gate On sustains until note-off. Arpeggiator and retrig notes restart the selected envelope."
           ],
           "fr": [
-            "DECAY du filtre ACID",
-            "DECAY",
-            "DECAY règle la décroissance de l’enveloppe du filtre. Volume tenu jusqu’au note-off, puis relâchement court."
+            "ACID Decay et enveloppe",
+            "DECAY ; Global > ACID > A / F / AF",
+            "DECAY regle le declin du filtre. A choisit l ampli, F le filtre (defaut), AF les deux. En A/AF, Gate Off permet le declin pendant le maintien ; Gate On tient jusqu au note-off. Arpege et retrig relancent l enveloppe choisie."
           ]
         },
         {
@@ -676,6 +824,30 @@
             "Commandes ESTUS avancees",
             "SETTINGS + COLOR / SHAPE / SWEEP / CONTOUR",
             "Forme d onde / ratio FM / Drive / transitoire. Disponible en lecture. Maintenir un pas avec ce geste pour un lock avance. Certains moteurs ignorent certaines commandes. SETTINGS + MACHINES + SWEEP choisit toujours le filtre."
+          ]
+        },
+        {
+          "en": [
+            "ACID glide",
+            "Selected ACID track: SETTINGS + PITCH",
+            "OFF, or 1-127 for approximately 50-360 ms glide time. Overlapping LEN values link notes. Default glide is about 50 ms. Saved per track with Save Project; no per-step glide locks."
+          ],
+          "fr": [
+            "Glide ACID",
+            "Piste ACID choisie : SETTINGS + PITCH",
+            "OFF ou1-127, environ50-360ms. Les LEN chevauchees lient les notes. Defaut : environ50ms. Sauvegarde par piste avec le projet ; pas de locks de glide par pas."
+          ]
+        },
+        {
+          "en": [
+            "ACID legato",
+            "Selected ACID track: SETTINGS + DECAY",
+            "Turn left for OFF, right for ON (default). With legato ON, overlapping ordinary notes do not restart the envelope. With glide OFF they change pitch immediately. Legato OFF restarts the envelope; glide can remain active. Arpeggiator/retrig notes always restart it."
+          ],
+          "fr": [
+            "Legato ACID",
+            "Piste ACID choisie : SETTINGS + DECAY",
+            "Gauche OFF, droite ON (defaut). ON : les notes ordinaires chevauchees ne relancent pas l enveloppe. Glide OFF change la hauteur immediatement. Legato OFF relance l enveloppe, meme avec glide actif. Arpege/retrig la relancent toujours."
           ]
         }
       ]
@@ -917,6 +1089,18 @@
             "Sur Sample Wizard : SETTINGS + REC",
             "Ouvrir le menu Resample. Choisir les options d enregistrement et sauvegarder la prise depuis ce menu."
           ]
+        },
+        {
+          "en": [
+            "P-lock priority",
+            "Parameter-lock pitch, sample start, sample end or other Wizard controls",
+            "During playback, the current note uses its p-lock values ahead of CTRL-ALL. CTRL-ALL still edits the underlying sound for unlocked notes."
+          ],
+          "fr": [
+            "Priorite des p-locks",
+            "Verrouiller pitch, debut, fin ou autres commandes Wizard",
+            "Pendant la lecture, la note utilise ses p-locks avant CTRL-ALL. CTRL-ALL modifie toujours le son de base pour les notes non verrouillees."
+          ]
         }
       ]
     },
@@ -1056,14 +1240,14 @@
       "rows": [
         {
           "en": [
-            "Global / Track",
+            "Global / Track / Song",
             "DATA enters; BACK returns",
-            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID (when installed). Track: SCRM, S.Chn, Human. BACK leaves editing before returning a level. Reopening starts at the root."
+            "Global: Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID (when installed), JUMP. Track: SCRM, S.Chn, Human. Song opens the arrangement grid."
           ],
           "fr": [
-            "Global / Track",
+            "Global / Track / Song",
             "DATA entre ; BACK revient",
-            "Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs. Track : SCRM, S.Chn, Human. BACK quitte d abord l edition puis remonte. Reouverture a la racine."
+            "Global : Pad, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID si installe, JUMP. Track : SCRM, S.Chn, Human. Song ouvre la grille d arrangement."
           ]
         },
         {
@@ -1293,6 +1477,18 @@
             "Global > ACID > A / F / AF",
             "Un choix global sauvegarde pour toutes les pistes ACID. A = ampli ; F = filtre (defaut) ; AF = les deux. Gate OFF laisse decroitre l ampli en A/AF ; ON maintient jusqu au note-off. Sauvegarde a l arret et au repos. Lite ne contient pas ACID."
           ]
+        },
+        {
+          "en": [
+            "JUMP",
+            "Global > JUMP > Off / On",
+            "Direct Pattern Jump preference; saved globally while stopped."
+          ],
+          "fr": [
+            "JUMP",
+            "Global > JUMP > Off / On",
+            "Preference Direct Pattern Jump ; sauvegarde globale a l arret."
+          ]
         }
       ]
     },
@@ -1326,12 +1522,12 @@
           "en": [
             "Edition availability",
             "Main Full / Lite versus Machine Optional",
-            "Main excludes Legacy, ChordKeys and Vinyl. The controls below require Machine Optional with the relevant machine enabled; they are not extra main-edition features."
+            "Full and Lite use their listed audio engines. LEGACY, ChordKeys and Vinyl controls apply when enabled in Machine Optional."
           ],
           "fr": [
             "Disponibilite",
             "Full / Lite principal et Machine Optional",
-            "Le principal exclut Legacy, ChordKeys et Vinyl. Commandes suivantes reservees a Machine Optional avec la machine activee."
+            "Full et Lite utilisent les moteurs audio indiques. Les commandes LEGACY, ChordKeys et Vinyl s appliquent si ces choix sont actifs dans Machine Optional."
           ]
         },
         {
@@ -1368,6 +1564,18 @@
             "Vinyl",
             "SIZE / FUNC + SIZE / FUNC avant TRACK + SIZE",
             "Crackle / intensite Warble / vitesse Warble. REVERB SEND dose Vinyl. Absent du principal Full/Lite."
+          ]
+        },
+        {
+          "en": [
+            "TRX-B2 / TRX-SD / TRX-CH",
+            "Select in Machine Optional; supply your Machinedrum UW OS 1.63 file",
+            "Three optional engines: bass drum, snare and closed hi-hat. They require the MD file when building. Retained Optional choices include LEGACY, ChordKeys and Vinyl."
+          ],
+          "fr": [
+            "TRX-B2 / TRX-SD / TRX-CH",
+            "Choisir dans Machine Optional ; fournir votre OS Machinedrum UW1.63",
+            "Trois moteurs : grosse caisse, caisse claire et charley ferme. Le fichier MD est requis au build. Optional conserve LEGACY, ChordKeys et Vinyl."
           ]
         }
       ]

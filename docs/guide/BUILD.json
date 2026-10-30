@@ -1,0 +1,23 @@
+{
+  "release": "2.64",
+  "date": "2026-10-30",
+  "stamp": "2026-10-30-guide264",
+  "source": "tools/shortcut_guide_content.json",
+  "shortcut_pages": 8,
+  "manual_pages": 34,
+  "cover": true,
+  "acknowledgments_preserved": true,
+  "browser_EN_FR_mobile_and_downloads": true,
+  "all_page_print_bounds_checked": true,
+  "old_guide_urls_redirect_to_current": true,
+  "files": {
+    "docs/flasher/shortcut-guide.pdf": {
+      "sha256": "e67600638b65399f7fc5da67d8a54c91b0ef19df9ab7acc2c386b36fbdd6dcad",
+      "bytes": 35153
+    },
+    "docs/flasher/user-manual.pdf": {
+      "sha256": "0d4a084dceeef572aa92e559337e984c98acb6ff9e32768414fa58e6230fade7",
+      "bytes": 180241
+    }
+  }
+}

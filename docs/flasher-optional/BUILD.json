@@ -137,7 +137,7 @@
   "asset_source_commit": "8a10633b3ab20937a363ece8c9e36683d1e5efe3",
   "filter_deferred_new_sound_low": true,
   "double_stop_fx_reset": true,
-  "guide_version": "2026-10-29-guide261",
+  "guide_version": "2026-10-30-guide264",
   "acid_envelope_global": true,
   "pots_delay": true,
   "wizard_plock_priority": true,

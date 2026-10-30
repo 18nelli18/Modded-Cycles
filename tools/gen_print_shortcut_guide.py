@@ -122,7 +122,7 @@ flow.extend([Spacer(1,9),para(soup.select_one('main > p.note'))])
 out=ROOT/args.output;out.parent.mkdir(exist_ok=True,parents=True)
 def chrome(c,doc):
  c.setFillColor(accent);c.setFont('Helvetica-Bold',7);c.drawString(30,773,'SUPERMODEL EDITION | MODEL:CYCLES');c.setFont('Helvetica',7);c.drawRightString(582,773,f'Page {doc.page} / {pages}')
- c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 29 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
+ c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 30 October 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
 doc=SimpleDocTemplate(str(out),pagesize=letter,rightMargin=30,leftMargin=30,topMargin=36,bottomMargin=34,title='Supermodel Edition - Features and Shortcuts',author='A.V.')
 # ReportLab modifie les tables pendant le decoupage : chaque passe repart
 # des objets frais pour stabiliser la pagination et son total imprime.
@@ -132,7 +132,7 @@ doc.build(copy.deepcopy(flow),onFirstPage=chrome,onLaterPages=chrome)
 r=PdfReader(out);assert len(r.pages)==pages,len(r.pages)
 alltext=' '.join(' '.join(p.extract_text().split()) for p in r.pages)
 for term in ('PLAY advances','STOP moves back','Mute: LTC','Num Off','sample browser must be open'):assert term in alltext,term
-for term in ('Elder', 'Chorus 1', 'CHORUS 2', 'Crush', 'Rate 0', 'Bits 2', 'nine knobs', 'Glycinate', 'Fors', 'PING PONG', 'SPEAK', 'FUTURE', '350 ms', '0.5 seconds'):assert term in alltext,term
+for term in ('Elder', 'Chorus 1', 'CHORUS 2', 'Crush', 'Rate 0', 'Bits 2', 'nine knobs', 'Glycinate', 'Fors', 'PING PONG', 'SPEAK', 'FUTURE', '350 ms', '0.5 seconds','Song mode','TRACK + PAGE','SETTINGS + PITCH','SETTINGS + DECAY','JUMP','P-lock priority','TRX-B2'):assert term in alltext,term
 for term in ('Channel','Output','KbT','Pad Note','Two MIDI LFOs','MIDI Out machine','SPEAK word library','Machine Optional extras only','SPEAK voice machine','External keyboard recording','Shared filter type','Per-track FX routing','ESTUS advanced controls'):assert term in alltext,term
 if pages>=3:
  for term in ('DX', 'LTC', 'SIL', 'Mod Setup','Stk / SIL','2ch / 6ch','Off / On','Stk / LTC','Stk / Div','global preferences','save waits until it stops'):assert term in alltext,term
