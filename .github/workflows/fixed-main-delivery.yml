@@ -6,12 +6,14 @@ on:
       - 'docs/flasher/**'
       - 'tools/test_fixed_main*'
       - 'tools/test_editions_ui.js'
+      - '.github/scripts/bug-reports*'
       - '.github/workflows/fixed-main-delivery.yml'
   pull_request:
     paths:
       - 'docs/flasher/**'
       - 'tools/test_fixed_main*'
       - 'tools/test_editions_ui.js'
+      - '.github/scripts/bug-reports*'
       - '.github/workflows/fixed-main-delivery.yml'
 jobs:
   verify:
@@ -23,3 +25,4 @@ jobs:
           node-version: '22'
       - run: node tools/test_fixed_main_delivery.js
       - run: node tools/test_fixed_main_loader.js
+      - run: node --test .github/scripts/bug-reports.test.cjs

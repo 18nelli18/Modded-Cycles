@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bug reports · Supermodel</title>
+<meta name="description" content="Report a Supermodel bug, attach a recording, and follow its progress in the shared report inbox.">
+<link rel="icon" href="../assets/icon.svg">
+<link rel="stylesheet" href="../assets/site.css?v=2026-10-30-bugs1">
+<script>try{var l=localStorage.getItem('mc-lang'),t=localStorage.getItem('mc-theme')}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||'')?'fr':'en');if(t)document.documentElement.setAttribute('data-theme',t)</script>
+<style>
+.report-hero{padding:64px 0 48px;max-width:850px}.report-hero h1{margin-bottom:24px}.report-hero .lead{max-width:55ch;font-size:21px;color:var(--ink-2)}
+.report-actions{display:flex;align-items:center;flex-wrap:wrap;gap:18px 28px;margin:28px 0 16px}.report-note{color:var(--muted);font-size:15px;max-width:65ch}
+.report-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:64px;border-top:1px solid var(--line);padding-top:36px}.report-grid h2{margin-bottom:22px}.report-grid ol{padding-left:24px}.report-grid li{margin-bottom:20px;padding-left:6px}.report-grid li strong{display:block}.inbox{padding:26px;border:1px solid var(--line);border-radius:var(--r);align-self:start}.inbox p{color:var(--ink-2)}.inbox-links{display:flex;flex-wrap:wrap;gap:12px 24px}.eyebrow{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+@media(max-width:700px){.report-hero{padding:40px 0 28px}.report-grid{grid-template-columns:1fr;gap:28px}.report-hero .lead{font-size:19px}.inbox{padding:20px}.top nav{gap:12px}}
+</style>
+</head>
+<body data-page="bugs">
+<header class="wrap top">
+<a class="brand" href="../">Supermodel</a>
+<nav aria-label="Site"><a href="../flasher/">Flasher</a><a href="../flasher-optional/">Machine Optional</a><a href="./" aria-current="page"><span data-l="en">Bug reports</span><span data-l="fr">Signaler un bug</span></a></nav>
+<div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button>/<button type="button" data-lang="fr" aria-pressed="false">FR</button></div>
+</header>
+<main class="wrap">
+<section class="report-hero">
+<p class="eyebrow">Supermodel <span data-l="en">support</span><span data-l="fr">assistance</span></p>
+<h1><span data-l="en">Report a problem.</span><span data-l="fr">Signaler un probleme.</span></h1>
+<p class="lead"><span data-l="en">A silent track, an unexpected sound, or a button that behaves strangely? Send a report so we can track it and work out what happened.</span><span data-l="fr">Une piste muette, un son inattendu ou une touche au comportement etrange ? Envoyez un rapport pour suivre le probleme et comprendre son origine.</span></p>
+<div class="report-actions">
+<a class="btn" id="report-bug" href="https://github.com/AveyCole/Supermodel/issues/new?template=bug-report.yml"><span data-l="en">Submit a bug report</span><span data-l="fr">Envoyer un rapport</span></a>
+<a id="all-reports" href="https://github.com/AveyCole/Supermodel/issues?q=is%3Aissue"><span data-l="en">View all reports</span><span data-l="fr">Voir tous les rapports</span></a>
+</div>
+<p class="report-note"><span data-l="en">The form opens on GitHub and requires a free GitHub account. Reports and attachments are public. AveyCole is notified of new reports; you can follow replies in the same place.</span><span data-l="fr">Le formulaire s'ouvre sur GitHub et necessite un compte GitHub gratuit. Rapports et pieces jointes publics. AveyCole est notifie des nouveaux rapports ; vous pouvez suivre les reponses au meme endroit.</span></p>
+</section>
+<div class="report-grid">
+<section aria-labelledby="help-title">
+<h2 id="help-title"><span data-l="en">What helps us fix it</span><span data-l="fr">Pour nous aider a corriger</span></h2>
+<ol>
+<li><strong><span data-l="en">Version and build</span><span data-l="fr">Version et edition</span></strong><span data-l="en">Include the startup version, Full / Lite / Machine Optional, your device, and any selected optional machines.</span><span data-l="fr">Indiquez la version au demarrage, Full / Lite / Machine Optional, votre appareil et les machines optionnelles choisies.</span></li>
+<li><strong><span data-l="en">What you did</span><span data-l="fr">Ce que vous avez fait</span></strong><span data-l="en">Describe the buttons, track, settings and tempo. Random problems are worth reporting too: tell us what was happening before it started.</span><span data-l="fr">Decrivez les touches, la piste, les reglages et le tempo. Signalez aussi les problemes aleatoires : indiquez ce qui precedait le probleme.</span></li>
+<li><strong><span data-l="en">What you heard or saw</span><span data-l="fr">Ce que vous avez entendu ou vu</span></strong><span data-l="en">Explain the expected result and actual result. Add audio, a short video or a screenshot if it helps. Do not attach firmware files.</span><span data-l="fr">Precisez le resultat attendu et le resultat obtenu. Ajoutez un enregistrement, une courte video ou une capture si utile. Ne joignez pas de fichiers firmware.</span></li>
+</ol>
+</section>
+<aside class="inbox" aria-labelledby="inbox-title">
+<h2 id="inbox-title"><span data-l="en">One shared inbox.</span><span data-l="fr">Une boite commune.</span></h2>
+<p><span data-l="en">Every submission gets its own report, discussion and status. Check existing reports first; if someone has the same problem, add your details there.</span><span data-l="fr">Chaque envoi dispose de son rapport, de sa discussion et de son statut. Consultez d'abord les rapports existants ; si le probleme est deja signale, ajoutez vos details a celui-ci.</span></p>
+<div class="inbox-links"><a href="https://github.com/AveyCole/Supermodel/issues?q=is%3Aissue+is%3Aopen"><span data-l="en">Open reports</span><span data-l="fr">Rapports ouverts</span></a><a href="https://github.com/AveyCole/Supermodel/issues?q=is%3Aissue+is%3Aclosed"><span data-l="en">Closed reports</span><span data-l="fr">Rapports fermes</span></a></div>
+<p><span data-l="en">For questions and general discussion, join the </span><span data-l="fr">Pour les questions et discussions, rejoignez le </span><a href="https://discord.gg/hWegtJZcmm">Discord</a>.</p>
+</aside>
+</div>
+</main>
+<footer class="foot"><div class="wrap"><p>Supermodel · <a href="../flasher/shortcut-guide.pdf"><span data-l="en">Download the feature and shortcut guide</span><span data-l="fr">Telecharger le guide des fonctions et raccourcis</span></a></p></div></footer>
+<script src="../assets/site.js?v=2026-10-30-bugs1"></script>
+</body>
+</html>

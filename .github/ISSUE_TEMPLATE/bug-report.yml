@@ -1,0 +1,86 @@
+name: Bug report / Signaler un bug
+description: Report a Supermodel problem / Signaler un probleme Supermodel
+title: "[Bug] "
+labels: [bug]
+assignees: [AveyCole]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Reports go to the shared Supermodel bug inbox and notify AveyCole. You can write in English or French. Reports and attachments are public; do not upload firmware files or personal information.
+
+        Les rapports arrivent dans la boite commune Supermodel et notifient AveyCole. Vous pouvez ecrire en francais ou en anglais. Rapports et pieces jointes publics : ne joignez pas de firmware ni de donnees personnelles.
+  - type: input
+    id: version
+    attributes:
+      label: Firmware version / Version du firmware
+      description: Use the startup screen version, or the exact test-build filename. / Version au demarrage ou nom exact du build de test.
+      placeholder: "Example: 2.63 / Exemple : 2.63"
+    validations:
+      required: true
+  - type: dropdown
+    id: edition
+    attributes:
+      label: Edition
+      options:
+        - Full
+        - Lite
+        - Machine Optional
+        - Private test build / Build de test prive
+        - Other or unsure / Autre ou incertain
+    validations:
+      required: true
+  - type: dropdown
+    id: hardware
+    attributes:
+      label: Hardware / Appareil
+      options:
+        - Model:Cycles
+        - Model:Samples
+        - Flasher only / Flasheur uniquement
+    validations:
+      required: true
+  - type: input
+    id: feature
+    attributes:
+      label: Machine or feature / Machine ou fonction
+      placeholder: "Example: Sample Wizard, ESTUS hi-hat, delay / Exemple : Sample Wizard, charley ESTUS, delai"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened? / Que s'est-il passe ?
+      description: Describe the problem and which track it affects. / Decrivez le probleme et la piste concernee.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen? / Quel resultat attendu ?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce / Etapes pour reproduire
+      description: Include buttons, knob values, playback state and tempo. If it seems random, describe what you were doing. / Precisez touches, valeurs, etat de lecture et tempo. Si le probleme semble aleatoire, decrivez ce que vous faisiez.
+      placeholder: "1. ...\n2. ...\n3. ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often? / A quelle frequence ?
+      options:
+        - Every time / Toujours
+        - Sometimes / Parfois
+        - Once so far / Une seule fois
+        - Unsure / Incertain
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Other details and attachments / Details et pieces jointes
+      description: Optional machines selected, last working version, whether a restart helps, audio/video or screenshots. For sample bugs, say whether the take was saved. Drag files here. / Machines choisies, derniere version fonctionnelle, effet d'un redemarrage, audio/video ou captures. Pour les samples, precisez si la prise etait sauvegardee. Glissez vos fichiers ici.

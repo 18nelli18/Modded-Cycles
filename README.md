@@ -155,7 +155,7 @@ This project stands on the work of others, all MIT licensed:
 - **[mischa85/elektron-firmware-tool](https://github.com/mischa85/elektron-firmware-tool)** and **[mxldyn/octamax](https://github.com/mxldyn/octamax)**: firmware tooling and reverse-engineering methods.
 
 If these mods are useful to you, you can support the project on **[Ko-fi](https://ko-fi.com/18nelli)**.
-Questions, feedback and feature requests are welcome on the **[Discord](https://discord.gg/hWegtJZcmm)**; bug reports also fit in the [issues](https://github.com/18nelli18/Modded-Cycles/issues).
+Questions, feedback and feature requests are welcome on the **[Discord](https://discord.gg/hWegtJZcmm)**; bug reports also fit in the [Supermodel bug reports](https://github.com/AveyCole/Supermodel/issues/new?template=bug-report.yml).
 
 MIDI OUT Bank is hardware tested by AveyCole (16 October 2026) and available in the main flasher, alone or alongside the current machines including RETROSYN and TINY. Sample Wizard is optional. MIDI saving is hardware tested, including saving into an empty project slot. Stop playback before Save Project and wait for MIDI SAVED. **Saved MIDI data loads only when you enter B-side and only while playback is stopped.** Model-TG remains blocked.
 
@@ -202,3 +202,5 @@ Release 2.58 fixes late new-sound filter initialization and double-STOP FX tail 
 Release 2.60 adds a globally saved ACID envelope selector under Mod Setup > Global: A / F / AF. F remains the default. Lite retains the shared features and excludes added-machine controls.
 
 Release 2.61 adds durchgemacht/model27 POTS delay (MIT) to Full, Lite and Machine Optional. Delay menu: PHASER, DUCK, DUB, POTS, PING PONG, DELAY, CRUSH 1, CRUSH 2. Native Time/Feedback, project selection saving and double-STOP tail reset; native emulation verified, device confirmation pending.
+
+Bug reports: use the [report form](https://github.com/AveyCole/Supermodel/issues/new?template=bug-report.yml) and follow submissions in the [shared inbox](https://github.com/AveyCole/Supermodel/issues). New reports are assigned to AveyCole for GitHub notifications; email delivery follows the account notification settings.
