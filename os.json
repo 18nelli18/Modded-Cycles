@@ -37,6 +37,8 @@
     { "id": "model-tg", "cat": "sound", "tweaks": ["model-tg-st"], "status": "experimental",
       "credit": { "kind": "by", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG" }, "license": "LICENSE-Model-TG",
       "guide": "model-tg", "notes": "notes/31" },
+    { "id": "track-lofi", "cat": "sound", "tweaks": [], "status": "experimental", "credit": null,
+      "guide": "track-lofi", "notes": "notes/86" },
     { "id": "syntakt", "cat": "sound", "tweaks": ["syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-retrosyn"], "status": "tested",
       "credit": null, "needs": "syntakt", "guide": "syntakt", "notes": "notes/17, 18, 19, 20, 21, 22, 31" },
     { "id": "macro", "cat": "sound", "tweaks": [], "status": "tested",

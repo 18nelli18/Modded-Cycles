@@ -5055,6 +5055,14 @@ window.MC_TWEAKS = {
    "guide": "model-tg"
   },
   {
+   "id": "track-lofi",
+   "cat": "sound",
+   "status": "experimental",
+   "credit": null,
+   "tweaks": [],
+   "guide": "track-lofi"
+  },
+  {
    "id": "syntakt",
    "cat": "sound",
    "status": "tested",
