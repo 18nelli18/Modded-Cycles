@@ -145,6 +145,11 @@ void acid_update(s32 pmod, char *v, const char *p)
 	tr->left = LEN_LEFT[t];
 	if (V32(0x34)) {
 		slide = tr->held && !tr->idle && (left == 0 || left > 2 * LEN_STEP) && (s8)p[0x12] == tr->mach;
+#ifdef ACID_ARP_RETRIGGER
+  /* Une repetition native (dont l'arpege) relance l'enveloppe, meme avec LEN INF. */
+  const volatile s32 *repeat=(const volatile s32 *)(0x40a78d58u+28*(u32)t);
+  if(repeat[1]&&repeat[5])slide=0;
+#endif
 #ifdef ACID_ARTICULATION
   tr->glide_retrigger=slide&&aa_glide_get(t)&&!aa_legato_get(t);
   if(!aa_legato_get(t))slide=0;
@@ -217,4 +222,3 @@ void acid_render(s32 *out, char *v)
 	VCA(out, v);
 	PUNCH(out, v);
 }
-

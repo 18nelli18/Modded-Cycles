@@ -33,8 +33,11 @@ e=tw.fixtures(False,127,0,[stem],native_chordkeys=False,audit_count=False)[0];co
 fx=meta['per_track_fx'];sy=fx['symbols'];f=W/'env-module.bin';f.write_bytes(e.uc.mem_read(fx['code'],fx['code_bytes']));e.emac.install(emac.disasm(str(f),fx['code'],fx['code'],fx['code']+fx['code_bytes']))
 e.emac.fast[0x400a82cc]=lambda:None;e.emac.next[0x400a82cc]=sy['dry_osc']
 
-if 'acid_arp' in meta:
- art=meta['acid_arp'];f=W/'arp-module.bin';f.write_bytes(e.uc.mem_read(art['code'],art['code_bytes']));e.emac.install(emac.disasm(str(f),art['code'],art['code'],art['code']+art['code_bytes']))
+patched='acid_arp' in meta or meta.get('acid_articulation',{}).get('arp_retrigger',False)
+if patched:
+ art=meta.get('acid_arp',meta.get('acid_articulation'));
+ if 'acid_articulation' in meta:sy=dict(sy,trk=art['symbols']['trk'])
+ f=W/'arp-module.bin';f.write_bytes(e.uc.mem_read(art['code'],art['code_bytes']));e.emac.install(emac.disasm(str(f),art['code'],art['code'],art['code']+art['code_bytes']))
 runs={}
 for mode,gate,repeat in [(0,1,0),(0,1,1),(1,0,1),(2,0,1)]:
  for t in range(6):
@@ -52,10 +55,10 @@ assert not e.unmapped
 for key,rows in runs.items():
  active=key!='(0, 1, 0)'
  for b in (10,20):
-  if active and 'acid_arp' in meta:
+  if active and patched:
    assert rows[b+1]['trig']==1 and rows[b+1]['env']==0x7fffffff,(key,b,'missing envelope restart')
    if key.startswith('(1,') or key.startswith('(2,'):assert rows[b]['amp']==(0,0) and rows[b+1]['amp']==rows[1]['amp'],(key,b,'amp not restarted')
   else:
    assert rows[b]['trig']==2 and rows[b+1]['env']<rows[b-1]['env'],(key,b,'slide changed')
-print('PASS native ACID envelopes: '+('arp retriggers; ordinary ties preserved' if 'acid_arp' in meta else '2.63 arp regression reproduced'),flush=True)
-args.output.write_text(json.dumps(dict(patched='acid_arp' in meta,runs=runs,hardware_tested=False),indent=2)+'\n')
+print('PASS native ACID envelopes: '+('arp retriggers; ordinary ties preserved' if patched else '2.63 arp regression reproduced'),flush=True)
+args.output.write_text(json.dumps(dict(patched=patched,runs=runs,hardware_tested=False),indent=2)+'\n')

@@ -445,3 +445,7 @@ User explicitly authorizes "Push 2.62 to main, lite, optional". Publish the veri
 ## Release2.63 (2026-10-30)
 
 AveyCole explicitly requests "push wizard p lock fix 2.63 to main". Publish the Wizard-only Full/Lite and Optional images built from pinned2.62 sources, with startup and both flashers2.63. Song and ACID articulation remain private test firmware. This authorizes these exact firmware assets and direct main publication. Preserve Optional extras and the protected blurb. The guard is native-emulation verified, not hardware confirmed. Proofs: docs/flasher/release263-validation.json and docs/flasher-optional/validation263.json.
+
+## Complete release2.64 (2026-10-30)
+
+AveyCole explicitly requests all features in the builds and main publication, including Song mode, per-track ACID glide/legato, the ACID arp envelope retrigger fix, and Wizard p-lock priority. This authorizes the exact complete Full/Lite and Optional firmware assets and direct main release. Song and shared controls are included in Lite; ACID is present only in Full editions. Startup titles and both flashers display2.64. Preserve Optional choices, bug reporting and the protected blurb. Native audio/UI/storage/browser/signature checks passed; hardware confirmation remains pending. Proofs: docs/flasher/release264-validation.json and docs/flasher-optional/validation264.json.

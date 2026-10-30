@@ -1,4 +1,4 @@
-/* Vrai navigateur :22choix, fichier MD local, verrou et pins2.63 des variantes. */
+/* Vrai navigateur :22choix, fichier MD local, verrou et pins2.64 des variantes. */
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const root=path.resolve(__dirname,'..'),docs=path.join(root,'docs'),[cycles,md,out]=process.argv.slice(2);assert(cycles&&md&&out);fs.mkdirSync(out,{recursive:true});
@@ -14,7 +14,7 @@ const root=path.resolve(__dirname,'..'),docs=path.join(root,'docs'),[cycles,md,o
   await page.locator('#file').setInputFiles(cycles);await page.waitForFunction(()=>MCOptionalUI.result?.mask===0x7ffff&&!MCOptionalBusy,{},{timeout:90000});
   await page.locator('#optional-all').click();await page.waitForFunction(()=>!!MCOptionalFailed);assert.equal(await page.evaluate(()=>MCOptionalUI.result),null);
   await page.locator('#optional-md-file').setInputFiles(md);await page.waitForFunction(()=>MCOptionalUI.result?.mask===0x3fffff&&!MCOptionalBusy,{},{timeout:120000});
-  assert.equal(await page.evaluate(()=>MCFirmwareImages.full.startup_title.version),'2.63');assert.equal(await page.evaluate(()=>MCOptionalUI.result.machinedrum),true);
+  assert.equal(await page.evaluate(()=>MCFirmwareImages.full.startup_title.version),'2.64');assert.equal(await page.evaluate(()=>MCOptionalUI.result.machinedrum),true);
   await page.screenshot({path:path.join(out,'all-22.png'),fullPage:true});
   await page.locator('#optional-none').click();await page.waitForFunction(()=>MCOptionalUI.result?.mask===0&&!MCOptionalBusy);
   assert.equal(await page.evaluate(()=>MCOptionalUI.result.syxSha256===MCOptionalBaseEditions.lite.syxSha256),true);
@@ -23,6 +23,6 @@ const root=path.resolve(__dirname,'..'),docs=path.join(root,'docs'),[cycles,md,o
   await page.locator('#optional-md-file').setInputFiles({name:'invalid.syx',mimeType:'application/octet-stream',buffer:Buffer.alloc(64)});await page.waitForFunction(()=>!!MCOptionalFailed);assert.equal(await page.evaluate(()=>MCFlasherApp.state.fw),null);assert.equal(await page.evaluate(async()=>{try{await MCFirmwareImageLoad('full');return false}catch{return true}}),true);
   await page.locator('#optional-md-file').setInputFiles(md);await page.waitForFunction(()=>MCOptionalUI.result?.mask===0x80000&&!MCOptionalBusy,{},{timeout:120000});
   await page.evaluate(()=>{MCFlasherApp.state.sending=true;MCOptionalRender(MCFlasherApp.state)});assert(await page.locator('#optional-md-file').isDisabled());assert(await page.locator('#optional-grid input[data-machine="25"]').isDisabled());
-  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'browser-proof.json'),JSON.stringify({choices:22,default_19_preserved:true,MD_file_required:true,all_and_kick_only:true,None_exact_Lite:true,invalid_MD_rejected:true,startup263:true,sending_locked:true,page_errors:errors,hardware_tested:false},null,2)+'\n');console.log('PASS real browser22choices, local MD file, all/none/kick, invalid-file rejection and sending lock');
+  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'browser-proof.json'),JSON.stringify({choices:22,default_19_preserved:true,MD_file_required:true,all_and_kick_only:true,None_exact_Lite:true,invalid_MD_rejected:true,startup264:true,sending_locked:true,page_errors:errors,hardware_tested:false},null,2)+'\n');console.log('PASS real browser22choices, local MD file, all/none/kick, invalid-file rejection and sending lock');
  }finally{if(browser)await browser.close();await new Promise(r=>server.close(r))}
 })().catch(e=>{console.error(e);process.exit(1)});

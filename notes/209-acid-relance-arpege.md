@@ -53,3 +53,11 @@ Le generateur est `tools/gen_acid_arp_retrigger.py`, avec `--check`.
 [A FAIRE] Confirmation sur appareil avec notes internes, MIDI, A.On,
 RETRIG tenu, vitesses lentes/rapides, ainsi que charge polyphonique. Aucun
 resultat materiel ni mesure de cycles physiques annonce.
+
+## Publication complete2.64
+
+AveyCole demande ensuite explicitement de publier toutes les fonctions.
+Le build combine utilise ACID_ARP_RETRIGGER dans le noyau partage, avant
+le choix glide/legato. Le meme banc confirme F/A/AF ; le banc articulation
+confirme les cinq couples glide/legato. Le wrapper autonome ci-dessus
+reste seulement le prototype intermediaire, pas la recette publiee.

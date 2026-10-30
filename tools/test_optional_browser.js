@@ -11,10 +11,10 @@ const root=path.resolve(__dirname,'..'),docs=path.join(root,'docs'),[cycles,out]
   await page.addInitScript(()=>{navigator.requestMIDIAccess=async()=>({inputs:new Map(),outputs:new Map(),addEventListener(){}});localStorage.setItem('mc-lang','en');});
   const base='http://127.0.0.1:'+server.address().port;
   await page.goto(base+'/flasher/');await page.waitForFunction(()=>window.MCFlasherApp&&window.MCFirmwareImages);
-  assert.equal((await page.locator('[data-rel="version"]').first().innerText()).trim(),'2.63');assert.equal(await page.evaluate(()=>MCFirmwareImages.full.startup_title.version),'2.63');
+  assert.equal((await page.locator('[data-rel="version"]').first().innerText()).trim(),'2.64');assert.equal(await page.evaluate(()=>MCFirmwareImages.full.startup_title.version),'2.64');
   await page.screenshot({path:path.join(out,'main257.png'),fullPage:false});
   await page.goto(base+'/flasher-optional/');await page.waitForFunction(()=>window.MCOptionalUI&&window.MCFlasherApp);
-  assert.equal((await page.locator('[data-rel="version"]').first().innerText()).trim(),'2.63');assert.equal(await page.locator('#optional-grid input').count(),22);
+  assert.equal((await page.locator('[data-rel="version"]').first().innerText()).trim(),'2.64');assert.equal(await page.locator('#optional-grid input').count(),22);
   for(const id of [21,17])assert.equal(await page.locator(`#optional-grid input[data-machine="${id}"]`).count(),1);
   await page.locator('#file').setInputFiles(cycles);await page.waitForFunction(()=>MCOptionalUI.result&&!window.MCOptionalBusy,{},{timeout:60000});
   let result=await page.evaluate(()=>({mask:MCOptionalUI.result.mask,sha:MCOptionalUI.result.syxSha256}));assert.equal(result.mask,0x7ffff);
@@ -26,7 +26,7 @@ const root=path.resolve(__dirname,'..'),docs=path.join(root,'docs'),[cycles,out]
   assert.equal(await page.locator('#optional-grid input:disabled').count(),22);assert.equal(await page.evaluate(()=>MCOptionalUI.setMask(0)),false);assert.equal(await page.evaluate(()=>MCOptionalUI.mask),before);
   await page.evaluate(()=>{MCFlasherApp.state.sending=false;MCOptionalRender(MCFlasherApp.state);});
   await page.screenshot({path:path.join(out,'optional257.png'),fullPage:false});assert.deepEqual(errors,[]);
-  fs.writeFileSync(path.join(out,'browser-proof.json'),JSON.stringify({release:'2.63',main_and_optional_displayed:true,machine_choices:22,all_none_legacy_only:true,sending_locked:true,page_errors:errors,hardware_tested:false},null,2)+'\n');
-  console.log('PASS real browser: main/Optional2.63,22choices,All/None/Legacy-only and sending lock');
+  fs.writeFileSync(path.join(out,'browser-proof.json'),JSON.stringify({release:'2.64',main_and_optional_displayed:true,machine_choices:22,all_none_legacy_only:true,sending_locked:true,page_errors:errors,hardware_tested:false},null,2)+'\n');
+  console.log('PASS real browser: main/Optional2.64,22choices,All/None/Legacy-only and sending lock');
  }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,15 +1,15 @@
 {
-  "stamp": "2026-10-30-optional263",
+  "stamp": "2026-10-30-optional264",
   "status": "experimental",
-  "release": "2.63",
+  "release": "2.64",
   "base_editions": {
     "full": {
       "id": "full",
       "productName": "Supermodel",
-      "release": "2.63",
-      "file": "Supermodel_Optional_Full_2.63_42fb95265a18.syx",
-      "syxSha256": "42fb95265a18d609a53674777583e41137a52f1cee6ceca58af5a8aa46248e60",
-      "mainOsSha": "abf3cd3eebdd0b7b94259df0f21d000f763775169df8900d5be8c0443559d272",
+      "release": "2.64",
+      "file": "Supermodel_Optional_Full_2.64_e564a32da1bb.syx",
+      "syxSha256": "e564a32da1bba5bc022ac776eebcfbe0c18b8a8e7dbe9b8c8fdca05861de7c5c",
+      "mainOsSha": "c3b02ba3f0220bfb0f24cb32cf21d16f1deec147c2cbdc4364900ae7d5eddcd8",
       "requiresSyntakt": true,
       "source_build": 215,
       "new_clear_filter_defaults": true,
@@ -20,11 +20,11 @@
       "inactive_fx_zero_bypass": true,
       "startup_title": {
         "name": "Supermodel",
-        "version": "2.63",
-        "edition": "2.63",
+        "version": "2.64",
+        "edition": "2.64",
         "code": 1074084460,
         "code_bytes": 794,
-        "sha256": "ac93b50b2f7bca68645cdb0392a5c4806e04da7b3ed13bd1ecb609dc5ac7fa22",
+        "sha256": "1f5ab57714f37b1bb2f5742edfc6a49f48c5a238c9811cf4a7bc17b4852e0191",
         "native_os_protocol_version_unchanged": true,
         "hardware_tested": false
       },
@@ -57,15 +57,18 @@
       "direct_pattern_jump": true,
       "trig_select": true,
       "track_selection_momentary": true,
-      "wizard_plock_priority": true
+      "wizard_plock_priority": true,
+      "song_mode": true,
+      "acid_articulation": true,
+      "acid_arp_retrigger": true
     },
     "lite": {
       "id": "lite",
       "productName": "Supermodel Lite",
-      "release": "2.63",
-      "file": "Supermodel_Optional_Lite_2.63_65eedce577fc.syx",
-      "syxSha256": "65eedce577fc1a494a44ab054e7f3ab979e32e2bad26f776ec79d6306f467494",
-      "mainOsSha": "c8f814b6c006b5c3431a325d6591b5921a7ae711aad2706881ad0b7720bc785c",
+      "release": "2.64",
+      "file": "Supermodel_Optional_Lite_2.64_4630dd01d50f.syx",
+      "syxSha256": "4630dd01d50f860bc57980d865dd262f7e955d6599d55db5ea683e739ee5e26f",
+      "mainOsSha": "a0721f97843a3a4d4a5eec4192e2b488cec274670d0056b916c1530577230b43",
       "requiresSyntakt": false,
       "source_build": 216,
       "new_clear_filter_defaults": true,
@@ -76,11 +79,11 @@
       "inactive_fx_zero_bypass": true,
       "startup_title": {
         "name": "Supermodel Lite",
-        "version": "2.63",
-        "edition": "LITE 2.63",
+        "version": "2.64",
+        "edition": "LITE 2.64",
         "code": 1074084460,
         "code_bytes": 856,
-        "sha256": "705fe8c66163899fd2126fbecd2c554338cbdbb783ed1397b8c2fc64871e3441",
+        "sha256": "72ac7d352432c8a0a24089ed81f5bfcfa233c5d6c2c3dc935c3afd2b6a8589a9",
         "native_os_protocol_version_unchanged": true,
         "hardware_tested": false
       },
@@ -107,10 +110,13 @@
       "direct_pattern_jump": true,
       "trig_select": true,
       "track_selection_momentary": true,
-      "wizard_plock_priority": true
+      "wizard_plock_priority": true,
+      "song_mode": true,
+      "acid_articulation": false,
+      "acid_arp_retrigger": false
     }
   },
-  "recipe_sha256": "18f19a6f7e5082563c30ca46161f9ffe3aeb6179582547c8deb5fd4f73774f57",
+  "recipe_sha256": "c2736d664b0de0e37ea2eefd8ead9b2be89a386c4c559b15f093859f2f1a47e5",
   "selection_bits": 19,
   "selection_variants": 524288,
   "embedded_unselected_dsp": true,
@@ -128,12 +134,15 @@
     "ChordKeys",
     "Vinyl"
   ],
-  "asset_source_commit": "59cd42cee5c7ee8e240c70444efccfecdfeed023",
+  "asset_source_commit": "8a10633b3ab20937a363ece8c9e36683d1e5efe3",
   "filter_deferred_new_sound_low": true,
   "double_stop_fx_reset": true,
   "guide_version": "2026-10-29-guide261",
   "acid_envelope_global": true,
   "pots_delay": true,
   "wizard_plock_priority": true,
-  "hardware_verified": false
+  "hardware_verified": false,
+  "song_mode": true,
+  "acid_articulation": true,
+  "acid_arp_retrigger": true
 }

@@ -78,3 +78,14 @@ et lisible dans les deux etats. Un clic DATA dans Song choisit STOP/LOOP,
 avec ou sans FUNC ; sa rotation reste reservee a la ligne. Verification
 appui+release via Application sans double bascule. Livraisons Song_Menu_Data_Fix
 sous ../song-menu-label-fix/ ; verification materielle encore attendue.
+
+## Publication complete2.64 (30/10/2026)
+
+AveyCole demande explicitement de publier toutes ces fonctions dans les builds,
+y compris le correctif de relance arpege ACID. Le generateur combine Song,
+articulation ACID et garde Wizard sur les cinq bases2.62 epinglees. Le titre
+est2.64. ACID_ARP_RETRIGGER force le chemin de relance natif avant la decision
+de glide/legato pour les notes du retrig natif actif. Les slides ordinaires et
+les cinq couples glide/legato du banc restent valides. Les flasheurs main et
+Optional servent maintenant ces images completes ; Lite conserve Song et
+les fonctions partagees. Confirmation materielle encore attendue.

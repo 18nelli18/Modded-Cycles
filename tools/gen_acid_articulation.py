@@ -72,7 +72,7 @@ def main():
  from title204_assets import apply as apply_title
  def title_patch(at,old,new,buf):
   assert bytes(buf[at-BASE:at-BASE+len(old)])==old;buf[at-BASE:at-BASE+len(old)]=new
- m['title_screen']=apply_title(Path('H:/CREATURE-source/retrosyn-integration-step-rec-solo'),O,image,title_patch,'2.63',lite=not full,previous=m['title_screen'])
+ m['title_screen']=apply_title(Path('H:/CREATURE-source/retrosyn-integration-step-rec-solo'),O,image,title_patch,'2.64',lite=not full,previous=m['title_screen'])
  dirty=bytes(x!=y for x,y in zip(image[:START],stock))+b'\1'*(len(image)-START);packed=aplib_grow.repack_grow(bytes(image),ops,dirty,START);packed,_=pack(packed);assert aplib.depack(packed,bootstrap_gap=0x1ffc00)[0]==image
  plains=[]
  for sec in pkg['sections']:
@@ -82,5 +82,5 @@ def main():
  result=wrap(container.build_stream(rebuilt,BYTES_PER_MSG),info['product'],info['start_seq']);target=O/'Supermodel_ACID_Articulation_Experimental.syx'
  if a.check:assert target.read_bytes()==result
  else:target.write_bytes(result)
- m.update(sha256=sha(result),main_os_sha256=sha(image),acid_articulation=dict(code=CODE,code_bytes=len(blob),bss=BSS,bss_end=sy['aa_end'],symbols=sy,hooks=hooks,flash_bytes=len(rebuilt),hardware_tested=False,full=full,song_row=songrow));(O/'BUILD.json').write_text(json.dumps(m,indent=2)+'\n');print('BUILT experimental ACID',len(blob),'code bytes',len(rebuilt),'flash bytes',flush=True)
+ m.update(sha256=sha(result),main_os_sha256=sha(image),acid_articulation=dict(loader=loader,previous_loader=oldentry,arp_retrigger=True,code=CODE,code_bytes=len(blob),bss=BSS,bss_end=sy['aa_end'],symbols=sy,hooks=hooks,flash_bytes=len(rebuilt),hardware_tested=False,full=full,song_row=songrow));(O/'BUILD.json').write_text(json.dumps(m,indent=2)+'\n');print('BUILT experimental ACID',len(blob),'code bytes',len(rebuilt),'flash bytes',flush=True)
 if __name__=='__main__':main()

@@ -1,10 +1,10 @@
-# Supermodel Machine Optional 2.63
+# Supermodel Machine Optional 2.64
 
 The updated Optional Full and Lite bases include per-track FX, Global FX
 MST/TRK controls, per-pattern/project FX persistence, the later LFO/filter and
 native audio/DMA fixes, packed repeat-history writes, distinct Punch attacks
 and the inactive-FX zero bypass. Both startup screens and this flasher display
-2.63. Optional retains Legacy, ChordKeys, Vinyl and all nineteen machine choices.
+2.64. Optional retains Legacy, ChordKeys, Vinyl and all nineteen machine choices.
 Legacy keeps its original full-rate processing; only MACRO's existing supported
 models receive the selective ECO behavior used by main Full.
 
@@ -29,7 +29,7 @@ requires explicitly pinned Full/Lite hashes for a new release. Run
 `tools/check_release_versions.py --base origin/main` before each release push
 to verify the new release number, image hashes and actual compiled title bytes.
 
-Fresh 2.63 checks cover both base bootstraps, per-track controls and storage,
+Fresh 2.64 checks cover both base bootstraps, per-track controls and storage,
 96 native mixer comparisons, eight signed selections on Cycles and both Samples
 transports, eight native payload boots, 65 native selector masks, 5265 selector
 comparisons and 1625 native dispatch checks. The browser checks all nineteen
@@ -46,15 +46,15 @@ The experimental Machinedrum integration adds TRX-B2, TRX-SD and TRX-CH as
 three choices, credited to Talachan12's port. There are 22 optional choices;
 the original 19 remain checked initially. Selecting a TRX engine requires the
 official Machinedrum UW OS 1.63 `.syx`, or the verified 1.63 reference `.bin`.
-Files stay in the browser. These choices generate an experimental 2.63 image;
-normal selections continue using the pinned 2.63 bases until release promotion.
+Files stay in the browser. These choices generate an experimental 2.64 image;
+normal selections continue using the pinned 2.64 bases until release promotion.
 Native emulation is verified; hardware confirmation is pending.
 
 L'integration experimentale ajoute TRX-B2, TRX-SD et TRX-CH, d'apres le port
 de Talachan12. Il y a22choix ; les19precedents restent coches au depart.
 Un moteur TRX exige le SYX officiel Machinedrum UW1.63 ou le BIN1.63 epingle.
-Les fichiers restent dans le navigateur. Ces choix generent une image2.63
-experimentale ; les choix ordinaires conservent les socles2.63 jusqu'a la
+Les fichiers restent dans le navigateur. Ces choix generent une image2.64
+experimentale ; les choix ordinaires conservent les socles2.64 jusqu'a la
 promotion de release. Emulation native verifiee ; confirmation appareil attendue.
 
 Build source: `tools/gen_optional_machinedrum.py`. Proof:
