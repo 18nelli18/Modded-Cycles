@@ -327,3 +327,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [202 - Delay POTS](202-delay-pots.md) : DSP MIT model27 epingle, huit choix de delay dans Full/Lite/Optional ; integration privee experimentale2.61, preuves natives, confirmation appareil en attente.
 
 - [203 - Machinedrum optionnel](203-machinedrum-optionnel.md) : TRX-B2/SD/CH en IDs25..27, catalogue28 et selecteur22choix ; fichier utilisateur1.63, recette sans tables ROM, integration experimentale2.62 et preuves natives/navigateur.
+
+- [204 - Saut pattern global](204-saut-pattern-global.md) : PPPCCC Direct Jump MIT, Global JUMP OFF/ON sauvegarde, cinq editions privees2.62 ; preuves natives sequenceur, touches, menu et preference.
