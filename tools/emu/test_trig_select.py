@@ -116,8 +116,8 @@ chk('Modus aus: Trig, PAGE, SETTINGS + PAGE, SETTINGS + Taste 9 -> Original, Rue
     all(x[0] == 0x55 and x[1] and len(x[3]) == 1 and not x[2] for x in r) and on() == 0)
 # ---- TRACK + PAGE: an
 d0, g, cons, orig = key(15, PRESS, (2,))
-chk('TRACK + PAGE: Modus an, Popup %s, TRACK und PAGE verbraucht %s, Original nicht gerufen' % (popup(), cons),
-    on() == 1 and d0 == 1 and g and orig == [] and cons == [2, 15] and popup() == (C.OV_TEXT, 'On', 'Trig', 'Select'))
+chk('TRACK + PAGE: Modus an, Popup %s, nur PAGE verbraucht %s, Original nicht gerufen' % (popup(), cons),
+    on() == 1 and d0 == 1 and g and orig == [] and cons == [15] and popup() == (C.OV_TEXT, 'On', 'Trig', 'Select'))
 # ---- Trigs waehlen
 res = []
 for code, fl in ((16, PRESS), (16, HOLD), (16, REL), (19, PRESS), (19, REL), (23, PRESS), (21, PRESS), (17, PRESS)):
@@ -155,8 +155,8 @@ r = key(9, PRESS | 2)
 chk('andere Tasten im Modus (FUNC + Taste 9): Original, sieht die Auswahl', len(r[3]) == 1 and r[3][0][2] == mask() and mask() != 0)
 # ---- TRACK + PAGE: aus
 d0, g, cons, orig = key(15, PRESS, (2,))
-chk('TRACK + PAGE im Modus: aus, Auswahl geloescht, Popup Off, TRACK + PAGE verbraucht',
-    on() == 0 and steps() == [] and hold() == 0 and popup()[1] == 'Off' and cons == [2, 15] and orig == [] and d0 == 1 and g)
+chk('TRACK + PAGE im Modus: aus, Auswahl geloescht, Popup Off, nur PAGE verbraucht',
+    on() == 0 and steps() == [] and hold() == 0 and popup()[1] == 'Off' and cons == [15] and orig == [] and d0 == 1 and g)
 r = key(16, PRESS)
 chk('danach: Trig-Tasten wieder normal (Original)', len(r[3]) == 1 and steps() == [])
 
@@ -215,4 +215,22 @@ _,base_mem=CACHE[STOCK];_,test_mem=CACHE[IMG];assert base_mem[0][0]==test_mem[0]
 oldram,newram=base_mem[0][1],test_mem[0][1];start=j['code']-base_mem[0][0];end=start+j['code_bytes']
 assert oldram[:start]==newram[:start] and oldram[end:]==newram[end:]
 chk('RAM runtime : DSP, Genie, Page Len et handlers existants inchanges hors du module ajoute',True)
+# TRACK reste physique : ne pas consommer son appui/release avec PAGE.
+closed=[]
+def view_stub(uu,pc,size,kind):
+ sp=uu.reg_read(mk.UC_M68K_REG_A7)
+ if kind=='event':uu.reg_write(mk.UC_M68K_REG_D0,e.r32(e.r32(sp+4)+12))
+ elif kind=='close':closed.append(e.r32(sp+4))
+ else:uu.reg_write(mk.UC_M68K_REG_D0,0)
+ uu.reg_write(mk.UC_M68K_REG_PC,e.r32(sp));uu.reg_write(mk.UC_M68K_REG_A7,sp+4)
+for at,kind in ((0x4007240c,'event'),(0x4e000800,'close'),(0x40075f3c,'general')):u.hook_add(UC_HOOK_CODE,view_stub,begin=at,end=at,user_data=kind)
+trackview,trackvt=0x4f04ec00,0x4f04ed00;e.w32(trackview,trackvt);e.w32(trackvt+40,0x4e000800)
+e.w32(G.TS_ON,0);d0,good,cons,orig=key(15,PRESS,(2,));assert on() and good and cons==[15]
+# Vrai TrackSelectionView : l'appui garde la vue, toutes les releases la ferment.
+for flags in (1,0,16,32):
+ e.held={2} if flags&1 else set();e.call(0x4007238c,EV,2,flags,0,127);closed.clear();e.call(0x40024078,trackview,EV)
+ assert closed==([] if flags&1 else [trackview]) and on()
+assert e.call(C.HELD,2)[0]==0
+e.call(G.U_CLR,UISB);S['page']=0;S['trigs']={0:1};key(16,PRESS)
+chk('TRACK relache : vue TrackSelection native fermee, mode ON conserve et tap TRIG selectionne un pas',steps()==[0] and on())
 args.output.write_text(json.dumps(dict(sha256=m['sha256'],checks=checks,hardware_tested=False),indent=2)+'\n')

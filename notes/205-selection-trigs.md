@@ -60,3 +60,24 @@ de la delegation ne remplacent pas cet essai des commandes de bout en bout.
 Verifier aussi changement de piste/pattern et fermeture des autres fenetres.
 Aucun resultat materiel ni mesure CPU revendique ; pas de popup CPU/CUT dans
 ces images. Les flasheurs restent inchanges, pas de publication.
+
+## 4. TRACK momentane (30/10/2026)
+
+Demande utilisateur : entrer dans la selection de trigs ne doit pas verrouiller
+la selection de piste ; celle-ci ne dure que pendant l'appui physique sur TRACK.
+Le wrapper `ts_gest` consommait aussi TRACK via `0x400723e0`. Il retourne
+maintenant sans consommer TRACK ; le noyau TSK consomme seulement PAGE.
+
+[FAIT en emulation] Le vrai handler TrackSelectionView `0x40024078` garde
+la vue pendant l'appui et appelle sa fermeture sur les releases testees
+(flags 0, 16, 32). Le mode de selection reste ON et un tap TRIG suivant
+selectionne encore un pas. La preuve utilise des objets/peripheriques simules ;
+elle ne constitue pas un essai physique complet du routage des touches.
+
+Les cinq editions sont regenerees et passent la preuve native. Packaging
+Cycles/Samples : signatures, bootstrap Samples et deux verificateurs natifs
+valides. Rapports et images prives : `../trig-select-release-fix/`.
+Full SHA256 : `c74daa751796ebf79a52bac28083ca0d36f859cfde85dce1272700f8c998a380`.
+Optional MD all22 : `4829f71e6bc1cb0632de7ce37c7eb2ff2349681f2d13d54f372d12cc7fc23fa6`.
+[A FAIRE sur appareil] Maintenir TRACK, appuyer PAGE, relacher TRACK puis
+selectionner des trigs ; verifier aussi TRACK seul et sortie du mode.

@@ -7,9 +7,8 @@ ts_popup:
  addq.l #4,%sp
  rts
 ts_gest:
- move.l %d0,-(%sp)
- jsr 0x400723e0
- addq.l #4,%sp
+ /* TRACK doit conserver sa release native pour fermer TrackSelectionView.
+  * Seule PAGE est consommee par TSK ; aucun latch du modificateur. */
  rts
 /* Appele par JSR au site40021f56 : D3=pas, D2=LED, A5=etat.
  * Page*16 est a SP+60. Les non-selectionnes gardent le helper slide existant. */
