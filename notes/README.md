@@ -333,3 +333,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [205 - Selection trigs](205-selection-trigs.md) : PPPCCC MIT, TRACK + PAGE choisi par AveyCole ; masque tenu natif, all/none, pages, LEDs et Page Len preserves ; candidat combine prive2.62, confirmation appareil en attente.
 
 - [206 - Song et articulation ACID](206-song-et-articulation-acid.md) : investigation et proposition ; chaine native64 entrees, glide existant, arrangement et controles explicites a implementer.
+
+- [207 - Prototype Song et ACID](207-song-acid-prototype.md) : editeur, chaine native64 lectures, STOP/LOOP, mutes et projet ; glide/legato physiques par piste ; cinq editions experimentales2.63, confirmation appareil en attente.

@@ -73,9 +73,16 @@ struct track {
 #ifdef GOV_SKIP
 	u32 seen;                                        /* minuteur au dernier appel */
 #endif
+#ifdef ACID_ARTICULATION
+ u32 glide_retrigger;
+#endif
 };
 
 static struct track trk[6];
+#ifdef ACID_ARTICULATION
+extern u32 aa_legato_get(u32 track),aa_glide_get(u32 track);
+extern s32 aa_glide_coefficient(u32 setting);
+#endif
 #ifdef ACID_ENV_SELECT
 extern volatile u32 ae_mode; /* 0:F historique, 1:A, 2:AF */
 #endif
@@ -102,6 +109,9 @@ void acid_update(s32 pmod, char *v, const char *p)
 		tr->held = V32(0x38) != 0;
 		tr->ramp = 0;
 		tr->mach = (s8)p[0x12];
+#ifdef ACID_ARTICULATION
+  tr->glide_retrigger=0;
+#endif
 		V32(MARK_OFF) = MARK;
 	}
 #ifdef GOV_SKIP
@@ -135,6 +145,10 @@ void acid_update(s32 pmod, char *v, const char *p)
 	tr->left = LEN_LEFT[t];
 	if (V32(0x34)) {
 		slide = tr->held && !tr->idle && (left == 0 || left > 2 * LEN_STEP) && (s8)p[0x12] == tr->mach;
+#ifdef ACID_ARTICULATION
+  tr->glide_retrigger=slide&&aa_glide_get(t)&&!aa_legato_get(t);
+  if(!aa_legato_get(t))slide=0;
+#endif
 		tr->held = 1;
 		/* Velocite97..127 : accent progressif, conserve le volume natif. */
 		tr->accent = VGAIN_NEXT[t] > 96 ? (VGAIN_NEXT[t]-96)*32767/31 : 0;
@@ -175,6 +189,11 @@ void acid_update(s32 pmod, char *v, const char *p)
 	tr->in.wave = P16(0x1e) != 0;
 	tr->in.accent = tr->accent;
 	tr->in.trig = slide ? ACID_SLIDE : (V32(0x38) ? ACID_TRIG : 0);
+#ifdef ACID_ARTICULATION
+ tr->in.glide_a=aa_glide_coefficient(aa_glide_get(t));
+ if(slide&&!aa_glide_get(t))tr->in.trig=ACID_TIE;
+ if(!V32(0x34)&&V32(0x38)&&tr->glide_retrigger){tr->in.trig=ACID_GLIDE_TRIG;tr->glide_retrigger=0;}
+#endif
 }
 
 void acid_render(s32 *out, char *v)

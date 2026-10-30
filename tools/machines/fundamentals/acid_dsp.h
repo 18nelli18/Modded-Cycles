@@ -86,10 +86,15 @@ typedef struct {
 	s32 accent; /* 0..32767, accent de la note, pas un potard supplementaire */    /* potards 0..32767 */
 	s32 wave;          /* 0 : scie, 1 : carre */
 	s32 trig;          /* 0 : rien ; ACID_TRIG : nouvelle note ; ACID_SLIDE : note liee (glisse, sans MEG) */
+#ifdef ACID_ARTICULATION
+ s32 glide_a;       /* Q31 : 0 conserve la constante historique, ONE = instantane */
+#endif
 } acid_in_t;
 
 #define ACID_TRIG  1
 #define ACID_SLIDE 2
+#define ACID_TIE 3
+#define ACID_GLIDE_TRIG 4
 #define ACID_ATK_SH 5      /* fondu d'entree d'une nouvelle note : 2^5 = 32 echantillons (~0,7 ms) */
 
 static inline s32 acid_lut17(const s32 *t, s32 x)        /* 17 points sur 0..32767, interpoles */
@@ -147,11 +152,24 @@ static inline void acid_block(acid_t * ACID_R s, const acid_in_t * ACID_R in, s3
 			s->key = in->note;
 			s->env = ACID_ONE;
 		}
+#ifdef ACID_ARTICULATION
+  if(in->trig == ACID_TIE)s->key=in->note;
+  if(in->trig == ACID_GLIDE_TRIG)s->env=ACID_ONE;
+#endif
 		s->edec = acid_lut17(ACID_DEC, in->decay);
 	}
-	if (in->trig != ACID_TRIG)
+	if (in->trig != ACID_TRIG
+#ifdef ACID_ARTICULATION
+     && in->trig != ACID_GLIDE_TRIG
+#endif
+ )
 		s->env = qmul(s->env, s->edec);
-	s->key += qmul(in->note - s->key, ACID_SLIDE_A);       /* slide : 90 % en 50 ms environ */
+#ifdef ACID_ARTICULATION
+ if(in->glide_a==ACID_ONE)s->key=in->note;
+ else s->key+=qmul(in->note-s->key,in->glide_a?in->glide_a:ACID_SLIDE_A);
+#else
+ s->key += qmul(in->note - s->key, ACID_SLIDE_A);       /* slide : 90 % en 50 ms environ */
+#endif
 	t = s->key + in->tune;
 	inc = acid_inc(t < 0 ? 0 : (t > (127 << 16) ? 127 << 16 : t));
 
