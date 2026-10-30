@@ -186,16 +186,31 @@ function render(host, opts) {
     if (sel) el("rect", { x: 147, y: y - 1, width: 115, height: 14, class: "lcd-sel" }, lcd);
     text(lcd, x || 151, y + 10, s, "lcd-t" + (sel ? " inv" : ""));
   };
+  // "A|B|C" shows the screens in turn (a picker moving through its choices, Mod Setup then Song).
+  let cycleTimer = null;
   function show(spec) {
+    clearInterval(cycleTimer);
+    cycleTimer = null;
+    spec = (spec || "logo").trim();
+    const steps = spec.split("|").map((s) => s.trim()).filter(Boolean);
+    if (steps.length < 2) return paint(spec);
+    let i = 0;
+    paint(steps[0]);
+    if (!reduced()) cycleTimer = setInterval(() => { i = (i + 1) % steps.length; paint(steps[i]); }, 1500);
+  }
+  function paint(spec) {
     clearInterval(lcdTimer);
     lcdTimer = null;
-    spec = (spec || "logo").trim();
     lcd.innerHTML = "";
     if (spec.startsWith("capture:")) {
+      // a real frame of the firmware's 128 x 64 screen, in the panel's LCD colours, fitted without stretching
       el("image", { x: 145, y: 170, width: 119, height: 64,
-        href: spec.slice(8), preserveAspectRatio: "none",
-        style: "image-rendering:pixelated",
-        "aria-label": "Supermodel 2.64 native firmware screen" }, lcd);
+        href: spec.slice(8), preserveAspectRatio: "xMidYMid meet",
+        "aria-label": "Supermodel native firmware screen" }, lcd);
+    } else if (spec === "startup") {
+      const rel = window.MC_RELEASES && window.MC_RELEASES[0];
+      text(lcd, 204.5, rel ? 201 : 209, "supermodel", "lcd-logo", { "text-anchor": "middle", style: "font-size:15px" });
+      if (rel) text(lcd, 204.5, 220, rel.version, "lcd-t", { "text-anchor": "middle" });
     } else if (spec === "logo") {
       text(lcd, 204.5, 209, "elektron", "lcd-logo", { "text-anchor": "middle" });
     } else if (spec === "menu") {

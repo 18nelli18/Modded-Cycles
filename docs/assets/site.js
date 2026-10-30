@@ -106,7 +106,7 @@ const devices = $$("[data-device]").map((host) => {
 // home: hovering a mod lights the controls it touches and changes the screen
 const bench = devices[0];
 $$("[data-hl]").forEach((a) => {
-  const on = () => { if (bench) { bench.light(split(a.dataset.hl)); bench.show(a.dataset.capture ? "capture:" + a.dataset.capture : a.dataset.lcd); } };
+  const on = () => { if (bench) { bench.light(split(a.dataset.hl)); bench.show(a.dataset.lcd); } };
   const off = () => { if (bench) { bench.light([]); bench.show(document.querySelector("[data-device]").dataset.lcd || "logo"); } };
   a.addEventListener("mouseenter", on);
   a.addEventListener("focus", on);
