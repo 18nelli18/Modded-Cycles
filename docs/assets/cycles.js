@@ -207,10 +207,6 @@ function render(host, opts) {
       el("image", { x: 145, y: 170, width: 119, height: 64,
         href: spec.slice(8), preserveAspectRatio: "xMidYMid meet",
         "aria-label": "Supermodel native firmware screen" }, lcd);
-    } else if (spec === "startup") {
-      const rel = window.MC_RELEASES && window.MC_RELEASES[0];
-      text(lcd, 204.5, rel ? 201 : 209, "supermodel", "lcd-logo", { "text-anchor": "middle", style: "font-size:15px" });
-      if (rel) text(lcd, 204.5, 220, rel.version, "lcd-t", { "text-anchor": "middle" });
     } else if (spec === "logo") {
       text(lcd, 204.5, 209, "elektron", "lcd-logo", { "text-anchor": "middle" });
     } else if (spec === "menu") {
