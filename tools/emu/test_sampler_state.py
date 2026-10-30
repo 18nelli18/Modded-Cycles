@@ -13,7 +13,9 @@ d'autre ne touche). Vérifications :
      tous ; k 27 n'est jamais écrit ;
   4. le changement de machine (mc_commit_hook) : un état d'étiquette 0x7 (l'actuelle) ou 0xF (samplerIR) est gardé,
      sans état on prend le défaut, en deux moitiés ; k 27 et d1 intacts. Avant, le test du bit 7 ne reconnaissait pas
-     l'étiquette 0x7 : un Sampler quitté puis repris perdait ses modes.
+     l'étiquette 0x7 : un Sampler quitté puis repris perdait ses modes ;
+  5. l'écran des machines (restore_hook -> 0x4001416c) : revenir à la machine d'origine sans quitter l'écran remet le
+     cliché pris à son ouverture, pour le Sampler comme pour les autres (Model-TG sautait le Sampler, notes/83 §4).
 
     python3 tools/emu/test_sampler_state.py --cycles firmware/model-cycles_OS1.13.syx
 """
@@ -161,6 +163,30 @@ def main():
             and u.uc.reg_read(mk.UC_M68K_REG_A7) == sp
         check(ok, f"changement de machine, {name} : k 26 / sound+86 = {got[0]:#06x} / {got[1]:#06x} ; k 27, d1 et "
                   f"la pile intacts")
+
+    # 5. l'écran des machines : revenir à la machine d'origine sans le quitter remet le cliché pris à l'ouverture
+    # (0x4001416c, par restore_hook), le Sampler compris (Model-TG le sautait : ses Start/End/Filtre/Résonance et
+    # le reste de la page revenaient aux défauts)
+    obj, vt, vec, pairs = S + 0x300, S + 0x340, S + 0x400, S + 0x420
+    snd_fn, notify = S + 0x3e0, S + 0x3e4
+    u.uc.mem_write(obj, struct.pack(">I", vt))
+    u.uc.mem_write(vt + 40, struct.pack(">I", snd_fn))
+    u.uc.mem_write(vt + 16, struct.pack(">I", notify))
+    u.hooks[snd_fn] = ("sound_obj", rt)
+    u.hooks[notify] = ("notify", 0)
+    snap = [(11 + i, 0x1111 * (i + 1)) for i in range(4)] + [(5, 0x0321)]   # (k, valeur) : k 11..14, k 5
+    u.uc.mem_write(pairs, b"".join(struct.pack(">IHH", s, v, 0) for s, v in snap))
+    u.uc.mem_write(vec, struct.pack(">II", pairs, pairs + 8 * len(snap)))
+    for mach in (6, 2):
+        u.uc.mem_write(rt, bytes(100))
+        u.uc.mem_write(rt + 38, bytes([mach]))
+        u.calls.clear()
+        u.call(sym["restore_hook"], obj, vec)
+        got = [w16(u, rt + 20 + 2 * k) for k, _ in snap]
+        sent = bool(u.calls) and u.calls[-1][0] == "notify" and u.calls[-1][1][:2] == (obj, 0)
+        check(got == [v for _, v in snap] and sent and u.sp_ok,
+              f"retour à la machine d'origine sur l'écran des machines, machine {mach} : les {len(snap)} réglages du "
+              f"cliché remis ({[hex(x) for x in got]}), notification envoyée, pile rendue")
     print("\nTOUT OK" if not FAIL else f"\n{len(FAIL)} ÉCHEC(S)")
     return 1 if FAIL else 0
 

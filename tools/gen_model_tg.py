@@ -325,6 +325,16 @@ MC_PATCHES = (
      f'    jmp     {sampler_mode_filter.GFLT:#x}            | Modded-Cycles: smf_gflt (tools/sampler_mode_filter.py)\n    nop\n',
      "filtre de piste Sampler : actif uniquement en modes Granular/Stretch/Pluck/Wave (notes/83)"),
     ("src/model_tg.s",
+     '    jmp     0x4005a6ac            | none\n',
+     f'    jmp     {sampler_mode_filter.COM:#x}            | Modded-Cycles: smf_com (tools/sampler_mode_filter.py)\n',
+     "liste DEST des LFO du Sampler : Filtre et Résonance de piste (k 24/25) en modes Granular/Stretch/Pluck/Wave, "
+     "même taille (notes/83 §3)"),
+    ("src/model_tg.s",
+     '    cmpil   #6,%d0\n    beqs    rs_skip\n',
+     '    cmpil   #6,%d0\n    nop                           | Modded-Cycles: the Sampler is restored too\n',
+     "écran des machines : revenir au Sampler d'origine sans quitter l'écran remet ses réglages, comme pour toute "
+     "machine (le retour au stock sautait le Sampler), même taille (notes/83 §4)"),
+    ("src/model_tg.s",
      'str_greso:     .asciz "Resonance"\n',
      'str_greso:     .asciz "Res"\n    .byte 0,0,0,0,0,0     | padding: same length as "Resonance"\n',
      "noms : le Resonance de la piste ne tient pas sur la plaque du popup ; Res tient, et l'entree du "
@@ -423,7 +433,7 @@ ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_e
 # appelle ces fonctions et lit ces variables de Model-TG, aux mêmes adresses dans les deux builds.
 PV_SYMBOLS = ("tok_of", "sound_obj", "ensure_loaded", "slot_hash", "pd_mode", "ld_busy", "pad_load_hook")
 # Symboles de l'état du Sampler (k 26 + sound+86), que tools/emu/test_sampler_state.py appelle (notes/86).
-SS_SYMBOLS = ("state_store", "st_apply", "st_apply_c", "st_fields", "mc_commit_hook", "mch_hasst")
+SS_SYMBOLS = ("state_store", "st_apply", "st_apply_c", "st_fields", "mc_commit_hook", "mch_hasst", "restore_hook")
 # Symboles du filtre en échelle que tools/emu/test_model_tg_res.py appelle directement (notes/85) : ils n'ont pas bougé
 # avec RES_PATCHES, la preuve s'en sert aussi sur le tweak d'avant.
 FLT_SYMBOLS = ("ladder_run", "filt_coef", "filt_fbmax", "filt_mkt", "filt_mk", "filt_y1", "gflt_run", "gflt_f",

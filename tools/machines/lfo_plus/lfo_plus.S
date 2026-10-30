@@ -661,6 +661,11 @@ taken:
  *  - MACHINES tenue (bit 0 de KEY_BITS) sur PITCH (position 0) d'une piste MACRO (son enregistrement, 0x4004df76,
  *    porte FINE en entrée 16) : FINE (id 43), le lo-fi, comme MACHINES + PITCH le règle sur la page ;
  *    FUNC+PITCH (a5 != 0) reste le stock PITCH ; autres machines inchangées.
+ *  - Filtre ou Résonance de piste (0x0c / 0x0b, SWEEP / CONTOUR sous MACHINES) sur une piste Sampler : l'identifiant
+ *    est relu dans le descripteur du Sampler sous MACHINES (0x4004df5c(7), descr_hook de Model-TG puis smf_descr,
+ *    positions 4 et 5) : en modes 0..2 son propre filtre (0x49 / 0x4a, k 13/14), en modes 3..6 celui de la piste
+ *    (0x0c / 0x0b, k 24/25), ce que les potards règlent dans chaque mode. Avant, l'enregistrement de KICK donnait
+ *    toujours k 24/25 : muet en modes 0..2, et hors de la liste DEST du Sampler (DST None).
  *  - affectation libre ou déjà prise : admise (la molette DEST saute les prises, mais l'affectation directe par
  *    potard autorise le cumul, notes/56 §3.13).
  * d0-d1/a0-a1 libres ; d3-d6, a2-a5 gardés (la suite s'en sert). */
@@ -679,7 +684,25 @@ lfo_learn:
 	   MACHINES + PITCH tenu donne FINE (id 43), la vraie fonction stock. MACHINES + PITCH sans LFO reste
 	   le lo-fi de MACRO, par knob_vec. */
 	moveq	#FTUN_ID, %d2
-1:	move.l	%d2, -(%sp)
+1:	moveq	#0x0c, %d1			/* Filtre (0x0c) ou Résonance (0x0b) de piste ? */
+	sub.l	%d2, %d1
+	moveq	#1, %d0
+	cmp.l	%d1, %d0
+	bcs.s	2f
+	move.l	%a3, -(%sp)
+	jsr	0x40014042			/* machine de la piste */
+	addq.l	#4, %sp
+	moveq	#6, %d1
+	cmp.l	%d0, %d1
+	bne.s	2f				/* pas le Sampler */
+	pea	7.w
+	jsr	0x4004df5c			/* descripteur du Sampler (sous MACHINES) */
+	addq.l	#4, %sp
+	movea.l	%d0, %a0
+	moveq	#0x0c, %d1
+	sub.l	%d2, %d1			/* 0 : Filtre, position 4 ; 1 : Résonance, position 5 */
+	move.l	24(%a0, %d1.l*4), %d2
+2:	move.l	%d2, -(%sp)
 	jsr	0x4005a4e8			/* id -> k */
 	addq.l	#4, %sp
 	move.l	%d0, %d2

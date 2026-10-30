@@ -80,3 +80,48 @@ Validation globale de la chaîne de build :
   la génération s'arrête.
 - Reste connu : le mode lu est celui de la piste sélectionnée (comme `wf_popup`), pas forcément celle dont l'OS
   demande le descripteur.
+
+## 3. `[LFO]` + `MACHINES` + SWEEP / CONTOUR sur le Sampler `[FAIT en émulation]` (30/10/2026)
+
+Signalé par le propriétaire : sur le Sampler, `[LFO]` + `MACHINES` + SWEEP / CONTOUR ne donnait pas Filtre / Résonance
+comme destination (DST None), alors que DECAY donnait bien Attack. Relevé (agent DSH, identique sur `merge-retro`, donc
+antérieur au lo-fi de piste) :
+
+- l'affectation par potard (`0x4001eaa2`) lit l'identifiant dans l'enregistrement de **KICK** (`0x4004df5c(1)`), que
+  `dh_pass` de Model-TG change sous `MACHINES` (positions 1/4/5 = 0x0d/0x0c/0x0b) : sur le Sampler on obtenait donc
+  toujours k 24/25 (filtre de piste), jamais son filtre (0x49/0x4a, k 13/14), ce que règlent pourtant les potards en
+  modes 0..2 ; et en modes 0..2 le filtre de piste est sauté : affectation muette ;
+- `sampler_com_gate` (Model-TG) retire k 24/25 de la liste DEST du Sampler (`paramIdFor`, `0x4005a692`) : la page LFO
+  nommait None et la diode retombait sur PITCH, même en modes 3..6 où ce filtre joue.
+
+Correctifs :
+
+1. `lfo_learn` (`tools/machines/lfo_plus/lfo_plus.S`) : pour 0x0c/0x0b sur une piste Sampler (`0x40014042`),
+   l'identifiant est relu dans le descripteur du Sampler sous `MACHINES` (`0x4004df5c(7)` : `descr_hook`, puis
+   `smf_descr`), positions 4 et 5 : 0x49/0x4a en modes 0..2, 0x0c/0x0b en modes 3..6. lfo-plus ne lit aucune adresse
+   de Model-TG ; tant que `sampler_pre` n'a pas construit le descripteur (`descr_done`), on retombe sur l'ancien
+   résultat.
+2. `smf_com` (`sampler_mode_filter.S`) à la place du `jmp 0x4005a6ac` (« aucun identifiant ») de `sampler_com_gate`,
+   même taille : en modes 3..6 la réponse commune (0x0c/0x0b). DST affiche le Filtre / la Résonance de piste et
+   `lfo_led` allume SWEEP / CONTOUR. En modes 0..2, rien ne change. (La molette DEST n'est pas vérifiée.)
+   Place : la recherche du mode (`smf_mode`) est mise en commun avec `smf_descr` ; le code tient en 192 o.
+
+**Preuve** `tools/emu/test_lfo_plus.py` §9 (vrai code de l'OS, de Model-TG et de lfo-plus) : Sampler, modes 0..6,
+LFO 1..4 : `[LFO]` + `MACHINES` + SWEEP / CONTOUR → k 13/14 en modes 0..2, k 24/25 en modes 3..6, k 13/14 sans
+`MACHINES` ; `paramIdFor` nomme 24/25 0x0c/0x0b en modes 3..6 seulement, 13/14 toujours 0x49/0x4a ; diode SWEEP (40) /
+CONTOUR (41). Seul avec Model-TG : TOUT OK ; avec tout `os.json` : les 9 échecs préexistants (handoff §5), le nouveau
+contrôle passe. `test_sampler_mode_filter.py` : TOUT OK (ses adresses `track_hash` / `track_slot` sont maintenant
+tirées de `slot_hash`, elles dataient d'avant le +0x34 de notes/86).
+
+## 4. Retour à la machine d'origine sur l'écran des machines (30/10/2026)
+
+Signalé par le propriétaire : un Sampler réglé, passé sur une autre machine puis repris, sonnait autrement. L'OS
+photographie les réglages de chaque piste à l'ouverture de l'écran des machines ; revenir sur la machine d'origine
+sans le quitter les remet (`0x4001416c`). Model-TG sautait ce retour pour le Sampler (`restore_hook`), qui retombait
+donc sur les défauts de page de l'OS et ceux de `mc_commit_hook` (Start 0, End au maximum, Filtre ouvert, Résonance
+0) : seuls ses modes et son échantillon survivaient.
+
+Retouche de `MC_PATCHES` (même taille, `beqs rs_skip` → `nop`) : le Sampler est rendu comme toute machine. Un vrai
+changement de machine (sortie de l'écran puis retour plus tard) remet toujours les défauts, comme le stock pour toutes
+les machines. **Preuve** `tools/emu/test_sampler_state.py` §5 : `restore_hook` (vrai code, puis `0x4001416c` de l'OS)
+remet les cinq réglages du cliché (k 11..14 et k 5) et envoie la notification, Sampler (6) comme Metal (2).

@@ -9,6 +9,11 @@
 
 	.globl	smf_descr
 	.globl	smf_gflt
+	.globl	smf_com
+
+	.equ	PID_COMMON, 0x40a79394		/* paramIdFor : identifiants des paramètres communs, par k */
+	.equ	PID_OUT, 0x4005a6fc		/* paramIdFor : sortie, d0 = l'identifiant */
+	.equ	PID_NONE, 0x4005a6ac		/* paramIdFor : aucun identifiant (d0 = 0) */
 
 	.section .text.sampler_mode_filter, "ax"
 
@@ -16,22 +21,11 @@
  * 0x4004df5c : elle ne touche que d0 et d1, et l'appelant compte sur a0/a1 (Model-TG l'a payé d'un plantage, voir
  * descr_hook). d1, d2, a0 et a1 sont donc rendus intacts ; seul d0 (le descripteur) change. */
 smf_descr:
-	lea	-16(%sp), %sp
-	movem.l	%d1-%d2/%a0-%a1, (%sp)
-	jsr	CUR_PROJ
-	move.l	%d0, -(%sp)
-	jsr	CUR_KIT
-	move.l	%d0, -(%sp)
-	jsr	SEL_TRACK
-	addq.l	#8, %sp
-	move.l	%d0, %d2
-	cmpi.l	#6, %d2
-	bhs.s	.Luse_atk
-
-	lea	LOOP_MODE, %a0
-	move.l	(%a0,%d2.l*4), %d0
-	cmpi.l	#3, %d0
-	blt.s	.Luse_atk
+	lea	-12(%sp), %sp
+	movem.l	%d1/%a0-%a1, (%sp)
+	move.l	#SAMPLER_DESCR_ATK, %d0
+	bsr.s	smf_mode
+	ble.s	9f
 
 	/* Modes 3..6 : copie dans other_descr et affectation SWEEP -> 0x0c, CONTOUR -> 0x0b */
 	lea	OTHER_DESCR, %a0
@@ -45,17 +39,41 @@ smf_descr:
 	move.l	%d1, -52(%a0)		/* other_descr + 24 (SWEEP = Filter) */
 	moveq	#0x0b, %d1
 	move.l	%d1, -48(%a0)		/* other_descr + 28 (CONTOUR = Res) */
-	lea	-76(%a0), %a0
-	move.l	%a0, %d0
-	bra.s	.Ldescr_out
+	move.l	#OTHER_DESCR, %d0
+9:	movem.l	(%sp), %d1/%a0-%a1
+	lea	12(%sp), %sp
+	rts
 
-.Luse_atk:
-	lea	SAMPLER_DESCR_ATK, %a0
-	move.l	%a0, %d0
+/* À la place de « jmp 0x4005a6ac » (aucun identifiant) dans sampler_com_gate (Model-TG), pris pour le Sampler
+ * (groupe 6) et k 24/25 (a2) : Model-TG les cache de la liste DEST des LFO parce que son filtre de piste ne joue pas
+ * sur le Sampler. En modes 3..6 il y joue (smf_gflt) : on rend alors l'identifiant commun (0x0c Filtre, 0x0b
+ * Résonance), comme pour les autres machines. La page LFO affiche FLT/RES au lieu de None et la diode trouve SWEEP /
+ * CONTOUR. En modes 0..2 : rien, comme avant (le Sampler y a son propre filtre, k 13/14). */
+smf_com:
+	bsr.s	smf_mode
+	ble.s	1f
+	lea	PID_COMMON, %a0
+	move.l	(%a0,%a2.l*4), %d0
+	jmp	PID_OUT
+1:	jmp	PID_NONE
 
-.Ldescr_out:
-	movem.l	(%sp), %d1-%d2/%a0-%a1
-	lea	16(%sp), %sp
+/* d1 = loop_mode de la piste sélectionnée (hors des pistes 0..5 : 0) moins 2, d'où « ble » = modes 0..2. Détruit
+ * a0/a1 (smf_descr les garde, avec d1) ; d0 rendu intact. */
+smf_mode:
+	move.l	%d0, -(%sp)
+	jsr	CUR_PROJ
+	move.l	%d0, -(%sp)
+	jsr	CUR_KIT
+	move.l	%d0, -(%sp)
+	jsr	SEL_TRACK
+	addq.l	#8, %sp
+	moveq	#0, %d1
+	cmpi.l	#6, %d0
+	bcc.s	1f
+	lea	LOOP_MODE, %a0
+	move.l	(%a0,%d0.l*4), %d1
+1:	move.l	(%sp)+, %d0
+	subq.l	#2, %d1
 	rts
 
 smf_gflt:

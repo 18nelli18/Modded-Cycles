@@ -62,13 +62,21 @@ def setup_sampler_sample(e, tw, slot=0):
     return pcm, N_PCM
 
 
+def track_tables(tw):
+    """(track_hash, track_slot) de Model-TG : 0x100 et 0xe8 o sous slot_hash (model_tg.s, track_hash .. track_tried),
+    pris du symbole pour suivre les retouches qui déplacent ces tables (ST_SPLIT_PATCHES : +0x34, notes/86)."""
+    sh = int(tw["symbols"]["slot_hash"], 16)
+    return sh - 0x100, sh - 0xe8
+
+
 def run_mode_audio(img, tw, mode, cutoff, res=0, blocks=15):
     """Rend `blocks` de la piste 0 en machine Sampler (6) avec `mode` et le filtre de piste réglé."""
     e = TM.engine(img)
     setup_sampler_sample(e, tw, slot=0)
     # track_slot = 0, track_hash = 0x1234
-    e.uc.mem_write(0x401be3b8, struct.pack(">I", 0))
-    e.uc.mem_write(0x401be3a0, struct.pack(">I", 0x1234))
+    th, ts = track_tables(tw)
+    e.uc.mem_write(ts, struct.pack(">I", 0))
+    e.uc.mem_write(th, struct.pack(">I", 0x1234))
     e.set(0, machine=6, note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0, finetune=64, decay=60)
     e.uc.mem_write(0x401b2404, struct.pack(">I", mode))
     e.uc.mem_write(E.PARAMS + 0xe + 0 * 0x42 + 48, struct.pack(">hh", cutoff, res))
@@ -165,9 +173,10 @@ def test_load_budget(img, tw):
     print("\n--- 3. Preuve de charge : 6 pistes Granular + filtre 4 pôles actif ---")
     e = TM.engine(img)
     setup_sampler_sample(e, tw, slot=0)
+    th, ts = track_tables(tw)
     for t in range(6):
-        e.uc.mem_write(0x401be3b8 + t * 4, struct.pack(">I", 0))
-        e.uc.mem_write(0x401be3a0 + t * 4, struct.pack(">I", 0x1234))
+        e.uc.mem_write(ts + t * 4, struct.pack(">I", 0))
+        e.uc.mem_write(th + t * 4, struct.pack(">I", 0x1234))
         e.set(t, machine=6, note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0, finetune=64, decay=60)
         e.uc.mem_write(0x401b2404 + t * 4, struct.pack(">I", 3)) # Granular mode
         e.uc.mem_write(E.PARAMS + 0xe + t * 0x42 + 48, struct.pack(">hh", 4000, 1000)) # ladder actif

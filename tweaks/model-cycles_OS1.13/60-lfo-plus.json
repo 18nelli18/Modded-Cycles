@@ -11,7 +11,7 @@
   "Pendant le geste [LFO] tenue + MACHINES + potard, MACHINES n'ouvre plus l'écran des machines par-dessus la page : elle est le modificateur du geste. Posée seule sur la page LFO, elle ouvre l'écran des machines comme d'origine (notes/56 §3.14).",
   "Corrige au passage les p-locks d'Attack, Filtre et Résonance de Model-TG dans le pattern (relus en None, LFO Speed, Multiplier).",
   "D'après le Model-TG-VA-DR-v1 de DavidCaruso (octobre 2026), réécrit ; s'installe avec ou sans Model-TG.",
-  "Code et données : 2936 o dans 13 masques de sprites 34x34 libérés (0x4016f8c8, 0x40173848, 0x401780a8, 0x401784e8, 0x401835b8, 0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88, 0x4018b1a8, 0x4018ff64) ; mémoire de travail 0x4233e000..0x4233e49c, blocs LFO 3/4 0x4233b000..0x4233def4 (au-dessus du BSS). Généré par tools/gen_lfo_plus.py, notes/56 §3.",
+  "Code et données : 2984 o dans 13 masques de sprites 34x34 libérés (0x4016f8c8, 0x40173848, 0x401780a8, 0x401784e8, 0x401835b8, 0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88, 0x4018b1a8, 0x4018ff64) ; mémoire de travail 0x4233e000..0x4233e49c, blocs LFO 3/4 0x4233b000..0x4233def4 (au-dessus du BSS). Généré par tools/gen_lfo_plus.py, notes/56 §3.",
   "Pas avec le filtre par piste : les deux rangent leurs réglages en k 28..31 et en +88..+91 du son (notes/56 §3.6)."
  ],
  "device": "Model:Cycles",
@@ -51,7 +51,7 @@
   "kit_load": "0x4018968c",
   "kit_copy": "0x401853a4",
   "lfo_learn": "0x4018af88",
-  "lfo_led": "0x4018afbc",
+  "lfo_led": "0x4018afec",
   "m5": "0x40184dfe",
   "lfo_tail": "0x401784fa"
  },
@@ -79,7 +79,7 @@
   {
    "off": 155308,
    "old": "4fef000c200f",
-   "new": "4ef94018afbc"
+   "new": "4ef94018afec"
   },
   {
    "off": 365510,
@@ -283,8 +283,8 @@
   },
   {
    "off": 1616776,
-   "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
-   "new": "4aaf00446618702ab08266124a8d660e103940f95744080000006702742b2f024eb94005a4e8588f2400e18a20534ef94001eb604fef000c2002720b90817202b280650a713b081e24320c00600e702bb0826608b0aa004066022412200f4ef9400262b205040100"
+   "old": "ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000ffffffffc0000000",
+   "new": "4aaf00446618702ab08266124a8d660e103940f95744080000006702742b720c92827001b08165262f0b4eb940014042588f7206b2806616487800074eb94004df5c588f2040720c928224301c182f024eb94005a4e8588f2400e18a20534ef94001eb604fef000c2002720b90817202b280650a713b081e24320c00600e702bb0826608b0aa004066022412200f4ef9400262b205040100"
   },
   {
    "off": 1617320,

@@ -9,7 +9,9 @@ double filtrage.
 
 Entrées :
   - dh_atk / dbh_atk : jmp vers smf_descr au lieu de movel #sampler_descr_atk,%d0 ; rts ;
-  - gflt_coef : jmp vers smf_gflt au lieu de cmpil #6,%d1 ; beqs gc_store.
+  - gflt_coef : jmp vers smf_gflt au lieu de cmpil #6,%d1 ; beqs gc_store ;
+  - sampler_com_gate : jmp vers smf_com au lieu de jmp 0x4005a6ac (k 24/25 du Sampler, Filtre et Résonance de
+    piste, dans la liste DEST des LFO en modes >= 3 : notes/83 §3).
 Mêmes tailles (MC_PATCHES de gen_model_tg.py) : aucun symbole de Model-TG ne bouge. Le code va dans
 le masque de sprite 48x22 libéré 0x4016bcd8 (tools/sprites.py), écrit avec Model-TG comme usb_steady,
 voice_loop et popup_view.
@@ -73,6 +75,7 @@ def compile_filter():
 ADDR, CODE, SYMS = compile_filter()
 DESCR = SYMS["smf_descr"]
 GFLT = SYMS["smf_gflt"]
+COM = SYMS["smf_com"]
 
 
 def writes(stock):

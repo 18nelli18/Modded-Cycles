@@ -1600,6 +1600,9 @@ LED_CTL, LED_SET, TRIG_SCAN, FN_DTOR = 0x400cfaf4, 0x40005f86, 0x4006be48, 0x400
 UI_INIT, KEY_BITS = 0x400de244, 0x40f95744                    # objets d'interface et enregistrements ; MACHINES = bit 0
 KIT_OBJ, TRACK_OBJ2, LEDS, FCODE2 = FAKE + 0x20000, FAKE + 0x21000, FAKE + 0x22000, FAKE + 0x23000
 ATK, FLT, RES, PITCH, FTUN = 0x0d, 0x0c, 0x0b, 42, 43
+# Model-TG : loop_mode, descr_done, sampler_descr, sampler_descr_atk (tools/sampler_mode_filter.py, qui les vérifie,
+# et tools/emu/test_sampler_mode_filter.py)
+SMF_LOOP_MODE, SMF_DESCR_DONE, SMF_DESCR, SMF_DESCR_ATK = 0x401b2408, 0x401abe98, 0x401abe9a, 0x401abee6
 
 
 def learn_rig(img, rt, sel, machine, held):
@@ -1787,6 +1790,61 @@ def learn_led(base_img, img, rt, syms, tg):
           "diode de la destination (0x400261aa), machines 0..5 et MACRO, k = 0, 9..25, LFO 1..4 : Attack -> DECAY (37), "
           "Filtre -> SWEEP (40), Résonance -> CONTOUR (41), lo-fi de MACRO -> PITCH (36) ; tout le reste = l'OS "
           f"d'origine, sur les 4 pages ({len(rows)} différences, avant -> après : {desc})")
+    # 3b. le Sampler (machine 6) : SWEEP / CONTOUR sous MACHINES règlent son filtre (k 13/14) en modes 0..2, celui de
+    # la piste (k 24/25) en modes 3..6 (sampler_mode_filter, notes/83 §3) ; [LFO] + le même potard doit donner le même
+    # k, que la page LFO nomme (paramIdFor, 0x4005a692) et dont elle allume la diode
+    if tg:
+        lm = SMF_LOOP_MODE + 4 * sel[0]
+        machine[0] = 6
+        # Les deux descripteurs du Sampler, que sampler_pre construit sur le fil audio (puis descr_done = 1) : ici
+        # l'enregistrement que rend l'OS avant cela, avec Attack (0x0d) en position 1 pour la variante MACHINES et
+        # Filtre / Résonance du Sampler (0x49 / 0x4a) en positions 4 et 5, comme dans test_sampler_mode_filter.py
+        mod(False)
+        for r in (S, P):
+            rec = r.rd(r.call(0x4004df5c, 7), 76)
+            for a, atk in ((SMF_DESCR, False), (SMF_DESCR_ATK, True)):
+                r.uc.mem_write(a, rec)
+                r.uc.mem_write(a + 24, struct.pack(">II", 0x49, 0x4a))
+                if atk:
+                    r.w32(a + 12, ATK)
+            r.w8(SMF_DESCR_DONE, 1)
+        good, bad = True, []
+        for mode in range(7):
+            for r in (S, P):
+                r.w32(lm, mode)
+            want = (24, 25) if mode >= 3 else (13, 14)
+            for on in (True, False):
+                mod(on)
+                for pg in range(4):
+                    for knob, k in zip((4, 5), want if on else (13, 14)):
+                        clear(P)
+                        got = learn(P, pg, knob)
+                        if got != k:
+                            bad.append((mode, on, pg, knob, got))
+            mod(False)
+            ids = [s32(P.call(K2ID, k, 6)) for k in (24, 25, 13, 14)]
+            good &= ids == ([FLT, RES] if mode >= 3 else [0, 0]) + [0x49, 0x4a]
+            for k, led in ((24, 40), (25, 41), (13, 40), (14, 41)):
+                if k >= 24 and mode < 3:
+                    continue
+                for pg in range(4):
+                    clear(P)
+                    set_dest(P, pg, k)
+                    P.log.clear()
+                    P.w8(page, pg)
+                    P.call(LED_PAINT, VIEWOBJ, check="diode de la page LFO")
+                    lit = [a for t, a, _ in P.log if t == "led"]
+                    if lit != [led]:
+                        bad.append(("led", mode, k, pg, lit))
+        for r in (S, P):
+            r.w32(lm, 0)
+            r.w8(SMF_DESCR_DONE, 0)
+        machine[0] = 0
+        P.w8(page, 0)
+        check(good and not bad,
+              "Sampler, modes 0..6, LFO 1..4 : [LFO] + MACHINES + SWEEP / CONTOUR -> k 13/14 (son filtre) en modes 0..2, "
+              "k 24/25 (filtre de piste) en modes 3..6, k 13/14 sans MACHINES ; DST nomme 24/25 Filtre / Résonance (0x0c / "
+              f"0x0b) en modes 3..6 seulement ; diode SWEEP (40) / CONTOUR (41) {bad[:3]}")
     # 4. sauvegarde et rechargement : LFO 1 -> Attack, LFO 2 -> Filtre, LFO 3 -> Résonance
     if tg:
         mod(True)
