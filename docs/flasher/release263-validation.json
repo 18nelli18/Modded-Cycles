@@ -1,0 +1,191 @@
+{
+  "release": "2.63",
+  "hardware_tested": false,
+  "builds": [
+    {
+      "scope": "main",
+      "edition": "full",
+      "file": "Supermodel_2.63_Main_Full_Wizard_Plock_Priority_Test.syx",
+      "sha256": "266fe30abce8297b8a997fa598d3481789a5226a6742a0fad8e74b5f25271d47",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1624720
+    },
+    {
+      "scope": "main",
+      "edition": "lite",
+      "file": "Supermodel_2.63_Main_Lite_Wizard_Plock_Priority_Test.syx",
+      "sha256": "a123ac52282889d9e244a57e1e03bf04d9f49a370c53835c6611ed2ea98805c3",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1652336
+    },
+    {
+      "scope": "optional",
+      "edition": "full",
+      "file": "Supermodel_2.63_Optional_Full_Wizard_Plock_Priority_Test.syx",
+      "sha256": "42fb95265a18d609a53674777583e41137a52f1cee6ceca58af5a8aa46248e60",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1678160
+    },
+    {
+      "scope": "optional",
+      "edition": "lite",
+      "file": "Supermodel_2.63_Optional_Lite_Wizard_Plock_Priority_Test.syx",
+      "sha256": "65eedce577fc1a494a44ab054e7f3ab979e32e2bad26f776ec79d6306f467494",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1652336
+    },
+    {
+      "scope": "optional-md",
+      "edition": "full",
+      "file": "Supermodel_2.63_Optional_Md_Full_Wizard_Plock_Priority_Test.syx",
+      "sha256": "daa7a92c71893b030be2645a66ce03ff9c5c1e5961cd180b7f7e222b86a6fe9d",
+      "HMAC_valid": true,
+      "Samples_native_boot_and_both_verifiers": true,
+      "flash_bytes": 1754608
+    }
+  ],
+  "scope": "Wizard priority only; Song and ACID articulation excluded",
+  "native_p_lock_proofs": {
+    "main-full-proof": {
+      "native_audio_refresh": true,
+      "native_p_lock_storage_and_getter": true,
+      "slots_tested": 32,
+      "pitch_start_end": true,
+      "unlocked_steps": true,
+      "other_machines": true,
+      "base_edits_retained": true,
+      "hardware_tested": false
+    },
+    "main-lite-proof": {
+      "native_audio_refresh": true,
+      "native_p_lock_storage_and_getter": true,
+      "slots_tested": 32,
+      "pitch_start_end": true,
+      "unlocked_steps": true,
+      "other_machines": true,
+      "base_edits_retained": true,
+      "hardware_tested": false
+    },
+    "optional-full-proof": {
+      "native_audio_refresh": true,
+      "native_p_lock_storage_and_getter": true,
+      "slots_tested": 32,
+      "pitch_start_end": true,
+      "unlocked_steps": true,
+      "other_machines": true,
+      "base_edits_retained": true,
+      "hardware_tested": false
+    },
+    "optional-lite-proof": {
+      "native_audio_refresh": true,
+      "native_p_lock_storage_and_getter": true,
+      "slots_tested": 32,
+      "pitch_start_end": true,
+      "unlocked_steps": true,
+      "other_machines": true,
+      "base_edits_retained": true,
+      "hardware_tested": false
+    },
+    "optional-md-full-proof": {
+      "native_audio_refresh": true,
+      "native_p_lock_storage_and_getter": true,
+      "slots_tested": 32,
+      "pitch_start_end": true,
+      "unlocked_steps": true,
+      "other_machines": true,
+      "base_edits_retained": true,
+      "hardware_tested": false
+    }
+  },
+  "browser_MD_variants": {
+    "release": "2.63",
+    "variants": [
+      {
+        "mask": 524288,
+        "sha256": "3613917722ba7185c2ffe686940360f09919ea81958daf82d0f2ab026a1d73b4",
+        "main_sha256": "62904aea8c96943aa16eb472333b614c0a686979b88f50dc0300d33516b031c5",
+        "flash_bytes": 1754496,
+        "release": "2.63"
+      },
+      {
+        "mask": 1048576,
+        "sha256": "a5cb98ffb3f12265ca65334e1e961e53d102712427c584eb4e035a3dce4735cf",
+        "main_sha256": "32a6fafda4126cd37063de0f9f21a27e06e297e3b58effaa2eb9e0b77557aa7d",
+        "flash_bytes": 1754496,
+        "release": "2.63"
+      },
+      {
+        "mask": 2097152,
+        "sha256": "d349225e11e2d67f95797f9091c51ce97b6cbcaafd29257098bc701fba74f81b",
+        "main_sha256": "ea1cc727a908d2144ff991b9f7f9fdb36b81d2235284cb3799770a795b6dc9e7",
+        "flash_bytes": 1754496,
+        "release": "2.63"
+      },
+      {
+        "mask": 3670016,
+        "sha256": "dc203b318e2830547113120f9040b4f9189ab7e9761454d9547784ed126d7363",
+        "main_sha256": "8ba5eb80bf43699db65d33801ffb5243e2fd27a43c4f0e3cd4882c26b58e8ca7",
+        "flash_bytes": 1754496,
+        "release": "2.63"
+      },
+      {
+        "mask": 4194303,
+        "sha256": "9c0a6810b4bd88f80168ac103d5b5fa5efa13d36152bba0366d2051fcd7b8ddb",
+        "main_sha256": "9c100871ccb591c39b455495963b0ad1708957e8c4a02e3954121b457d22e862",
+        "flash_bytes": 1754496,
+        "release": "2.63"
+      }
+    ],
+    "hardware_tested": false
+  },
+  "native_MD_guard_checks": [
+    {
+      "native_audio_refresh": true,
+      "native_p_lock_storage_and_getter": true,
+      "slots_tested": 32,
+      "pitch_start_end": true,
+      "unlocked_steps": true,
+      "other_machines": true,
+      "base_edits_retained": true,
+      "hardware_tested": false
+    },
+    {
+      "native_audio_refresh": true,
+      "native_p_lock_storage_and_getter": true,
+      "slots_tested": 32,
+      "pitch_start_end": true,
+      "unlocked_steps": true,
+      "other_machines": true,
+      "base_edits_retained": true,
+      "hardware_tested": false
+    }
+  ],
+  "overlaps_passed": true,
+  "source_generator": "tools/gen_wizard_plock_priority.py",
+  "generator_check_passed": true,
+  "browser_ui": {
+    "release": "2.63",
+    "main_and_optional_displayed": true,
+    "machine_choices": 22,
+    "all_none_legacy_only": true,
+    "sending_locked": true,
+    "page_errors": [],
+    "hardware_tested": false
+  },
+  "browser_MD_ui": {
+    "choices": 22,
+    "default_19_preserved": true,
+    "MD_file_required": true,
+    "all_and_kick_only": true,
+    "None_exact_Lite": true,
+    "invalid_MD_rejected": true,
+    "startup263": true,
+    "sending_locked": true,
+    "page_errors": [],
+    "hardware_tested": false
+  }
+}

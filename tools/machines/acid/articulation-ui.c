@@ -16,7 +16,7 @@ u32 aa_face_key(u32 view,const u32*e){
  return aa_old_key(view,e);
 }
 static u32 stamp[12],delta[12],valid;
-u32 aa_face_encoder(u32 view,const u32*e){
+static u32 aa_encoder_inner(u32 view,const u32*e){
  if(menu&&sg_page&&e&&e[0]==0x400fbebc)return sg_encoder(e);
  if(!e||e[0]!=0x400fbebc||(e[3]!=2&&e[3]!=3)||!N(0x4007faf4)(13)||N(0x4007faf4)(1)||N(0x4007faf4)(2)||N(0x4007faf4)(5))return aa_old_encoder(view,e);
  u32 root=N(0x400cf866)();if(!root)return aa_old_encoder(view,e);
@@ -34,3 +34,5 @@ u32 aa_face_encoder(u32 view,const u32*e){
  char text[40];if(k)N(0x40000e6e)(text,"ACID Legato %s",l?"ON":"OFF");else if(!g)N(0x40000e6e)(text,"ACID Glide OFF");else N(0x40000e6e)(text,"ACID Glide %d ms",50+(g-1)*310/126);
  fx_notice(text);return 1;
 }
+extern void wp_before(const u32*),wp_after(void);
+u32 aa_face_encoder(u32 view,const u32*e){wp_before(e);u32 result=aa_encoder_inner(view,e);wp_after();return result;}

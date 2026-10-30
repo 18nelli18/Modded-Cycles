@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),cp=r
 const root=path.resolve(__dirname,'..'),site=path.join(root,'docs/flasher'),optional=path.join(root,'docs/flasher-optional');
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const metadata=JSON.parse(fs.readFileSync(path.join(optional,'BUILD.json')));
-assert.equal(metadata.release,'2.62');assert(metadata.per_track_fx);
+assert.equal(metadata.release,'2.63');assert(metadata.per_track_fx);
 assert.deepEqual(metadata.retained_extra_choices,['LEGACY','ChordKeys','Vinyl']);
 const context={window:{}};
 for(const name of ['editions.js','recipe.js'])vm.runInNewContext(fs.readFileSync(path.join(optional,name),'utf8'),context);
@@ -13,7 +13,7 @@ for(const [id,entry] of Object.entries(editions)){
  assert.equal(entry.startup_title.version,metadata.release);assert(entry.per_track_fx);
  assert.equal(entry.legacy_removed,false);assert.equal(entry.chordkeys_removed,false);assert.equal(entry.vinyl_removed,false);
 }
-console.log('PASS Optional2.62 has per-track FX and retains its extra choices');
+console.log('PASS Optional2.63 has per-track FX and retains its extra choices');
 if(process.argv[2]){
  const O=require(path.join(optional,'optional-builder.js')),F=require(path.join(site,'flasher.js'));
  const full=fs.readFileSync(path.join(site,editions.full.file)),lite=fs.readFileSync(path.join(site,editions.lite.file));

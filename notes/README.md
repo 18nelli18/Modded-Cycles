@@ -335,3 +335,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [206 - Song et articulation ACID](206-song-et-articulation-acid.md) : investigation et proposition ; chaine native64 entrees, glide existant, arrangement et controles explicites a implementer.
 
 - [207 - Prototype Song et ACID](207-song-acid-prototype.md) : editeur, chaine native64 lectures, STOP/LOOP, mutes et projet ; glide/legato physiques par piste ; cinq editions experimentales2.63, confirmation appareil en attente.
+
+- [208 - Priorite Wizard p-locks](208-wizard-priorite-plocks.md) : protection du frame courant pendant CTRL-ALL, restauration native du prochain pas ; candidat prive2.63 et preuves natives partielles, confirmation appareil en attente.

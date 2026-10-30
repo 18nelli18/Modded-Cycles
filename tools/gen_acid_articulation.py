@@ -19,6 +19,7 @@ def main():
  def run(t,*v):return subprocess.check_output([cross+t+'.exe',*map(str,v)],text=True)
  full='ae_mode' in m['per_track_fx']['symbols'];songrow=12 if full else 11
  aliases={**m['direct_jump']['aliases'],**m['direct_jump']['symbols']}
+ aliases['wp_mask_pointer']=m['beat_repeat_symbols']['br_mask_address']
  aliases['aa_old_key']=int.from_bytes(image[0x40077722-BASE:0x40077726-BASE],'big')
  aliases['aa_old_encoder']=int.from_bytes(image[0x400775fa-BASE:0x400775fe-BASE],'big')
  for name,at in [('encode',0x4005d18a),('decode',0x4005d3dc),('new',0x4000f906)]:aliases['sg_old_'+name]=int.from_bytes(image[at+2-BASE:at+6-BASE],'big')
@@ -52,7 +53,7 @@ def main():
  chain_at=0x40055cd6;assert image[chain_at-BASE:chain_at-BASE+8]==stock[chain_at-BASE:chain_at-BASE+8]
  (O/'chain.S').write_text('.text\n.globl sg_chain_original\nsg_chain_original:\n.byte '+','.join(map(str,stock[chain_at-BASE:chain_at-BASE+8]))+'\njmp 0x40055cde\n')
  objects=[]
- for src in [S/'articulation.c',S/'articulation-ui.c',S/'articulation-dsp.c',O/'coefficients.c',R/'tools/machines/song/song.c',R/'tools/machines/song/storage.c',R/'tools/machines/song/playback.c',R/'tools/machines/song/ui.c',R/'tools/machines/song/hooks.S',R/'tools/machines/song/grid.c',O/'song-root.S',O/'song-editor.S',O/'song-top.S',O/'song-values.c',O/'chain.S']:
+ for src in [S/'articulation.c',S/'articulation-ui.c',S/'articulation-dsp.c',O/'coefficients.c',R/'tools/machines/song/song.c',R/'tools/machines/song/storage.c',R/'tools/machines/wizard_priority/control.c',R/'tools/machines/song/playback.c',R/'tools/machines/song/ui.c',R/'tools/machines/song/hooks.S',R/'tools/machines/song/grid.c',O/'song-root.S',O/'song-editor.S',O/'song-top.S',O/'song-values.c',O/'chain.S']:
   if src.stem=='articulation-dsp' and not full:continue
   obj=O/(src.stem+'.o');run('gcc','-mcpu=54418','-O3' if src.stem=='articulation-dsp' else '-Os','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-fwrapv','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',f'-DSONG_ROW={songrow}','-c',src,'-o',obj);objects.append(obj)
  (O/'module.ld').write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) *(.data*) }} .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) aa_end = .; }} }}\n'+''.join(f'PROVIDE({k} = {v:#x});\n' for k,v in aliases.items()))

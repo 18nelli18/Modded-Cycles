@@ -69,12 +69,13 @@ def main():
  shift=len(packed)-8-(oldend-START);relocations=[]
  if 'direct_jump' in meta:
   first=meta['direct_jump']['loader'];last=int.from_bytes(original[0x40195adc-BASE:0x40195ae0-BASE],'big')
-  for loader in (first,last):
+  loaders=(first,meta['wizard_priority']['previous_loader'],last) if 'wizard_priority' in meta else (first,last)
+  for loader in loaders:
    for offset in range(loader-BASE,loader-BASE+124,2):
     value=int.from_bytes(original[offset:offset+4],'big')
     if first<=value<BASE+len(original):
      relocations.append(dict(at=BASE+offset,old=value));struct.pack_into('>I',tail,offset-oldend,value+shift)
-  assert len(relocations)==3
+  assert len(relocations)==(5 if 'wizard_priority' in meta else 3)
   struct.pack_into('>I',prefix,0x40195adc-BASE,last+shift)
  struct.pack_into('>I',prefix,0x40195ad0-BASE,BASE+START+len(packed)-8)
  main=bytes(prefix)+packed[8:]+bytes(tail)

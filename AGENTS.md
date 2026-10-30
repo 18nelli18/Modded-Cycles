@@ -441,3 +441,7 @@ AveyCole explicitly requests "Go ahead and push that and add it to the list of d
 ## Release 2.62 (2026-10-30)
 
 User explicitly authorizes "Push 2.62 to main, lite, optional". Publish the verified Direct Jump and momentary TRACK trig-selection Full/Lite and Optional bases through the established fixed-image paths, with both flashers and startup titles2.62. This authorizes the exact firmware assets and direct main push. Optional retains its extra choices and adds the three licensed TRX choices using user-supplied MD tables. Preserve the protected blurb. Song mode and additional ACID articulation remain separate experimental work, not included in2.62. Hardware confirmation is pending.
+
+## Release2.63 (2026-10-30)
+
+AveyCole explicitly requests "push wizard p lock fix 2.63 to main". Publish the Wizard-only Full/Lite and Optional images built from pinned2.62 sources, with startup and both flashers2.63. Song and ACID articulation remain private test firmware. This authorizes these exact firmware assets and direct main publication. Preserve Optional extras and the protected blurb. The guard is native-emulation verified, not hardware confirmed. Proofs: docs/flasher/release263-validation.json and docs/flasher-optional/validation263.json.
