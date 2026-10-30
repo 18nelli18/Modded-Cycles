@@ -48,10 +48,14 @@ smf_descr:
  * (groupe 6) et k 24/25 (a2) : Model-TG les cache de la liste DEST des LFO parce que son filtre de piste ne joue pas
  * sur le Sampler. En modes 3..6 il y joue (smf_gflt) : on rend alors l'identifiant commun (0x0c Filtre, 0x0b
  * Résonance), comme pour les autres machines. La page LFO affiche FLT/RES au lieu de None et la diode trouve SWEEP /
- * CONTOUR. En modes 0..2 : rien, comme avant (le Sampler y a son propre filtre, k 13/14). */
+ * CONTOUR. En modes 0..2 : rien, comme avant (le Sampler y a son propre filtre, k 13/14). Le mode est lu dans ui_gran
+ * de Model-TG (piste sélectionnée, tenu à jour à chaque bloc par gran_watch : 1..4 = modes 3..6), sans appeler l'OS :
+ * paramIdFor sert aussi hors de l'interface (le banc des moteurs du Syntakt l'appelle sans projet chargé). */
 smf_com:
-	bsr.s	smf_mode
-	ble.s	1f
+	move.l	UI_GRAN, %d0
+	subq.l	#1, %d0
+	lsr.l	#2, %d0				/* 0 seulement pour ui_gran = 1..4 */
+	bne.s	1f
 	lea	PID_COMMON, %a0
 	move.l	(%a0,%a2.l*4), %d0
 	jmp	PID_OUT
@@ -80,9 +84,9 @@ smf_gflt:
 	cmpi.l	#6, %d1
 	bne.s	.Lgflt_on
 	lea	LOOP_MODE, %a0
-	move.l	(%a0,%d2.l*4), %d0
-	cmpi.l	#3, %d0
-	blt.s	.Lgflt_off
+	moveq	#2, %d0
+	cmp.l	(%a0,%d2.l*4), %d0
+	bge.s	.Lgflt_off			/* modes 0..2 */
 .Lgflt_on:
 	moveq	#0, %d0
 	jmp	GC_CONT

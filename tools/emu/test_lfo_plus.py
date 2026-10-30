@@ -1639,6 +1639,7 @@ ATK, FLT, RES, PITCH, FTUN = 0x0d, 0x0c, 0x0b, 42, 43
 # Model-TG : loop_mode, descr_done, sampler_descr, sampler_descr_atk (tools/sampler_mode_filter.py, qui les vérifie,
 # et tools/emu/test_sampler_mode_filter.py)
 SMF_LOOP_MODE, SMF_DESCR_DONE, SMF_DESCR, SMF_DESCR_ATK = 0x401b2408, 0x401abe98, 0x401abe9a, 0x401abee6
+SMF_UI_GRAN = 0x401bccbc          # ui_gran : le mode de la piste sélectionnée que tient gran_watch (1..4 = 3..6)
 
 
 def learn_rig(img, rt, sel, machine, held):
@@ -1851,6 +1852,7 @@ def learn_led(base_img, img, rt, syms, tg):
         for mode in range(7):
             for r in (S, P):
                 r.w32(lm, mode)
+                r.w32(SMF_UI_GRAN, mode - 2 if mode >= 3 else 0)
             want = (24, 25) if mode >= 3 else (13, 14)
             for on in (True, False):
                 mod(on)
@@ -1879,6 +1881,7 @@ def learn_led(base_img, img, rt, syms, tg):
                         bad.append(("led", mode, k, pg, lit))
         for r in (S, P):
             r.w32(lm, 0)
+            r.w32(SMF_UI_GRAN, 0)
             r.w8(SMF_DESCR_DONE, 0)
         machine[0] = 0
         P.w8(page, 0)

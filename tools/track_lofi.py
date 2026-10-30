@@ -6,7 +6,7 @@ le build.py de Model-TG comme ses Attack, Filtre et Résonance (MC_PATCHES de ge
 la case 18 de l'enregistrement (+64/+65, un octet chacun) par la fin de snd_save_post / snd_load_post, qui saute ici ;
 réglés par MACHINES + COLOR / SHAPE sur toutes les machines (dh_pass et le descripteur du Sampler sous MACHINES, qui
 sautent ici), affichés « OFF », « 46K » .. « 4K », « 12B » .. « 2B » comme le lo-fi de MACRO. Chaque saut remplace des
-instructions de Model-TG à taille égale : aucun symbole ne bouge. Le code et les noms vont dans trois masques de sprite
+instructions de Model-TG à taille égale : aucun symbole ne bouge. Le code et les noms vont dans sept masques de sprite
 48x22 libérés (tools/sprites.py), écrits avec Model-TG comme sampler_mode_filter.
 """
 import pathlib
@@ -20,10 +20,12 @@ HERE = pathlib.Path(__file__).resolve().parent
 SRC = HERE / "machines" / "track_lofi"
 BASE = 0x40000400
 CAVES = {".cave": 0x4015943c, ".cave2": 0x4015f38c, ".cave3": 0x40165fec,    # masques 48x22 libérés (192 o)
-         ".cave4": 0x40168da4, ".cave5": 0x4016dab8, ".cave6": 0x4016fae8}
-# sx_side de Model-TG (le côté d'une piste Sampler stéréo, 6 x 128 o comme 0x80001858) : écrit en dur, comparé à sa
+         ".cave4": 0x40168da4, ".cave5": 0x4016dab8, ".cave6": 0x4016fae8, ".cave7": 0x40170c48}
+# sx_side de Model-TG (le côté d'une piste Sampler stéréo, 6 x 128 o comme 0x80001858) et sx_on (stéréo dans ce
+# bloc, par piste) : écrits en dur, comparé à sa
 # table de symboles par check_syms (appelé par gen_model_tg.py) dans les deux variantes
 SX_SIDE = 0x401b9f30
+SX_ON = 0x401b9b24
 # le son : après Volume + Dist (0x40056f58), comme le filtre par piste (notes/47 §2)
 HOOK, HOOK_OLD = 0x40059852, "4eb940056f58"
 
@@ -51,7 +53,7 @@ def compile_lofi():
             ".macro TL_INC\n\t.word\t" + ", ".join(str(lofi_inc(r)) for r in range(1, 65)) + "\n.endm\n",
             encoding="ascii")
         obj, elf = d / "tl.o", d / "tl.elf"
-        gx.run([gx.CROSS + "gcc", "-mcpu=54418", f"-DSX_SIDE={SX_SIDE:#x}", "-Wa,-I" + str(d), "-c", str(SRC / "track_lofi.S"), "-o", str(obj)])
+        gx.run([gx.CROSS + "gcc", "-mcpu=54418", f"-DSX_SIDE={SX_SIDE:#x}", f"-DSX_ON={SX_ON:#x}", "-Wa,-I" + str(d), "-c", str(SRC / "track_lofi.S"), "-o", str(obj)])
         gx.run([gx.CROSS + "ld", "-T", str(SRC / "track_lofi.ld"), "--no-warn-rwx-segments", "-o", str(elf),
                 str(obj)])
         syms = {}
@@ -96,8 +98,9 @@ def writes(stock):
 
 def check_syms(syms):
     """sx_side de Model-TG, écrit en dur ci-dessus, contre la table de symboles de sa construction."""
-    if syms.get("sx_side") != SX_SIDE:
-        raise SystemExit(f"!! track_lofi : sx_side de Model-TG en {syms.get('sx_side', 0):#x}, pas {SX_SIDE:#x}")
+    for name, want in (("sx_side", SX_SIDE), ("sx_on", SX_ON)):
+        if syms.get(name) != want:
+            raise SystemExit(f"!! track_lofi : {name} de Model-TG en {syms.get(name, 0):#x}, pas {want:#x}")
 
 
 def build_rows():

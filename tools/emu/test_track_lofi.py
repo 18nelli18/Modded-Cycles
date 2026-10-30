@@ -52,9 +52,9 @@ def want(desc, v):
 TRK, OBJ, VOLDIST, HOOK = 0x80001858, 0x8000100c, 0x40056f58, 0x40059852
 
 
-def model(blocks, words, side=None):
+def model(blocks, words, side=None, stereo=True):
     """Le lo-fi d'une piste, en Python : blocks = blocs de 32 trames (int32), words = (k 27, k 30) lissés par bloc.
-    Rend (blocs, côtés) traités. Phase de départ 0xffff : la première trame est prise."""
+    Rend (blocs, côtés) traités ; le côté seulement en stéréo. Phase de départ 0xffff : la première trame est prise."""
     ph, hold, hold_s = 0xffff, 0xffff, 0xffff
     out, out_s = [], []
     for n, (blk, (wr, wb)) in enumerate(zip(blocks, words)):
@@ -62,6 +62,14 @@ def model(blocks, words, side=None):
         vr, vb = q(wr), q(wb)
         inc = round(65536 * 2 ** (-86 * ((vr + 1) // 2) / 1536)) if vr else 65536
         mask = (-1 << (20 + (vb - 1) * 10 // 126)) & 0xffffffff if vb else 0xffffffff
+        half = ((-mask) & 0xffffffff) >> 1 if vb else 0
+
+        def crush(v):                                   # au plus proche, borné au dernier pas, niveaux symétriques
+            v = min(v + half, 0x7fffffff)
+            v = (v & 0xffffffff) & mask
+            if vb and v & 0x80000000 and v - (1 << 32) < -(0x7fffffff & mask):
+                v = (-(0x7fffffff & mask)) & 0xffffffff
+            return v
         sb = side[n] if side else [0] * 32
         if not vr and not vb:
             ph = 0xffff
@@ -72,10 +80,10 @@ def model(blocks, words, side=None):
             ph += inc
             if ph >= 65536:
                 ph -= 65536
-                hold, hold_s = (x & 0xffffffff) & mask, (y & 0xffffffff) & mask
+                hold, hold_s = crush(x), crush(y)
             o.append(hold - (1 << 32) if hold & 0x80000000 else hold)
             os_.append(hold_s - (1 << 32) if hold_s & 0x80000000 else hold_s)
-        out.append(o); out_s.append(os_)
+        out.append(o); out_s.append(os_ if stereo else list(sb))
     return out, out_s
 
 
@@ -101,7 +109,9 @@ def audio(u, img, sym):
     words = [[(wr + (rnd.randrange(-0x300, 0x300) if n % 3 and wr else 0), wb) for n in range(nblk)]
              for wr, wb in cfg]
     words[5][6] = (0, 0)                                          # s'éteint un bloc, repart
-    want = [model(blocks[t], words[t], sides[t]) for t in range(6)]
+    stereo = [t in (2, 3) for t in range(6)]                     # sx_on de Model-TG : pistes 2 et 3 en stéréo
+    u.uc.mem_write(track_lofi.SX_ON, b"".join(struct.pack(">I", int(x)) for x in stereo))
+    want = [model(blocks[t], words[t], sides[t], stereo[t]) for t in range(6)]
     bad, regs_ok, insns = [], True, []
     sp = lofi_ui.STACK - 0x400
     for n in range(nblk):
@@ -131,10 +141,30 @@ def audio(u, img, sym):
                 bad.append((n, t, cfg[t]))
     check(not bad, f"tl_post, 6 pistes x {nblk} blocs (éteint ; Rate seul ; Bits seul ; les deux au plus fort ; mots "
                    f"hors bornes ; une piste éteinte un bloc puis rallumée) : sortie et côté = le modèle (S&H Q16, pas "
-                   f"de MACRO, masque des b bits forts), piste éteinte bit pour bit {bad[:3]}")
+                   f"de MACRO, arrondi au plus proche de b bits), côté des seules pistes stéréo (2, 3), piste éteinte bit pour bit "
+                   f"{bad[:3]}")
     check(regs_ok, "d2-d7, a2-a6 et la pile rendus, aucun accès hors mémoire")
-    check(max(insns) < 2600, f"coût : {min(insns)}..{max(insns)} instructions par bloc avec 5 pistes en lo-fi "
-                             f"(Volume + Dist bouché ; un bloc fait environ 108 000 instructions)")
+    # arrondi au plus proche : à 2 bits (pas 2^30), un signal sous le demi-pas s'éteint ; un signal plein échelle
+    # garde sa forme sans décalage (moyenne d'un sinus ~ 0)
+    import math
+    for t in range(6):
+        u.uc.mem_write(OBJ + 14 + 66 * t + 54, bytes(2))
+        u.uc.mem_write(OBJ + 14 + 66 * t + 60, struct.pack(">h", 0x7f00 if t == 0 else 0))
+    quiet = [int(0.9 * 2 ** 29 * math.sin(2 * math.pi * i / 32)) for i in range(32)]
+    loud = [int(0.99 * 2 ** 31 * math.sin(2 * math.pi * i / 32)) for i in range(32)]
+    outs = []
+    for sig in (quiet, loud):
+        u.uc.mem_write(TRK, struct.pack(">32i", *sig))
+        u.uc.mem_write(sp, struct.pack(">III", lofi_ui.STOP, TRK, OBJ))
+        u.uc.reg_write(mk.UC_M68K_REG_A7, sp)
+        u.uc.emu_start(track_lofi.SYMS["tl_post"], lofi_ui.STOP, count=200_000)
+        outs.append(list(struct.unpack(">32i", u.uc.mem_read(TRK, 128))))
+    check(outs[0] == [0] * 32 and set(outs[1]) <= {-2 ** 30, 0, 2 ** 30}
+          and sum(outs[1]) == 0,
+          f"Bits 2B, arrondi au plus proche : signal sous le demi-pas -> silence ; sinus plein échelle -> niveaux "
+          f"{sorted(set(outs[1]))}, somme {sum(outs[1])} (pas de décalage)")
+    check(max(insns) < 3000, f"coût : {min(insns)}..{max(insns)} instructions par bloc avec 5 pistes en lo-fi, dont 2 "
+                             f"stéréo (Volume + Dist bouché ; un bloc fait environ 108 000 instructions)")
 
 
 def main():

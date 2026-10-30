@@ -191,7 +191,10 @@ tl_khz:	TL_KHZ
  * Après Volume + Dist, sur les 6 pistes (Q31, 32 trames par bloc, 0x80001858 + 128 t), comme le filtre par piste
  * (notes/47 §2) : échantillonnage-blocage puis masque de bits, l'algorithme de lofi_apply de Model-TG et les pas du
  * lo-fi de MACRO. Rate : la phase (Q16) avance de 2^(-86 r / 1536) par trame (r = 1..64), chaque passage de 1 prend
- * une nouvelle valeur ; Bits : la valeur prise garde ses b bits forts (b = 12..2, 32 - b bits de poids faible à 0).
+ * une nouvelle valeur ; Bits : la valeur prise est arrondie au plus proche de b bits forts (b = 12..2 : plus un
+ * demi-pas, bornée au dernier pas, puis 32 - b bits de poids faible à 0). Arrondi et non troncature (demande du
+ * propriétaire, 30/10/2026) : la troncature vers -inf donnait un décalage continu et faisait d'un signal faible un
+ * créneau d'un pas entier, nettement plus fort à 2..4 bits ; arrondi, il s'éteint.
  * Une piste dont les deux sont à 0 n'est pas touchée (bit pour bit) et sa phase est remise pour prendre la première
  * trame dès qu'elle repart. Les mots lus sont les mots lissés (+14 + 66 t + 2 k : p-locks, LFO, vélocité compris),
  * arrondis au pas et bornés à 0..127. Une piste Sampler en stéréo (sx_on de Model-TG) a son côté dans sx_side, avec
@@ -209,23 +212,25 @@ tl_post:
 	move.l	8(%sp), -(%sp)
 	jsr	VOLDIST
 	addq.l	#8, %sp
-	lea	-36(%sp), %sp
-	movem.l	%d2-%d7/%a2-%a4, (%sp)
-	movea.l	44(%sp), %a2
+	lea	-44(%sp), %sp
+	movem.l	%d2-%d7/%a2-%a6, (%sp)
+	movea.l	52(%sp), %a2
 	lea	14 + 54(%a2), %a2		/* k 27 de la piste 0 ; k 30 en +6 */
 	lea	TRK, %a0
 	lea	SX_SIDE, %a4
 	lea	tl_st, %a3
+	lea	SX_ON, %a6			/* piste Sampler stéréo dans ce bloc (Model-TG) */
 	moveq	#5, %d7
 1:	jsr	tl_trk
 	lea	66(%a2), %a2
 	lea	128(%a0), %a0
 	lea	128(%a4), %a4
 	lea	12(%a3), %a3
+	addq.l	#4, %a6
 	subq.l	#1, %d7
 	bpl.s	1b
-	movem.l	(%sp), %d2-%d7/%a2-%a4
-	lea	36(%sp), %sp
+	movem.l	(%sp), %d2-%d7/%a2-%a6
+	lea	44(%sp), %sp
 	rts
 
 /* par piste : phase (Q16), valeur tenue, valeur tenue du côté ; dans le masque, donc rechargé depuis la flash à chaque
@@ -234,11 +239,77 @@ tl_st:	.fill	6 * 3, 4, 0x0000ffff
 
 	.section .text.tl_trk, "ax"
 
-/* une piste : a2 = son mot k 27 lissé, a0 = son bloc, a4 = son côté, a3 = son état (phase, tenue, tenue du côté).
- * Détruit d0-d6, a1. */
+/* une piste : a2 = son mot k 27 lissé, a0 = son bloc, a4 = son côté, a3 = son état (phase, tenue, tenue du côté),
+ * a6 = son sx_on (côté traité seulement en stéréo). Détruit d0-d6, a1. */
 tl_trk:
+	jsr	tl_par				/* d3 avance, d4 masque, d0 demi-pas, a5 borne basse */
+	move.l	(%a3), %d5
+	move.l	4(%a3), %d6
+	movea.l	%a0, %a1
+	moveq	#31, %d2
+	tst.l	(%a6)
+	bne.s	ts
+1:	add.l	%d3, %d5				/* mono */
+	cmpi.l	#65536, %d5
+	bcs.s	3f
+	subi.l	#65536, %d5
+	move.l	(%a1), %d6
+	add.l	%d0, %d6
+	bvc.s	2f
+	move.l	#0x7fffffff, %d6
+2:	and.l	%d4, %d6
+	cmp.l	%a5, %d6
+	bge.s	3f
+	move.l	%a5, %d6
+3:	move.l	%d6, (%a1)+
+	subq.l	#1, %d2
+	bpl.s	1b
+	move.l	%d5, (%a3)
+	move.l	%d6, 4(%a3)
+	rts
+ts:						/* stéréo : le côté avec la même phase */
+	move.l	8(%a3), %d1
+	move.l	%a4, -(%sp)
+4:	add.l	%d3, %d5
+	cmpi.l	#65536, %d5
+	bcs.s	5f
+	subi.l	#65536, %d5
+	move.l	(%a1), %d6
+	add.l	%d0, %d6
+	bvc.s	6f
+	move.l	#0x7fffffff, %d6		/* au-dessus du dernier pas : borné */
+6:	and.l	%d4, %d6
+	cmp.l	%a5, %d6
+	bge.s	9f
+	move.l	%a5, %d6
+9:	move.l	(%a4), %d1
+	add.l	%d0, %d1
+	bvc.s	7f
+	move.l	#0x7fffffff, %d1
+7:	and.l	%d4, %d1
+	cmp.l	%a5, %d1
+	bge.s	5f
+	move.l	%a5, %d1
+5:	move.l	%d6, (%a1)+
+	move.l	%d1, (%a4)+
+	subq.l	#1, %d2
+	bpl.s	4b
+	movea.l	(%sp)+, %a4
+	move.l	%d5, (%a3)
+	move.l	%d6, 4(%a3)
+	move.l	%d1, 8(%a3)
+	rts
+
+	.section .text.tl_data, "ax"
+tl_inc:	TL_INC					/* 64 mots : 65536 x 2^(-86 r / 1536), r = 1..64 */
+
+	.section .text.tl_par, "ax"
+
+/* les réglages d'une piste (a2 = son mot k 27 lissé, a3 = son état) : d3 = avance de la phase, d4 = masque,
+ * d0 = demi-pas, a5 = borne basse ; les deux à 0 : ne rentre pas dans tl_trk. Détruit d1, a1. */
+tl_par:
 	mvs.w	(%a2), %d0			/* Rate */
-	bsr.w	tl_q
+	bsr.s	tl_q
 	move.l	#65536, %d3			/* éteint : chaque trame prise */
 	tst.l	%d0
 	beq.s	1f
@@ -247,7 +318,7 @@ tl_trk:
 	lea	tl_inc, %a1
 	mvz.w	-2(%a1, %d0.l*2), %d3
 1:	mvs.w	6(%a2), %d0			/* Bits */
-	bsr.w	tl_q
+	bsr.s	tl_q
 	moveq	#-1, %d4
 	tst.l	%d0
 	beq.s	2f
@@ -263,30 +334,19 @@ tl_trk:
 2:	cmpi.l	#65536, %d3
 	bne.s	3f
 	move.l	#0xffff, (%a3)			/* les deux à 0 : rien ; la prochaine trame sera prise */
+	addq.l	#4, %sp				/* et tl_trk rend la main */
 	rts
-3:	move.l	(%a3), %d5
-	move.l	4(%a3), %d6
-	move.l	8(%a3), %d1
-	movea.l	%a0, %a1
-	moveq	#31, %d2
-	move.l	%a4, -(%sp)
-4:	add.l	%d3, %d5
-	cmpi.l	#65536, %d5
-	bcs.s	5f
-	subi.l	#65536, %d5
-	move.l	(%a1), %d6
-	and.l	%d4, %d6
-	move.l	(%a4), %d1
-	and.l	%d4, %d1
-5:	move.l	%d6, (%a1)+
-	move.l	%d1, (%a4)+
-	subq.l	#1, %d2
-	bpl.s	4b
-	movea.l	(%sp)+, %a4
-	move.l	%d5, (%a3)
-	move.l	%d6, 4(%a3)
-	move.l	%d1, 8(%a3)
+3:	move.l	%d4, %d0
+	neg.l	%d0
+	lsr.l	#1, %d0				/* demi-pas (0 sans Bits) : arrondi au plus proche */
+	movea.l	#0x80000000, %a5		/* borne basse : sans Bits, aucune */
+	beq.s	8f
+	move.l	%d4, %d6
+	andi.l	#0x7fffffff, %d6
+	neg.l	%d6
+	movea.l	%d6, %a5			/* avec : -(dernier pas positif), niveaux symétriques */
 	rts
+8:	rts
 
 /* d0 = mot -> pas 0..127 (arrondi, borné) */
 tl_q:
@@ -300,5 +360,3 @@ tl_q:
 	move.l	%d1, %d0
 2:	rts
 
-	.section .text.tl_data, "ax"
-tl_inc:	TL_INC					/* 64 mots : 65536 x 2^(-86 r / 1536), r = 1..64 */

@@ -42,6 +42,7 @@ import voice_loop                  # noqa: E402
 import popup_view                  # noqa: E402
 import sampler_mode_filter          # noqa: E402
 import track_lofi                  # noqa: E402
+import trig_machines               # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -551,6 +552,7 @@ def adapt_st(tw, stock, syms):
             popup_view.NOTE,
             sampler_mode_filter.NOTE,
             track_lofi.NOTE,
+            trig_machines.NOTE,
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
@@ -580,12 +582,12 @@ def adapt(tw, stock, syms):
     sampler_mode_filter.check_syms(syms)
     track_lofi.check_syms(syms)
     steady = (usb_steady.writes() + voice_loop.writes() + popup_view.writes(stock) + sampler_mode_filter.writes(stock)
-              + track_lofi.writes(stock))
+              + track_lofi.writes(stock) + trig_machines.writes(stock))
     taken = [(w["off"], w["off"] + len(w["new"]) // 2) for w in tw["writes"]]
     for w in steady:
         a, b = w["off"], w["off"] + len(w["new"]) // 2
         if any(a < y and x < b for x, y in taken):
-            raise SystemExit(f"!! envoi à heure fixe, boucle des voix, popup_view, sampler_mode_filter, track_lofi : 0x{a + BASE:08x} déjà écrit par "
+            raise SystemExit(f"!! envoi à heure fixe, boucle des voix, popup_view, sampler_mode_filter, track_lofi, trig_machines : 0x{a + BASE:08x} déjà écrit par "
                              "Model-TG")
     writes = sorted(tw["writes"] + steady, key=lambda w: w["off"])
     return {
@@ -606,6 +608,7 @@ def adapt(tw, stock, syms):
             popup_view.NOTE,
             sampler_mode_filter.NOTE,
             track_lofi.NOTE,
+            trig_machines.NOTE,
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],

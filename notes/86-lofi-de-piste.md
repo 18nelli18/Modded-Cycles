@@ -132,16 +132,20 @@ fenêtre montre le texte en grande police, sans jauge, comme `lofi_draw` de MACR
 
 `0x40059852` : `jsr 0x40056f58` (Volume + Dist) -> `jsr tl_post`, qui l'appelle puis traite les 6 pistes (Q31,
 32 trames, `0x80001858 + 128 t`) : échantillonnage-blocage (phase Q16, avance 2^(−86 r / 1536) par trame, une nouvelle
-valeur à chaque passage de 1), puis masque des b bits forts (32 − b bits faibles à 0) — l'algorithme de `lofi_apply`
-de Model-TG, les pas du lo-fi de MACRO. Mots lus : les mots lissés (`0x8000100c + 14 + 66 t + 2 k`, p-locks, LFO,
+valeur à chaque passage de 1), puis arrondi au plus proche de b bits forts (un demi-pas ajouté, borné au dernier pas,
+32 − b bits faibles à 0, et la borne basse symétrique : −(dernier pas positif)) — l'algorithme de `lofi_apply` de
+Model-TG, les pas du lo-fi de MACRO. Arrondi plutôt que troncature à la demande du propriétaire (os-lofi4, 30/10) : la
+troncature vers −∞ ajoutait un décalage continu et faisait d'un signal sous le pas un créneau d'un pas entier, d'où un
+volume qui montait avec Bits ; à 2 bits, la borne basse non symétrique (−2³¹ contre +2³⁰) déformait encore un sinus. Mots lus : les mots lissés (`0x8000100c + 14 + 66 t + 2 k`, p-locks, LFO,
 vélocité compris), arrondis et bornés à 0..127. Une piste dont Rate et Bits sont à 0 n'est pas touchée (bit pour bit)
 et sa phase est remise pour prendre la première trame. Une piste Sampler stéréo de Model-TG a son côté dans `sx_side`
-(`0x401b9f30`, vérifié contre sa table de symboles) : même phase, même masque. Place : six masques 48×22 (`0x4015943c`,
-`0x4015f38c`, `0x40165fec`, `0x40168da4`, `0x4016dab8`, `0x4016fae8`) ; état par piste dans le masque (rechargé depuis
-la flash au démarrage).
+(`0x401b9f30`), traité seulement quand `sx_on` (`0x401b9b24`) dit la piste stéréo dans ce bloc (deux adresses
+vérifiées contre sa table de symboles) : même phase, même masque. Place : sept masques 48×22 (`0x4015943c`,
+`0x4015f38c`, `0x40165fec`, `0x40168da4`, `0x4016dab8`, `0x4016fae8`, `0x40170c48`) ; état par piste dans un masque
+(rechargé depuis la flash au démarrage).
 
-Coût mesuré (`test_track_lofi.py`) : environ 400 instructions par piste en lo-fi et par bloc (≈ 0,4 % d'un bloc de
-~108 000), le côté stéréo traité toujours ; une piste éteinte : une dizaine.
+Coût mesuré (`test_track_lofi.py`) : environ 400 instructions par piste mono en lo-fi et par bloc (≈ 0,4 % d'un bloc de
+~108 000), un peu plus en stéréo ; une piste éteinte : une dizaine.
 
 Conflit : le filtre par piste (`48-track-filter`, hors OS 2.0) prend le même site `0x40059852` et les ids 1..4 ; il
 déclare déjà `conflicts` avec Model-TG.
@@ -150,5 +154,39 @@ déclare déjà `conflicts` avec Model-TG.
 `tl_atk` ; texte de 0 à 0x7f00 (et hors pas, hors bornes) ; fenêtre de valeur = le chemin texte de l'OS, sans sprite ;
 `tl_post` contre un modèle Python, 6 pistes × 12 blocs (éteint, Rate seul, Bits seul, les deux au plus fort, mots hors
 bornes, une piste éteinte un bloc puis rallumée) avec côté stéréo, bit pour bit ; registres et pile.
+
+## 7. Pas tenu + MACHINES : le navigateur au relâchement `[FAIT en émulation]`
+
+Sur l'appareil (os-lofi4) : pas tenu + `MACHINES` + COLOR pose bien le p-lock de Rate, mais l'OS ouvre le navigateur
+des machines du pas dès l'appui de `MACHINES`. Décision du propriétaire : avec un pas tenu, l'ouvrir au **relâchement**
+de `MACHINES`, et seulement si rien n'a servi pendant. Vaut pour tous les gestes `MACHINES` + potard (Attack, Filtre,
+Résonance de Model-TG aussi).
+
+Relevé (agent DSH, `docs/2026-10-30-trig-machines-dsh.md`) : `MainScreenView::consumeKeyEvent` (`0x4001c0d2`), cas 5
+en `0x4001c252` : appui frais sans FUNC -> `0x4006b736` (UIStates +0x164, maintien) choisit PresetManager (1) ou
+DrumSelect (0, le cas d'un appui de pas récent), ouverts à l'appui ; le relâchement arrive au même cas, sans effet. Le
+masque des pas tenus est +0x15c/+0x160 (`0x4006b78e`).
+
+`tools/trig_machines.py` + `tools/machines/trig_machines/` (masques 41×41 `0x4018d918` et 52×22 `0x4016ea78`, écrit
+avec Model-TG), quatre accroches de prologue, aucune sur Model-TG :
+
+- `0x4001c0d2` -> `mt_main` : appui frais de `MACHINES` sans FUNC, un pas tenu -> avalé (rend 1), le navigateur que
+  l'appui aurait ouvert noté ; relâchement avec cette attente, le pas toujours tenu -> la fonction rejouée sur une
+  copie de l'événement en appui frais ; le pas lâché d'abord : rien ; l'appui frais d'une autre touche annule ;
+- `0x4001c27c` (`jsr 0x4006b736`) -> `mt_trig` : pendant le rejeu, le navigateur noté ;
+- `0x4001f4f0` (`ParameterPageView::encoder`) -> `mt_knob` : un potard tourné (pas ≠ 0) annule ; un clic, non ;
+- `0x4001f97e` (`ParameterPageView::consumeKeyEvent`) -> `mt_key` : l'appui frais d'une autre touche ([LFO]...) annule.
+
+Sans pas tenu, ou avec FUNC : l'OS, à l'appui. Le modificateur n'est pas touché : Model-TG lit l'état physique de la
+touche (`0x4007faf4` / KEY_BITS), pas l'événement avalé. Le premier jet de l'agent rejouait les prologues de
+`encoder` et de la touche de page sans retirer l'adresse de retour du `jsr` (cadre décalé de 4) : corrigé, et le banc
+le vérifie.
+
+**Preuve** `tools/emu/test_trig_machines.py` (le vrai code de l'interface, constructeurs des navigateurs bouchés ;
+référence : Model-TG sans ces écritures) : sans pas tenu ou avec FUNC, ouverture à l'appui comme avant ; pas tenu,
+appui avalé et ouverture au relâchement, du navigateur de l'appui (DrumSelect, PresetManager en maintien) ; attente
+annulée par un potard tourné, [LFO], une autre touche, gardée par un clic et un relâchement ; pas lâché avant : rien ;
+les quatre fonctions dont le prologue est remplacé rendent la même chose et font les mêmes appels, deux fois
+d'affilée sur une interface neuve.
 
 Reste : MACRO (FINE redevient l'accord fin, `MACHINES` + PITCH = FTUNE comme partout), documentation, PR.

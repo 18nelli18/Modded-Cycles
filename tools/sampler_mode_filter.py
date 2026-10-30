@@ -37,6 +37,7 @@ OTHER_DESCR = 0x401abf32
 SAMPLER_DESCR_ATK = 0x401abee6
 GC_CONT = 0x401bac2a                  # lo-fi de piste : ST_SPLIT_PATCHES de gen_model_tg.py (notes/86)
 GC_STORE = 0x401bac98                 # ajoute 0x20 o avant gflt_coef (ailleurs : 0x401bac0a / 0x401bac78)
+UI_GRAN = 0x401bccbc                         # mode de la piste sélectionnée (1..4 = modes 3..6), par gran_watch
 
 NOTE = ("Filtre et Résonance de piste pour le Sampler en modes Granular/Stretch/Pluck/Wave "
         "(tools/sampler_mode_filter.py, notes/83) : filtre de piste sous MACHINES+SWEEP/CONTOUR "
@@ -57,6 +58,7 @@ def compile_filter():
                 f"-DSAMPLER_DESCR_ATK={SAMPLER_DESCR_ATK:#x}",
                 f"-DGC_CONT={GC_CONT:#x}",
                 f"-DGC_STORE={GC_STORE:#x}",
+                f"-DUI_GRAN={UI_GRAN:#x}",
                 "-c", str(SRC / "sampler_mode_filter.S"), "-o", str(obj)])
         gx.run([gx.CROSS + "ld", "-T", str(SRC / "sampler_mode_filter.ld"), "--no-warn-rwx-segments", "-o", str(elf),
                 str(obj)])
@@ -92,7 +94,7 @@ def check_syms(syms):
     """Les adresses de Model-TG écrites en dur ci-dessus, contre la table de symboles de sa construction (les deux
     variantes, model-tg et model-tg-st) : une retouche de Model-TG qui les déplacerait arrête la génération."""
     want = {"loop_mode": LOOP_MODE, "other_descr": OTHER_DESCR, "sampler_descr_atk": SAMPLER_DESCR_ATK,
-            "gc_store": GC_STORE}
+            "gc_store": GC_STORE, "ui_gran": UI_GRAN}
     bad = {n: (syms.get(n), v) for n, v in want.items() if syms.get(n) != v}
     if syms.get("gflt_coef", 0) + 18 != GC_CONT:             # après lea, moveml, moveq, puis les 8 o remplacés
         bad["gflt_coef+18"] = (syms.get("gflt_coef", 0) + 18, GC_CONT)
