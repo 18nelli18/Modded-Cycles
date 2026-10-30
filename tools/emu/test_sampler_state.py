@@ -84,22 +84,47 @@ def main():
     for _ in range(64):
         hi = ST_TAG >> 16 | rnd.randrange(0x1000)
         lo = rnd.randrange(0x10000)
-        k27 = rnd.randrange(0x7f01)
+        k27, k30 = rnd.randrange(0x7f01), rnd.randrange(0x7f01)
         u.uc.mem_write(rt, bytes(100))
         u.uc.mem_write(rt + 72, struct.pack(">HH", hi, k27))
+        u.uc.mem_write(rt + 80, struct.pack(">H", k30))
         u.uc.mem_write(rt + 86, struct.pack(">H", lo))
         u.uc.mem_write(rec, bytes(100))
         u.call(SAVE, rec, rt)
         r = bytes(u.uc.mem_read(rec, 100))
-        if r[84:88] != struct.pack(">HH", hi, lo):
-            bad.append(("save", hex(hi), hex(lo), r[84:88].hex()))
+        if r[84:88] != struct.pack(">HH", hi, lo) or r[64:66] != bytes([k27 >> 8, k30 >> 8]):
+            bad.append(("save", hex(hi), hex(lo), r[84:88].hex(), r[64:66].hex()))
         u.uc.mem_write(rt2, b"\xaa" * 100)
         u.call(LOAD, rt2, rec)
         g = bytes(u.uc.mem_read(rt2, 100))
-        if g[72:74] != struct.pack(">H", hi) or g[86:88] != struct.pack(">H", lo) or g[74:76] != bytes(2):
-            bad.append(("load", hex(hi), hex(lo), g[72:76].hex(), g[86:88].hex()))
-    check(not bad, f"son : sauvegarde (cases 28/29 = k 26 | sound+86, le long d'avant) et chargement (k 26, sound+86 ; "
-                   f"k 27 laissé à 0) sur 64 états au hasard {bad[:2]}")
+        if g[72:74] != struct.pack(">H", hi) or g[86:88] != struct.pack(">H", lo) \
+                or g[74:76] != struct.pack(">H", k27 & 0x7f00) or g[80:82] != struct.pack(">H", k30 & 0x7f00):
+            bad.append(("load", hex(hi), hex(lo), g[72:76].hex(), g[80:82].hex(), g[86:88].hex()))
+    check(not bad, f"son : sauvegarde (cases 28/29 = k 26 | sound+86, le long d'avant ; case 18 = octets forts de k 27 "
+                   f"et k 30, Lo-Fi Rate / Bits) et chargement (k 26, sound+86, k 27, k 30) sur 64 états au hasard "
+                   f"{bad[:2]}")
+    # anciens enregistrements (case 18 à 0) : lo-fi éteint ; un octet > 127 (jamais écrit) vaut 0
+    got = []
+    for b in (b"\x00\x00", b"\x80\xff", b"\x7f\x01"):
+        u.uc.mem_write(rec + 64, b)
+        u.uc.mem_write(rt2, b"\xaa" * 100)
+        u.call(LOAD, rt2, rec)
+        got.append((w16(u, rt2 + 74), w16(u, rt2 + 80)))
+    check(got == [(0, 0), (0, 0), (0x7f00, 0x0100)],
+          f"chargement de la case 18 : 00 00 -> éteint, 80 ff -> éteint, 7f 01 -> 0x7f00 / 0x0100 ({got})")
+    # destinations de LFO 1 (son+28, octet fort) et la seconde (son+0x58) : Lo-Fi Rate / Bits gardés (dst_ours)
+    got = []
+    for k in (27, 30, 23):
+        u.uc.mem_write(rt, bytes(100))
+        u.uc.mem_write(rt + 28, bytes([k]))
+        u.uc.mem_write(rt + 0x58, struct.pack(">I", k))
+        u.uc.mem_write(rec, bytes(100))
+        u.call(SAVE, rec, rt)
+        u.uc.mem_write(rt2, bytes(100))
+        u.call(LOAD, rt2, rec)
+        got.append((k, u.uc.mem_read(rt2 + 28, 1)[0], struct.unpack(">I", u.uc.mem_read(rt2 + 0x58, 4))[0]))
+    check(all(a == b == c for a, b, c in got),
+          f"destinations de LFO (son+28, son+0x58) Lo-Fi Rate (27), Bits (30), Attack (23) gardées à la sauvegarde {got}")
 
     # 3. state_store / st_apply / st_apply_c
     fields = []

@@ -41,6 +41,7 @@ import usb_steady                  # noqa: E402
 import voice_loop                  # noqa: E402
 import popup_view                  # noqa: E402
 import sampler_mode_filter          # noqa: E402
+import track_lofi                  # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -413,6 +414,43 @@ MC_PATCHES += (
      "_DATA_LABELS={'st_fields','st_fields_end','st_reset','key_value_strings','rtg_names',\n",
      "build : rtg_names (table de pointeurs) parmi les tables de données que la vérification des branchements saute"),
 )
+# --- lo-fi de piste (notes/86 §4, tools/track_lofi.py) ---
+# Lo-Fi Rate (k 27) et Lo-Fi Bits (k 30) : nos descripteurs 1 et 2 posés par son build.py à côté des siens ; rangés
+# dans la case 18 de l'enregistrement par la fin de snd_save_post / snd_load_post (déjà retouchée par
+# ST_SPLIT_PATCHES : ces entrées viennent après), qui saute dans notre code, même taille ; et dst_ours garde aussi
+# comme destination de LFO 1 / vélocité les k 26..32 (Rate, Bits), pas seulement 23..25.
+TL_PATCHES = (
+    ("src/model_tg.s",
+     '    movew   %a1@(86),%d1\n    movew   %d1,%a0@(86)\n    movel   %sp@,%d0\n    addql   #8,%sp\n    rts\n',
+     f'    movew   %a1@(86),%d1\n    movew   %d1,%a0@(86)\n'
+     f'    jmp     {track_lofi.SAVE:#x}            | Modded-Cycles: tl_save (tools/track_lofi.py)\n',
+     "lo-fi de piste : Rate / Bits (k 27 / 30) rangés dans la case 18 de l'enregistrement (snd_save_post)"),
+    ("src/model_tg.s",
+     '    movew   %a0@(86),%d1          | on k26, low half at sound+86 (Modded-Cycles)\n'
+     '    movew   %d1,%a1@(86)\n    movel   %sp@,%d0\n    addql   #8,%sp\n    rts\n',
+     '    movew   %a0@(86),%d1          | on k26, low half at sound+86 (Modded-Cycles)\n'
+     f'    movew   %d1,%a1@(86)\n    jmp     {track_lofi.LOAD:#x}            | Modded-Cycles: tl_load\n',
+     "lo-fi de piste : Rate / Bits (k 27 / 30) relus de la case 18 de l'enregistrement (snd_load_post)"),
+    ("src/model_tg.s",
+     '    subil   #23,%d1\n    cmpil   #2,%d1\n    blss    do_keep\n',
+     '    subil   #23,%d1\n    cmpil   #9,%d1                | Modded-Cycles: 23..32 (track lo-fi on 27, 30)\n'
+     '    blss    do_keep\n',
+     "destinations de LFO 1 / vélocité gardées à la sauvegarde : k 23..32 (Lo-Fi Rate / Bits compris), même taille"),
+    ("src/model_tg.s",
+     '    movel   %d1,%a0@(28)          | position 5: Resonance, not Contour\n    movel   #other_descr,%d0\n',
+     '    movel   %d1,%a0@(28)          | position 5: Resonance, not Contour\n'
+     f'    jsr     {track_lofi.DH:#x}            | Modded-Cycles: tl_dh, COLOR / SHAPE -> Lo-Fi Rate / Bits\n',
+     "MACHINES + COLOR / SHAPE -> Lo-Fi Rate / Bits sur les machines d'origine (dh_pass), même taille"),
+    ("src/model_tg.s",
+     '    moveq   #0x0d,%d1\n    movel   %d1,%a0@(12)          | position 1: Attack, not Amp Decay\n',
+     f'    jsr     {track_lofi.ATK:#x}            | Modded-Cycles: tl_atk, Attack + Lo-Fi Rate / Bits\n',
+     "MACHINES + COLOR / SHAPE -> Lo-Fi Rate / Bits sur le Sampler (sampler_descr_atk), même taille"),
+    ("build.py",
+     '    print(f"  param id 0x{_id:02x} -> k={_k}, trackData+{2*_k}")\n',
+     '    print(f"  param id 0x{_id:02x} -> k={_k}, trackData+{2*_k}")\n' + track_lofi.build_rows(),
+     "descripteurs 1 et 2 : Lo-Fi Rate (k 27) et Lo-Fi Bits (k 30), groupe 7, drapeaux 0x600 (notes/86 §4)"),
+)
+MC_PATCHES += TL_PATCHES
 # --- version combinée (notes/31 §4) ---
 # Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)
 # s'arrête 1 Mo plus bas, pour nos moteurs du Syntakt (gen_syntakt_engines.PAY_TG = 0x46700000). Tout ce qu'il y
@@ -512,6 +550,7 @@ def adapt_st(tw, stock, syms):
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
             popup_view.NOTE,
             sampler_mode_filter.NOTE,
+            track_lofi.NOTE,
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
@@ -539,12 +578,14 @@ def adapt(tw, stock, syms):
     # éteints) et l'OS envoie chaque bloc à l'USB juste après l'avoir calculé. Mêmes écritures que 6ch-usbup.
     # Et la division des pistes par 2 plus courte de la boucle des voix (notes/36), comme 6ch-usbup.
     sampler_mode_filter.check_syms(syms)
-    steady = usb_steady.writes() + voice_loop.writes() + popup_view.writes(stock) + sampler_mode_filter.writes(stock)
+    track_lofi.check_syms(syms)
+    steady = (usb_steady.writes() + voice_loop.writes() + popup_view.writes(stock) + sampler_mode_filter.writes(stock)
+              + track_lofi.writes(stock))
     taken = [(w["off"], w["off"] + len(w["new"]) // 2) for w in tw["writes"]]
     for w in steady:
         a, b = w["off"], w["off"] + len(w["new"]) // 2
         if any(a < y and x < b for x, y in taken):
-            raise SystemExit(f"!! envoi à heure fixe, boucle des voix, popup_view, sampler_mode_filter : 0x{a + BASE:08x} déjà écrit par "
+            raise SystemExit(f"!! envoi à heure fixe, boucle des voix, popup_view, sampler_mode_filter, track_lofi : 0x{a + BASE:08x} déjà écrit par "
                              "Model-TG")
     writes = sorted(tw["writes"] + steady, key=lambda w: w["off"])
     return {
@@ -564,6 +605,7 @@ def adapt(tw, stock, syms):
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
             popup_view.NOTE,
             sampler_mode_filter.NOTE,
+            track_lofi.NOTE,
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],

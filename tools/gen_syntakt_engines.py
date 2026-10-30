@@ -844,6 +844,8 @@ def tg_records(a, ins, lab, n, firsts, first, top, tg):
     lab("1"); ins("move.l (%a0)+, (%a1)+"); ins("subq.l #1, %d1"); ins("bpl.s 1b")
     ins(f"lea {REC_ATK:#x}, %a0"); ins("moveq #0x0d, %d1"); ins("move.l %d1, 12(%a0)")      # Attack
     ins("moveq #0x0c, %d1"); ins("move.l %d1, 24(%a0)"); ins("moveq #0x0b, %d1"); ins("move.l %d1, 28(%a0)")
+    # lo-fi de piste (notes/86, tools/track_lofi.py, écrit avec Model-TG) : COLOR / SHAPE -> Lo-Fi Rate / Bits (ids 1 / 2)
+    ins("moveq #1, %d1"); ins("move.l %d1, 16(%a0)"); ins("moveq #2, %d1"); ins("move.l %d1, 20(%a0)")
     ins("move.l %a0, %d0")
     lab("tg_sync")
     ins(f"lea {tg['param_table'] + 44:#x}, %a0"); ins(f"lea {DESCN + 44:#x}, %a1"); ins(f"moveq #{g7.NDESC - 1}, %d1")

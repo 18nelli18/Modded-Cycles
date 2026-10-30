@@ -79,3 +79,76 @@ masque 34×34 (`0x4018ff64`, le dernier libre).
 relu avec WAVE en k 0 ; aller-retour de 1 148 p-locks k 0..32 (WAVE par la rangée 29) ; p-lock WAVE ancien (rangée
 29) relu sur k 0 ; sortie de LFO 2 inchangée par une valeur ajoutée au mot k 0 de obj ; les accroches gardent pile,
 registres et mémoire. Seul : TOUT OK ; combiné avec tout `os.json` : les mêmes 9 échecs préexistants.
+
+## 4. Les deux paramètres : descripteurs, rangement, p-locks `[FAIT en émulation]`
+
+**Descripteurs.** Les ids 1 et 2 (emplacements « Error », groupe -1, libres dans l'OS 2.0) deviennent **Lo-Fi Rate**
+/ `RATE` (k 27) et **Lo-Fi Bits** / `BITS` (k 30) : groupe 7 (communs à toutes les machines), 0..32512, défaut 0
+(éteint), ni page ni potard ni CC, drapeaux 0x600 (destinations des LFO et de la vélocité), tri 38 / 39 après Attack,
+Filtre, Résonance. Ils sont posés par le build.py de Model-TG à côté des siens (`TL_PATCHES` de `gen_model_tg.py`) :
+les moteurs du Syntakt recopient la table de l'image (DESCN, `0x43034000`) avec les retouches de Model-TG, donc avec
+les nôtres, sans rien de plus. La table k -> id communs de l'OS (`0x40a79394`, faite au démarrage par groupe) et
+`paramIdFor` les donnent alors pour toutes les machines, Sampler compris (`sampler_com_gate` ne cache que 24/25).
+Noms et code : `tools/track_lofi.py`, `tools/machines/track_lofi/track_lofi.S`, masque 48×22 `0x4015943c`, écrit avec
+Model-TG comme `sampler_mode_filter`.
+
+**Rangement.** Case 18 de l'enregistrement du son (+64/+65), que la sauvegarde de l'OS n'écrit jamais (sa table
+k -> case saute 0x12) : un octet par réglage, l'octet fort du mot (0..127). La fin de `snd_save_post` /
+`snd_load_post` de Model-TG saute dans `tl_save` / `tl_load` (même taille, aucun symbole ne bouge) ; le chargement
+passe après `lfo_tail` de lfo-plus (qui remet WAVE en k 0 et vide k 30). Ancien enregistrement : 0, éteint ; un octet
+au-dessus de 127 (jamais écrit) vaut 0. `dst_ours` de Model-TG garde aussi comme destination de LFO 1 / vélocité les
+k 23..32 (avant : 23..25), Rate et Bits compris : sans cela la sauvegarde les renvoyait à None.
+
+**p-locks.** Rangées de fichier : k 27 -> **32**, k 30 -> **18**, deux identifiants que l'OS n'écrit jamais (sa table
+k -> rangée saute 0x12, son chargeur refuse au-delà de 32) ; `plk_id` / `lfo_plk_load` de lfo-plus. En mémoire, rien
+à faire : ce sont des k <= 32.
+
+**Preuves.** `test_sampler_state.py` : 64 sons au hasard, case 18 = octets forts de k 27 / 30 et relus ; ancienne case
+à 0 et octet > 127 -> éteint ; destinations de LFO Rate, Bits, Attack gardées par la sauvegarde. `test_lfo_plus.py`
+(attentes mises à jour par l'agent DSH, relues) : ids 1 / 2 -> k 27 / 30 et k -> id = 1 / 2 sur 24 machines, aucun
+descripteur sur 28, 29, 31, 32 ; chargement avec et sans Model-TG ; rangées 18 et 24..32 ; aller-retour des p-locks
+k 0..32 (1 225, seul k 26 laissé).
+
+## 5. Le geste et l'affichage `[FAIT en émulation]`
+
+`MACHINES` + COLOR / SHAPE règle Rate / Bits sur **toutes les machines**, comme `MACHINES` + DECAY / SWEEP / CONTOUR
+règle Attack / Filtre / Résonance : positions 2 et 3 du descripteur sous `MACHINES` = ids 1 et 2.
+
+- machines d'origine : `dh_pass` de Model-TG, `movel #other_descr,%d0` -> `jsr tl_dh` (même taille) ;
+- Sampler : là où `sampler_pre` fait `sampler_descr_atk`, `moveq #0x0d ; movel d1,a0@(12)` -> `jsr tl_atk` (Attack
+  puis Rate / Bits) ; `smf_descr` le rend ou le recopie selon le mode, positions 2 et 3 comprises ;
+- machines des moteurs du Syntakt (MACRO comprise) : `tg_records` de `gen_syntakt_engines.py`, deux `move.l` de plus.
+
+`[LFO]` + `MACHINES` + COLOR / SHAPE affecte donc Rate / Bits (lfo-plus `lfo_learn` lit l'enregistrement de KICK
+changé par `dh_pass`), et la diode de la page LFO les montre sur COLOR (38) / SHAPE (39) (`lfo_led`, table `led_pos`
+pour les ids 1..13).
+
+Valeur : `OFF` à 0 ; Rate `46K` .. `4K` (pas r = (v + 1) / 2 = 1..64 du lo-fi de MACRO, 48 kHz × 2^(−86 r / 1536)) ;
+Bits `12B` .. `2B` (12 − 10 (v − 1) / 126). Texte (+0x20) et dessin dans la fenêtre de valeur (+0x30) des objets
+d'interface des ids 1 et 2 (`0x40a71754 + 100 id`), posés par `tl_ui` au geste et à chaque chargement de son ; la
+fenêtre montre le texte en grande police, sans jauge, comme `lofi_draw` de MACRO.
+
+## 6. Le son `[FAIT en émulation]`
+
+`0x40059852` : `jsr 0x40056f58` (Volume + Dist) -> `jsr tl_post`, qui l'appelle puis traite les 6 pistes (Q31,
+32 trames, `0x80001858 + 128 t`) : échantillonnage-blocage (phase Q16, avance 2^(−86 r / 1536) par trame, une nouvelle
+valeur à chaque passage de 1), puis masque des b bits forts (32 − b bits faibles à 0) — l'algorithme de `lofi_apply`
+de Model-TG, les pas du lo-fi de MACRO. Mots lus : les mots lissés (`0x8000100c + 14 + 66 t + 2 k`, p-locks, LFO,
+vélocité compris), arrondis et bornés à 0..127. Une piste dont Rate et Bits sont à 0 n'est pas touchée (bit pour bit)
+et sa phase est remise pour prendre la première trame. Une piste Sampler stéréo de Model-TG a son côté dans `sx_side`
+(`0x401b9f30`, vérifié contre sa table de symboles) : même phase, même masque. Place : six masques 48×22 (`0x4015943c`,
+`0x4015f38c`, `0x40165fec`, `0x40168da4`, `0x4016dab8`, `0x4016fae8`) ; état par piste dans le masque (rechargé depuis
+la flash au démarrage).
+
+Coût mesuré (`test_track_lofi.py`) : environ 400 instructions par piste en lo-fi et par bloc (≈ 0,4 % d'un bloc de
+~108 000), le côté stéréo traité toujours ; une piste éteinte : une dizaine.
+
+Conflit : le filtre par piste (`48-track-filter`, hors OS 2.0) prend le même site `0x40059852` et les ids 1..4 ; il
+déclare déjà `conflicts` avec Model-TG.
+
+**Preuve** `tools/emu/test_track_lofi.py` : descripteurs ; geste sur les machines 0..5 avec et sans `MACHINES` ;
+`tl_atk` ; texte de 0 à 0x7f00 (et hors pas, hors bornes) ; fenêtre de valeur = le chemin texte de l'OS, sans sprite ;
+`tl_post` contre un modèle Python, 6 pistes × 12 blocs (éteint, Rate seul, Bits seul, les deux au plus fort, mots hors
+bornes, une piste éteinte un bloc puis rallumée) avec côté stéréo, bit pour bit ; registres et pile.
+
+Reste : MACRO (FINE redevient l'accord fin, `MACHINES` + PITCH = FTUNE comme partout), documentation, PR.

@@ -723,16 +723,17 @@ lfo_learn:
  * machine, sans le changement de Model-TG (MACHINES n'est plus tenue) : Attack, Filtre, Résonance n'y sont pas, et
  * FINE de MACRO y est en entrée 16, sans potard ; sans diode, ou une diode hors des potards. On cherche donc
  * l'identifiant du potard qui les règle sous MACHINES : DECAY (1) pour Attack, SWEEP (4) pour Filtre, CONTOUR (5)
- * pour Résonance, PITCH (0) pour FINE de MACRO. d0-d1 libres ; d0 = sp à la sortie, comme l'OS. */
+ * pour Résonance, COLOR (2) et SHAPE (3) pour Lo-Fi Rate et Bits (ids 1 et 2, notes/86), PITCH (0) pour FINE de
+ * MACRO. d0-d1 libres ; d0 = sp à la sortie, comme l'OS. */
 lfo_led:
 	lea	12(%sp), %sp
 	move.l	%d2, %d0
-	moveq	#0x0b, %d1
-	sub.l	%d1, %d0
-	moveq	#2, %d1
+	subq.l	#1, %d0
+	moveq	#12, %d1
 	cmp.l	%d0, %d1
 	bcs.s	1f
 	mvs.b	led_pos(%pc, %d0.l), %d0
+	bmi.s	1f
 	move.l	(%a2, %d0.l*4), %d2
 	bra.s	9f
 1:	moveq	#FTUN_ID, %d0
@@ -743,7 +744,8 @@ lfo_led:
 	move.l	(%a2), %d2
 9:	move.l	%sp, %d0
 	jmp	0x400262b2
-led_pos:	.byte	5, 4, 1			/* Résonance (0x0b), Filtre (0x0c), Attack (0x0d) */
+/* position du potard pour les ids 1..13 : Rate (1), Bits (2), rien (3..10), Résonance (0x0b), Filtre, Attack */
+led_pos:	.byte	2, 3, -1, -1, -1, -1, -1, -1, -1, -1, 5, 4, 1
 	.align	2
 
 /* ================================================================== son et pattern ======================== */
@@ -896,29 +898,37 @@ lfo_plk_save:
 1:	move.b	plk_id-23(%pc, %d0.l), (%a3)
 2:	move.b	%d2, 1(%a3)
 	rts
-/* identifiant de rangée pour k = 23..32 (0xff : rangée ignorée à la relecture ; k = 26, 27 : état du Sampler de
- * Model-TG, jamais p-locké) */
-plk_id:	.byte	24, 25, 26, 0xff, 0xff, 27, 28, 0xff, 30, 31
+/* identifiant de rangée pour k = 23..32 (0xff : rangée ignorée à la relecture ; k = 26 : état du Sampler de Model-TG,
+ * jamais p-locké). Lo-Fi Rate (k 27) et Bits (k 30, notes/86 §4) : rangées 32 et 18, que l'OS n'écrit jamais (sa table
+ * k -> rangée saute 0x12 ; son chargeur refuse au-delà de 32) */
+plk_id:	.byte	24, 25, 26, 0xff, 32, 27, 28, 18, 30, 31
 
 /* 0x4005aa22, identifiant de rangée -> k (0x4005aa1a(piste, id) ; d2 empilé puis = 6, d1 = piste) : jmp
- * lfo_plk_load à la place de move.l 12(sp),d0 ; cmp.l d1,d2. Pistes 0..5, identifiants 24..31 (que l'OS n'écrit
- * jamais) -> plk_k ; sinon les deux instructions et la suite en 0x4005aa28. */
+ * lfo_plk_load à la place de move.l 12(sp),d0 ; cmp.l d1,d2. Pistes 0..5, identifiants 24..32 et 18 (que l'OS
+ * n'écrit jamais) -> plk_k, k 30 ; sinon les deux instructions et la suite en 0x4005aa28. */
 lfo_plk_load:
 	move.l	12(%sp), %d0
 	moveq	#5, %d2
 	cmp.l	%d1, %d2
 	bcs.s	1f
-	moveq	#-24, %d2
+	moveq	#18, %d2			/* rangée 18 : Lo-Fi Bits, k 30 */
+	cmp.l	%d0, %d2
+	bne.s	2f
+	moveq	#30, %d0
+	bra.s	3f
+2:	moveq	#-24, %d2
 	add.l	%d0, %d2
-	cmpi.l	#7, %d2
-	bhi.s	1f
+	moveq	#8, %d0
+	cmp.l	%d2, %d0
+	bcs.s	4f
 	mvz.b	plk_k(%pc, %d2.l), %d0
-	move.l	(%sp)+, %d2
+3:	move.l	(%sp)+, %d2
 	rts
+4:	move.l	12(%sp), %d0
 1:	moveq	#6, %d2
 	cmp.l	%d1, %d2
 	jmp	0x4005aa28
-plk_k:	.byte	23, 24, 25, 28, 29, 0, 31, 32
+plk_k:	.byte	23, 24, 25, 28, 29, 0, 31, 32, 27	/* rangées 24..32 ; 32 : Lo-Fi Rate, k 27 */
 
 /* ================================================================== LFO 3/4 par pattern ===================== */
 
