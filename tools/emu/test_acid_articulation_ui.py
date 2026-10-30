@@ -31,7 +31,14 @@ for other in (1,2,5):
 held.clear();assert turn(2,1)==77
 held.add(13);machine[0]=12;assert turn(2,1)==77
 machine[0]=13;assert turn(4,1)==77
-assert consumed and set(consumed)=={13} and any('Legato OFF' in n for n in notices) and any('Glide OFF' in n for n in notices)
+assert not consumed and any('Legato OFF' in n for n in notices) and any('Glide OFF' in n for n in notices)
+# Vraie release du support SETTINGS partage, sans consommer Keyboard.
+api=al['wf_api'];shared=r.r32(api+16);used=r.r32(api+20)
+assert shared and used
+machine[0]=13;held.add(13)
+r.u.mem_write(EVENT,struct.pack('>6I',0x400fbebc,0,0,13,1,0));r.call(al['wf_key'],EVENT);assert r.r32(shared)==1
+turn(2,1,100);assert r.r32(used)==1 and not consumed
+held.remove(13);r.u.mem_write(EVENT,struct.pack('>6I',0x400fbebc,0,0,13,0,0));r.call(al['wf_key'],EVENT);assert r.r32(shared)==0
+assert turn(2,1,101)==77
+r.u.mem_write(EVENT,struct.pack('>6I',0x400fbebc,0,0,16,1,0));r.call(al['wf_key'],EVENT);assert r.r32(shared)==0
 a.output.write_text(json.dumps(dict(native_boot=True,selected_track_only=True,other_gestures_delegated=True,duplicate_event_ignored=True,bounds=True,popup=notices,hardware_tested=False),indent=2)+'\n');print('PASS native face controls, selected track isolation and modifier delegation',flush=True)
-
-

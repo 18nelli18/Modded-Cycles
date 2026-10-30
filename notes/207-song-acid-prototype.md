@@ -47,3 +47,21 @@ sans le stub graphique du banc de controles.657rectangles verifies dans
 les limites128x64 ; PNG inspecte visuellement avec F16 et x64. Le primitive
 40070efc est un contour avec interieur ; il ne convient pas aux pixels1x1.
 Preuves et livraisons corrigees : `../song-grid-test/`.
+
+## Retours appareil : menus et routage
+
+AveyCole demande de garder le style natif au premier niveau. Celui-ci utilise
+de nouveau le vrai MenuView avec Global/Track/Song ; seule la page Song a
+le dessin en grille. Les retours signalent aussi des potards qui modifient
+le son et FUNC+DATA sans effet. Le raccord gc_encoder seul est trop tardif
+pour les potards ordinaires : l'entree Application400775f8 route maintenant
+directement les evenements encodeur vers Song pendant sa page. L'entree
+clavier40077720 fait de meme pour ses touches d'edition. Le transport est
+prepare puis delegue une seule fois a l'application precedente.
+
+ACID : retirer la consommation400723e0(SETTINGS), qui peut retenir sa release.
+Marquer seulement wf_api[5] (mod_used), comme les FX existants. Le test exerce
+wf_key appui/release et verifie set_held=0, puis un trig ordinaire.
+Les tests d'edition Song passent par aa_face_encoder/aa_face_key, pas
+seulement les fonctions internes. Le bandeau montre STOP/LOOP au centre et
+le transport a droite. Les images avec suffixe Controls_Fix portent ces corrections.

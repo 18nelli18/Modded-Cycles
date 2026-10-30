@@ -19,6 +19,7 @@ def main():
  def run(t,*v):return subprocess.check_output([cross+t+'.exe',*map(str,v)],text=True)
  full='ae_mode' in m['per_track_fx']['symbols'];songrow=12 if full else 11
  aliases={**m['direct_jump']['aliases'],**m['direct_jump']['symbols']}
+ aliases['aa_old_key']=int.from_bytes(image[0x40077722-BASE:0x40077726-BASE],'big')
  aliases['aa_old_encoder']=int.from_bytes(image[0x400775fa-BASE:0x400775fe-BASE],'big')
  for name,at in [('encode',0x4005d18a),('decode',0x4005d3dc),('new',0x4000f906)]:aliases['sg_old_'+name]=int.from_bytes(image[at+2-BASE:at+6-BASE],'big')
  aliases['sg_old_frame']=aliases['jp_frame']
@@ -39,13 +40,19 @@ def main():
   editor+=f'.long 0,0,0,.Lrow{i},0,1,.Lts_label,0,0,0,0,0,0,1,sg_value{i},0,0,0,0,0,0\n'
   callbacks+=f'void sg_value{i}(u32 a,u32 b,u32 c,u32 x,u32 y){{(void)a;(void)b;(void)x;sg_row_value({i},c,y);}}\n'
  (O/'song-editor.S').write_text(editor);(O/'song-values.c').write_text(callbacks)
+ top=template.split('.Llabel0:')[0].replace('mf_global_draw','sg_top_draw').replace('ae_global_edit','sg_menu_edit').replace('moveq #11,%d0','moveq #3,%d0').replace('.Lts_title_header: .long 6,6,0','.Lts_title_header: .long 3,3,0').replace('.asciz "Global"','.asciz "Mod"').replace('.Lts_subtitle_header: .long 3,3,0','.Lts_subtitle_header: .long 5,5,0').replace('.asciz "Mod"\n\n','.asciz "Setup"\n\n')
+ import re
+ top=re.sub(r'    clrb %a0@\((?:332|416|500|584|668|752|836|920)\)\n','',top)
+ top+='\n.Lblank: .asciz ""\n.Lallocator: .byte 0\n.balign 4\n.Lts_rows:\n'
+ for fn in ('gc_top_global_value','gc_top_track_value','sg_top_song_value'):top+=f'.long 0,0,0,.Lblank,0,1,.Lts_label,0,0,0,0,0,0,1,{fn},0,0,0,0,0,0\n'
+ (O/'song-top.S').write_text(top)
  coefficients=[0x7fffffff]+[round((1-math.exp(-math.log(10)*(32/48000)/( (50+(i-1)*310/126)/1000)))*(1<<31)) for i in range(1,128)]
  coefficients[1]=64971779
  (O/'coefficients.c').write_text('const int aa_coefficients[128]={'+','.join(map(str,coefficients))+'};\n')
  chain_at=0x40055cd6;assert image[chain_at-BASE:chain_at-BASE+8]==stock[chain_at-BASE:chain_at-BASE+8]
  (O/'chain.S').write_text('.text\n.globl sg_chain_original\nsg_chain_original:\n.byte '+','.join(map(str,stock[chain_at-BASE:chain_at-BASE+8]))+'\njmp 0x40055cde\n')
  objects=[]
- for src in [S/'articulation.c',S/'articulation-ui.c',S/'articulation-dsp.c',O/'coefficients.c',R/'tools/machines/song/song.c',R/'tools/machines/song/storage.c',R/'tools/machines/song/playback.c',R/'tools/machines/song/ui.c',R/'tools/machines/song/hooks.S',R/'tools/machines/song/grid.c',O/'song-root.S',O/'song-editor.S',O/'song-values.c',O/'chain.S']:
+ for src in [S/'articulation.c',S/'articulation-ui.c',S/'articulation-dsp.c',O/'coefficients.c',R/'tools/machines/song/song.c',R/'tools/machines/song/storage.c',R/'tools/machines/song/playback.c',R/'tools/machines/song/ui.c',R/'tools/machines/song/hooks.S',R/'tools/machines/song/grid.c',O/'song-root.S',O/'song-editor.S',O/'song-top.S',O/'song-values.c',O/'chain.S']:
   if src.stem=='articulation-dsp' and not full:continue
   obj=O/(src.stem+'.o');run('gcc','-mcpu=54418','-O3' if src.stem=='articulation-dsp' else '-Os','-ffreestanding','-fno-builtin','-fno-pic','-fno-stack-protector','-fwrapv','-Wall','-Wextra','-Werror','-Wno-misleading-indentation',f'-DSONG_ROW={songrow}','-c',src,'-o',obj);objects.append(obj)
  (O/'module.ld').write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) *(.data*) }} .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) aa_end = .; }} }}\n'+''.join(f'PROVIDE({k} = {v:#x});\n' for k,v in aliases.items()))
@@ -54,8 +61,8 @@ def main():
  # La continuation native ne revient pas : installer avant le saut de fin.
  load=f'.text\n.globl aa_load\naa_load:\n lea -12(%sp),%sp\n movem.l %d0/%a0-%a1,(%sp)\n lea {source:#x},%a0\n lea {CODE:#x},%a1\n move.l #{len(blob)//4},%d0\n1: move.l (%a0)+,(%a1)+\n subq.l #1,%d0\n bne.s 1b\n lea {BSS:#x},%a0\n move.l #{(sy["aa_end"]-BSS+3)//4},%d0\n2: clr.l (%a0)+\n subq.l #1,%d0\n bne.s 2b\n'
  hooks=[]
- aliases.update(aa_application_encoder=0x400775f8,sg_encode_entry=0x4005d18a,sg_decode_entry=0x4005d3dc,sg_new_entry=0x4000f906,sg_frame_entry=m['lfo_reload']['symbols']['xp_frame'],sg_switch_entry=0x40055c5c,sg_mute_entry=0x40058ca6,sg_live_entry=0x40055700,sg_chain_entry=0x40055cd6)
- for old,new in [('ae_update','aa_update'),('ae_render','aa_render'),('aa_application_encoder','aa_face_encoder'),('sg_encode_entry','sg_encode'),('sg_decode_entry','sg_decode'),('sg_new_entry','sg_new'),('sg_frame_entry','sg_frame'),('gc_key','sg_key'),('gc_encoder','sg_encoder'),('gc_draw','sg_draw'),('sg_switch_entry','sg_switch'),('sg_mute_entry','sg_mute_irq'),('sg_live_entry','sg_live_switch'),('sg_chain_entry','sg_chain_set')]:
+ aliases.update(aa_application_encoder=0x400775f8,aa_application_key=0x40077720,sg_encode_entry=0x4005d18a,sg_decode_entry=0x4005d3dc,sg_new_entry=0x4000f906,sg_frame_entry=m['lfo_reload']['symbols']['xp_frame'],sg_switch_entry=0x40055c5c,sg_mute_entry=0x40058ca6,sg_live_entry=0x40055700,sg_chain_entry=0x40055cd6)
+ for old,new in [('ae_update','aa_update'),('ae_render','aa_render'),('aa_application_encoder','aa_face_encoder'),('aa_application_key','aa_face_key'),('sg_encode_entry','sg_encode'),('sg_decode_entry','sg_decode'),('sg_new_entry','sg_new'),('sg_frame_entry','sg_frame'),('gc_key','sg_key'),('gc_encoder','sg_encoder'),('gc_draw','sg_draw'),('sg_switch_entry','sg_switch'),('sg_mute_entry','sg_mute_irq'),('sg_live_entry','sg_live_switch'),('sg_chain_entry','sg_chain_set')]:
   if old in ('ae_update','ae_render') and not full:continue
   at=aliases.get(old) or m['lfo_reload']['symbols'][old];hooks.append(dict(at=at,target=sy[new]));load+=f' lea {at:#x},%a0\n move.l #{0x4eb9 if old in ('sg_new_entry','sg_mute_entry','sg_live_entry') else 0x4ef9},%d0\n move.w %d0,(%a0)+\n move.l #{sy[new]:#x},%d0\n move.l %d0,(%a0)\n'
  load+=f' movem.l (%sp),%d0/%a0-%a1\n lea 12(%sp),%sp\n jmp {oldentry:#x}\n';(O/'load.S').write_text(load)

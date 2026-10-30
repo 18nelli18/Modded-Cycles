@@ -17,7 +17,7 @@ static void box(u32 c,int x,int y,int w,int h){fill(c,x,y,w,1,~0u);fill(c,x,y+h-
 static void text(u32 c,int x,int y,const char*s,u32 color){for(;*s;s++,x+=6){unsigned char ch=*s;if(ch>='a'&&ch<='z')ch-=32;int index=ch>='0'&&ch<='9'?ch-'0':ch>='A'&&ch<='Z'?10+ch-'A':-1;if(index<0)continue;for(int col=0;col<5;col++)for(int bit=0;bit<7;bit++)if(glyphs[index][col]&(1u<<bit))fill(c,x+col,y+bit,1,1,color);}}
 static void number(char*out,u32 n){out[0]='0'+n/10;out[1]='0'+n%10;out[2]=0;}
 void sg_grid_draw(u32 view,u32 c){
- (void)view;fill(c,0,0,128,64,0);fill(c,0,0,128,11,~0u);text(c,2,2,"SONG",0);
+ (void)view;fill(c,0,0,128,64,0);fill(c,0,0,128,11,~0u);text(c,2,2,"SONG",0);text(c,48,2,sg_song.loop?"LOOP":"STOP",0);
  u32 playing=*(volatile u32*)0x40a78874||*(volatile u32*)0x40a7883c;text(c,playing?102:102,2,playing?"PLAY":"STOP",0);
  u32 first=sg_cursor>=4?sg_cursor-3:0;
  for(u32 line=0;line<4;line++){
@@ -29,5 +29,4 @@ void sg_grid_draw(u32 view,u32 c){
  }
  fill(c,0,62,128,2,~0u);if(sg_song.count)fill(c,0,62,128*(sg_cursor+1)/sg_song.count,2,0);
 }
-void sg_top_draw(u32 view,u32 c){(void)view;fill(c,0,0,128,64,0);text(c,3,2,"MOD SETUP",~0u);const char*labels[3]={"GLOBAL","TRACK","SONG"};for(u32 i=0;i<3;i++){int y=17+15*i;if(gc_tree_cursor==i)fill(c,0,y-2,128,12,~0u);text(c,5,y,labels[i],gc_tree_cursor==i?0:~0u);}}
 
