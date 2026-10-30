@@ -186,7 +186,7 @@ function render(host, opts) {
     if (sel) el("rect", { x: 147, y: y - 1, width: 115, height: 14, class: "lcd-sel" }, lcd);
     text(lcd, x || 151, y + 10, s, "lcd-t" + (sel ? " inv" : ""));
   };
-  // "A|B|C" shows the screens in turn (a picker moving through its choices, Mod Setup then Song).
+  // "A|B|C" shows the screens in turn, 2.5 s each (still on the first one under prefers-reduced-motion).
   let cycleTimer = null;
   function show(spec) {
     clearInterval(cycleTimer);
@@ -196,7 +196,7 @@ function render(host, opts) {
     if (steps.length < 2) return paint(spec);
     let i = 0;
     paint(steps[0]);
-    if (!reduced()) cycleTimer = setInterval(() => { i = (i + 1) % steps.length; paint(steps[i]); }, 1500);
+    if (!reduced()) cycleTimer = setInterval(() => { i = (i + 1) % steps.length; paint(steps[i]); }, 2500);
   }
   function paint(spec) {
     clearInterval(lcdTimer);
