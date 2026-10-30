@@ -1759,7 +1759,8 @@ def learn_led(base_img, img, rt, syms, tg):
                     n += 1
     P.w8(page, 0)
     mod(False)
-    # FUNC + PITCH : reste stock (PITCH, k = 10) même sur MACRO et sous MACHINES
+    # FUNC + PITCH : reste stock (PITCH, k = 10) sans MACHINES ; sous MACHINES (Model-TG), FINE (k 17) comme sans FUNC :
+    # l'enregistrement sous MACHINES porte FINE en position 0 (notes/86 §8)
     good_func = True
     for m in list(range(6)) + ([macro] if macro is not None else []):
         machine[0] = m
@@ -1768,7 +1769,7 @@ def learn_led(base_img, img, rt, syms, tg):
             held.add(2)
             clear(P)
             got = learn(P, 0, 0)
-            good_func &= got == 10
+            good_func &= got == (17 if on and tg else 10)
             held.discard(2)
     mod(False)
     machine[0] = 0
@@ -1778,7 +1779,7 @@ def learn_led(base_img, img, rt, syms, tg):
                                           "MACHINES + COLOR / SHAPE -> Lo-Fi Rate / Bits (k 27, 30)"
                                           + ("" if tg else " [sans Model-TG : pas vérifié]")
                                           + " ; MACHINES + PITCH -> FINE (k 17, le lo-fi de MACRO et l'accord fin ailleurs) "
-                                          "sur toutes les machines, PITCH (k 10) sans MACHINES ; FUNC + PITCH -> PITCH (k 10)")
+                                          "sur toutes les machines, PITCH (k 10) sans MACHINES ; FUNC + PITCH -> PITCH (k 10), FINE sous MACHINES")
     # 2. destination déjà prise par un autre LFO de la piste : admise (cumul de plusieurs LFO)
     machine[0] = 0
     mod(bool(tg))
@@ -1818,7 +1819,7 @@ def learn_led(base_img, img, rt, syms, tg):
             S.log.clear()
             S.call(LED_PAINT, VIEWOBJ)
             ls = [a for t, a, _ in S.log if t == "led"]
-            want = ({23: [37], 24: [40], 25: [41], 27: [38], 30: [39]}.get(k) if tg else None) or ([36] if k == 17 and m == macro else ls)
+            want = ({23: [37], 24: [40], 25: [41], 27: [38], 30: [39], 17: [36]}.get(k) if tg else None) or ([36] if k == 17 and m == macro else ls)
             good &= all(x == want for x in lit)
             if want != ls:
                 rows.append((m, k, ls, lit[0]))
@@ -1826,9 +1827,9 @@ def learn_led(base_img, img, rt, syms, tg):
     P.w8(page, 0)
     desc = "; ".join(f"m{m} k{k} : {ls} -> {lp}" for m, k, ls, lp in rows[:3] + [x for x in rows if x[0] == macro])
     nm = 6 + (macro is not None)
-    check(good and len(rows) == (5 * nm if tg else 0) + (macro is not None),
+    check(good and len(rows) == (6 * nm if tg else 0) + (macro is not None and not tg),
           "diode de la destination (0x400261aa), machines 0..5 et MACRO, k = 0, 9..25, 27, 30, LFO 1..4 : Attack -> DECAY (37), "
-          "Filtre -> SWEEP (40), Résonance -> CONTOUR (41), Lo-Fi Rate -> COLOR (38), Bits -> SHAPE (39), lo-fi de MACRO -> PITCH (36) ; tout le reste = l'OS "
+          "Filtre -> SWEEP (40), Résonance -> CONTOUR (41), Lo-Fi Rate -> COLOR (38), Bits -> SHAPE (39), FINE -> PITCH (36, toutes les machines) ; tout le reste = l'OS "
           f"d'origine, sur les 4 pages ({len(rows)} différences, avant -> après : {desc})")
     # 3b. le Sampler (machine 6) : SWEEP / CONTOUR sous MACHINES règlent son filtre (k 13/14) en modes 0..2, celui de
     # la piste (k 24/25) en modes 3..6 (sampler_mode_filter, notes/83 §3) ; [LFO] + le même potard doit donner le même

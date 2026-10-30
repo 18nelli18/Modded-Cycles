@@ -189,4 +189,29 @@ annulée par un potard tourné, [LFO], une autre touche, gardée par un clic et 
 les quatre fonctions dont le prologue est remplacé rendent la même chose et font les mêmes appels, deux fois
 d'affilée sur une interface neuve.
 
-Reste : MACRO (FINE redevient l'accord fin, `MACHINES` + PITCH = FTUNE comme partout), documentation, PR.
+## 8. FINE sous MACHINES + PITCH partout ; MACRO sans son lo-fi `[FAIT en émulation]`
+
+Décision du propriétaire (29/10) : `MACHINES` + PITCH = FINE TUNE sur toutes les machines, MACRO comprise ; le lo-fi
+propre à MACRO (sur FINE) cède la place au lo-fi de piste.
+
+- **FINE de l'OS** (id 43, k 17, `p + 0x22`) : mesuré sur TONE (`mcengine`, note 60) : **1/32 de demi-ton par pas**
+  autour de 64 (0 → −2,00, 32 → −1,00, 96 → +1,00, 127 → +1,97 demi-ton). L'OS ne le met pas dans `pmod` (`0x3c0000`
+  quel que soit FINE) : chaque machine le lit elle-même. Aucun potard ne le réglait.
+- **Geste** : l'enregistrement sous `MACHINES` porte FINE en position 0 (PITCH) sur toutes les machines : `tl_dh`
+  (machines d'origine), `tl_atk` (Sampler), `tg_records` (machines des moteurs du Syntakt, MACRO comprise). La page
+  règle donc FINE avec l'interface de l'OS (texte −64..63, jauge). Avec FUNC, l'OS appliquait le pas de FINE
+  `0x4004552c`, qui rend le défaut (retour au centre à chaque cran) : `tl_ui` pose `tl_step` (un pas par cran, borné ;
+  `lofi_step` de MACRO) en +0x50 de son objet d'interface. Diode de la page LFO : FINE -> PITCH sur toutes les machines
+  (`lfo_led`). `[LFO]` + `MACHINES` + PITCH -> FINE (k 17), avec ou sans FUNC.
+- **MACRO** : `gen_macro.MACHINE["lofi"] = False` : `lofi_asm` n'est plus lié, `knob_vec` n'aiguille plus vers
+  `lofi_knob`, le nom de FINE n'est plus réécrit en « Lo-Fi », son entrée 16 n'est plus posée. `macro.cc` : FINE
+  s'ajoute à la note, `n += (FINE − 0x4000) × 8` (1/32 de demi-ton, comme TONE) ; `rate` et `bits` restent à 0.
+  **Un projet dont une piste MACRO avait FINE ≠ 64 (son lo-fi) sonne maintenant désaccordé** : statut expérimental.
+- Place : un huitième masque 48×22 (`0x40171a48`, `tl_step`) ; les noms des descripteurs passent à côté de `tl_inc`.
+
+**Preuve** `test_track_lofi.py` : `MACHINES` + PITCH -> FINE (43), sans `MACHINES` PITCH (42), machines 0..5 ; FUNC +
+cran sur FINE = un pas ; `tl_atk` pose FINE, Attack, Rate, Bits en positions 0..3. `test_lfo_plus.py` §9 : FINE ->
+PITCH (36) sur la diode de toutes les machines ; FUNC + PITCH -> PITCH sans `MACHINES`, FINE avec.
+
+Reste : documentation (FEATURES, guide en/fr), `os.json` (`experimental`), régénérer acid-tg / syntakt-tg-meter /
+syntakt-tg-profile, PR.

@@ -650,7 +650,7 @@ taken:
 
 	.equ	KEY_BITS, 0x40f95744		/* état des touches que lit 0x4007faf4 ; MACHINES (code 5) = bit 0 */
 	.equ	PITCH_ID, 42			/* PITCH, sous le potard PITCH de toutes les machines */
-	.equ	FTUN_ID, 43			/* FINE : le lo-fi de MACRO (entrée 16 de son enregistrement) */
+	.equ	FTUN_ID, 43			/* FINE : l'accord fin, sous MACHINES + PITCH sur toutes les machines */
 
 	.section .text.learn, "ax"
 
@@ -659,9 +659,9 @@ taken:
  * en positions 1, 4, 5 ; d7 = piste, a3 = l'accesseur des réglages de la piste, 0x400097f0, et non l'objet de la
  * piste, 0x40009c1a : passé à 0x40014042, il plantait l'OS, EXCEPTION V03 en 0x40014070) : jmp lfo_learn à la place de
  * move.l d2,-(sp) ; jsr 0x4005a4e8 ; addq.l #4,sp ; movea.l (a3),a0 ; move.l d0,d2 ; lsl.l #8,d2.
- *  - MACHINES tenue (bit 0 de KEY_BITS) sur PITCH (position 0) d'une piste MACRO (son enregistrement, 0x4004df76,
- *    porte FINE en entrée 16) : FINE (id 43), le lo-fi, comme MACHINES + PITCH le règle sur la page ;
- *    FUNC+PITCH (a5 != 0) reste le stock PITCH ; autres machines inchangées.
+ *  - MACHINES tenue (bit 0 de KEY_BITS) sur PITCH (position 0) : FINE (id 43), l'accord fin, comme MACHINES + PITCH
+ *    le règle sur la page de toutes les machines (notes/86 §8 ; l'enregistrement sous MACHINES le porte déjà en
+ *    position 0, ce test reste pour le cas où il ne le porterait pas) ; FUNC+PITCH (a5 != 0) reste le stock PITCH.
  *  - Filtre ou Résonance de piste (0x0c / 0x0b, SWEEP / CONTOUR sous MACHINES) sur une piste Sampler : l'identifiant
  *    est relu dans le descripteur du Sampler sous MACHINES (0x4004df5c(7), descr_hook de Model-TG puis smf_descr,
  *    positions 4 et 5) : en modes 0..2 son propre filtre (0x49 / 0x4a, k 13/14), en modes 3..6 celui de la piste
@@ -681,9 +681,7 @@ lfo_learn:
 	move.b	KEY_BITS, %d0
 	btst	#0, %d0				/* MACHINES tenue */
 	beq.s	1f
-	/* LO-FI n'est PAS une destination de LFO (décision du propriétaire) : sur n'importe quelle machine,
-	   MACHINES + PITCH tenu donne FINE (id 43), la vraie fonction stock. MACHINES + PITCH sans LFO reste
-	   le lo-fi de MACRO, par knob_vec. */
+	/* sur n'importe quelle machine, MACHINES + PITCH tenu donne FINE (id 43), l'accord fin */
 	moveq	#FTUN_ID, %d2
 1:	moveq	#0x0c, %d1			/* Filtre (0x0c) ou Résonance (0x0b) de piste ? */
 	sub.l	%d2, %d1
@@ -723,8 +721,8 @@ lfo_learn:
  * machine, sans le changement de Model-TG (MACHINES n'est plus tenue) : Attack, Filtre, Résonance n'y sont pas, et
  * FINE de MACRO y est en entrée 16, sans potard ; sans diode, ou une diode hors des potards. On cherche donc
  * l'identifiant du potard qui les règle sous MACHINES : DECAY (1) pour Attack, SWEEP (4) pour Filtre, CONTOUR (5)
- * pour Résonance, COLOR (2) et SHAPE (3) pour Lo-Fi Rate et Bits (ids 1 et 2, notes/86), PITCH (0) pour FINE de
- * MACRO. d0-d1 libres ; d0 = sp à la sortie, comme l'OS. */
+ * pour Résonance, COLOR (2) et SHAPE (3) pour Lo-Fi Rate et Bits (ids 1 et 2, notes/86), PITCH (0) pour FINE
+ * (toutes les machines, notes/86 §8). d0-d1 libres ; d0 = sp à la sortie, comme l'OS. */
 lfo_led:
 	lea	12(%sp), %sp
 	move.l	%d2, %d0
@@ -736,10 +734,8 @@ lfo_led:
 	bmi.s	1f
 	move.l	(%a2, %d0.l*4), %d2
 	bra.s	9f
-1:	moveq	#FTUN_ID, %d0
+1:	moveq	#FTUN_ID, %d0			/* FINE : sous MACHINES + PITCH sur toutes les machines (notes/86 §8) */
 	cmp.l	%d2, %d0
-	bne.s	9f
-	cmp.l	64(%a2), %d0
 	bne.s	9f
 	move.l	(%a2), %d2
 9:	move.l	%sp, %d0

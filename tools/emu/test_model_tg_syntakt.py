@@ -203,9 +203,11 @@ def interface(ref, fw, codes, tg):
     r = b.call(0x4004df5c, first + 1)
     rec, base_ = bytes(b.uc.mem_read(r, REC_LEN)), bytes(b.uc.mem_read(gs.RECS, REC_LEN))
     sw = struct.unpack_from(">I", rec, 12)[0], struct.unpack_from(">I", rec, 24)[0], struct.unpack_from(">I", rec, 28)[0]
-    same = rec[:12] + rec[16:24] + rec[32:] == base_[:12] + base_[16:24] + base_[32:]
-    check(r == gs.REC_ATK and sw == (0x0d, 0x0c, 0x0b) and same,
-          "touche Attack tenue (mod_held) : DECAY, SWEEP, CONTOUR -> Attack, Filtre, Résonance, comme Model-TG")
+    lofi = struct.unpack_from(">II", rec, 16)                # COLOR, SHAPE : Lo-Fi Rate / Bits (notes/86 §5)
+    same = rec[:12] + rec[32:] == base_[:12] + base_[32:]
+    check(r == gs.REC_ATK and sw == (0x0d, 0x0c, 0x0b) and lofi == (1, 2) and same,
+          "touche Attack tenue (mod_held) : DECAY, SWEEP, CONTOUR -> Attack, Filtre, Résonance, comme Model-TG ; "
+          f"COLOR, SHAPE -> Lo-Fi Rate, Bits (ids {lofi})")
     b.uc.mem_write(tg["mod_held"], struct.pack(">I", 0))
     pt = tg["param_table"] + 0x2e * g7.DSTRIDE + 44
     b.uc.mem_write(pt, struct.pack(">III", 0x13572468, 0x2468ace0, 0x369cf258))

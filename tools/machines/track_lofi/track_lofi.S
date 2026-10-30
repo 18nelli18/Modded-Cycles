@@ -15,11 +15,12 @@
 
 	.globl	tl_save, tl_load, tl_dh, tl_atk
 	.globl	tl_s_rate, tl_s_rte, tl_s_bits, tl_s_bts
-	.globl	tl_fmt_r, tl_fmt_b, tl_draw_r, tl_draw_b, tl_post, tl_trk, tl_st, tl_inc
+	.globl	tl_step, tl_fmt_r, tl_fmt_b, tl_draw_r, tl_draw_b, tl_post, tl_trk, tl_st, tl_inc
 
 	.equ	UI_REC, 0x40a71754		/* objets d'interface des descripteurs, 100 o chacun (0x4004df40) */
 	.equ	UI_RATE, UI_REC + 100 * 1
 	.equ	UI_BITS, UI_REC + 100 * 2
+	.equ	UI_FTUN, UI_REC + 100 * 43		/* FINE */
 	.equ	SPRINTF, 0x40000e6e
 	.equ	S_OFF, 0x40124b67		/* "OFF" de l'OS */
 
@@ -57,8 +58,11 @@ tl_load:
 
 /* À la place de « movel #other_descr,%d0 » dans dh_pass (Model-TG : MACHINES tenue, machine d'origine ; a0 =
  * other_descr, la copie de son descripteur) : COLOR et SHAPE (positions 2 et 3) -> Lo-Fi Rate et Bits, comme
- * DECAY, SWEEP, CONTOUR -> Attack, Filtre, Résonance. d1 rendu par dh_pass. */
+ * DECAY, SWEEP, CONTOUR -> Attack, Filtre, Résonance ; et PITCH (position 0) -> FINE (id 43), l'accord fin de l'OS,
+ * qu'aucun potard ne réglait. d1 rendu par dh_pass. */
 tl_dh:
+	moveq	#43, %d1			/* PITCH (position 0) -> FINE, l'accord fin (notes/86 §8) */
+	move.l	%d1, 8(%a0)
 	moveq	#1, %d1
 	move.l	%d1, 16(%a0)
 	moveq	#2, %d1
@@ -67,9 +71,11 @@ tl_dh:
 	bra.s	tl_ui
 
 /* À la place de « moveq #0x0d,%d1 ; movel %d1,%a0@(12) » où sampler_pre fait sampler_descr_atk (a0), le descripteur
- * du Sampler sous MACHINES (rendu tel quel en modes 0..2, recopié par smf_descr en modes 3..6) : Attack en
- * position 1, et Rate / Bits en 2 et 3. */
+ * du Sampler sous MACHINES (rendu tel quel en modes 0..2, recopié par smf_descr en modes 3..6) : FINE en position 0,
+ * Attack en 1, et Rate / Bits en 2 et 3. */
 tl_atk:
+	moveq	#43, %d1			/* PITCH -> FINE */
+	move.l	%d1, 8(%a0)
 	moveq	#0x0d, %d1
 	move.l	%d1, 12(%a0)
 	moveq	#1, %d1
@@ -79,8 +85,11 @@ tl_atk:
 	/* suite : tl_ui */
 
 /* Texte (+0x20) et dessin dans la fenêtre de valeur (+0x30) des objets d'interface de nos deux descripteurs, faits
- * au démarrage de l'interface. Détruit d1. */
+ * au démarrage de l'interface ; et le pas avec FUNC (+0x50) de FINE, qui rendait le défaut (sous MACHINES + PITCH,
+ * FUNC + un cran remettait l'accord au centre) : un pas par cran. Détruit d1. */
 tl_ui:
+	move.l	#tl_step, %d1
+	move.l	%d1, UI_FTUN + 0x50
 	move.l	#tl_fmt_r, %d1
 	move.l	%d1, UI_RATE + 0x20
 	move.l	#tl_fmt_b, %d1
@@ -91,12 +100,9 @@ tl_ui:
 	move.l	%d1, UI_BITS + 0x30
 	rts
 
-tl_s_rate:	.asciz	"Lo-Fi Rate"
-tl_s_rte:	.asciz	"RATE"
-tl_s_bits:	.asciz	"Lo-Fi Bits"
-tl_s_bts:	.asciz	"BITS"
 
 	.section .text.tl_fmt, "ax"
+
 
 /* (fonction, valeur, tampon) : le texte de la valeur, comme lofi_fmt de MACRO. d0-d1/a0-a1 libres. */
 tl_fmt_r:
@@ -302,8 +308,14 @@ ts:						/* stéréo : le côté avec la même phase */
 
 	.section .text.tl_data, "ax"
 tl_inc:	TL_INC					/* 64 mots : 65536 x 2^(-86 r / 1536), r = 1..64 */
+/* noms des descripteurs 1 et 2 (build.py de Model-TG) */
+tl_s_rate:	.asciz	"Lo-Fi Rate"
+tl_s_rte:	.asciz	"RATE"
+tl_s_bits:	.asciz	"Lo-Fi Bits"
+tl_s_bts:	.asciz	"BITS"
 
 	.section .text.tl_par, "ax"
+
 
 /* les réglages d'une piste (a2 = son mot k 27 lissé, a3 = son état) : d3 = avance de la phase, d4 = masque,
  * d0 = demi-pas, a5 = borne basse ; les deux à 0 : ne rentre pas dans tl_trk. Détruit d1, a1. */
@@ -360,3 +372,28 @@ tl_q:
 	move.l	%d1, %d0
 2:	rts
 
+	.section .text.tl_step, "ax"
+
+/* (fonction, valeur, delta, min, max, défaut) : la valeur arrondie au pas (0x100), plus delta arrondi vers le haut à
+ * des pas entiers, bornée (lofi_step de MACRO) */
+tl_step:
+	move.l	8(%sp), %d0
+	addi.l	#0x80, %d0
+	andi.l	#0xffffff00, %d0
+	move.l	12(%sp), %d1
+	bpl.s	1f
+	neg.l	%d1
+	addi.l	#0xff, %d1
+	andi.l	#0xffffff00, %d1
+	sub.l	%d1, %d0
+	bra.s	2f
+1:	addi.l	#0xff, %d1
+	andi.l	#0xffffff00, %d1
+	add.l	%d1, %d0
+2:	cmp.l	16(%sp), %d0
+	bge.s	3f
+	move.l	16(%sp), %d0
+3:	cmp.l	20(%sp), %d0
+	ble.s	4f
+	move.l	20(%sp), %d0
+4:	rts

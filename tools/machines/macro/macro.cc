@@ -22,7 +22,8 @@
  * plafonnent a la note 16383 : un modele n'y passe que si sa note, plus ce qu'il y ajoute (LITE : les accords de
  * WAVE PARAPHONIC, les desaccords des TRIPLE), tient sous ce plafond ; sinon il reste a 96 kHz.
  *
- * Lo-fi (FUNC + PITCH, notes/55) : sur une piste MACRO, FINE n'accorde plus ; au centre (64), rien ne change.
+ * Lo-fi (notes/55, eteint depuis notes/86 §8) : il etait sur FINE, qui n'accordait alors plus ; FINE est redevenu
+ * l'accord fin (1/32 de demi-ton par pas), le lo-fi est Rate / Bits de piste. Ce qui suit reste pour rate > 0 :
  * En dessous, RATE : d = 64 - FINE pas, frequence 48 kHz x 2^(-86 d / 1536) (de 46 kHz a 4 kHz). Un modele allege
  * est alors vraiment rendu a cette frequence (hauteur + 86 d), chaque echantillon tenu le temps qu'il faut (si sa note
  * est trop haute pour cela, a la plus basse qui tienne sous le plafond, puis echantillonne-bloque) ; les autres sont
@@ -31,7 +32,7 @@
  *
  * Potards : PITCH = la note, comme les machines d'origine ; COLOR = TIMBRE de Braids ; SHAPE = le
  * modele (0..46, l'ordre de Braids : CSAW, MORPH, ...) ; SWEEP = COLOR de Braids ; CONTOUR = l'enveloppe
- * d'ampli ouvre TIMBRE (0 : rien) ; FINE = RATE / BITS. DECAY, GATE et PUNCH : la chaine d'ampli d'origine, reglee
+ * d'ampli ouvre TIMBRE (0 : rien) ; FINE = l'accord fin. DECAY, GATE et PUNCH : la chaine d'ampli d'origine, reglee
  * comme TONE (enveloppe 0x400a9252, VCA 0x400a9430, PUNCH 0x400a967a). Un trig frappe le modele (Strike).
  *
  * Etat : une voix de Braids par piste, ici (BSS de la charge utile, mis a zero au demarrage), initialisee a
@@ -172,14 +173,15 @@ extern "C" void macro_update(s32 pmod, char *v, const char *p)
 	shape = shape < 0 ? 0 : (shape >= MODELS ? MODELS - 1 : shape);
 	tr->osc.set_shape(static_cast<braids::MacroOscillatorShape>(shape));
 
-	/* FINE (FUNC + PITCH) : RATE en dessous de 64, BITS au-dessus */
-	fine = (P16(0x22) + 0x80) >> 8;
-	fine = fine < 0 ? 0 : (fine > 127 ? 127 : fine);
-	rate = fine < 64 ? 64 - fine : 0;
-	tr->bits = fine > 64 ? 12 - (fine - 65) * 10 / 62 : 0;
+	/* FINE : l'accord fin, comme les machines d'origine (TONE mesuree : 1/32 de demi-ton par pas, +-2 demi-tons ;
+	 * l'OS ne le met pas dans pmod, chaque machine le lit). Le lo-fi propre a MACRO (RATE / BITS sur FINE) a cede la
+	 * place au lo-fi de piste de toutes les machines (notes/86 §8) : rate et bits restent a 0. */
+	fine = P16(0x22) - 0x4000;                       /* 8.8 : 0x100 = 1/32 de demi-ton = 8 << 8 en demi-tons << 16 */
+	rate = 0;
+	tr->bits = 0;
 
-	/* note : PITCH - 64 + note du trig, comme les machines d'origine ; Braids : 1/128 de demi-ton */
-	n = ((s32)P16(0x14) << 8) - (64 << 16) + pmod;
+	/* note : PITCH - 64 + FINE + note du trig, comme les machines d'origine ; Braids : 1/128 de demi-ton */
+	n = ((s32)P16(0x14) << 8) - (64 << 16) + pmod + fine * 8;
 	n = n < 0 ? 0 : (n > (127 << 16) ? 127 << 16 : n);
 	n >>= 9;
 	/* rendu : modele allege a la frequence de RATE, ou a la plus basse sous le plafond (puis bloque a celle de RATE) ;

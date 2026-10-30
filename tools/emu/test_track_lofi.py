@@ -4,7 +4,7 @@ l'interface de l'OS et de Model-TG (30-model-tg-st.json) :
   1. descripteurs 1 / 2 : Lo-Fi Rate / Bits, k 27 / 30, groupe 7, drapeaux 0x600, 0..32512, défaut 0 ;
   2. MACHINES + COLOR / SHAPE -> ids 1 / 2 sur les machines 0..5 (dh_pass -> tl_dh) ; DECAY / SWEEP / CONTOUR gardent
      Attack / Filtre / Résonance ; sans MACHINES, les potards de l'OS ;
-  3. le descripteur du Sampler sous MACHINES (sampler_pre -> tl_atk) : Attack, Rate, Bits en positions 1, 2, 3 ;
+  3. le descripteur du Sampler sous MACHINES (sampler_pre -> tl_atk) : FINE, Attack, Rate, Bits en positions 0..3 ;
   4. le texte de la valeur : OFF, 46K..4K (les pas de RATE du lo-fi de MACRO), 12B..2B ;
   5. la fenêtre de valeur : ce texte, dessiné comme l'OS dessine le texte d'un paramètre sans jauge (aucun sprite).
 
@@ -28,7 +28,7 @@ import test_sdvintage as T          # noqa: E402
 import track_lofi                   # noqa: E402
 
 TWEAK = HERE.parent.parent / "tweaks" / "model-cycles_OS1.13" / "30-model-tg-st.json"
-COLOR, SHAPE, DECAY, SWEEP, CONTOUR = 4, 5, 3, 6, 7          # potards de lofi_ui.lookup (PITCH = 2)
+PITCH, COLOR, SHAPE, DECAY, SWEEP, CONTOUR = 2, 4, 5, 3, 6, 7   # potards de lofi_ui.lookup
 FAIL = []
 
 
@@ -194,13 +194,21 @@ def main():
     for m in range(6):
         for key in (False, True):
             u.uc.mem_write(held, struct.pack(">I", int(key)))
-            got[m, key] = [u.lookup(m, kn, False, key) for kn in (DECAY, COLOR, SHAPE, SWEEP, CONTOUR)]
+            got[m, key] = [u.lookup(m, kn, False, key) for kn in (PITCH, DECAY, COLOR, SHAPE, SWEEP, CONTOUR)]
         u.uc.mem_write(held, bytes(4))
-        if got[m, True] != [0x0d, 1, 2, 0x0c, 0x0b] or 1 in got[m, False] or 2 in got[m, False] \
-                or None in got[m, False]:
+        if got[m, True] != [43, 0x0d, 1, 2, 0x0c, 0x0b] or got[m, False][0] != 42 or 1 in got[m, False] \
+                or 2 in got[m, False] or None in got[m, False]:
             bad.append((m, got[m, False], got[m, True]))
-    check(not bad, "MACHINES + DECAY / COLOR / SHAPE / SWEEP / CONTOUR -> Attack / Rate / Bits / Filtre / Résonance "
+    check(not bad, "MACHINES + PITCH / DECAY / COLOR / SHAPE / SWEEP / CONTOUR -> FINE / Attack / Rate / Bits / Filtre / "
+                   "Résonance "
                    f"(0x0d, 1, 2, 0x0c, 0x0b) sur les machines 0..5 ; sans MACHINES, les potards de l'OS {bad[:2]}")
+
+    # 2b. FINE avec FUNC (MACHINES + FUNC + PITCH) : un pas par cran (tl_step, posé par tl_ui), plus le défaut de l'OS
+    cases = [(0x4000, 0x80), (0x4000, -0x80), (0x4012, 0x300), (0x7f00, 0x100), (0, -0x100), (0x2000, -0x400)]
+    got = [u.edit_func(43, cur, d) for cur, d in cases]
+    steps = [lofi_ui.want_step(cur, d) for cur, d in cases]
+    check(got == steps, f"FUNC + un cran sur FINE : un pas (0x100) par cran, borné, au lieu du retour au centre de l'OS "
+                       f"{[hex(x) if x is not None else None for x in got]}")
 
     # 3. le descripteur du Sampler sous MACHINES : tl_atk, et l'appel à sa place dans sampler_pre
     S = lofi_ui.SCRATCH + 0x9000
@@ -216,10 +224,10 @@ def main():
     calls = img.count(b"\x4e\xb9" + struct.pack(">I", tl_atk))
     u.uc.emu_start(tl_atk, lofi_ui.STOP, count=200)
     d = struct.unpack(">19I", u.uc.mem_read(S, 76))
-    check(calls == 1 and d[3:6] == (0x0d, 1, 2) and d[:3] == (0x55555555,) * 3 and d[6:] == (0x55555555,) * 13
+    check(calls == 1 and d[2:6] == (43, 0x0d, 1, 2) and d[:2] == (0x55555555,) * 2 and d[6:] == (0x55555555,) * 13
           and u.uc.reg_read(mk.UC_M68K_REG_D2) == 0x2468ace0 and u.uc.reg_read(mk.UC_M68K_REG_A7) == sp + 4,
-          f"descripteur du Sampler sous MACHINES (tl_atk, appelé une fois dans Model-TG : {calls}) : positions 1, 2, 3 "
-          f"= Attack, Rate, Bits ({[hex(x) for x in d[3:6]]}), le reste intact, pile et d2 rendus")
+          f"descripteur du Sampler sous MACHINES (tl_atk, appelé une fois dans Model-TG : {calls}) : positions 0..3 "
+          f"= FINE, Attack, Rate, Bits ({[hex(x) for x in d[2:6]]}), le reste intact, pile et d2 rendus")
 
     # 4. le texte de la valeur (fonctions posées par tl_dh au geste, et par tl_load au chargement)
     bad = []

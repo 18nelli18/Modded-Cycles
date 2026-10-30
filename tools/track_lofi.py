@@ -6,7 +6,7 @@ le build.py de Model-TG comme ses Attack, Filtre et Résonance (MC_PATCHES de ge
 la case 18 de l'enregistrement (+64/+65, un octet chacun) par la fin de snd_save_post / snd_load_post, qui saute ici ;
 réglés par MACHINES + COLOR / SHAPE sur toutes les machines (dh_pass et le descripteur du Sampler sous MACHINES, qui
 sautent ici), affichés « OFF », « 46K » .. « 4K », « 12B » .. « 2B » comme le lo-fi de MACRO. Chaque saut remplace des
-instructions de Model-TG à taille égale : aucun symbole ne bouge. Le code et les noms vont dans sept masques de sprite
+instructions de Model-TG à taille égale : aucun symbole ne bouge. Le code et les noms vont dans huit masques de sprite
 48x22 libérés (tools/sprites.py), écrits avec Model-TG comme sampler_mode_filter.
 """
 import pathlib
@@ -20,7 +20,8 @@ HERE = pathlib.Path(__file__).resolve().parent
 SRC = HERE / "machines" / "track_lofi"
 BASE = 0x40000400
 CAVES = {".cave": 0x4015943c, ".cave2": 0x4015f38c, ".cave3": 0x40165fec,    # masques 48x22 libérés (192 o)
-         ".cave4": 0x40168da4, ".cave5": 0x4016dab8, ".cave6": 0x4016fae8, ".cave7": 0x40170c48}
+         ".cave4": 0x40168da4, ".cave5": 0x4016dab8, ".cave6": 0x4016fae8, ".cave7": 0x40170c48,
+         ".cave8": 0x40171a48}
 # sx_side de Model-TG (le côté d'une piste Sampler stéréo, 6 x 128 o comme 0x80001858) et sx_on (stéréo dans ce
 # bloc, par piste) : écrits en dur, comparé à sa
 # table de symboles par check_syms (appelé par gen_model_tg.py) dans les deux variantes
