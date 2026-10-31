@@ -169,11 +169,12 @@ def build_macro_acid(img, repo, tg=None):
     return out, dict(ndesc=g7.NDESC + 10, size=append["size"], packed=segs, end=at + segs)
 
 
-def build_engines(img, st_img, repo, codes, tg=None, macro=True):
-    """Les moteurs codes, MACRO si macro, puis ACID (gen_macro_syntakt.build_tweak)."""
+def build_engines(img, st_img, repo, codes, tg=None, macro=True, more=()):
+    """Les moteurs codes, MACRO si macro, puis ACID (gen_macro_syntakt.build_tweak). more : d'autres machines après
+    ACID (RETROSYN, tools/gen_retrosyn.py) ; l'appelant complète alors l'id, le nom et la description."""
     pay = gs.PAY_TG if tg else gs.PAY_ALONE
     acid = acid_part(pay)
-    out, info = gms.build_tweak(img, st_img, repo, codes, tg, macro=macro, acid=acid)
+    out, info = gms.build_tweak(img, st_img, repo, codes, tg, macro=macro, acid=acid, more=more)
     macro_syms = gms.compile_macro(repo, pay)[1] if macro else None
     first = gs.TG_FIRST if tg else 6
     names = [gs.CATALOG[c]["name"] for c in codes]

@@ -27,7 +27,7 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.0: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "71166a77e3d43ba566d762f39fba66559bc4e96aa6265528a09864d7bc468238",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-retrosyn": "956bbd4190bb716bee4b49d04a68ec5aa938318091951f65053418a8afd8f5c3",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "56008179c5ede484324433e433c40bdbe0e6be944d3f4f9f1a04c12002c0db3f", "p": "00ca7997885971c7e51a00258ac3c0b1c890ef51168236b56066236941df3829"},
@@ -43,7 +43,7 @@ const REF_MODS = {
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
   "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
-  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": {"w": "045d7a3afb79336a765556762de67b49d1b3143dc5ee89559fae1b08529e6afe", "p": "c1f8b90c879c09659c843589daf4213c7e32696f94a80f64679c7a3e90473060"},
+  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-retrosyn": {"w": "2a35e42d05d51b1b7e04c279b0933124eadc3209ad599b3798b7f8b0f42aee4a", "p": "7d0722c288584e53ccbe58f96c7718f7b3098b09742ca06d20d34d0f941698c9"},
 };
 
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container
@@ -583,9 +583,17 @@ const FEAT = {
       desc: "An extra machine, the 13th, with the 47 synthesis models of Braids, from Émilie Gillet's own open-source code: analog-style waves, FM, vowels and speech, physical models, drums, wavetables and noises. SHAPE picks the model, COLOR and SWEEP shape it, CONTOUR lets the amp envelope open the timbre. Hold FUNC and turn PITCH for lo-fi: left lowers the sample rate (46K down to 4K), right the bit depth (12B down to 2B), OFF in the middle. Thirteen models are computed at 48 kHz for half the processor time.",
       note: "About as heavy on the processor as a Syntakt engine for most models; the load governor looks after MACRO voices too." },
     acid: { label: "ACID machine",
-      short: "Machine 14, the last one: an acid bass in the style of the TB-303, with a drive knob and slides from your trigs.",
-      desc: "The last machine, the 14th: an acid bass in the style of the TB-303, from Robin Schmidt's open-source Open303 model, rewritten in fixed point. COLOR is the cutoff, SHAPE the resonance, SWEEP the env mod, CONTOUR the drive (from clean to fuzz, at about the same volume) and DECAY the decay; PUNCH switches the wave from saw to square. A trig whose length (LEN) runs past the next trig slides into the next note instead of playing it again; played live, a note played while another is held slides too. Each note fades in over less than a millisecond, so there is no click.",
+      short: "Machine 14: an acid bass in the style of the TB-303, with a drive knob and slides from your trigs.",
+      desc: "An extra machine, the 14th: an acid bass in the style of the TB-303, from Robin Schmidt's open-source Open303 model, rewritten in fixed point. COLOR is the cutoff, SHAPE the resonance, SWEEP the env mod, CONTOUR the drive (from clean to fuzz, at about the same volume) and DECAY the decay; PUNCH switches the wave from saw to square. A trig whose length (LEN) runs past the next trig slides into the next note instead of playing it again; played live, a note played while another is held slides too. Each note fades in over less than a millisecond, so there is no click.",
       note: "Turn GATE on for notes that hold their whole length, as on the original. Under a very heavy load the governor can fade an ACID note out; the track's next trig then plays afresh." },
+    retrosyn: { label: "RETROSYN machine",
+      short: "Machine 15, the last one: chiptune voices in the style of the Game Boy, NES and SNES, with a pitch sweep and chord arpeggios.",
+      desc: "The last machine, the 15th: six chiptune waves picked with SHAPE (pulse, NES triangle, Game Boy wavetable, long noise, short metallic noise, SNES loop). COLOR changes the wave (pulse width, wavetable, loop or noise rate), SWEEP sweeps the pitch on each note (64 is off, right goes up, left down), CONTOUR plays one of 8 chords as a fast arpeggio, PUNCH crushes the output to 4 bits; DECAY and GATE work as on Tone. Sound core by AveyCole.",
+      note: "Experimental: proven in the emulator, not yet tried on a Model:Cycles. With 15 machines the MACHINES screen draws 8 marks per row." },
+    retrosyn: { label: "Machine RETROSYN",
+      short: "Machine 15, la dernière : des voix chiptune à la manière de la Game Boy, de la NES et de la SNES, avec balayage de hauteur et arpèges d'accords.",
+      desc: "La dernière machine, la 15e : six ondes chiptune choisies avec SHAPE (impulsion, triangle de la NES, table d'onde de la Game Boy, bruit long, bruit court métallique, boucle de la SNES). COLOR change l'onde (rapport cyclique, table, boucle ou cadence du bruit), SWEEP balaie la hauteur à chaque note (64 : rien, à droite elle monte, à gauche elle descend), CONTOUR joue un des 8 accords en arpège rapide, PUNCH écrase la sortie à 4 bits ; DECAY et GATE comme sur Tone. Cœur du son par AveyCole.",
+      note: "Expérimental : prouvé en émulation, pas encore essayé sur un Model:Cycles. Avec 15 machines, l'écran MACHINES dessine 8 repères par ligne." },
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Three more LFOs per track: on the LFO page, press LFO again for LFO 2, 3 and 4.",
       desc: "On the LFO page, press [LFO] again: a big 2, then 3, then 4 shows in the left box, and the fifth press closes the page. Each extra LFO has its own speed, multiplier, waveform, destination and depth; fade, start phase and mode stay shared with LFO 1. LFO 2 is saved with the sound and can be p-locked; LFO 3 and 4 are for live play (one setting per track, not saved). Rewritten for this project from DavidCaruso's Model-TG-VA-DR-v1 firmware." },
@@ -635,6 +643,7 @@ const FEAT = {
     "mach-sampler": { label: "Model-TG sampler" },
     "mach-macro": { label: "47 models from Braids" },
     "mach-acid": { label: "acid bass in the style of the TB-303" },
+    "mach-retrosyn": { label: "chiptune voices in the style of the Game Boy, NES and SNES" },
   },
   fr: {
     "model-tg": { label: "Machine Sampler (Model-TG)",
@@ -655,8 +664,8 @@ const FEAT = {
       desc: "Une machine ajoutée, la 13e, avec les 47 modèles de synthèse de Braids, tirés du code libre d'Émilie Gillet : ondes analogiques, FM, voyelles et parole, modèles physiques, percussions, tables d'ondes et bruits. SHAPE choisit le modèle, COLOR et SWEEP le sculptent, CONTOUR laisse l'enveloppe d'ampli ouvrir le timbre. Maintenez FUNC et tournez PITCH pour le lo-fi : à gauche la fréquence d'échantillonnage baisse (46K à 4K), à droite la résolution (12B à 2B), OFF au milieu. Treize modèles sont calculés à 48 kHz pour moitié moins de temps processeur.",
       note: "À peu près aussi lourd pour le processeur qu'un moteur du Syntakt pour la plupart des modèles ; le régulateur de charge veille aussi sur les voix MACRO." },
     acid: { label: "Machine ACID",
-      short: "Machine 14, la dernière : une basse acide à la manière de la TB-303, avec un potard de saturation et des slides depuis vos trigs.",
-      desc: "La dernière machine, la 14e : une basse acide à la manière de la TB-303, d'après le modèle libre Open303 de Robin Schmidt, réécrit en virgule fixe. COLOR règle le cutoff, SHAPE la résonance, SWEEP l'env mod, CONTOUR la saturation (du son propre au fuzz, à volume à peu près égal) et DECAY la décroissance ; PUNCH passe l'onde de scie à carré. Un trig dont la longueur (LEN) dépasse le trig suivant glisse vers la note suivante au lieu de la rejouer ; en jeu live, une note jouée pendant qu'une autre est tenue glisse aussi. Chaque note monte en moins d'une milliseconde : pas de clic.",
+      short: "Machine 14 : une basse acide à la manière de la TB-303, avec un potard de saturation et des slides depuis vos trigs.",
+      desc: "Une machine ajoutée, la 14e : une basse acide à la manière de la TB-303, d'après le modèle libre Open303 de Robin Schmidt, réécrit en virgule fixe. COLOR règle le cutoff, SHAPE la résonance, SWEEP l'env mod, CONTOUR la saturation (du son propre au fuzz, à volume à peu près égal) et DECAY la décroissance ; PUNCH passe l'onde de scie à carré. Un trig dont la longueur (LEN) dépasse le trig suivant glisse vers la note suivante au lieu de la rejouer ; en jeu live, une note jouée pendant qu'une autre est tenue glisse aussi. Chaque note monte en moins d'une milliseconde : pas de clic.",
       note: "Mettez GATE pour des notes tenues toute leur longueur, comme sur l'original. Sous une très forte charge, le régulateur peut éteindre une note ACID en fondu ; le trig suivant de la piste rejoue alors la note." },
     "lfo-plus": { label: "LFO 2, 3, 4",
       short: "Trois LFO de plus par piste : sur la page LFO, appuyez encore sur LFO pour LFO 2, 3 et 4.",
@@ -707,6 +716,7 @@ const FEAT = {
     "mach-sampler": { label: "sampler de Model-TG" },
     "mach-macro": { label: "47 modèles de Braids" },
     "mach-acid": { label: "basse acide à la manière de la TB-303" },
+    "mach-retrosyn": { label: "voix chiptune à la manière de la Game Boy, de la NES et de la SNES" },
   },
 };
 

@@ -9,7 +9,7 @@ documentation at its tag `v1.1.0`.
 
 **OS 2.0 composition:** Model-TG v1.1.0 (Sampler machine and everything it brings, including drumkilla's latching
 mute, trig preview and scrolling names), sample preview, the five Syntakt engines (SD VINTAGE, CP VINTAGE, SY TOY,
-SY BITS, SY SWARM), MACRO, ACID, arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
+SY BITS, SY SWARM), MACRO, ACID, RETROSYN (experimental), arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
 browser, volume/pan as numbers, dimmed trigless trigs, live MIDI OUT + THRU toggle, LFO 2/3/4, Mod Settings
 (USB audio in stereo or six tracks, added on 19/10/2026) and step record (added on 20/10/2026).
 
@@ -40,6 +40,7 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [2.5 LFO 2, 3, 4](#25-lfo-2-3-4)
    - [2.6 Order of the machines in OS 2.0](#26-order-of-the-machines-in-os-20)
    - [2.7 Load governor](#27-load-governor)
+   - [2.8 RETROSYN machine (experimental)](#28-retrosyn-machine-experimental)
 3. [Sequencer](#3-sequencer)
    - [3.1 Arpeggiator](#31-arpeggiator)
    - [3.2 Easier trig removal](#32-easier-trig-removal-trig-hold)
@@ -103,7 +104,7 @@ retrig page, menus) are listed with that page as context.
 | **MACHINES** held + **DECAY** | Attack (instant to about 2 s) | Model-TG | Every machine, including the Syntakt engines |
 | **MACHINES** held + **SWEEP** | Filter (Model-TG's ladder low-pass) | Model-TG | Every machine. Same gesture as the per-track filter, which is why that mod is outside OS 2.0 |
 | **MACHINES** held + **CONTOUR** | Resonance | Model-TG | Same note as above |
-| **MACHINES**, then pick ACID / MACRO / Sampler / an engine | The added machines, after Chord | Machines | MACHINES menu, see [2.6](#26-order-of-the-machines-in-os-20) |
+| **MACHINES**, then pick RETROSYN / ACID / MACRO / Sampler / an engine | The added machines, after Chord | Machines | MACHINES menu, see [2.6](#26-order-of-the-machines-in-os-20) |
 | **PAGE** with a trig key held | Plays that step (note, length, p-locks, sound lock) instead of turning the page | Trig preview | Sequencer stopped or paused. Stock, changed |
 | **PATTERN** | Closes the retrig page so you can choose a pattern | Model-TG retrig page | Retrig page only |
 | **PLAY** | Skips the current step (it stays as it was) | Step record | In step record, no note held |
@@ -310,7 +311,7 @@ in fixed point. Slides come from trig lengths.
 
 **How to use it** (guide):
 
-1. Press **MACHINES** and pick **ACID**, the last machine (14 in OS 2.0). Its icon is Tone's.
+1. Press **MACHINES** and pick **ACID**, machine 14 in OS 2.0 (RETROSYN, 15, comes after it). Its icon is Tone's.
 2. Shape it with the knobs. The defaults already give the squelch.
 
 | Knob | Name on screen | What it does |
@@ -389,7 +390,7 @@ rewritten, then removed at Maxime's request on 11/10/2026.
 ### 2.6 Order of the machines in OS 2.0
 
 The guide's rule: the added machines come after Chord; the Sampler is the 7th, the engines follow in the order SD,
-CP, TOY, BITS, SWARM, then MACRO, then ACID last. With everything in OS 2.0 (also the list in the draft `os.json`):
+CP, TOY, BITS, SWARM, then MACRO, then ACID, then RETROSYN last. With everything in OS 2.0 (also the list in the draft `os.json`):
 
 | # | Machine | # | Machine |
 |---|---|---|---|
@@ -397,7 +398,7 @@ CP, TOY, BITS, SWARM, then MACRO, then ACID last. With everything in OS 2.0 (als
 | 07 | Sampler (Model-TG) | 12 | SYSwm |
 | 08 | SDVtg | 13 | MACRO |
 | 09 | CPVtg | 14 | ACID |
-| 10 | SYToy | | |
+| 10 | SYToy | 15 | RETROSYN |
 
 A project that uses machine 08 or higher only plays the same machine on a firmware with the same layout. The single OS
 fixes this layout for everyone, which removes the "the number depends on what you ticked" problem described all over
@@ -410,10 +411,45 @@ Not a feature you play, but it shapes every heavy machine above (guide, "Process
 - It measures every audio block. Under a sustained high load, voices that are dying out are stopped earlier (below
   −66 dB). If the load stays too high, it fades out the voice heard least in the mix (a muted track first, then the
   quietest), one at a time. A single heavy block does not trigger it.
-- It covers the original machines, the Syntakt engines, MACRO and ACID. It never turns off the Sampler or the track
+- It covers the original machines, the Syntakt engines, MACRO, ACID and RETROSYN. It never turns off the Sampler or the track
   Model-TG is recording or slice-editing.
 - Advice from the guide when notes get cut: lower the volume of the track you can spare most, mute what you don't
   hear, shorten long decays, or use the delay and reverb less (about 12 % of the processor).
+
+### 2.8 RETROSYN machine (experimental)
+
+**What it does.** One extra machine, **RETROSYN**, machine 15 (the last): chiptune voices in the style of the Game Boy,
+NES and SNES, with a pitch sweep and chord arpeggios.
+
+**How to use it:**
+
+1. Press **MACHINES** and pick **RETROSYN**, the last machine (15 in OS 2.0). Its icon is Tone's. With 15 machines,
+   the MACHINES screen draws 8 marks per row instead of 7.
+2. Pick a wave with SHAPE, then shape it with the other knobs.
+
+| Knob | Name on screen | What it does |
+|---|---|---|
+| SHAPE | Shape (SHAP) | 6 waves: pulse, NES triangle, Game Boy wavetable, long noise (15-bit), short metallic noise (7-bit), SNES loop |
+| COLOR | Color (COLR) | depends on the wave: pulse width, continuous from 12.5 % to 75 % (an LFO on COLOR gives PWM), one of 8 wavetables or 8 SNES loops, noise rate (continuous over 3 octaves) |
+| SWEEP | Sweep (SWEP) | pitch sweep on each note, Game Boy style: 64 is off, right sweeps up, left down; a note swept past C9 goes silent |
+| CONTOUR | Contour (CONT) | 8 chords played as a 60 Hz arpeggio (unison, octave, major, minor, fifth + octave, major and minor with octave, two octaves) |
+| DECAY | — | the amp decay, as on Tone; GATE holds the note |
+| PUNCH | — | crushes the output to 4 bits |
+
+3. **PITCH**, the keys and **FINE** set the note.
+
+**Limits and interactions.**
+
+- One voice per track. A silent RETROSYN track is not computed. Every trig restarts the wave, the sweep and the
+  arpeggio.
+- The governor covers RETROSYN like the other added machines; a note it fades out plays afresh on the next trig.
+- Set RETROSYN tracks back to an original machine before flashing anything else.
+
+**Origin and license.** Sound core by AveyCole (fork `AveyCole/Modded-Cycles`, `tools/machines/retrosyn/`), bridge to
+this OS by this project (notes/84). The fork declares no license for this core (its own notes/96 §5 says so); the
+license is still to be confirmed with AveyCole.
+
+**Status.** Experimental: proven in the emulator (notes/84), no hardware test recorded.
 
 ---
 

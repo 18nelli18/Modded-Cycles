@@ -80,11 +80,12 @@ M32 = 0xffffffff
 # la boucle des voix : rien au-delà de la dernière machine)
 OFF = 100
 ta.OFF = OFF
+KINDS = ("macro", "acid")            # machines ajoutées reconnues dans les symboles (test_retrosyn.py ajoute la sienne)
 
 
 def engines_of(t):
     """Moteurs du Syntakt d'un tweak (syntakt-[tg-]<moteurs>[-macro][-acid])."""
-    return [c for c in t["id"].split("-") if c in gs.CATALOG and c not in ("macro", "acid")]
+    return [c for c in t["id"].split("-") if c in gs.CATALOG and c not in KINDS]
 
 
 tmx.engines_of = engines_of          # chord_at, avec « acid » au catalogue (interface)
@@ -130,9 +131,9 @@ class Fw:
         syms = {k: int(v, 16) for k, v in t.get("symbols", {}).items()}
         first = gs.TG_FIRST if tg else 6
         self.codes = engines_of(t)
-        kinds = [k for k in ("macro", "acid") if k + "_update" in syms]
+        kinds = [k for k in KINDS if k + "_update" in syms]
         self.nm = first + len(self.codes) + len(kinds)
-        data = dest + gs.LAYOUT["DATA"]
+        data = dest + (gs.ROWS8["DATA"] if len(self.codes) + len(kinds) > 7 else gs.LAYOUT["DATA"])  # gs.set_rows
         u32 = lambda va: struct.unpack_from(">I", self.runtime, va - dest)[0]
         for i, k in enumerate(kinds):
             index = first + len(self.codes) + i
