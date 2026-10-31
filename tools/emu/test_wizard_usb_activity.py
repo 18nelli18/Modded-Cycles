@@ -14,7 +14,11 @@ def fixture():
  r,_,h,log,files,key,turn,data,bind=fx.fixture('unused');bind(al['gc_input_quiet'],lambda a:1);bind(0x400423e4,lambda a:0);return r,files,bind
 
 r,files,bind=fixture();feature=m['activity_masks']
-assert bytes(r.u.mem_read(feature['code'],feature['code_bytes']))==(a.build/'module.bin').read_bytes().ljust(feature['code_bytes'],b'\0')
+expected=bytearray((a.build/'module.bin').read_bytes().ljust(feature['code_bytes'],b'\0'))
+if 'er_source' in s:struct.pack_into('>I',expected,s['er_source']-feature['code'],feature['loader']+512+feature['code_bytes'])
+assert bytes(r.u.mem_read(feature['code'],feature['code_bytes']))==expected
+image=bc.load(next(a.build.glob('*.syx')))
+if len(image)>0x40200000-0x40000400:r.u.mem_write(0x40200000,image[0x40200000-0x40000400:])
 for hook in feature['hooks']:assert bytes(r.u.mem_read(hook['at'],6))==b'\x4e\xf9'+struct.pack('>I',hook['target']),hex(hook['at'])
 r.u.reg_write(C.UC_M68K_REG_A0,0x931b0000);bind(0x40000542,lambda a:0);r.call(s['am_boot_finish']);assert bytes(r.u.mem_read(0x401adbf6,6))==b'\x4e\xf9'+struct.pack('>I',s['am_wizard_usb'])
 voice=0x931a0000

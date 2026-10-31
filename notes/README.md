@@ -341,3 +341,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [209 - ACID et relance arpege](209-acid-relance-arpege.md) : regression2.63 reproduite dans l'audio natif ; garde de152 octets, slides ordinaires preserves et enveloppes F/A/AF relancees ; candidat prive2.64, confirmation appareil en attente.
 
 - [210 - Parite stock et choix MACHINES](210-parite-stock-et-machines-confirmees.md) : PUNCH natif, masques LFO, Wizard USB et confirmation DATA ; prototype Full2.65 et preuves natives.
+
+- [211 - Comparaisons DSP EMAC et reverbes](211-comparaisons-dsp-emac-reverbes.md) : deux comparaisons Full, parite PCM, couts instructions et audit SRAM/USB/panneau.
