@@ -471,7 +471,9 @@ def audio_extra(base_img, img, rt, syms):
                        mode=(t + seed) % 5) for t in range(6)]
         sets = {}
         for i, (name, dest) in enumerate((("LFO1", 14), ("LFO2", 11), ("LFO3", 12), ("LFO4", 13))):
-            sets[name] = [lfo(spd=rnd.randrange(0x4400, 0x7f01), mult=(3 * t + 5 * i + seed) % 24,
+            # Bit 7 de l'octet bas = SYNC pour tempo-sync (notes/82 §2.1) ; l'OS n'en met jamais dans un mot FREE (le
+            # potard écrit des multiples de 256, le lissage l'efface pour LFO 2) : on ne tire que des vitesses FREE.
+            sets[name] = [lfo(spd=rnd.randrange(0x4400, 0x7f01) & ~0x80, mult=(3 * t + 5 * i + seed) % 24,
                               wave=(t + 2 * i + seed) % 7, dest=dest, dep=rnd.choice((rnd.randrange(0x7f01), 0x7f00, 0)))
                           for t in range(6)]
         l1 = [dict(sets["LFO1"][t], **common[t]) for t in range(6)]
