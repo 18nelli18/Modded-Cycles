@@ -27,3 +27,7 @@ Preuves : test_machine_confirm.py (controle/persistence), test_machine_confirm_n
 ## Memoire et distribution
 
 Module4691a000..4691f000 ; BSS4691f000..46920000, apres lt_bss_end46919048 et avant la limite historique du module FX. Generateur refuse toute collision et garde les images2.64 epinglees. SysEx2.65 produit sur D:, non versionne/non publie. Les autres modifications preexistantes dans tweaks.js/licences restent hors de ce travail.
+
+## Correction ecran MACHINES
+
+AveyCole demande explicitement de conserver la presentation stock en modeSil. Le panneau textuel et le popup de parcours ont ete retires. mb_display_hook a400a25e0 substitue seulement l ID visuel dans d3, puis rejoue le moveq/lea natif et reprend400a25e8. Aucune ecriture dans les sons. Le dessinateur DrumSelect complet conserve noms, images et reperes. test_machine_confirm_native.py compare toutes les commandes graphiques du choix pending avec le meme choix natif engage, puis verifie le vrai commit DATA. Candidat corrige dans activity-masks-test/stock-screen/full ; meme version experimentale2.65, pas de publication.

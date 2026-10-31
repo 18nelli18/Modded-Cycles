@@ -41,8 +41,10 @@ def main():
   for name,at in (('mb_native_key',0x400a292c),('mb_native_draw',0x400a24ca)):
    assert image[at-BASE:at-BASE+8]==stock[at-BASE:at-BASE+8]
    f.write(f'.globl {name}\n{name}:\n.byte '+','.join(map(str,stock[at-BASE:at-BASE+8]))+f'\n jmp {at+8:#x}\n')
+ assert image[0x400a25e0-BASE:0x400a25e8-BASE]==bytes.fromhex('701841f940071a04')
+ with (O/'wizard-usb.S').open('a') as f:f.write('.globl mb_display_hook\nmb_display_hook:\n lea -16(%sp),%sp\n movem.l %d0-%d1/%a0-%a1,(%sp)\n move.l %a2,-(%sp)\n move.l %d3,-(%sp)\n jsr mb_display_machine\n addq.l #8,%sp\n move.l %d0,%d3\n movem.l (%sp),%d0-%d1/%a0-%a1\n lea 16(%sp),%sp\n moveq #24,%d0\n lea 0x40071a04,%a0\n jmp 0x400a25e8\n')
  # Installer les relais UI apres les chargeurs2.64 qui possedent les memes slots.
- late=[(0x400a2712,'mb_rotate'),(0x400a292c,'mb_key'),(0x400a24ca,'mb_draw'),(m['per_track_fx']['symbols']['rm_step'],'mb_step')]
+ late=[(0x400a2712,'mb_rotate'),(0x400a292c,'mb_key'),(0x400a25e0,'mb_display_hook'),(m['per_track_fx']['symbols']['rm_step'],'mb_step')]
  for key,target in (('key','mb_gc_key'),('encoder','mb_gc_encoder'),('draw','mb_gc_draw')):late.append((m['groove_strum']['symbols']['gc_'+key],target))
  late.append((m['lfo_reload']['symbols']['xp_frame'],'mb_frame'))
  asm=(O/'wizard-usb.S').read_text(encoding='utf-8');needle=' lea 0x401adbf6,%a1\n'

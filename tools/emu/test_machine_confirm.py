@@ -9,7 +9,7 @@ from test_seq_gen_menu import EVENT
 from unicorn import m68k_const as C
 m=json.loads((a.build/'BUILD.json').read_text(encoding='utf-8'));s=m['activity_masks']['symbols'];al=m['direct_jump']['aliases']
 bc.ROOT=a.output.parent/'ui-cache';fx.metadata=m;fx.boot=lambda path:bc.boot(next(a.build.glob('*.syx')))
-src=inspect.getsource(fx.fixture).replace("m=json.loads((ROOT/'output/firmware'/(stem+'.json')).read_text(encoding='utf-8'))",'m=metadata');exec(src,fx.__dict__)
+src=inspect.getsource(fx.fixture).replace("m=json.loads((ROOT/'output/firmware'/(stem+'.json')).read_text())",'m=metadata');exec(src,fx.__dict__)
 def fixture():
  r,_,h,log,files,key,turn,data,bind=fx.fixture('unused');bind(al['gc_input_quiet'],lambda a:1);bind(0x400423e4,lambda a:0);return r,files,bind
 
@@ -18,7 +18,7 @@ r,files,bind=fixture();feature=m['activity_masks'];r.u.reg_write(C.UC_M68K_REG_A
 for h in feature['late_hooks']:assert bytes(r.u.mem_read(h['at'],6))==b'\x4e\xf9'+struct.pack('>I',h['target']),hex(h['at'])
 EVENT=0x93001000;log=[];selected=[0]
 bind(0x400cf866,lambda a:0x41400000);bind(0x40012412,lambda a:selected[0]);bind(0x4001e318,lambda a:0);bind(0x4007240c,lambda a:r.r32(a[0]+12))
-bind(s['mb_native_rotate'],lambda a:log.append(tuple(a[:4])) or 77);bind(s['mb_native_key'],lambda a:66);bind(s['fx_notice'],lambda a:0)
+bind(s['mb_native_rotate'],lambda a:log.append(tuple(a[:4])) or 77);bind(s['mb_native_key'],lambda a:66);bind(m['fx_menu']['symbols']['fx_notice'],lambda a:0)
 r.w32(s['mb_silent'],1)
 for i in range(4):r.call(s['mb_rotate'],0x931c0000,1,0,0)
 assert not log and r.r32(s['mb_pending']) and r.r32(s['mb_candidate'])==4

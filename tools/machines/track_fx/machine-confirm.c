@@ -8,7 +8,6 @@ extern u32 rm_machine_valid,rm_machine_stamp,rm_machine_result;
 extern void fx_notice(const char*);
 volatile u32 mb_silent=1,mb_pending,mb_candidate,mb_lane,mb_all,mb_view;
 static u32 committing,owned;
-static const char*const names[]={"Kick","Snare","Metal","Perc","Tone","Chord","Wizard","SD Vintage","Clap Vintage","SY Toy","SY Bits","SY Swarm","Macro","ACID","Wave","Feral","Elder","MIDI Out","Tiny","Shadow","Speak","Legacy","Retrosyn","Punch","Estus"};
 static void redraw(void){u32 app=*(volatile u32*)0x40fe4178;if(app)N(0x40076bee)(app+64);}
 void mb_cancel(void){mb_pending=committing=0;}
 u32 mb_step(u32 machine,s32 delta){
@@ -25,7 +24,7 @@ u32 mb_rotate(u32 view,s32 delta,u32 all,u32 arg){
  if(!mb_pending||mb_lane!=track||mb_view!=view){mb_candidate=N(0x4001e318)(0,track);mb_lane=track;mb_view=view;}
  u32 pos=0;for(u32 i=0;i<rm_count;i++)if(rm_order[i]==mb_candidate)pos=i;
  if(delta>0&&pos+1<rm_count)pos++;if(delta<0&&pos)pos--;mb_candidate=rm_order[pos];mb_all=all;mb_pending=1;redraw();
- char text[40];N(0x40000e6e)(text,"%s > DATA",mb_candidate<25?names[mb_candidate]:"Machine");fx_notice(text);return 0;
+ return 0;
 }
 u32 mb_key(u32 view,const u32*e){
  if(!e)return mb_native_key(view,e);u32 code=N(0x4007240c)(e),flags=e[4];
@@ -37,11 +36,5 @@ u32 mb_key(u32 view,const u32*e){
  return mb_native_key(view,e);
 }
 
-extern u32 mb_native_draw(u32,u32);
-u32 mb_draw(u32 view,u32 canvas){
- if(!mb_pending||view!=mb_view)return mb_native_draw(view,canvas);
- N(0x40070dea)(canvas,0,0,127,63,0);
- N(0x40071a04)(canvas,0x40ea14cc,4,52,0x10,"%s","MACHINES");
- N(0x40071a04)(canvas,0x40ea14cc,4,32,0x10,"%s",mb_candidate<25?names[mb_candidate]:"Machine");
- N(0x40071a04)(canvas,0x40ea14cc,4,12,0x10,"%s","DATA: select");return 1;
-}
+/* Le dessinateur natif recoit seulement l ID a afficher ; aucun son ecrit. */
+u32 mb_display_machine(u32 machine,u32 view){return mb_pending&&view==mb_view?mb_candidate:machine;}

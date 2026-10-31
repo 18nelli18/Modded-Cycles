@@ -19,7 +19,4 @@ for cursor in (0,1,12):
  r.w32(s['gc_tree_cursor'],cursor);r.u.mem_write(fb,bytes(1024));r.call(s['mb_global_draw'],0,canvas)
  raw=bytes(r.u.mem_read(fb,1024));pixels=[0 if struct.unpack_from('>I',raw,(x*2+(63-y)//32)*4)[0]&(1<<(31-(63-y)%32)) else 255 for y in range(64) for x in range(128)]
  png(a.output.with_name(a.output.stem+'-'+str(cursor)+'.png'),pixels)
-r.w32(s['mb_pending'],1);r.w32(s['mb_view'],0);r.w32(s['mb_candidate'],4);r.u.mem_write(fb,bytes(1024));r.call(s['mb_draw'],0,canvas)
-raw=bytes(r.u.mem_read(fb,1024));pixels=[0 if struct.unpack_from('>I',raw,(x*2+(63-y)//32)*4)[0]&(1<<(31-(63-y)%32)) else 255 for y in range(64) for x in range(128)]
-png(a.output.with_name(a.output.stem+'-browse.png'),pixels)
-print('PASS native Global Mac and pending-machine screen rendering',flush=True)
+print('PASS native Global Mac screen rendering',flush=True)

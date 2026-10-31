@@ -24,7 +24,7 @@ from test_chord_cpu import configure
 from unicorn import m68k_const as C
 import mcengine as E,emac
 source=inspect.getsource(tw.fixtures)
-source=source.replace("m=json.loads((ROOT/'output/firmware'/(stem+'.json')).read_text(encoding='utf-8'))","m=history_metadata()")
+source=source.replace("m=json.loads((ROOT/'output/firmware'/(stem+'.json')).read_text())","m=history_metadata()")
 source=source.replace("folder=ROOT/'tmp/emu-runtime-code'",'folder=pathlib.Path('+repr(str(W/'history-code'))+')')
 tw.history_metadata=lambda:current['meta'];exec(compile(source,'history-fixtures','exec'),tw.__dict__)
 
