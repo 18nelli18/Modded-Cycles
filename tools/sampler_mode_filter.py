@@ -32,7 +32,8 @@ MASK = 0x4016bcd8                  # masque 48x22 libéré (192 o)
 CUR_PROJ = 0x400cf866
 CUR_KIT = 0x4000eb90
 SEL_TRACK = 0x40012412
-LOOP_MODE = 0x401b2404
+LOOP_MODE = 0x401b2408                # avec la retouche FUNC+SETTINGS de gen_model_tg.py (#113, notes/81), qui
+                                      # ajoute 4 octets avant loop_mode (sans elle : 0x401b2404)
 OTHER_DESCR = 0x401abf32
 SAMPLER_DESCR_ATK = 0x401abee6
 GC_CONT = 0x401bac2a                  # lo-fi de piste : ST_SPLIT_PATCHES de gen_model_tg.py (notes/86)

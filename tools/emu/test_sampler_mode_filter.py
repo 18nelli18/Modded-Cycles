@@ -78,7 +78,7 @@ def run_mode_audio(img, tw, mode, cutoff, res=0, blocks=15):
     e.uc.mem_write(ts, struct.pack(">I", 0))
     e.uc.mem_write(th, struct.pack(">I", 0x1234))
     e.set(0, machine=6, note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0, finetune=64, decay=60)
-    e.uc.mem_write(0x401b2404, struct.pack(">I", mode))
+    e.uc.mem_write(0x401b2408, struct.pack(">I", mode))
     e.uc.mem_write(E.PARAMS + 0xe + 0 * 0x42 + 48, struct.pack(">hh", cutoff, res))
     out = []
     for b in range(blocks):
@@ -132,13 +132,13 @@ def test_descriptor_proof(img, tw):
     e.uc.mem_write(0x4000eb90, b"\x4e\x75")
     e.uc.mem_write(0x40012412, b"\x70\x00\x4e\x75")
 
-    MOD_HELD = 0x401b244e
+    MOD_HELD = 0x401b2452          # +4 : la retouche FUNC+SETTINGS de gen_model_tg.py (#113, notes/81)
     DESCR_HOOK = 0x401ae84e
 
     # A) Touche MACHINES tenue (mod_held = 1)
     e.uc.mem_write(MOD_HELD, struct.pack(">I", 1))
     for mode in range(7):
-        e.uc.mem_write(0x401b2404, struct.pack(">I", mode))
+        e.uc.mem_write(0x401b2408, struct.pack(">I", mode))
         regs = (mk.UC_M68K_REG_D1, mk.UC_M68K_REG_D2, mk.UC_M68K_REG_A0, mk.UC_M68K_REG_A1)
         for i, reg in enumerate(regs):                # la fonction feuille 0x4004df5c ne touchait pas a0/a1
             e.uc.reg_write(reg, 0x5a5a0000 + i)
@@ -160,7 +160,7 @@ def test_descriptor_proof(img, tw):
     # B) Touche MACHINES relâchée (mod_held = 0)
     e.uc.mem_write(MOD_HELD, struct.pack(">I", 0))
     for mode in range(7):
-        e.uc.mem_write(0x401b2404, struct.pack(">I", mode))
+        e.uc.mem_write(0x401b2408, struct.pack(">I", mode))
         r = e.call(DESCR_HOOK, 7)
         descr = bytes(e.uc.mem_read(r, 76))
         p4 = struct.unpack_from(">I", descr, 24)[0]
@@ -178,7 +178,7 @@ def test_load_budget(img, tw):
         e.uc.mem_write(ts + t * 4, struct.pack(">I", 0))
         e.uc.mem_write(th + t * 4, struct.pack(">I", 0x1234))
         e.set(t, machine=6, note=60, pitch=64, color=64, shape=64, sweep=64, contour=64, punch=0, gate=0, finetune=64, decay=60)
-        e.uc.mem_write(0x401b2404 + t * 4, struct.pack(">I", 3)) # Granular mode
+        e.uc.mem_write(0x401b2408 + t * 4, struct.pack(">I", 3)) # Granular mode
         e.uc.mem_write(E.PARAMS + 0xe + t * 0x42 + 48, struct.pack(">hh", 4000, 1000)) # ladder actif
 
     e.block(0x3f) # warmup
