@@ -2,6 +2,7 @@
 from pathlib import Path
 source=(Path(__file__).parent/'test_acid_articulation_ui.py').read_text(encoding='utf-8').split('r,files,bind=fixture();')[0]
 exec(compile(source,__file__,'exec'))
+bc.ROOT=R/'output/native-screen-cache'
 from render_midi_bank import png
 OriginalRig=fx.Rig
 class NativeDrawing(OriginalRig):

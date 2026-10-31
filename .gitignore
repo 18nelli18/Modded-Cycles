@@ -15,3 +15,6 @@ __pycache__/
 
 # Local Claude Code config
 .claude/
+
+# Les rendus LCD ne doivent jamais versionner le cache firmware Unicorn.
+/docs/assets/screens/**/ui-cache/
