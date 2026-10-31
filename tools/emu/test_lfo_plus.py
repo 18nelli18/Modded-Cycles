@@ -1821,7 +1821,7 @@ def learn_led(base_img, img, rt, syms, tg):
             S.log.clear()
             S.call(LED_PAINT, VIEWOBJ)
             ls = [a for t, a, _ in S.log if t == "led"]
-            want = ({23: [37], 24: [40], 25: [41], 27: [38], 30: [39], 17: [36]}.get(k) if tg else None) or ([36] if k == 17 and m == macro else ls)
+            want = ({23: [37], 24: [40], 25: [41], 27: [38], 30: [39], 17: [36]}.get(k) if tg else None) or ([36] if k == 17 else ls)
             good &= all(x == want for x in lit)
             if want != ls:
                 rows.append((m, k, ls, lit[0]))
@@ -1829,7 +1829,7 @@ def learn_led(base_img, img, rt, syms, tg):
     P.w8(page, 0)
     desc = "; ".join(f"m{m} k{k} : {ls} -> {lp}" for m, k, ls, lp in rows[:3] + [x for x in rows if x[0] == macro])
     nm = 6 + (macro is not None)
-    check(good and len(rows) == (6 * nm if tg else 0) + (macro is not None and not tg),
+    check(good and len(rows) == (6 * nm if tg else nm),       # FINE -> PITCH sur toutes les machines (notes/86 §8)
           "diode de la destination (0x400261aa), machines 0..5 et MACRO, k = 0, 9..25, 27, 30, LFO 1..4 : Attack -> DECAY (37), "
           "Filtre -> SWEEP (40), Résonance -> CONTOUR (41), Lo-Fi Rate -> COLOR (38), Bits -> SHAPE (39), FINE -> PITCH (36, toutes les machines) ; tout le reste = l'OS "
           f"d'origine, sur les 4 pages ({len(rows)} différences, avant -> après : {desc})")
