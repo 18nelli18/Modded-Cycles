@@ -40,6 +40,7 @@ import gen_syntakt_engines as gs   # noqa: E402
 import usb_steady                  # noqa: E402
 import voice_loop                  # noqa: E402
 import popup_view                  # noqa: E402
+import sampler_mode_filter          # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -125,6 +126,18 @@ MC_PATCHES = (
      f'wp_stock:\n    jmp     {popup_view.MASK:#x}            | Modded-Cycles: popup_view (tools/popup_view.py)\n',
      "fenêtre de valeur : Attack, Filtre et Résonance passent par tools/popup_view.py (grand nombre, points, courbe), "
      "même taille, notes/82"),
+    ("src/model_tg.s",
+     'dh_atk:\n    movel   #sampler_descr_atk,%d0\n    rts\n',
+     f'dh_atk:\n    jmp     {sampler_mode_filter.DESCR:#x}            | Modded-Cycles: smf_descr (tools/sampler_mode_filter.py)\n    nop\n',
+     "descripteur Sampler sous MACHINES : Filtre et Résonance en modes Granular/Stretch/Pluck/Wave (notes/83)"),
+    ("src/model_tg.s",
+     'dbh_atk:\n    movel   #sampler_descr_atk,%d0\n    rts\n',
+     f'dbh_atk:\n    jmp     {sampler_mode_filter.DESCR:#x}            | Modded-Cycles: smf_descr (tools/sampler_mode_filter.py)\n    nop\n',
+     "descripteur Sampler B sous MACHINES : Filtre et Résonance en modes Granular/Stretch/Pluck/Wave (notes/83)"),
+    ("src/model_tg.s",
+     '    cmpil   #6,%d1\n    beqs    gc_store              | the Sampler: off\n',
+     f'    jmp     {sampler_mode_filter.GFLT:#x}            | Modded-Cycles: smf_gflt (tools/sampler_mode_filter.py)\n    nop\n',
+     "filtre de piste Sampler : actif uniquement en modes Granular/Stretch/Pluck/Wave (notes/83)"),
     ("src/model_tg.s",
      'str_greso:     .asciz "Resonance"\n',
      'str_greso:     .asciz "Res"\n    .byte 0,0,0,0,0,0     | padding: same length as "Resonance"\n',
@@ -227,6 +240,7 @@ def adapt_st(tw, stock, syms):
             "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
             popup_view.NOTE,
+            sampler_mode_filter.NOTE,
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
@@ -252,12 +266,13 @@ def adapt(tw, stock, syms):
     # Envoi à l'USB à heure fixe (notes/35) : la charge de Model-TG varie beaucoup (pistes au repos, mutes, effets
     # éteints) et l'OS envoie chaque bloc à l'USB juste après l'avoir calculé. Mêmes écritures que 6ch-usbup.
     # Et la division des pistes par 2 plus courte de la boucle des voix (notes/36), comme 6ch-usbup.
-    steady = usb_steady.writes() + voice_loop.writes() + popup_view.writes(stock)
+    sampler_mode_filter.check_syms(syms)
+    steady = usb_steady.writes() + voice_loop.writes() + popup_view.writes(stock) + sampler_mode_filter.writes(stock)
     taken = [(w["off"], w["off"] + len(w["new"]) // 2) for w in tw["writes"]]
     for w in steady:
         a, b = w["off"], w["off"] + len(w["new"]) // 2
         if any(a < y and x < b for x, y in taken):
-            raise SystemExit(f"!! envoi à heure fixe, boucle des voix, popup_view : 0x{a + BASE:08x} déjà écrit par "
+            raise SystemExit(f"!! envoi à heure fixe, boucle des voix, popup_view, sampler_mode_filter : 0x{a + BASE:08x} déjà écrit par "
                              "Model-TG")
     writes = sorted(tw["writes"] + steady, key=lambda w: w["off"])
     return {
@@ -276,6 +291,7 @@ def adapt(tw, stock, syms):
             "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
             popup_view.NOTE,
+            sampler_mode_filter.NOTE,
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],
