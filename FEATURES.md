@@ -9,7 +9,7 @@ documentation at its tag `v1.1.0`.
 
 **OS 2.0 composition:** Model-TG v1.1.0 (Sampler machine and everything it brings, including drumkilla's latching
 mute, trig preview and scrolling names), sample preview, the five Syntakt engines (SD VINTAGE, CP VINTAGE, SY TOY,
-SY BITS, SY SWARM), MACRO, ACID, arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
+SY BITS, SY SWARM), MACRO, ACID, RETROSYN (experimental), arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
 browser, volume/pan as numbers, dimmed trigless trigs, live MIDI OUT + THRU toggle, LFO 2/3/4, Mod Settings
 (USB audio in stereo or six tracks, added on 19/10/2026) and step record (added on 20/10/2026).
 
@@ -40,6 +40,8 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [2.5 LFO 2, 3, 4](#25-lfo-2-3-4)
    - [2.6 Order of the machines in OS 2.0](#26-order-of-the-machines-in-os-20)
    - [2.7 Load governor](#27-load-governor)
+   - [2.8 RETROSYN machine (experimental)](#28-retrosyn-machine-experimental)
+   - [2.9 Track lo-fi and fine tune (experimental)](#29-track-lo-fi-and-fine-tune-experimental)
 3. [Sequencer](#3-sequencer)
    - [3.1 Arpeggiator](#31-arpeggiator)
    - [3.2 Easier trig removal](#32-easier-trig-removal-trig-hold)
@@ -82,7 +84,7 @@ retrig page, menus) are listed with that page as context.
 | **FUNC** + **MACHINES** with a step held, then pick a sample | Sample lock on that step | Model-TG Sampler | Sampler track |
 | **FUNC** + **MACHINES**, cursor on a sample file, then press the track's pad (or its trig keys in keyboard mode) | Plays the highlighted sample with the track's settings | Sample preview | Sampler tracks only. Nothing plays while scrolling |
 | **FUNC** + **PAGE** | Scale menu, as stock, with two added items **Scl** and **Key** (Scale Lock) | Model-TG Scale Lock | Stock menu, extended |
-| **FUNC** + **PITCH** (turn) | Lo-fi: OFF in the middle, sample rate on the left (46K down to 4K), bit depth on the right (12B down to 2B) | MACRO | **MACRO tracks only.** Stock, changed: on every other machine FUNC + PITCH still moves the note by semitones |
+| **MACHINES** held + **PITCH** (turn) | **FTUNE**, the fine tune: -64 to +63, 1/32 semitone per step (+/-2 semitones); the value window shows the number and a horizontal bar. With **FUNC**, one step per click | Track lo-fi and fine tune | Every machine. Stock: the fine tune existed but no knob reached it |
 | **FUNC** + **RETRIG** | Retrig Setup menu, now with two more rows under Rte, Len, A.On: **Arp** (direction) and **Oct** (octaves) | Arpeggiator | Stock menu, extended |
 | **FUNC** + trig key on an empty step | Places a trigless trig (stock); the key now lights dimmed | Dimmed trigless trigs | Grid mode |
 | **FUNC** + trig key (on a step with a trig) | Stock change applied on release; now decided within 0.5 s instead of 0.2 s | Easier trig removal | Grid mode |
@@ -103,11 +105,14 @@ retrig page, menus) are listed with that page as context.
 | **MACHINES** held + **DECAY** | Attack (instant to about 2 s) | Model-TG | Every machine, including the Syntakt engines |
 | **MACHINES** held + **SWEEP** | Filter (Model-TG's ladder low-pass) | Model-TG | Every machine. Same gesture as the per-track filter, which is why that mod is outside OS 2.0 |
 | **MACHINES** held + **CONTOUR** | Resonance | Model-TG | Same note as above |
-| **MACHINES**, then pick ACID / MACRO / Sampler / an engine | The added machines, after Chord | Machines | MACHINES menu, see [2.6](#26-order-of-the-machines-in-os-20) |
+| **MACHINES** held + **COLOR** | **Lo-Fi Rate**: OFF, then the sample rate from 46K down to 4K | Track lo-fi and fine tune | Every machine (experimental) |
+| **MACHINES** held + **SHAPE** | **Lo-Fi Bits**: OFF, then 12B down to 2B | Track lo-fi and fine tune | Every machine (experimental) |
+| **MACHINES** pressed with a trig key held | Opens the step's machine browser **on release**, and only if no knob was turned and no other key pressed meanwhile; so trig + MACHINES + a knob p-locks Attack, Filter, Resonance, Lo-Fi Rate, Lo-Fi Bits or FTUNE without the browser | Track lo-fi and fine tune | Stock, changed (the browser opened on press). Without a held trig, or with FUNC: unchanged |
+| **MACHINES**, then pick RETROSYN / ACID / MACRO / Sampler / an engine | The added machines, after Chord | Machines | MACHINES menu, see [2.6](#26-order-of-the-machines-in-os-20) |
 | **PAGE** with a trig key held | Plays that step (note, length, p-locks, sound lock) instead of turning the page | Trig preview | Sequencer stopped or paused. Stock, changed |
 | **PATTERN** | Closes the retrig page so you can choose a pattern | Model-TG retrig page | Retrig page only |
 | **PLAY** | Skips the current step (it stays as it was) | Step record | In step record, no note held |
-| **PITCH** (turn) on a MACRO track | Note, as stock; the fine-tune parameter moved under FUNC + PITCH | MACRO | MACRO tracks |
+| **PITCH** (turn) on a MACRO track | Note, as stock; MACHINES + PITCH is the fine tune, as on every machine | MACRO | MACRO tracks |
 | **PUNCH** | Arms tap slicing (*ARMED*), or stops it | Model-TG slice editor | Slice editor only |
 | **REC** pressed twice quickly | Starts step record (*Step-rec: ON*): the notes played go one by one on the blinking step | Step record | Sequencer stopped (or paused). Stock, changed: the second press used to turn grid recording back off |
 | **REC** | Stops step record (*Step-rec: OFF*) | Step record | In step record |
@@ -117,6 +122,7 @@ retrig page, menus) are listed with that page as context.
 | **SETTINGS** tapped | Opens its usual menu, with one more line at the end: **Mods** (a puzzle piece) | Mod Settings | Stock menu, extended |
 | **SETTINGS** held | No longer brings up the pattern save prompt; it is Model-TG's modifier key | Model-TG | Stock, changed (Model-TG's guide and this project's guide) |
 | **SETTINGS** + **BACK** | Turns the master effects off from anywhere (*Master FX off*) | Model-TG | Anywhere |
+| **SETTINGS** + **DELAY TIME** or **LFO SPEED** (turn) | Right: the value becomes a note value that follows the tempo (the nearest one: 1/128 .. 2 BAR for the delay, 1/128 .. 16 BAR per LFO cycle, the retrig's straight, triplet and dotted values; a minus sign plays the LFO backwards). Left: back to the usual values. In note values the knob alone steps from one to the next; saved with the pattern. A delay over 8 s is cut and shows ">" | Delay and LFO in note values (experimental, notes/82) | Parameter page knob 15 (DELAY TIME), knob 10 and LFO pages 1–4 (SPD); MULT does not count in note values; p-locks keep usual values |
 | **SETTINGS** + **MACHINES** | Playback mode menu (One shot, Loop, Slice, Granular, Stretch, Pluck, Wave) | Model-TG Sampler | Sampler track |
 | **SETTINGS** + **PUNCH** | Options of the current playback mode | Model-TG Sampler | Sampler track |
 | **SETTINGS** + **REC** | Resample menu | Model-TG | Anywhere; the take goes onto the track you opened it on |
@@ -140,7 +146,10 @@ Known collisions and raw spots, collected from the sources:
 - **SETTINGS held** lost the stock pattern save prompt (Model-TG guide; this project's guide repeats it).
 - **FUNC + PAGE** (Scale menu) carries Model-TG's Scale Lock. Chord Keys also changed the notes of the trig keys; the
   flasher listed that as their clash ("both change the notes of the TRIG keys").
-- **FUNC + PITCH** means two different things depending on the machine (lo-fi on MACRO, semitones elsewhere).
+- **FUNC + PITCH** is stock semitones on every machine. **MACHINES + PITCH** is the fine tune (FTUNE) on every
+  machine; MACRO's own lo-fi, which used to live there, gave way to the track lo-fi (MACHINES + COLOR / SHAPE).
+- **Trig + MACHINES** is the stock machine lock and the p-lock gesture of every MACHINES parameter: the browser now
+  opens on release, only if nothing else was touched (notes/86 §7).
 - **FUNC + LEVEL/DATA**: turned on the main screen it is the pan (with a number); pressed on the OUT/THRU row it is
   the MIDI toggle. Different gestures and screens, so no clash, but the same pair of keys.
 - **BACK on the retrig page** resets instead of closing, unlike everywhere else.
@@ -263,10 +272,9 @@ that code on a computer.
 4. **CONTOUR** (Env Timbre) lets the amp envelope open the timbre: "at 0, nothing; turned up, each note starts brighter
    and closes as it fades."
 5. **PITCH** and the keys set the note as on the original machines. **DECAY**, **GATE** and **PUNCH** work as on Tone.
-6. Lo-fi: hold **FUNC** and turn **PITCH**. Middle (default) = unchanged, screen shows **OFF**. Left = **RATE**, the
-   sample rate drops step by step from 48 kHz to about 4 kHz (screen **46K** down to **4K**). Right = **BITS**, from
-   12 bits down to 2 (screen **12B** down to **2B**). Shown in the large value window, one step per knob click.
-   Can be p-locked.
+6. Lo-fi: the track lo-fi of every machine, **MACHINES** + **COLOR** (Lo-Fi Rate) and **MACHINES** + **SHAPE** (Lo-Fi
+   Bits), see [2.9](#29-track-lo-fi-and-fine-tune-experimental). **MACHINES** + **PITCH** is the fine tune (FTUNE), as
+   on every machine.
 
 | Model | Family | Models, in order |
 |---|---|---|
@@ -290,7 +298,9 @@ that code on a computer.
 - A MACRO voice costs about twice an original voice: under one for CLOCKED NOISE, about three times for HARMONICS
   (emulator figures; "memory access can make it heavier on the machine"). On its own MACRO has no governor; in OS 2.0
   the engines' governor looks after MACRO tracks too.
-- The lo-fi replaces the fine tune on MACRO tracks only.
+- MACRO had its own lo-fi on the fine tune (FINE, MACHINES + PITCH) until 30/10/2026; it gave way to the track
+  lo-fi, and FINE tunes MACRO again like any machine. **A MACRO track saved with that old lo-fi on (FINE away from
+  the middle) now sounds detuned**: set FTUNE back to 0.
 - With Model-TG, MACRO gets Model-TG's Attack, Filter and Resonance, and its time shows on the System page
   (notes/43).
 - Set MACRO tracks back to an original machine before flashing anything else.
@@ -300,7 +310,7 @@ unchanged. Request from the Discord ("Mutable Instruments engines").
 
 **Status.** Tested on a Model:Cycles on 07/10/2026; with the 5 engines and Model-TG on 10/10/2026; the 48 kHz
 models on 11/10/2026; the lo-fi on **FUNC + PITCH** with its value on screen on 12/10/2026 (version 1.54; the first
-lo-fi did not reach the fine tune on the machine, notes/55 §8).
+lo-fi did not reach the fine tune on the machine, notes/55 §8). That lo-fi was removed on 30/10/2026 (notes/86 §8).
 
 ### 2.4 ACID machine
 
@@ -310,7 +320,7 @@ in fixed point. Slides come from trig lengths.
 
 **How to use it** (guide):
 
-1. Press **MACHINES** and pick **ACID**, the last machine (14 in OS 2.0). Its icon is Tone's.
+1. Press **MACHINES** and pick **ACID**, machine 14 in OS 2.0 (RETROSYN, 15, comes after it). Its icon is Tone's.
 2. Shape it with the knobs. The defaults already give the squelch.
 
 | Knob | Name on screen | What it does |
@@ -370,8 +380,10 @@ with or without Model-TG.
   its SPD and DEP are stored a little less finely than LFO 1's (whole values shown come back exactly).
 - **LFO 3 and 4 are for live play**: one setting per track whatever the pattern, kit or sound; not saved, back to
   defaults at power-on; cannot be p-locked ("turning a knob with a trig held changes the setting itself").
-- An extra LFO aimed at LFO 1's destination does nothing. DEST skips destinations another LFO of the track already
-  uses (NONE is always available). Two extra LFOs loaded onto the same destination add up.
+- Holding **[LFO]** + turning a knob assigns that destination to the displayed LFO; with **MACHINES** held too, the
+  MACHINES parameters: Attack, Filter, Resonance, Lo-Fi Rate, Lo-Fi Bits, FTUNE (on a Sampler track in One shot,
+  Loop or Slice, SWEEP / CONTOUR give its own Filter and Resonance). Knob LEDs on the LFO page light up for them.
+- Multiple LFOs assigned to the same destination stack and add up, including LFO 1's destination: each LFO adds its delta and saturates (cascaded 0..0x7f00). The DEST wheel skips taken destinations, but direct knob assignment allows stacking any LFOs.
 - Old sounds load with LFO 2 at no destination. Sounds saved with DavidCaruso's firmware keep their LFO 2. The
   official OS loads sounds saved with this mod and ignores LFO 2.
 - **Fixes a Model-TG bug**: p-locks on Attack, Filter and Resonance used to come back after reloading a pattern as
@@ -389,7 +401,7 @@ rewritten, then removed at Maxime's request on 11/10/2026.
 ### 2.6 Order of the machines in OS 2.0
 
 The guide's rule: the added machines come after Chord; the Sampler is the 7th, the engines follow in the order SD,
-CP, TOY, BITS, SWARM, then MACRO, then ACID last. With everything in OS 2.0 (also the list in the draft `os.json`):
+CP, TOY, BITS, SWARM, then MACRO, then ACID, then RETROSYN last. With everything in OS 2.0 (also the list in the draft `os.json`):
 
 | # | Machine | # | Machine |
 |---|---|---|---|
@@ -397,7 +409,7 @@ CP, TOY, BITS, SWARM, then MACRO, then ACID last. With everything in OS 2.0 (als
 | 07 | Sampler (Model-TG) | 12 | SYSwm |
 | 08 | SDVtg | 13 | MACRO |
 | 09 | CPVtg | 14 | ACID |
-| 10 | SYToy | | |
+| 10 | SYToy | 15 | RETROSYN |
 
 A project that uses machine 08 or higher only plays the same machine on a firmware with the same layout. The single OS
 fixes this layout for everyone, which removes the "the number depends on what you ticked" problem described all over
@@ -410,12 +422,83 @@ Not a feature you play, but it shapes every heavy machine above (guide, "Process
 - It measures every audio block. Under a sustained high load, voices that are dying out are stopped earlier (below
   −66 dB). If the load stays too high, it fades out the voice heard least in the mix (a muted track first, then the
   quietest), one at a time. A single heavy block does not trigger it.
-- It covers the original machines, the Syntakt engines, MACRO and ACID. It never turns off the Sampler or the track
+- It covers the original machines, the Syntakt engines, MACRO, ACID and RETROSYN. It never turns off the Sampler or the track
   Model-TG is recording or slice-editing.
 - Advice from the guide when notes get cut: lower the volume of the track you can spare most, mute what you don't
   hear, shorten long decays, or use the delay and reverb less (about 12 % of the processor).
 
+### 2.8 RETROSYN machine (experimental)
+
+**What it does.** One extra machine, **RETROSYN**, machine 15 (the last): chiptune voices in the style of the Game Boy,
+NES and SNES, with a pitch sweep and chord arpeggios.
+
+**How to use it:**
+
+1. Press **MACHINES** and pick **RETROSYN**, the last machine (15 in OS 2.0). Its icon is Tone's. With 15 machines,
+   the MACHINES screen draws 8 marks per row instead of 7.
+2. Pick a wave with SHAPE, then shape it with the other knobs.
+
+| Knob | Name on screen | What it does |
+|---|---|---|
+| SHAPE | Shape (SHAP) | 6 waves: pulse, NES triangle, Game Boy wavetable, long noise (15-bit), short metallic noise (7-bit), SNES loop |
+| COLOR | Color (COLR) | depends on the wave: pulse width, continuous from 12.5 % to 75 % (an LFO on COLOR gives PWM), one of 8 wavetables or 8 SNES loops, noise rate (continuous over 3 octaves) |
+| SWEEP | Sweep (SWEP) | pitch sweep on each note, Game Boy style: 64 is off, right sweeps up, left down; a note swept past C9 goes silent |
+| CONTOUR | Contour (CONT) | 8 chords played as a 60 Hz arpeggio (unison, octave, major, minor, fifth + octave, major and minor with octave, two octaves) |
+| DECAY | — | the amp decay, as on Tone; GATE holds the note |
+| PUNCH | — | crushes the output to 4 bits |
+
+3. **PITCH**, the keys and **FINE** set the note.
+
+**Limits and interactions.**
+
+- One voice per track. A silent RETROSYN track is not computed. Every trig restarts the wave, the sweep and the
+  arpeggio.
+- The governor covers RETROSYN like the other added machines; a note it fades out plays afresh on the next trig.
+- Set RETROSYN tracks back to an original machine before flashing anything else.
+
+**Origin and license.** Sound core by AveyCole (fork `AveyCole/Modded-Cycles`, `tools/machines/retrosyn/`), bridge to
+this OS by this project (notes/84). The fork declares no license for this core (its own notes/96 §5 says so); the
+license is still to be confirmed with AveyCole.
+
+**Status.** Experimental: proven in the emulator (notes/84), no hardware test recorded.
+
 ---
+
+### 2.9 Track lo-fi and fine tune (experimental)
+
+**What it does.** Every machine (the stock ones, the Sampler, the Syntakt engines, MACRO, ACID, RETROSYN) gets two
+more parameters, **Lo-Fi Rate** and **Lo-Fi Bits**, applied to the track after Volume + Dist, and its fine tune
+(**FTUNE**) under a knob. They sit in the same MACHINES layer as Model-TG's Attack, Filter and Resonance, so every
+machine works the same way.
+
+**How to use it.**
+
+1. Hold **MACHINES** and turn **COLOR**: **Lo-Fi Rate**. **OFF** at 0, then the sample rate drops step by step from
+   46 kHz to 4 kHz (screen **46K** down to **4K**), for a grainy, aliased sound.
+2. Hold **MACHINES** and turn **SHAPE**: **Lo-Fi Bits**. **OFF** at 0, then 12 bits down to 2 (screen **12B** down to
+   **2B**). Values are rounded to the nearest level: a quiet sound under one step goes silent; at 2 to 4 bits the
+   sound gets louder and harsher, which is the effect.
+3. Hold **MACHINES** and turn **PITCH**: **FTUNE**, the fine tune, -64 to +63, 1/32 semitone per step (+/-2
+   semitones), as the original OS tunes its machines. The value window shows the number and a horizontal bar; with
+   **FUNC**, one step per click.
+4. **P-locks**: hold a trig, hold **MACHINES**, turn the knob. With a trig held, MACHINES no longer opens the step's
+   machine browser on press: it opens on release, and only if you did not turn a knob or press another key meanwhile.
+5. **LFOs**: Lo-Fi Rate, Lo-Fi Bits and FTUNE are destinations of the four LFOs and of velocity: pick them with DEST, or
+   hold **[LFO]** + **MACHINES** and turn COLOR, SHAPE or PITCH (the knob's LED lights on the LFO page).
+
+**Limits and interactions.**
+
+- Saved with the sound (kit, sound pool) and p-locks with the pattern. Older projects load with the lo-fi off.
+- About 0.4 % of an audio block per track with lo-fi on; a track with both at OFF is not touched at all.
+- A stereo Sampler track is crushed on both sides with the same timing.
+- MACRO's own lo-fi on FINE is gone: **a MACRO track saved with it on now sounds detuned** (set FTUNE back to 0).
+- Not with the per-track filter (outside OS 2.0): both use the same spot after Volume + Dist and the same free
+  parameter slots.
+
+**Origin.** Owner's request, 29/10/2026: one lo-fi and one fine tune for every machine (notes/86).
+
+**Status.** Experimental. Tested on a Model:Cycles on 30/10/2026 (os-lofi4 to os-lofi7) and in the emulator on the
+OS's, Model-TG's and lfo-plus's own code (`tools/emu/test_track_lofi.py`, `test_trig_machines.py`).
 
 ## 3. Sequencer
 
@@ -989,8 +1072,14 @@ pump. The delay and reverb receive the ducked tracks, but their own returns aren
   Sampler's ladder filter; wide open it is bypassed.
 - On every machine: the stock ones, the Syntakt engines (notes/31 §4.4) and MACRO (notes/43). ACID is not mentioned
   in the sources.
+- The same MACHINES layer now also carries the fine tune (PITCH), Lo-Fi Rate (COLOR) and Lo-Fi Bits (SHAPE): see
+  [2.9](#29-track-lo-fi-and-fine-tune-experimental).
 - Real parameters: p-locks, LFO destinations, saved with the project. The p-lock reload bug is fixed by LFO 2, 3, 4
   ([2.5](#25-lfo-2-3-4)).
+- **Resonance keeps the level** (this project's change, notes/85): turning Resonance up no longer makes the sound
+  thinner and quieter (Model-TG lost up to about 5.5 dB at full Resonance). Bright sounds get louder with Resonance,
+  as on an analog filter, because the resonant peak is added on top; very loud resonant peaks are rounded off softly
+  instead of hitting a hard ceiling. Resonance 0 sounds exactly as before.
 
 ### 6.10 Slide trigs
 
@@ -1086,6 +1175,10 @@ MACHINE)". Model-TG's "PRESET" key is **MACHINES** (key code 5 in its `INTERNALS
 | Attack/Filter/Resonance p-locks reload correctly | fixed by LFO 2, 3, 4 | notes/56 |
 | Sample preview in the preset menu | Discord request | notes/46 |
 | USB tracks cut at mute with Model-TG; USB send at a fixed time | 6-channel glitches (the send at a fixed time helps 2CH too; see 4.3) | notes/35 |
+| Resonance no longer lowers the level: full makeup at the filter's output, with a soft clip | owner's report: the sound drops when Resonance is turned up, on every machine | notes/85 |
+| A Sampler switched away and back keeps its modes; going back to it on the machine page restores its knobs, as for every machine | owner's report: the sound changed after a machine change | notes/86 §2, notes/83 §4 |
+| [LFO] + MACHINES + SWEEP / CONTOUR on the Sampler: its own filter in One shot / Loop / Slice, the track filter (shown FLT / RES) in the other modes | owner's report: no destination | notes/83 §3 |
+| Track lo-fi (Lo-Fi Rate / Bits) and the fine tune on every machine; trig + MACHINES opens the browser on release | owner's request: one UX on every machine | notes/86 |
 
 ---
 

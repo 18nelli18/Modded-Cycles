@@ -203,9 +203,12 @@ def interface(ref, fw, codes, tg):
     r = b.call(0x4004df5c, first + 1)
     rec, base_ = bytes(b.uc.mem_read(r, REC_LEN)), bytes(b.uc.mem_read(gs.RECS, REC_LEN))
     sw = struct.unpack_from(">I", rec, 12)[0], struct.unpack_from(">I", rec, 24)[0], struct.unpack_from(">I", rec, 28)[0]
-    same = rec[:12] + rec[16:24] + rec[32:] == base_[:12] + base_[16:24] + base_[32:]
-    check(r == gs.REC_ATK and sw == (0x0d, 0x0c, 0x0b) and same,
-          "touche Attack tenue (mod_held) : DECAY, SWEEP, CONTOUR -> Attack, Filtre, Résonance, comme Model-TG")
+    lofi = struct.unpack_from(">II", rec, 16)                # COLOR, SHAPE : Lo-Fi Rate / Bits (notes/86 §5)
+    fine = struct.unpack_from(">I", rec, 8)[0]                 # PITCH : FINE, l'accord fin (notes/86 §8)
+    same = rec[:8] + rec[32:] == base_[:8] + base_[32:]
+    check(r == gs.REC_ATK and sw == (0x0d, 0x0c, 0x0b) and lofi == (1, 2) and fine == 43 and same,
+          "touche Attack tenue (mod_held) : DECAY, SWEEP, CONTOUR -> Attack, Filtre, Résonance, comme Model-TG ; "
+          f"COLOR, SHAPE -> Lo-Fi Rate, Bits (ids {lofi}) ; PITCH -> FINE ({fine})")
     b.uc.mem_write(tg["mod_held"], struct.pack(">I", 0))
     pt = tg["param_table"] + 0x2e * g7.DSTRIDE + 44
     b.uc.mem_write(pt, struct.pack(">III", 0x13572468, 0x2468ace0, 0x369cf258))
@@ -244,15 +247,15 @@ def interface(ref, fw, codes, tg):
         filled = [i for i, (k, _, _) in enumerate(marks) if k == "repère plein"]
         ys = [y for _, _, y in marks]
         rows_ok &= len(marks) == nm and filled == [m] and min(x for _, x, _ in marks) >= 64 \
-            and sorted(set(ys)) == sorted(gs.MARKS["y"]) and ys[:gs.MARKS_ROW] == [gs.MARKS["y"][0]] * gs.MARKS_ROW
+            and sorted(set(ys)) == sorted(gs.MARKS["y"]) and ys[:gs.marks_row(nm)] == [gs.MARKS["y"][0]] * gs.marks_row(nm)
         where.append(marks[m][1:])
-    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), les 7 premiers en "
+    check(rows_ok, f"écran MACHINES : {nm} repères sur 2 lignes dans la moitié droite (x >= 64), les {gs.marks_row(nm)} premiers en "
                    f"haut (y = {gs.MARKS['y'][0]}, l'axe y monte), le plein sur la "
                    f"machine choisie (1, 7, {first + 1}, {top + 1} : {where})")
 
     blob = bytes(b.uc.mem_read(tg["sampler_name_table"], 28))
     names = bytes(b.uc.mem_read(gs.DATA, 4 * nm))
-    strs = [bytes(b.uc.mem_read(struct.unpack_from(">I", names, 4 * m)[0], 6)).split(b"\0")[0].decode()
+    strs = [bytes(b.uc.mem_read(struct.unpack_from(">I", names, 4 * m)[0], 16)).split(b"\0")[0].decode()
             for m in range(first, nm)]
     if re.search("meter|profile", fw.tweaks[-1]["id"]):     # diagnostic : chaque nom est un compteur
         check(len(set(struct.unpack(f">{nm}I", names))) == nm, "noms : un compteur par machine (diagnostic)")

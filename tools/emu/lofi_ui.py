@@ -1,12 +1,16 @@
-"""Lo-fi de MACRO sous FUNC + PITCH (notes/55 §8), sur le code de l'interface de l'OS : la recherche du descripteur
-d'un potard (0x4001e814, ou le slot 124 de la vtable de ParameterPageView quand un tweak l'a remplacé), puis
-l'application d'un tour de potard avec FUNC (0x4000b7d6, l'objet des paramètres d'une piste), puis le texte de la
-valeur (le formateur de l'objet d'interface du descripteur, vrai sprintf), puis la fenêtre de valeur qui s'ouvre quand
-on tourne le potard (0x4001d818, le slot 144 de la vtable de ParameterPageView), dessinée dans un écran de 128 × 64.
+"""FINE (accord fin) sous MACHINES + PITCH, sur le code de l'interface de l'OS : la recherche du descripteur d'un
+potard (0x4001e814, ou le slot 124 de la vtable de ParameterPageView quand un tweak l'a remplacé), l'application d'un
+tour de potard avec FUNC (0x4000b7d6, l'objet des paramètres d'une piste), le texte de la valeur (le formateur de
+l'objet d'interface du descripteur, vrai sprintf), et la fenêtre de valeur qui s'ouvre quand on tourne le potard
+(0x4001d818, le slot 144 de la vtable de ParameterPageView), dessinée dans un écran de 128 × 64.
 
-Utilisé par test_macro.py et test_macro_syntakt.py. Sur la machine, FUNC + PITCH réglait PITCH par demi-tons
-(0x4004e84c) : FINE, que lit le lo-fi, n'était sous aucun potard (retour de deux utilisateurs, 11/10/2026)."""
+Avec Model-TG, l'enregistrement sous MACHINES porte FINE (43) en position 0 sur toutes les machines (notes/86 §8), et
+tl_ui (tools/track_lofi.py) pose le pas d'un cran par détent (+0x50) de FINE et le texte / le dessin des descripteurs
+1 / 2 (+0x20 / +0x30). Sans Model-TG, FINE n'est sous aucun potard et les 77 objets d'interface restent ceux de l'OS.
 
+Utilisé par test_macro.py, test_macro_syntakt.py, test_acid_combos.py et test_retrosyn.py."""
+
+import re
 import struct
 
 from unicorn import Uc, UC_ARCH_M68K, UC_MODE_BIG_ENDIAN, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED
@@ -24,6 +28,9 @@ VTABLE = 0x400fd134
 UI_REC = 0x40a71754                  # objets d'interface, 100 o par descripteur
 PITCH, FTUN = 42, 43
 PITCH_KNOB = 2
+PARAM_TABLE = 0x4010dce0
+KEY_HELD, KEY_TABLE, KEY_BITS = 0x4007faf4, 0x4010ae5c, 0x40f95744   # (code) -> touche tenue ; code -> bit ; état
+KEY_MACHINES = 5
 PAGE_VT = 0x4010052c                 # vtable de ParameterPageView (slot 124 en 0x401005a8)
 POPUP_SLOT = PAGE_VT + 144           # 0x4001d818 : (vue, bitmap, descripteur, valeur, drapeau, 1)
 BITMAP = 0x40070172                  # Bitmap(this, largeur, hauteur, image, masque)
@@ -81,20 +88,32 @@ class UI:
     def cstr(self, a):
         return bytes(self.uc.mem_read(a, 64)).split(b"\0")[0].decode("latin-1")
 
-    def lookup(self, machine, knob, func):
+    def hold(self, code, held):
+        """La touche de ce code tenue ou non, dans l'état que lit le vrai 0x4007faf4 (bit 0x4010ae5c[code] de
+        0x40f95744) : la fonction tourne, ses registres écrasés (d0, d1, a0) avec elle."""
+        bit = struct.unpack(">i", self.uc.mem_read(KEY_TABLE + 4 * code, 4))[0]
+        v = self.uc.mem_read(KEY_BITS + (bit >> 3), 1)[0]
+        v = v | 1 << (bit & 7) if held else v & ~(1 << (bit & 7))
+        self.uc.mem_write(KEY_BITS + (bit >> 3), bytes([v]))
+
+    def lookup(self, machine, knob, func, key=0):
         """Descripteur sous un potard pour une piste de cette machine : le vrai 0x4001e814 (par le slot 124, comme
-        l'OS l'appelle), la machine de la piste et les singletons de l'écran donnés (pas de popup)."""
+        l'OS l'appelle), la machine de la piste et les singletons de l'écran donnés (pas de popup). key : MACHINES
+        tenu (le vrai 0x4007faf4 répond)."""
         view = SCRATCH
         self.uc.mem_write(view + 104, struct.pack(">I", view + 0x200))
         self.uc.mem_write(view + 0x200, b"".join(struct.pack(">I", i) for i in range(1, 7)))   # vecteur [1..6]
-        self.hooks.update({MACHINE_OF: ("machine", machine), 0x400cf9a8: ("ui", 0), 0x4006b736: ("popup", 0),
-                           0x4007faf4: ("key", 0)})
+        self.hooks.update({MACHINE_OF: ("machine", machine), 0x400cf9a8: ("ui", 0), 0x4006b736: ("popup", 0)})
+        self.hooks.pop(KEY_HELD, None)
+        self.hold(KEY_MACHINES, key)
         d = self.call(self.u32(KNOB_SLOT), view, knob, 0xffffffff if func else 0, 0xffffffff)
+        self.hold(KEY_MACHINES, False)
         return d if self.sp_ok and not self.bad else None
 
-    def edit_func(self, desc, cur, delta):
-        """Un tour de potard avec FUNC sur ce descripteur : le vrai 0x4000b7d6 (fine = 1), sur un objet dont la
-        lecture (vt[28]) rend cur et l'écriture (vt[24]) est notée ; rend la valeur écrite (bornée par 0x4000b274)."""
+    def edit_func(self, desc, cur, delta, fine=1):
+        """Un tour de potard avec FUNC (fine = 1) ou sans (fine = 0) sur ce descripteur : le vrai 0x4000b7d6, sur un objet dont la
+        lecture (vt[28]) rend cur et l'écriture (vt[24]) est notée ; rend la valeur écrite (bornée par 0x4000b274), ou sans
+        FUNC la suite des valeurs écrites."""
         obj, vt = SCRATCH + 0x400, SCRATCH + 0x800
         self.uc.mem_write(vt, bytes(self.uc.mem_read(VTABLE, 0x80)))
         get, put = SCRATCH + 0xc00, SCRATCH + 0xc10
@@ -103,8 +122,10 @@ class UI:
         self.uc.mem_write(obj, struct.pack(">II", vt, 0))
         self.hooks.update({get: ("get", cur & 0xffff if cur >= 0 else cur), put: ("put", 0)})
         self.calls.clear()
-        self.call(EDIT, obj, desc, delta, 0, 1, 0, 1, 1)
+        self.call(EDIT, obj, desc, delta, 0, fine, 0, 1, 1)
         puts = [c for c in self.calls if c[0] == "put"]
+        if not fine:                     # sans FUNC, l'OS écrit plusieurs fois : toutes les valeurs écrites
+            return tuple(c[1][2] for c in puts) if puts and self.sp_ok and not self.bad else None
         return puts[0][1][2] if len(puts) == 1 and self.sp_ok and not self.bad else None
 
     def popup(self, desc, v, text_path=False):
@@ -156,16 +177,6 @@ class UI:
         return self.cstr(SCRATCH + 0x1000)
 
 
-def want_text(fine):
-    """Ce que macro.cc fait de FINE (notes/55) : RATE à gauche (en kHz), BITS à droite. En majuscules : la grande
-    police de la fenêtre de valeur n'a pas de minuscules (sauf m)."""
-    if fine == 64:
-        return "OFF"
-    if fine < 64:
-        return f"{round(48 * 2 ** (-86 * (64 - fine) / 1536))}K"
-    return f"{12 - (fine - 65) * 10 // 62}B"
-
-
 def pix(fb, x, y):
     w = struct.unpack(">I", fb[(x * 2 + y // 32) * 4:(x * 2 + y // 32) * 4 + 4])[0]
     return (w >> (31 - (y & 31))) & 1
@@ -177,85 +188,197 @@ def ascii_popup(fb, x0=64, x1=124, y0=22, y1=57):
                      for y in range(y1 - 1, y0 - 1, -1))
 
 
+def want_text(fine):
+    """Ce que macro.cc fait de FINE (notes/55) : RATE à gauche (en kHz), BITS à droite. En majuscules : la grande
+    police de la fenêtre de valeur n'a pas de minuscules (sauf m)."""
+    if fine == 64:
+        return "OFF"
+    if fine < 64:
+        return f"{round(48 * 2 ** (-86 * (64 - fine) / 1536))}K"
+    return f"{12 - (fine - 65) * 10 // 62}B"
+
+
 def want_step(cur, delta):
     v = (cur + 0x80) & ~0xff
     s = (abs(delta) + 0xff) & ~0xff
     return min(max(v + (s if delta >= 0 else -s), 0), 0x7f00)
 
 
+MACHINES_KNOBS = {2: FTUN, 3: 0x0d, 4: 1, 5: 2, 6: 0x0c, 7: 0x0b}   # MACHINES + potard -> descripteur
+LOAD = re.compile(rb"\x41\xe8\x00\x40\x70\x4a\x61.\x70\x50\x61.\x61")
+
+
+def load_at(img):
+    """tl_load (tools/track_lofi.py), le crochet de snd_load_post de Model-TG, dans cette image : lea 64(%a0), %a0 ;
+    moveq #74 ; ... ; None sans Model-TG."""
+    m = LOAD.search(img)
+    return BASE + m.start() if m else None
+
+
+def records(u):
+    return [bytes(u.uc.mem_read(UI_REC + 100 * d, 100)) for d in range(77)]
+
+
+def fields(x, y):
+    """Les décalages (octets) où deux objets d'interface diffèrent."""
+    return tuple(i for i in range(0, 100, 4) if x[i:i + 4] != y[i:i + 4])
+
+
+def run_load(u, addr):
+    """tl_load tel que snd_load_post l'appelle : a0 = enregistrement, a1 = son, pile [d0][son][retour]."""
+    rec, snd = SCRATCH + 0x10000, SCRATCH + 0x10100
+    u.uc.mem_write(rec, bytes(0x80))
+    u.uc.mem_write(snd, bytes(0x80))
+    sp = STACK - 0x400
+    u.uc.mem_write(sp, struct.pack(">III", 0, snd, STOP))
+    u.uc.reg_write(mk.UC_M68K_REG_A7, sp)
+    u.uc.reg_write(mk.UC_M68K_REG_A0, rec)
+    u.uc.reg_write(mk.UC_M68K_REG_A1, snd)
+    u.bad.clear()
+    u.uc.emu_start(addr, STOP, count=20_000)
+    return u.uc.reg_read(mk.UC_M68K_REG_PC) == STOP and not u.bad
+
+
 def check_lofi(base_img, fw_img, payload, top, label, check, end=None, base_end=None, base_payload=None,
-               base="l'OS d'origine", after=0):
-    """FUNC + PITCH sur une piste MACRO (machine top) : FINE, pas à pas, avec son texte ; le reste comme sans MACRO
-    (base : les mêmes mods sans MACRO, ses machines 0..top-1). after : machines ajoutées après MACRO (ACID,
-    tools/gen_acid_combos.py) : FUNC + PITCH y reste PITCH, FINE sous aucun potard."""
+               base="l'OS d'origine", after=0, tg=None):
+    """MACHINES + PITCH sur une piste MACRO (machine top) : FINE (43) avec Model-TG (tg : sa table de symboles,
+    mod_held), PITCH (42) sans ; FINE garde le texte et la jauge de l'OS ; FUNC + un cran : un pas par détent avec
+    Model-TG, le défaut de l'OS sans. after : machines ajoutées après MACRO (ACID, RETROSYN), mêmes règles."""
     a = UI(base_img, base_payload, end=base_end)
     b = UI(fw_img, payload, end=end)
     check(a.init_ok and b.init_ok, f"{label} : objets d'interface construits par l'OS (0x400de244)")
-    # 1. la recherche : FUNC + PITCH sur MACRO -> FINE ; les autres machines comme sans MACRO
+
+    def look(u, m, knob, func, key):
+        """Une recherche de descripteur, MACHINES tenue ou non (tg : mod_held de Model-TG, le vrai chemin)."""
+        if tg:
+            u.uc.mem_write(tg["mod_held"], struct.pack(">I", key))
+        try:
+            return u.lookup(m, knob, func, key)
+        finally:
+            if tg:
+                u.uc.mem_write(tg["mod_held"], bytes(4))
+
+    # 1. objets d'interface : ceux de l'OS avant tout chargement de son, puis, avec Model-TG, ce que tl_ui y pose
+    r0a, r0b = records(a), records(b)
+    check(r0a == r0b, f"{label} : objets d'interface des 77 descripteurs identiques à {base} avant le chargement d'un "
+                      f"son (l'OS ne les a pas encore touchés)")
+    if tg:
+        la, lb = load_at(base_img), load_at(fw_img)
+        ok = la is not None and lb is not None and run_load(a, la) and run_load(b, lb)
+        check(ok, f"{label} : chargement d'un son par Model-TG (tl_load) exécuté sans faute")
+        r1a, r1b = records(a), records(b)
+        check(r1a == r1b, f"{label} : après le chargement d'un son, les 77 objets de MACRO = ceux de {base} (MACRO "
+                          f"n'en ajoute aucun)")
+    else:
+        r1a, r1b = r0a, r0b
+    # 2. la recherche : MACHINES + PITCH -> FINE (43) avec Model-TG, PITCH (42) sans, sur toutes les machines
     got, same = {}, True
     for m in range(top + 1):
         for knob in range(2, 16):
             for func in (False, True):
-                got[m, knob, func] = d = b.lookup(m, knob, func)
-                if m < top:
-                    same &= d == a.lookup(m, knob, func)
+                for key in (0, 1):                      # key : la touche MACHINES tenue
+                    got[m, knob, func, key] = d = look(b, m, knob, func, key)
+                    if m < top:
+                        same &= d == look(a, m, knob, func, key)
     same &= None not in got.values()
-    check(got[top, PITCH_KNOB, True] == FTUN and got[top, PITCH_KNOB, False] == PITCH,
-          f"{label} : piste MACRO, FUNC + PITCH -> {got[top, PITCH_KNOB, True]} (FINE, {FTUN}) ; PITCH seul -> "
-          f"{got[top, PITCH_KNOB, False]} (PITCH, {PITCH})")
-    check(all(got[top, k, True] == got[top, k, False] for k in range(3, 14)),
-          f"{label} : les potards 3 à 13 de MACRO : avec FUNC comme sans (14 et 15 : leur 2e paramètre, comme l'OS)")
-    check(same, f"{label} : machines 0..{top - 1}, les 14 potards, avec et sans FUNC : le même descripteur que "
-                f"{base} (FUNC + PITCH : PITCH)")
+    # le Sampler (machine 6 de Model-TG) n'a pas de PITCH à lui : FINE n'y est que sous MACHINES
+    ms = [m for m in range(top + 1) if not (tg and m == 6)]
+    if tg:
+        bad = [(m, f) for m in ms for f in (False, True) if got[m, PITCH_KNOB, f, 1] != FTUN]
+        check(not bad and all(got[m, PITCH_KNOB, f, 0] == PITCH for m in ms for f in (False, True)),
+              f"{label} : MACHINES + PITCH -> FINE ({FTUN}) sur les machines 0..{top} (Sampler excepté), PITCH "
+              f"({PITCH}) sans MACHINES {bad[:3]}")
+        bad = [(m, k, f, got[m, k, f, 1]) for m in range(top + 1) for k in range(2, 8) for f in (False, True)
+               if got[m, k, f, 1] != MACHINES_KNOBS[k]]
+        check(not bad and all(got[m, k, f, 1] == got[m, k, f, 0] for m in range(top + 1) for k in range(8, 16)
+                              for f in (False, True)),
+              f"{label} : MACHINES + les potards 2..7 -> {[MACHINES_KNOBS[k] for k in range(2, 8)]} (FINE, Attack, "
+              f"Rate, Bits, Filtre, Résonance) sur les machines 0..{top} ; 8..15 comme sans MACHINES {bad[:3]}")
+    else:
+        check(all(got[m, k, f, 1] == got[m, k, f, 0] for m in range(top + 1) for k in range(2, 16)
+                  for f in (False, True)),
+              f"{label} : sans Model-TG, MACHINES ne change aucun potard de MACRO (PITCH reste {PITCH})")
+    check(all(got[m, PITCH_KNOB, 0, 0] == PITCH and got[m, PITCH_KNOB, 1, 0] == PITCH for m in ms),
+          f"{label} : PITCH seul et FUNC + PITCH (sans MACHINES) -> {PITCH} sur les machines 0..{top} (Sampler "
+          f"excepté)")
+    check(all(got[m, k, True, key] == got[m, k, False, key] for m in range(top + 1) for k in range(2, 14)
+              for key in (0, 1)),
+          f"{label} : FUNC ne change pas les potards 2..13 de MACRO (14 et 15 : leur 2e paramètre, comme l'OS)")
+    check(same, f"{label} : machines 0..{top - 1}, les 14 potards, avec et sans FUNC et MACHINES : le même "
+                f"descripteur que {base}")
+    # le nom de la plaque : celui de l'OS (FINE n'est plus renommé « Lo-Fi »)
+    ptr_a = struct.unpack(">I", a.uc.mem_read(PARAM_TABLE + 56 * FTUN + 0x2c, 4))[0]
+    ptr = struct.unpack(">I", b.uc.mem_read(PARAM_TABLE + 56 * FTUN + 0x2c, 4))[0]
+    nom = b.cstr(ptr)
+    check(nom == a.cstr(ptr_a) and "lo-fi" not in nom.lower(),
+          f"{label} : nom de la plaque pour FTUN -> {nom!r} (celui de {base}, pas 'Lo-Fi')")
     if after:
-        later = {(m, k, f): b.lookup(m, k, f) for m in range(top + 1, top + 1 + after) for k in range(2, 16)
-                 for f in (False, True)}
-        check(None not in later.values() and FTUN not in later.values()
-              and all(later[m, PITCH_KNOB, f] == PITCH for m in range(top + 1, top + 1 + after) for f in (False, True))
-              and all(later[m, k, True] == later[m, k, False] for m in range(top + 1, top + 1 + after)
-                      for k in range(3, 14)),
-              f"{label} : machines {top + 1}..{top + after} (après MACRO) : FUNC + PITCH -> PITCH, FINE sous aucun "
-              f"potard, potards 3 à 13 avec FUNC comme sans")
-    # 2. le tour de potard avec FUNC : sans MACRO, FINE revient au centre ; ici un pas par cran (au moins)
-    reset = {a.edit_func(FTUN, cur, d) for cur in (0, 0x2000, 0x5f00) for d in (0x100, -0x100)}
-    check(reset == {0x4000}, f"{base} : FUNC + un tour sur FINE le remet à {sorted(reset)} (le défaut) : pourquoi "
-                             f"il faut notre pas")
+        last = range(top + 1, top + 1 + after)
+        later = {(m, k, f, key): look(b, m, k, f, key) for m in last for k in range(2, 16) for f in (False, True)
+                 for key in (0, 1)}
+        if tg:
+            check(None not in later.values()
+                  and all(later[m, PITCH_KNOB, f, key] == (FTUN if key else PITCH)
+                          for m in last for f in (False, True) for key in (0, 1))
+                  and all(later[m, k, f, 1] == MACHINES_KNOBS[k] for m in last for k in range(3, 8)
+                          for f in (False, True))
+                  and all(later[m, k, f, 1] == later[m, k, f, 0] for m in last for k in range(8, 16)
+                          for f in (False, True)),
+                  f"{label} : machines {top + 1}..{top + after} (après MACRO) : MACHINES + PITCH -> FINE ({FTUN}) et "
+                  f"potards 2..7 -> Attack, Rate, Bits, Filtre, Résonance, comme les autres")
+        else:
+            check(None not in later.values() and FTUN not in later.values()
+                  and all(later[m, PITCH_KNOB, f, key] == PITCH for m in last for f in (False, True)
+                          for key in (0, 1))
+                  and all(later[m, k, True, key] == later[m, k, False, key] for m in last for k in range(3, 14)
+                          for key in (0, 1)),
+                  f"{label} : machines {top + 1}..{top + after} (après MACRO) : FUNC + PITCH et MACHINES + PITCH -> "
+                  f"PITCH, FINE sous aucun potard, potards 3 à 13 avec FUNC comme sans")
+    # 3. le tour de potard avec FUNC : un pas par cran avec Model-TG (tl_step), le défaut de l'OS sans
     cases = [(cur, d) for cur in (0, 0x100, 0x3f00, 0x4000, 0x4080, 0x4100, 0x7e00, 0x7f00, 0x1234)
              for d in (1, 0x100, 0x180, 0x300, -1, -0x100, -0x300, 0x7f00, -0x7f00)]
-    bad = [(hex(c), hex(d), b.edit_func(FTUN, c, d)) for c, d in cases if b.edit_func(FTUN, c, d) != want_step(c, d)]
-    check(not bad, f"{label} : FUNC + un tour sur FINE (vrai 0x4000b7d6) : arrondi au pas, plus le delta arrondi à des "
-                   f"pas entiers (un cran = un pas), borné à 0..0x7f00 ({len(cases)} cas){bad[:3]}")
+    if tg:
+        bad = [(hex(c), hex(d), b.edit_func(FTUN, c, d)) for c, d in cases
+               if b.edit_func(FTUN, c, d) != want_step(c, d) or a.edit_func(FTUN, c, d) != want_step(c, d)]
+        check(not bad, f"{label} : FUNC + un cran sur FINE (vrai 0x4000b7d6) : un pas (0x100) par cran, borné à "
+                       f"0..0x7f00, comme {base} ({len(cases)} cas) {bad[:3]}")
+    else:
+        reset = {b.edit_func(FTUN, cur, d) for cur in (0, 0x2000, 0x5f00) for d in (0x100, -0x100)}
+        check(reset == {0x4000} and all(b.edit_func(FTUN, c, d) == a.edit_func(FTUN, c, d) for c, d in cases),
+              f"{label} : sans Model-TG, FUNC + un tour sur FINE : le défaut de l'OS {sorted(reset)}, comme {base} "
+              f"({len(cases)} cas)")
+    plain = [(c, d, b.edit_func(FTUN, c, d, fine=0), a.edit_func(FTUN, c, d, fine=0)) for c, d in cases]
+    check(all(x == y and x is not None for _, _, x, y in plain),
+          f"{label} : MACHINES + un tour sur FINE (sans FUNC, vrai 0x4000b7d6) : le chemin de l'OS, comme {base} "
+          f"({len(plain)} cas)")
     pitch = [(b.edit_func(PITCH, c, d), a.edit_func(PITCH, c, d)) for c in (0x4000, 0x4080) for d in (0x100, -0x100)]
     check(all(x == y for x, y in pitch), f"{label} : FUNC + un tour sur PITCH : les demi-tons de l'OS "
                                          f"({', '.join(hex(x) for x, _ in pitch)})")
-    # 3. le texte : OFF au centre, kHz à gauche, bits à droite
+    # 4. le texte et la fenêtre de valeur de FINE : ceux de l'OS (-64..63, une jauge), aucun texte de lo-fi
     shown = [b.text(FTUN, n << 8) for n in range(128)]
-    check(shown == [want_text(n) for n in range(128)] and all(len(s) <= 3 for s in shown),
-          f"{label} : texte des 128 pas (vrai sprintf) : {shown[0]} .. {shown[63]} {shown[64]} {shown[65]} .. "
-          f"{shown[127]}, trois caractères au plus, comme macro.cc les règle")
-    check(a.text(FTUN, 0x2000) == "-32", f"{base} : FINE s'affiche -64..63")
-    # 4. la fenêtre de valeur (0x4001d818) : sans MACRO, FINE y est une jauge (un sprite) et aucun texte ; avec, le
-    # texte, dessiné comme l'OS dessine le texte d'un paramètre sans jauge (son propre chemin, 0x4000a70e)
-    gauge, plain = a.popup(FTUN, 0x2000), a.popup(FTUN, 0x2000, text_path=True)
-    check(gauge is not None and plain is not None and gauge[1] and not plain[1] and plain[0] != gauge[0],
-          f"{base} : la fenêtre de valeur de FINE dessine une jauge (un sprite, 0x40045fe0), "
-          f"aucun texte (ce que la machine a montré)")
+    os_shown = [a.text(FTUN, n << 8) for n in range(128)]
+    check(shown == os_shown and all(len(s) <= 3 for s in shown) and "OFF" not in shown,
+          f"{label} : texte de FINE (vrai sprintf) = celui de {base} : {shown[0]} .. {shown[127]} (pas OFF / 46K / "
+          f"12B)")
+    gauge = b.popup(FTUN, 0x2000)
+    check(gauge is not None and (not gauge[1] if tg else gauge[1]) and gauge == a.popup(FTUN, 0x2000),
+          f"{label} : fenêtre de valeur de FINE (vrai 0x4001d818) = celle de {base} : "
+          + ("le nombre et la barre de tl_draw_f (aucun sprite)" if tg else "une jauge (un sprite)")
+          + ", aucun texte de lo-fi")
     steps = (0, 1, 31, 63, 64, 65, 100, 127)
-    shots = {n: (b.popup(FTUN, n << 8), b.popup(FTUN, n << 8, text_path=True)) for n in steps}
-    bad = [n for n, (x, y) in shots.items() if x is None or y is None or x != y or x[1] or x[0] == gauge[0]]
-    check(not bad, f"{label} : fenêtre de valeur de FINE (vrai 0x4001d818) : le texte "
-                   f"{', '.join(want_text(n) for n in steps)}, pixel pour pixel celui que l'OS dessine par son chemin "
-                   f"texte (0x4000a70e, 0x40071a04, grande police) ; plus de jauge {bad}")
-    chars = sorted(set("".join(shown)))
-    missing = [c for c in chars if not b.glyph(c)]
-    check(not missing and b.glyph("k") == 0, f"{label} : chaque caractère de ces textes ({''.join(chars)}) existe dans "
-                                            f"la grande police de la fenêtre (elle n'a pas de minuscules) {missing}")
-    if not bad:
-        for n in (23, 64, 100):
-            print(f"      fenêtre de valeur, FUNC + PITCH à {n - 64:+d} (« {want_text(n)} ») :")
-            print(ascii_popup(b.popup(FTUN, n << 8)[0]))
-    recs = [(bytes(b.uc.mem_read(UI_REC + 100 * d, 100)), bytes(a.uc.mem_read(UI_REC + 100 * d, 100)))
-            for d in range(77)]
-    diff = [d for d, (x, y) in enumerate(recs) if x != y]
-    check(diff == [FTUN], f"{label} : objets d'interface des 77 descripteurs comme {base}, sauf FINE (pas, texte, dessin "
-                          f"de la valeur) : les fenêtres des autres paramètres ne changent pas ({diff})")
+    bad = [n for n in steps if b.popup(FTUN, n << 8) != a.popup(FTUN, n << 8)]
+    check(not bad, f"{label} : fenêtre de valeur de FINE à {', '.join(str(n) for n in steps)} : pixel pour pixel "
+                   f"celle de {base} (jauge, pas de texte) {bad}")
+    # 5. les 77 objets : ceux de l'OS avec Model-TG, sauf FINE (+0x50) et les descripteurs 1 / 2 (+0x20, +0x30)
+    r2a, r2b = records(a), records(b)
+    check(r2a == r1a and r2b == r1b, f"{label} : les vérifications ci-dessus n'ont pas touché aux objets d'interface")
+    if tg:
+        diff = [d for d in range(77) if r0a[d] != r2b[d]]
+        got = {d: fields(r0a[d], r2b[d]) for d in diff}
+        shown = {d: tuple(hex(i) for i in f) for d, f in got.items()}
+        check(diff == [1, 2, FTUN] and got == {1: (0x20, 0x30), 2: (0x20, 0x30), FTUN: (0x20, 0x30, 0x50)},
+              f"{label} : objets d'interface des 77 descripteurs = ceux de l'OS, sauf FINE (+0x20 texte signé, +0x30 "
+              f"nombre et barre, +0x50 notre pas) et les "
+              f"descripteurs 1 / 2 (+0x20 texte, +0x30 dessin) ({diff} {shown})")
+    else:
+        check(r2b == r0a, f"{label} : objets d'interface des 77 descripteurs identiques à {base}")

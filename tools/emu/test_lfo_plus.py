@@ -15,19 +15,31 @@ MAIN OS sans le tweak (« origine » : l'OS d'origine, ou la combinaison --with)
   2. LFO 2, 3, 4 : sortie = la fonction des LFO de l'OS réglée pareil (FADE, SPH, MODE de LFO 1), 3 tirages de 400
      blocs (toutes formes, mult synchro et libres, 5 modes, retrigs) ; LFO 1 inchangé ; même destination que LFO 1 :
      ignoré ; deux LFO de plus sur la même destination s'ajoutent, bornés 0..0x7f00 ; LFO 2 -> vitesse de LFO 1 :
-     appliqué avant LFO 1 ; destination > 32 : rien ; jeu sans destination : pas calculé ; k = 31 recopié brut.
-  3. Interface : id -> k (0x4005a4e8) pour tous les identifiants sur les 4 pages, aucun descripteur sur k = 28..32 ;
-     touche [LFO] ; get/set des pages 3-4 ; page 2 : le vrai get/set de l'OS écrit les mots k = 28..32 du son ;
+     appliqué avant LFO 1 ; destination > 32 : rien ; jeu sans destination : pas calculé ; k = 31 recopié brut ;
+     WAVE de LFO 2 lu dans le mot k = 0 des cibles, pas dans obj k = 0, k 30 jamais écrit.
+  3. Interface : id -> k (0x4005a4e8) pour tous les identifiants sur les 4 pages, aucun descripteur sur k = 28, 29,
+     31, 32 (27 / 30 = Lo-Fi Rate / Bits quand Model-TG est là) ;
+     touche [LFO] ; get/set des pages 3-4 ; page 2 : le vrai get/set de l'OS écrit SPD, MULT, DEST, DEP en
+     k = 28, 29, 31, 32 du son et WAVE en k = 0 ;
      rappels coupés pages 3-4 ; création/destruction de la vue ; dessin du chiffre ; molette DEST (vraie fonction
      de la vtable [20] -> 0x4000c140, vraie liste) : même liste sur les 4 pages, destinations prises sautées.
   4. Son : sauvegarde (formats 2 et 1) -> chargement par les vraies fonctions de l'OS : LFO 2 relu (SPD et DEP au
-     multiple de 0x80), tout le reste identique à l'origine ; ancien son -> défauts ; son neuf (0x40061866) ->
+     multiple de 0x80) avec WAVE en k = 0 ; sans Model-TG k = 30 remis à 0, avec lui k = 27 / 30 relus de la case 18
+     de l'enregistrement (+64 / +65, octet > 127 = 0), tout le reste identique à l'origine ; enregistrement
+     de l'ancienne disposition (WAVE en +88) relu de même ; ancien son -> défauts ; son neuf (0x40061866) ->
      défauts ; un OS sans le mod relit un son sauvé avec comme le sien.
   5. p-locks : identifiant de rangée -> k (0x4005aa1a) pour toutes les pistes et tous les identifiants ; aller-retour
-     complet 0x4005b95c -> 0x4005b766 de p-locks sur k = 1..32.
+     complet 0x4005b95c -> 0x4005b766 de p-locks sur k = 0..32, WAVE par la rangée 29, Lo-Fi Rate / Bits (k 27 / 30)
+     par les rangées 32 / 18, k 26 jamais sauvé.
   6. Coût : instructions par bloc (appel des LFO) : origine, sans LFO de plus, LFO 2 seul, les trois.
   7. Accroches au milieu d'une fonction : de l'adresse accrochée à la fin des instructions remplacées, mêmes
      registres (hors ceux que la suite réécrit, dits à chacune), même pile, même mémoire que l'origine.
+  8. LFO 3/4 par pattern (notes/56 §3.11) : bloc de chacun des 96 kits ; moteur et page sur le bloc du kit joué ;
+     vraie sauvegarde (0x4005b2ae) et vrai chargement (0x4005d080) d'un kit : enregistrement = l'origine hors
+     +648..+699, aller-retour exact, ancien enregistrement -> défauts, l'OS d'origine relit l'enregistrement du mod
+     comme le sien ; vrai son aux défauts (0x40061866) sur le son d'une piste d'un kit ; vrai memcpy (0x4008f1f0) :
+     autres tailles = l'origine, kit -> kit, kit -> tampon -> kit ; vrai nouveau projet (0x40061738) ; vrai Clear LFO
+     (vtable [12] de l'accesseur, identifiants 0x1e..0x24) sur les pages 3/4.
   (--david) Un son sauvé par le .syx de DavidCaruso se relit ici avec le même LFO 2.
 
     python3 tools/emu/test_lfo_plus.py --cycles model-cycles_OS1.13.syx \\
@@ -206,15 +218,19 @@ class Rig:
                 FAIL.append(check_fail)
         return self.uc.reg_read(D[0])
 
-    def block(self, tg, tempo, mask, smooth=True):
+    def block(self, tg, tempo, mask, smooth=True, obj0=None):
         """Un bloc audio : lissage des cibles tg (ou obj = tg), puis l'appel des LFO tel que la fonction audio le
         fait (0x400597ba..0x400597cc, a2 = obj, a3 = l'argument : (a3) = cibles, 4(a3) = masque des retrigs).
-        Rend (registres et pile rendus, instructions)."""
+        obj0 : valeur forcée dans le mot k = 0 de obj après le lissage (modulation de LFO 1 / vélocité), les cibles
+        k = 0 (WAVE de LFO 2) ne bougent pas. Rend (registres et pile rendus, instructions)."""
         self.uc.mem_write(TGT, tg)
         if smooth:
             self.call(SMOOTH, TGT)
         else:
             self.uc.mem_write(OBJ, tg)
+        if obj0 is not None:
+            for t in range(6):
+                self.w16(OBJ + 14 + 66 * t, obj0)
         self.w32(ARG, TGT)
         self.w32(ARG + 4, mask)
         self.w32(TEMPO, tempo)
@@ -249,7 +265,8 @@ def lfo(spd=0x7000, mult=4, fade=0x4000, dest=0, wave=0, sph=0, mode=0, dep=0x40
 
 
 def tracks(lfo1, lfo2=None, base=None):
-    """Cibles (14 o + 7 pistes × 66 o) : LFO 1 en k = 1..8, LFO 2 en k = 28..32, base : {k: mot}."""
+    """Cibles (14 o + 7 pistes × 66 o) : LFO 1 en k = 1..8 ; LFO 2 en k = 28, 29, 31, 32 (SPD, MULT, DEST, DEP),
+    son WAVE dans le mot k = 0 des cibles (notes/86 §3 ; k 30 reste à Lo-Fi Bits) ; base : {k: mot}."""
     b = bytearray(14 + 7 * 66)
     for t in range(6):
         p = 14 + 66 * t
@@ -261,8 +278,8 @@ def tracks(lfo1, lfo2=None, base=None):
         struct.pack_into(">8H", b, p + 2, *words)
         if lfo2:
             M = lfo2[t]
-            struct.pack_into(">5H", b, p + 56, M["spd"], M["mult"] << 8, M["wave"] << 8, (M["dest"] & 0xff) << 8,
-                             M["dep"])
+            struct.pack_into(">H", b, p, M["wave"] << 8)
+            struct.pack_into(">5H", b, p + 56, M["spd"], M["mult"] << 8, 0, (M["dest"] & 0xff) << 8, M["dep"])
     return bytes(b)
 
 
@@ -329,7 +346,7 @@ def writes_ok(stock, img, tweak, every, runtimes):
     for addr, old, *_ in G.HOOKS:
         n = len(old) // 2
         first = {0x4005b9c6: 4, 0x4000c140: 4, 0x4005a4ea: 4, 0x4005aa22: 4, 0x40025e10: 4, 0x400d97f8: 4,
-                 0x400618e2: 2}.get(addr, n)
+                 0x400618e2: 2, 0x4005b2ae: 4, 0x4005d080: 4, 0x4008f1f0: 4}.get(addr, n)
         inner |= {addr + first} if first < n else set()
         inner |= set(range(addr + 1, addr + n)) - {addr + first}
     tg = branch_targets(stock, BASE)
@@ -342,16 +359,18 @@ def writes_ok(stock, img, tweak, every, runtimes):
     bss_end = int.from_bytes(stock[0x400004c2 - BASE:0x400004c6 - BASE], "big")
     dma = int.from_bytes(stock[0x40057798 - BASE:0x4005779c - BASE], "big")
     lo, hi = G.SCR, G.SCR + G.SCR_SIZE
-    check(bss_end == 0x423380b0 and dma == 0x4a340000 and bss_end <= lo and hi <= dma & 0xf7ffffff,
-          f"mémoire de travail {lo:#x}..{hi:#x} entre la fin du BSS ({bss_end:#x}, 0x400004c2) et les tampons DMA "
-          f"({dma:#x} = {dma & 0xf7ffffff:#x}, 0x40057798)")
-    hole = (0x423380b1, 0x42340000)                     # 0x423380b0 : la borne de la remise à zéro, pas dedans
-
+    lo2, hi2 = G.SCR34, G.SCR34 + G.SCR34_SIZE
+    check(bss_end == 0x423380b0 and dma == 0x4a340000 and bss_end <= lo2 and hi2 <= lo and hi <= dma & 0xf7ffffff,
+          f"mémoire de travail {lo:#x}..{hi:#x} et blocs LFO 3/4 {lo2:#x}..{hi2:#x} (sans recouvrement) entre la fin du "
+          f"BSS ({bss_end:#x}, 0x400004c2) et les tampons DMA ({dma:#x} = {dma & 0xf7ffffff:#x}, 0x40057798)")
+    # Depuis OS 2.0, le trou de RAM libre n'est plus entierement libre : step-rec y range ses
+    # 0x4233e800.. (voir son generateur). On exige donc que NOS deux plages soient inoccupees, et
+    # seulement elles : le reste du trou appartient a qui le prend.
     def refs_in(data):
         n = 0
         for i in range(0, len(data) - 3):
             v = int.from_bytes(data[i:i + 4], "big") & 0xf7ffffff      # 0x4a.. (sans cache) -> 0x42..
-            if hole[0] <= v < hole[1] and i & 1 == 0:
+            if ((lo <= v < hi) or (lo2 <= v < hi2)) and i & 1 == 0:
                 n += 1
         return n
     own = sum(refs_in(bytes.fromhex(w["new"])) for w in tweak["writes"])
@@ -366,12 +385,14 @@ def writes_ok(stock, img, tweak, every, runtimes):
         pay += sum(refs_in(bytes.fromhex(new)) for _, _, new in ap_.get("reloc", []))
     found = (refs_in(stock), others, pay)
     check(found == (0, 0, 0) and own > 0,
-          f"aucune adresse de {hole[0] - 1:#x}..{hole[1]:#x} (ni de sa vue sans cache) dans l'OS, les écritures des "
-          f"autres tweaks et le code et les relocalisations de leurs charges utiles {found} ; {own} dans ce tweak")
+          f"aucune adresse de nos plages {lo:#x}..{hi:#x} et {lo2:#x}..{hi2:#x} (ni de leur vue sans cache) dans l'OS, "
+          f"les écritures des autres tweaks et le code et les relocalisations de leurs charges utiles {found} ; "
+          f"{own} dans ce tweak")
     lo34 = syms["lfo34"] - BASE
-    check(img[syms["view"] - BASE:syms["view"] - BASE + 7] == bytes(7)
+    check(img[syms["view"] - BASE:syms["view"] - BASE + 8] == bytes(8)
           and img[lo34:lo34 + 120] == struct.pack(">5H", *DEFAULTS) * 12,
-          "variables de la page à zéro, LFO 3/4 aux défauts dans l'image (rechargée à chaque démarrage)")
+          "variables de la page et kready à zéro, bloc LFO 3/4 de secours aux défauts dans l'image (rechargée à "
+          "chaque démarrage)")
 
 
 # --------------------------------------------------------------------------------- 1. bloc audio, sans plus ---
@@ -381,6 +402,7 @@ def audio_identity(base_img, img, rt, syms):
     rnd = random.Random(1)
     sched = masks_schedule(11, 600)
     scr0 = P.rd(G.SCR, G.SCR_SIZE)
+    t340 = P.rd(G.SCR34, G.SCR34_SIZE)
     k31 = {OBJ + 14 + 66 * t + 62 + i for t in range(6) for i in (0, 1)}      # recopie brute de k = 31
     same, regs, writes, n_moving = True, True, True, set()
     for blk in range(600):
@@ -408,18 +430,20 @@ def audio_identity(base_img, img, rt, syms):
     check(writes, "mêmes adresses écrites que l'origine (hors pile), plus le mot k = 31 des 6 pistes (recopié brut des "
                   "cibles, même valeur ici)")
     check(regs, "registres d2-d7/a2-a6 et pile rendus")
-    check(P.rd(G.SCR, G.SCR_SIZE) == scr0 and P.r8(syms["ready"]) == 0, "mémoire de travail pas touchée")
+    check(P.rd(G.SCR, G.SCR_SIZE) == scr0 and P.r8(syms["ready"]) == 0 and P.rd(G.SCR34, G.SCR34_SIZE) == t340
+          and P.r8(syms["kready"]) == 0, "mémoire de travail et blocs LFO 3/4 pas touchés (le moteur n'initialise "
+                                         "jamais T34)")
     check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
 
 
 # --------------------------------------------------------------------------------- 2. LFO 2, 3, 4 -------------
 
-def run(r, tg, sched, ks, n, syms=None, l34=None, after=None):
+def run(r, tg, sched, ks, n, syms=None, l34=None, after=None, obj0=None):
     out = []
     for blk in range(n):
         if l34 is not None:
             r.uc.mem_write(syms["lfo34"], l34)
-        ok = r.block(tg, 14400, sched[blk], smooth=False)
+        ok = r.block(tg, 14400, sched[blk], smooth=False, obj0=obj0)
         out.append([words(r, t, ks) for t in range(6)])
         if after:
             after(blk)
@@ -447,7 +471,9 @@ def audio_extra(base_img, img, rt, syms):
                        mode=(t + seed) % 5) for t in range(6)]
         sets = {}
         for i, (name, dest) in enumerate((("LFO1", 14), ("LFO2", 11), ("LFO3", 12), ("LFO4", 13))):
-            sets[name] = [lfo(spd=rnd.randrange(0x4400, 0x7f01), mult=(3 * t + 5 * i + seed) % 24,
+            # Bit 7 de l'octet bas = SYNC pour tempo-sync (notes/82 §2.1) ; l'OS n'en met jamais dans un mot FREE (le
+            # potard écrit des multiples de 256, le lissage l'efface pour LFO 2) : on ne tire que des vitesses FREE.
+            sets[name] = [lfo(spd=rnd.randrange(0x4400, 0x7f01) & ~0x80, mult=(3 * t + 5 * i + seed) % 24,
                               wave=(t + 2 * i + seed) % 7, dest=dest, dep=rnd.choice((rnd.randrange(0x7f01), 0x7f00, 0)))
                           for t in range(6)]
         l1 = [dict(sets["LFO1"][t], **common[t]) for t in range(6)]
@@ -481,12 +507,35 @@ def rules(S, P, base, syms):
     none = [lfo() for _ in range(6)]
     ref1 = reference(S, [dict(c) for c in l1], common, base, sched, 14, n)
 
-    # même destination que LFO 1 : ignoré
+    # même destination que LFO 1 : s'additionnent avec saturation
+    q = []
+
+    def grab12(blk):
+        q.append([(s32(P.r32(ST[2] + 32 * t + 20)), s32(P.r32(LFO_ST + 32 * t + 20))) for t in range(6)])
     l2 = [lfo(spd=0x6000, mult=5, wave=1, dest=14, dep=0x7f00) for _ in range(6)]
+    b14 = {**base, 14: 0x7000}
     P.reset_lfo(syms)
-    got = run(P, tracks(l1, l2, base), sched, [11, 14], n, syms, table34(none, none))
-    check([[g[t][1] for t in range(6)] for g in got] == ref1 and all(g[t][0] == 0x4000 for g in got for t in range(6)),
-          "LFO 2 sur la destination de LFO 1 : ignoré (seul LFO 1 la module)")
+    got = run(P, tracks(l1, l2, b14), sched, [14], n, syms, table34(none, none), after=grab12)
+    exp = [[min(max(min(max(0x7000 + q2, 0), 0x7f00) + q1, 0), 0x7f00) for q2, q1 in q[b]] for b in range(n)]
+    sat = sum(v in (0, 0x7f00) for b in range(n) for v in exp[b])
+    check([[g[t][0] for t in range(6)] for g in got] == exp and sat > 0,
+          f"LFO 1 et LFO 2 sur la même destination : mot = borne(borne(base + q2) + q1), 0..0x7f00 ({sat} butées)")
+
+    # trois LFO sur la même destination (LFO 2 + LFO 3 + LFO 1) : s'additionnent avec saturation
+    q.clear()
+
+    def grab123(blk):
+        q.append([(s32(P.r32(ST[2] + 32 * t + 20)),
+                   s32(P.r32(ST[3] + 32 * t + 20)),
+                   s32(P.r32(LFO_ST + 32 * t + 20))) for t in range(6)])
+    l3_stack = [lfo(spd=0x7400, mult=3, wave=(t + 2) % 6, dest=14, dep=0x7800) for t in range(6)]
+    P.reset_lfo(syms)
+    got3 = run(P, tracks(l1, l2, b14), sched, [14], n, syms, table34(l3_stack, none), after=grab123)
+    exp3 = [[min(max(min(max(min(max(0x7000 + q2, 0), 0x7f00) + q3, 0), 0x7f00) + q1, 0), 0x7f00)
+             for q2, q3, q1 in q[b]] for b in range(n)]
+    sat3 = sum(v in (0, 0x7f00) for b in range(n) for v in exp3[b])
+    check([[g[t][0] for t in range(6)] for g in got3] == exp3 and sat3 > 0,
+          f"trois LFO (LFO 2, 3 et 1) sur la même destination : mot = borne(borne(borne(base + q2) + q3) + q1), 0..0x7f00 ({sat3} butées)")
 
     # destination > 32 : rien d'autre que LFO 1
     l2 = [lfo(spd=0x6000, mult=5, wave=1, dest=40, dep=0x7f00) for _ in range(6)]
@@ -559,12 +608,32 @@ def rules(S, P, base, syms):
     check(out[S] == {(0x0a80, 0x4000)} and out[P] == {(0x0b00, 0x4000)} and moved > 0,
           "k = 31 (destination de LFO 2) recopié brut des cibles comme k = 4 : 0x0a80 en cours de lissage -> 0x0b00, "
           f"LFO 2 module k = 11 et jamais k = 10 ({moved} mots modulés) ; l'origine n'y touche pas")
+
+    # WAVE de LFO 2 lu dans les CIBLES k = 0 ; une valeur dans obj k = 0 (LFO 1 / vélocité vers None) n'y change rien
+    l2w = [lfo(spd=0x6000, mult=5, wave=3, dest=11, dep=0x7f00) for _ in range(6)]
+    tgw = tracks(l1, l2w, base)
+    P.reset_lfo(syms)
+    refw = run(P, tgw, sched, [11], n, syms, table34(none, none), obj0=0)
+    P.reset_lfo(syms)
+    junkw = run(P, tgw, sched, [11], n, syms, table34(none, none), obj0=0x0500)
+    movingw = len({tuple(x[0] for x in b) for b in refw})
+    check(refw == junkw and movingw > 1,
+          f"WAVE de LFO 2 lu dans les cibles k = 0 : même sortie k = 11 ({movingw} valeurs) avec 0x0000 ou 0x0500 "
+          "dans obj k = 0 (modulation de LFO 1 / vélocité)")
+    b30 = {k: 0x4000 for k in range(9, 23)}
+    tg30 = bytearray(tracks(l1, l2w, b30))
+    for t in range(6):
+        struct.pack_into(">H", tg30, 14 + 66 * t + 60, 0x1234)       # k = 30 : Lo-Fi Bits, hors LFO 2
+    P.reset_lfo(syms)
+    got30 = run(P, bytes(tg30), sched, [30], n, syms, table34(none, none))
+    check(all(g[t][0] == 0x1234 for g in got30 for t in range(6)),
+          "k = 30 (Lo-Fi Bits) jamais écrit par LFO 2, 3, 4 : 0x1234 des cibles gardé")
     check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
 
 
 # --------------------------------------------------------------------------------- 3. interface ----------------
 
-def ui(base_img, img, rt, syms):
+def ui(base_img, img, rt, syms, tg):
     S, P = Rig(base_img, rt), Rig(img, rt)
     bound = img[0x4005a4e9 - BASE]
     page = syms["page"]
@@ -574,46 +643,106 @@ def ui(base_img, img, rt, syms):
         P.w8(page, pg)
         for i in range(bound + 8):
             ks, kp = s32(S.call(ID2K, i)), s32(P.call(ID2K, i, check="id -> k"))
-            exp = ks if pg == 0 or i not in OWN else (28 + OWN[i] if pg == 1 else -1)
+            exp = ks if pg == 0 or i not in OWN else ((28, 29, 0, 31, 32)[OWN[i]] if pg == 1 else -1)
             ok[pg] &= kp == exp
     P.w8(page, 0)
     check(ok[0], f"page LFO 1 : id -> k = l'origine pour les {bound + 8} identifiants (borne {bound})")
-    check(ok[1], "page LFO 2 : SPD, MULT, WAVE, DEST, DEP -> k = 28, 29, 30, 31, 32 ; tout le reste = l'origine")
+    check(ok[1], "page LFO 2 : SPD, MULT, WAVE, DEST, DEP -> k = 28, 29, 0, 31, 32 (WAVE en k 0, notes/86 §3) ; "
+                 "tout le reste = l'origine")
     check(ok[2] and ok[3], "pages LFO 3/4 : ces 5 identifiants -> -1 (aucun mot du son) ; tout le reste = l'origine")
-    ks = {s32(S.call(ID2K, i)) for i in range(bound + 1)}
-    k2i = {S.call(K2ID, k, m) for k in range(28, 33) for m in range(24)}
-    check(not ks & set(range(28, 33)) and k2i == {0},
-          f"aucun descripteur ne vise k = 28..32 ({bound + 1} identifiants ; k -> identifiant = 0 pour 24 machines)")
+    dst = {i: s32(S.call(ID2K, i)) for i in range(bound + 1)}
+    k2i = {k: {S.call(K2ID, k, m) for m in range(24)} for k in range(27, 33)}
+    free = (28, 29, 31, 32)
+    if tg:                              # Model-TG : ids 1 / 2 -> Lo-Fi Rate (k 27) / Lo-Fi Bits (k 30)
+        lofi = dst.get(1) == 27 and dst.get(2) == 30 and k2i[27] == {1} and k2i[30] == {2} \
+            and all(k2i[k] == {0} for k in free)
+        msg = f"aucun descripteur ne vise k = 28, 29, 31, 32 ({bound + 1} identifiants) ; Model-TG : ids 1 / 2 -> " \
+              "k 27 / 30 (Lo-Fi Rate / Bits), k -> identifiant = 1 / 2 pour 24 machines"
+    else:
+        lofi = dst.get(1) == dst.get(2) == -1 and all(k2i[k] == {0} for k in k2i)
+        msg = f"aucun descripteur ne vise k = 28..32 ({bound + 1} identifiants ; k -> identifiant = 0 pour 24 machines)"
+    check(not set(dst.values()) & set(free) and lofi, msg)
 
     # touche [LFO]
     view = VIEWOBJ + 56
     P.w32(syms["view"], view)
     P.stub(ORIG_KEY, P.logged("orig", 0x77))
     P.stub(NEEDS_REDRAW, P.logged("redraw"))
-    seq = [  # (code, indicateurs, rendu attendu, page, eat, original appelé, redessin)
-        (8, 0, 0x77, 0, 0, True, False), (8, 1, 1, 1, 1, False, True), (8, 9, 0x77, 1, 1, True, False),
-        (8, 0, 1, 1, 0, False, False), (8, 3, 0x77, 1, 0, True, False), (9, 1, 0x77, 1, 0, True, False),
-        (8, 1, 1, 2, 1, False, True), (8, 0, 1, 2, 0, False, False), (8, 1, 1, 3, 1, False, True),
-        (8, 0, 1, 3, 0, False, False), (8, 1, 0x77, 3, 0, True, False), (8, 0, 0x77, 3, 0, True, False)]
+    held = view - 56 + 604                              # drapeau « tenue » de la vue (0x40024db6)
+    seq = [  # (code, indicateurs, drapeau tenue, rendu attendu, page, pend, original appelé, redessin)
+        (8, 0, 0, 0x77, 0, 0, True, False),             # relâchement de l'appui qui a ouvert la page : l'original
+        (8, 1, 0, 0x77, 0, 1, True, False),             # appui : l'original (il le prend), noté
+        (8, 9, 0, 0x77, 0, 1, True, False),             # répétition : l'original
+        (8, 0, 0, 1, 1, 0, False, True),                # relâchement d'un appui bref : LFO 2, redessin
+        (8, 1, 0, 0x77, 1, 1, True, False),             # appui...
+        (8, 0, 0xff, 0x77, 1, 0, True, False),          # ...potard tourné [LFO] tenue : l'original, la page reste
+        (8, 1, 0, 0x77, 1, 1, True, False),             # appui...
+        (9, 1, 0, 0x77, 1, 0, True, False),             # ...une autre touche (Clear LFO) : plus d'appui bref
+        (9, 0, 0, 0x77, 1, 0, True, False),
+        (8, 0, 0, 0x77, 1, 0, True, False),             # ...son relâchement : l'original, la page reste
+        (8, 3, 0, 0x77, 1, 0, True, False),             # FUNC + [LFO] : l'original
+        (8, 1, 0, 0x77, 1, 1, True, False), (8, 0, 0, 1, 2, 0, False, True),       # LFO 3
+        (8, 1, 0, 0x77, 2, 1, True, False), (8, 0, 0, 1, 3, 0, False, True),       # LFO 4
+        (8, 1, 0, 0x77, 3, 0, True, False), (8, 0, 0, 0x77, 3, 0, True, False)]   # sur LFO 4 : l'original (ferme)
+        # (MACHINES a son propre bloc plus bas : avalée pendant [LFO] tenue seulement)
     good = True
-    for code, flags, ret, pg, eat, orig, redraw in seq:
+    for code, flags, flag, ret, pg, pend, orig, redraw in seq:
         P.uc.mem_write(EVT, struct.pack(">5I", 0, 0, 0, code, flags))
+        P.w8(held, flag)
         P.log.clear()
         r = P.call(P.r32(P_KEY), view, EVT, check="touche")
         names = [x[0] for x in P.log]
-        good &= (r == ret and P.r8(page) == pg and P.r8(syms["eat"]) == eat and ("orig" in names) == orig
+        good &= (r == ret and P.r8(page) == pg and P.r8(syms["pend"]) == pend and ("orig" in names) == orig
                  and (("redraw", view) in [x[:2] for x in P.log]) == redraw)
-    check(good, "touche [LFO] : appui -> LFO 2, 3, 4 (redessin), relâchement avalé, répétition / FUNC / autre "
-                "touche / appui sur LFO 4 -> l'original (il ferme la page au relâchement)")
+    P.w8(held, 0)
+    check(good, "touche [LFO] : appui -> l'original (noté) ; relâchement d'un appui bref (drapeau tenue de la vue à "
+                "0) -> LFO 2, 3, 4 (redessin) ; potard tourné [LFO] tenue (drapeau mis) ou autre touche entre-temps "
+                "-> l'original, la page reste ; répétition / FUNC / relâchement de l'appui d'ouverture / LFO 4 -> "
+                "l'original (il ferme la page au relâchement)")
+    # MACHINES : avalée seulement pendant le geste [LFO] tenue + potard (et son relâchement avec elle) ; posée
+    # seule sur la page LFO, elle passe à l'original, qui ouvre l'écran des machines (0x40075822)
+    P.w8(page, 1)
+
+    def ev(code, down):
+        P.uc.mem_write(EVT, struct.pack(">5I", 0, 0, 0, code, 1 if down else 0))
+        P.w8(held, 0)
+        P.log.clear()
+        return P.call(P.r32(P_KEY), view, EVT, check="touche"), [x[0] for x in P.log]
+
+    P.w8(syms["pend"], 1)                       # appui bref de [LFO] en cours
+    P.w8(KEY_BITS, 0x08)                        # [LFO] tenue : bit 3 de KEY_BITS (0x4010ae5c[8])
+    r1, log1 = ev(5, True)                      # appui de MACHINES : avalé
+    ok_held = r1 == 1 and "orig" not in log1 and P.r8(syms["pend"]) == 0 and P.r8(page) == 1
+    r2, log2 = ev(5, False)                     # relâchement : avalé aussi
+    ok_held &= r2 == 1 and "orig" not in log2 and P.r8(syms["m5"]) == 0
+    check(ok_held, "MACHINES pendant [LFO] tenue : la touche est prise (l'original ne la voit pas), son relâchement "
+                   "aussi, l'appui bref de [LFO] est annulé, la page ne bouge pas")
+    P.w8(syms["pend"], 0)
+    P.w8(KEY_BITS, 0)                           # [LFO] relâchée
+    r3, log3 = ev(5, True)                      # appui de MACHINES seul : à l'original
+    r4, log4 = ev(5, False)
+    check(r3 == 0x77 and r4 == 0x77 and "orig" in log3 and "orig" in log4 and P.r8(page) == 1,
+          "MACHINES seule sur la page LFO : appui et relâchement à l'original, qui ouvre l'écran des machines "
+          "(0x40075822) ; la page ne bouge pas")
+    # un appui avalé avale son relâchement même si [LFO] est lâchée entre-temps : l'OS ne voit jamais un
+    # relâchement sans appui
+    P.w8(KEY_BITS, 0x08)
+    r5, log5 = ev(5, True)
+    P.w8(KEY_BITS, 0)
+    r6, log6 = ev(5, False)
+    check(r5 == 1 and r6 == 1 and "orig" not in log5 + log6 and P.r8(syms["m5"]) == 0 and P.r8(page) == 1,
+          "appui de MACHINES avalé puis [LFO] lâchée : le relâchement est avalé avec lui (m5 retombé)")
+    P.w8(KEY_BITS, 0)
+    P.w8(page, 3)
 
     # création / destruction de la vue
     P.stub(VIEW_CTOR, P.logged("ctor", 0x55))
     P.w8(page, 2)
-    P.w8(syms["eat"], 1)
+    P.w8(syms["pend"], 1)
     P.log.clear()
     r = P.call(syms["lfo_ctor"], VIEWOBJ, check="création")
     check(r == 0x55 and P.log == [("ctor", VIEWOBJ, 0, 0, 0, 0, 0)] and P.r32(syms["view"]) == view
-          and P.r8(page) == 0 and P.r8(syms["eat"]) == 0,
+          and P.r8(page) == 0 and P.r8(syms["pend"]) == 0,
           "création : constructeur d'origine avec le même argument, vue = objet + 56, page LFO 1")
     P.call(syms["lfo_ctor"], 0)
     check(P.r32(syms["view"]) == 0, "création sur une allocation ratée (0) : pas de vue")
@@ -694,15 +823,15 @@ def ui(base_img, img, rt, syms):
             good &= sw == ref and P.log == S.log
         else:
             exp = list(ref)
-            for k, src in zip(range(28, 33), (1, 2, 5, 4, 8)):
+            for k, src in zip((28, 29, 0, 31, 32), (1, 2, 5, 4, 8)):
                 exp[k], exp[src] = ref[src], 0
-            good &= sw == exp and [x[2] for x in P.log] == [28, 29, 3, 31, 30, 6, 7, 32]
+            good &= sw == exp and [x[2] for x in P.log] == [28, 29, 3, 31, 0, 6, 7, 32]
             good &= [s32(P.call(P.r32(P_GET), THIS, i)) for i in (0x1d, 0x1e, 0x21, 0x20, 0x24, 0x1f)] == \
                 [0x5a00, 0x0b00, 0x0300, 0x0e00, 0x2380, 0x3100]
     P.w8(page, 0)
-    check(good, "page LFO 2 : le get/set de l'OS (0x4000ae20, 0x4000ba7a) lit et écrit k = 28..32 du son "
-                "(SPD, MULT, WAVE, DEST, DEP) et notifie ces k ; FADE, SPH, MODE restent ceux de LFO 1 ; page "
-                "LFO 1 = l'origine")
+    check(good, "page LFO 2 : le get/set de l'OS (0x4000ae20, 0x4000ba7a) lit et écrit k = 28, 29, 0, 31, 32 du son "
+                "(SPD, MULT, WAVE, DEST, DEP), WAVE dans le mot k = 0, et notifie ces k ; FADE, SPH, MODE restent ceux "
+                "de LFO 1 ; page LFO 1 = l'origine")
 
     # dessin
     P.stub(ORIG_DRAW, P.logged("draw"))
@@ -831,7 +960,8 @@ def sound_bytes(rnd, lfo2):
                          rnd.randrange(0x7f01))
     struct.pack_into(">H", b, 38, rnd.randrange(6) << 8)               # k = 9 : machine (octet fort)
     struct.pack_into(">H", b, 28, rnd.randrange(33) << 8)              # k = 4 : destination de LFO 1
-    struct.pack_into(">5H", b, 76, *lfo2)
+    struct.pack_into(">H", b, 20, lfo2[2])                             # k = 0 : WAVE de LFO 2 (notes/86 §3)
+    struct.pack_into(">5H", b, 76, lfo2[0], lfo2[1], 0x0f00, lfo2[3], lfo2[4])   # k 30 : Lo-Fi Bits, leurre
     struct.pack_into(">IHBBI", b, 88, rnd.randrange(23), 0x4000, rnd.randrange(24), rnd.randrange(128), 0x7f)
     return bytes(b)
 
@@ -845,14 +975,19 @@ def unpacked(p):
     return [(p >> 22 & 0xff) << 7, (p >> 17 & 0x1f) << 8, (p >> 14 & 7) << 8, (p >> 8 & 0x3f) << 8, (p & 0xff) << 7]
 
 
-def sound(base_img, img, rt, syms, david=None):
+def rec_word(rec, at):
+    """Mot relu par tl_load (Model-TG) de l'octet at de l'enregistrement : octet fort, > 127 -> 0."""
+    return rec[at] << 8 if rec[at] <= 127 else 0
+
+
+def sound(base_img, img, rt, syms, tg, david=None):
     S, P = Rig(base_img, rt), Rig(img, rt)
     rnd = random.Random(9)
     cases = [[0x7000, 0x0400, 0, 0, 0x4000], [0x5a80, 0x0b00, 0x0300, 0x0e00, 0x2380],
              [0x5aff, 0x0b7f, 0x03ff, 0x0eff, 0x23ff], [0x7f00, 0x1700, 0x0600, 0x2000, 0x7f00], [0, 0, 0, 0, 0]]
     cases += [[rnd.randrange(0x7f01), rnd.randrange(24) << 8, rnd.randrange(7) << 8, rnd.randrange(33) << 8,
                rnd.randrange(0x7f01)] for _ in range(20)]
-    save_ok = load_ok = old_ok = back_ok = True
+    save_ok = load_ok = old_ok = back_ok = legacy_ok = True
     for c in cases:
         snd = sound_bytes(rnd, c)
         for fn in (SND_SAVE2, SND_SAVE1):
@@ -874,26 +1009,66 @@ def sound(base_img, img, rt, syms, david=None):
                 r.call(SND_LOAD, SOUND2, REC, check="chargement du son")
                 outs.append(r.rd(SOUND2, 100))
             ls, lp, ls_new, lp_old = outs
-            got = list(struct.unpack(">5H", lp[76:86]))
-            load_ok &= ls[:76] == lp[:76] and ls[86:] == lp[86:] and got == unpacked(packed(c))
-            old_ok &= ls[:76] == lp_old[:76] and ls[86:] == lp_old[86:] and list(struct.unpack(">5H", lp_old[76:86])) == DEFAULTS
+            u = unpacked(packed(c))
+            # sans Model-TG, k 27 / 30 restent à 0 et k 0 reçoit la case 18 du son ; avec lui, tl_load y relit Rate / Bits
+            load_ok &= ls[:20] == lp[:20] and ls[22:76] == lp[22:76] and ls[86:] == lp[86:] \
+                and ls[20:22] == rs[64:66] and ls_new[20:22] == rp[64:66] \
+                and ls[76:80] == bytes(4) and ls[82:86] == bytes(4) \
+                and ls[80:82] == struct.pack(">H", rec_word(rs, 65) if tg else 0) \
+                and lp[20:22] == struct.pack(">H", u[2]) \
+                and lp[74:76] == struct.pack(">H", rec_word(rp, 64) if tg else 0) \
+                and list(struct.unpack(">2H", lp[76:80])) == u[:2] \
+                and lp[80:82] == struct.pack(">H", rec_word(rp, 65) if tg else 0) \
+                and list(struct.unpack(">2H", lp[82:86])) == u[3:]
+            old_ok &= ls[:20] == lp_old[:20] and ls[22:76] == lp_old[22:76] and ls[86:] == lp_old[86:] \
+                and lp_old[74:76] == struct.pack(">H", rec_word(rs, 64) if tg else 0) \
+                and list(struct.unpack(">2H", lp_old[76:80])) == DEFAULTS[:2] \
+                and lp_old[80:82] == struct.pack(">H", rec_word(rs, 65) if tg else 0) \
+                and list(struct.unpack(">2H", lp_old[82:86])) == DEFAULTS[3:] \
+                and lp_old[20:22] == bytes(2)
             back_ok &= ls_new == ls
+            # (a) enregistrement de l'ANCIENNE disposition (WAVE empaqueté en +88, p-lock en rangée 29) : relu ici
+            legacy = bytearray(rs)
+            legacy[88:92] = struct.pack(">I", packed(c))
+            P.uc.mem_write(REC, bytes(legacy))
+            P.uc.mem_write(SOUND2, b"\x55" * 100)
+            P.call(SND_LOAD, SOUND2, REC, check="chargement d'un ancien son")
+            lq = P.rd(SOUND2, 100)
+            legacy_ok &= lq[20:22] == struct.pack(">H", u[2]) \
+                and lq[74:76] == struct.pack(">H", rec_word(legacy, 64) if tg else 0) \
+                and list(struct.unpack(">2H", lq[76:80])) == u[:2] \
+                and lq[80:82] == struct.pack(">H", rec_word(legacy, 65) if tg else 0) \
+                and list(struct.unpack(">2H", lq[82:86])) == u[3:]
     check(save_ok, f"sauvegarde (formats 2 et 1), {len(cases)} sons : enregistrement = l'origine sauf +88..+91 = LFO 2 "
-                   "empaqueté (marque 10, SPD>>7, MULT, WAVE, DEST, DEP>>7)")
+                   "empaqueté (marque 10, SPD>>7, MULT, WAVE, DEST, DEP>>7) ; WAVE pris en k 0, k 30 (Lo-Fi Bits) "
+                   "ignoré")
     check(load_ok, "chargement (0x4005aecc, enregistrements au format 2, le seul qu'il relit) : son = l'origine sauf "
-                   "k = 28..32 = LFO 2 relu (SPD, DEP au multiple de 0x80 près : 0x5aff -> 0x5a80)")
-    check(old_ok, "son sauvé sans le mod (+88 = 0) : LFO 2 aux défauts (0x7000, 4, TRI, None, 0), le reste = l'origine")
+                   "k = 28, 29, 31, 32 = SPD, MULT, DEST, DEP et k = 0 = WAVE ; k = 30 laissé à 0 sans Model-TG, avec "
+                   "lui k = 27 / 30 = case 18 de l'enregistrement (octet > 127 = 0) (SPD et DEP au multiple de 0x80 "
+                   "près : 0x5aff -> 0x5a80) ; l'OS sans le mod ne relit pas +88 (k = 28, 29, 31, 32 à 0, k = 30 par la "
+                   "case 18 de Model-TG seulement)")
+    check(old_ok, "son sauvé sans le mod (+88 = 0) : LFO 2 aux défauts (0x7000, 4, TRI, None, 0), k = 0 à 0, k = 30 "
+                  "à 0 sans Model-TG (avec lui k = 27 / 30 = case 18), le reste = l'origine")
     check(back_ok, "OS sans le mod : relit un son sauvé avec le mod comme le sien (+88..+91 ignorés)")
+    check(legacy_ok, "enregistrement de l'ancienne disposition (WAVE empaqueté en +88, comme avant notes/86) : "
+                     "WAVE relu en k = 0, k = 30 remis à 0 sans Model-TG (avec lui k = 27 / 30 = case 18), SPD, MULT, "
+                     "DEST, DEP en k = 28, 29, 31, 32")
     good = True
     for tag in (0x00000000, 0x40ffffff, 0xc0ffffff, 0x3fffffff):
         snd = sound_bytes(rnd, cases[1])
         P.uc.mem_write(SOUND, snd)
         P.call(SND_SAVE2, REC, SOUND)
+        rec = P.rd(REC, 100)
         P.w32(REC + 88, tag)
         P.uc.mem_write(SOUND2, b"\x55" * 100)
         P.call(SND_LOAD, SOUND2, REC)
-        good &= list(struct.unpack(">5H", P.rd(SOUND2 + 76, 10))) == DEFAULTS
-    check(good, "marque autre que 10 en +88 : défauts")
+        exp = list(DEFAULTS)
+        exp[2] = rec_word(rec, 65) if tg else 0
+        good &= list(struct.unpack(">5H", P.rd(SOUND2 + 76, 10))) == exp \
+            and P.rd(SOUND2 + 20, 2) == bytes(2) \
+            and P.rd(SOUND2 + 74, 2) == struct.pack(">H", rec_word(rec, 64) if tg else 0)
+    check(good, "marque autre que 10 en +88 : défauts (k = 28, 29, 31, 32), WAVE en k = 0 à 0, k = 30 à 0 sans "
+                "Model-TG (avec lui k = 27 / 30 = case 18)")
     good = True
     for m in range(6):
         outs = []
@@ -902,23 +1077,35 @@ def sound(base_img, img, rt, syms, david=None):
             r.call(SND_INIT, SOUND2, M32, m, check="son aux défauts")
             outs.append(r.rd(SOUND2, 100))
         good &= outs[0][:76] == outs[1][:76] and outs[0][86:] == outs[1][86:] \
-            and list(struct.unpack(">5H", outs[1][76:86])) == DEFAULTS and outs[0][76:86] == bytes(10)
-    check(good, "son neuf (0x40061866, machines 0..5) : = l'origine, sauf LFO 2 aux défauts (l'origine y met 0)")
+            and list(struct.unpack(">5H", outs[1][76:86])) == DEFAULTS and outs[0][76:86] == bytes(10) \
+            and outs[1][80:82] == bytes(2)
+    check(good, "son neuf (0x40061866, machines 0..5) : = l'origine, sauf LFO 2 aux défauts (l'origine y met 0), "
+                "k = 30 (Lo-Fi Bits) à 0")
     if david:
         Dv = Rig(david)
         good = True
         for c in cases[:6]:
-            snd = sound_bytes(rnd, c)
-            Dv.uc.mem_write(SOUND, snd)
+            # l'ancien .syx lit WAVE en k = 30 : on lui donne un son à l'ancienne disposition
+            snd = bytearray(sound_bytes(rnd, c))
+            snd[20:22] = bytes(2)
+            struct.pack_into(">H", snd, 80, c[2])
+            Dv.uc.mem_write(SOUND, bytes(snd))
             Dv.uc.mem_write(REC, bytes(100))
             Dv.call(SND_SAVE2, REC, SOUND)
             rec = Dv.rd(REC, 100)
             P.uc.mem_write(REC, rec)
             P.uc.mem_write(SOUND2, b"\x55" * 100)
             P.call(SND_LOAD, SOUND2, REC)
-            good &= list(struct.unpack(">5H", P.rd(SOUND2 + 76, 10))) == unpacked(packed(c)) \
+            u = unpacked(packed(c))
+            got = P.rd(SOUND2, 100)
+            good &= got[20:22] == struct.pack(">H", u[2]) \
+                and got[74:76] == struct.pack(">H", rec_word(rec, 64) if tg else 0) \
+                and got[80:82] == struct.pack(">H", rec_word(rec, 65) if tg else 0) \
+                and list(struct.unpack(">2H", got[76:80])) == u[:2] \
+                and list(struct.unpack(">2H", got[82:86])) == u[3:] \
                 and int.from_bytes(rec[88:92], "big") == packed(c)
-        check(good, "son sauvé par le .syx de DavidCaruso : même +88..+91, relu ici avec le même LFO 2")
+        check(good, "son sauvé par le .syx de DavidCaruso : même +88..+91, relu ici avec le même LFO 2 (WAVE en k = 0, "
+                    "k = 30 à 0 sans Model-TG ; avec lui k = 27 / 30 = case 18 de son enregistrement)")
     check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
 
 
@@ -926,14 +1113,16 @@ def sound(base_img, img, rt, syms, david=None):
 
 def plocks(base_img, img, rt):
     S, P = Rig(base_img, rt), Rig(img, rt)
-    plk_k = [23, 24, 25, 28, 29, 30, 31, 32]
+    plk_k = [23, 24, 25, 28, 29, 0, 31, 32, 27]       # rangées 24..32 ; 32 : Lo-Fi Rate (k 27)
     good = True
     for t in range(8):
         for i in range(48):
             ks, kp = s32(S.call(PLK_K, t, i)), s32(P.call(PLK_K, t, i, check="identifiant -> k"))
-            good &= kp == (plk_k[i - 24] if t <= 5 and 24 <= i <= 31 else ks)
-    check(good, "identifiant de rangée -> k : pistes 0..5, identifiants 24..31 -> k = 23, 24, 25, 28..32 ; tout le "
-                "reste (piste FX comprise) = l'origine")
+            exp = 30 if t <= 5 and i == 18 else (plk_k[i - 24] if t <= 5 and 24 <= i <= 32 else ks)
+            good &= kp == exp
+    check(good, "identifiant de rangée -> k : pistes 0..5, identifiants 24..32 -> k = 23, 24, 25, 28, 29, 0, 31, 32, "
+                "27 et identifiant 18 -> k = 30 (Lo-Fi Rate / Bits) (rangée 29 = WAVE de LFO 2, k 0) ; tout le reste "
+                "(piste FX comprise) = l'origine")
     rnd = random.Random(4)
     src = bytearray(6 * 4385)
     for t in range(6):
@@ -942,7 +1131,7 @@ def plocks(base_img, img, rt):
                 struct.pack_into(">H", src, t * 4385 + s * 68 + 2 * k, 0xffff)
     locked = {}
     for t in (0, 5):
-        for k in range(1, 33):
+        for k in range(33):
             src[t * 4385 + 4352 + k] = 1
             for s in range(64):
                 if rnd.random() < 0.3:
@@ -966,16 +1155,29 @@ def plocks(base_img, img, rt):
                         back[(t, k, s)] = v
         ids = sorted({r.r8(ROWS + 130 * i) for i in range(64)})
         res[name] = (a, b, back, ids)
-    exp = {key: v for key, v in locked.items() if key[1] not in (26, 27)}
+    exp = {key: v for key, v in locked.items() if key[1] != 26}
     a, b, back, ids = res["modifié"]
     check(a == b == 1 and back == exp,
-          f"aller-retour 0x4005b95c -> 0x4005b766, 2 pistes, k = 1..32 ({len(exp)} p-locks) : tous relus au même k "
-          f"et au même pas ; k = 26, 27 (état du Sampler de Model-TG) ignorés ; identifiants {ids}")
+          f"aller-retour 0x4005b95c -> 0x4005b766, 2 pistes, k = 0..32 ({len(exp)} p-locks) : tous relus au même k "
+          f"et au même pas, WAVE (k 0) par la rangée 29, Lo-Fi Rate / Bits (k 27 / 30) par les rangées 32 / 18 ; "
+          f"k = 26 (état du Sampler de Model-TG) ignoré ; identifiants {ids}")
     a, b, back, ids = res["origine"]
     lost = {k for (t, k, s) in locked if back.get((t, k, s)) != locked[(t, k, s)]}
-    check(lost == set(range(1, 10)) | set(range(23, 33)),
+    check(lost == set(range(0, 10)) | set(range(23, 33)),
           "origine, pour mémoire : les rangées de k = 23..32 reviennent sur k = 0..9 et les écrasent (k perdus : "
           f"{sorted(lost)}) ; k = 10..22 relus")
+    # (a) p-locks de l'ancienne disposition : WAVE était p-locké en k 30, donc rangée 29 ; relu sur k 0
+    rows = bytearray(10400)
+    for i in range(64):
+        rows[130 * i:130 * i + 2] = b"\xff\xff"
+    struct.pack_into(">BBH", rows, 0, 29, 3, 0x0600)
+    P.uc.mem_write(ROWS, bytes(rows))
+    P.uc.mem_write(PDST, bytes(6 * 4385))
+    b = P.call(PLK_LOAD, PDST, ROWS, check="ancien p-lock")
+    dst = P.rd(PDST, 6 * 4385)
+    check(b == 1 and struct.unpack_from(">H", dst, 3 * 4385)[0] == 0x0600
+          and struct.unpack_from(">H", dst, 3 * 4385 + 2 * 30)[0] == 0xffff,
+          "p-lock de WAVE de l'ancienne disposition (rangée 29, k 30) : relu sur k = 0, k = 30 laissé libre")
     check(not (S.bad or P.bad), "aucun accès hors mémoire")
 
 
@@ -1021,11 +1223,12 @@ def sites(base_img, img, rt, syms):
     bound = img[0x4005a4e9 - BASE]
     PC = mk.UC_M68K_REG_PC
 
-    def one(start, stop, frame=(), regs=None, clobber=(), page=0, view=0, rec=None, differ=(), extra=None):
+    def one(start, stop, frame=(), regs=None, clobber=(), page=0, view=0, rec=None, differ=(), extra=None,
+            snd2=b"\x77" * 100):
         """De start à stop (les instructions remplacées), origine et modifié, mêmes registres au départ (au hasard,
         sauf regs) : mêmes registres à l'arrivée hors clobber, même pile, mêmes REC / SOUND2 / ROWS
         hors differ ; extra(origine, modifié) en plus. La pile comparée est celle au-dessus de sp (en dessous, la place
-        libre où un jsr met son adresse de retour)."""
+        libre où un jsr met son adresse de retour). snd2 : contenu de SOUND2 au départ."""
         init = {k: rnd.getrandbits(32) for k in D + A[:7]}
         init.update(regs or {})
         stack = bytes(rnd.getrandbits(8) for _ in range(128))
@@ -1037,7 +1240,7 @@ def sites(base_img, img, rt, syms):
             r.uc.mem_write(STACK - 0x80, stack)
             r.uc.mem_write(STACK - 0x40, b"".join(struct.pack(">I", w & M32) for w in frame))
             r.uc.mem_write(REC, rec or bytes(range(100)))
-            r.uc.mem_write(SOUND2, b"\x77" * 100)
+            r.uc.mem_write(SOUND2, snd2)
             r.uc.mem_write(ROWS, b"\xee" * 130)
             for k, v in init.items():
                 r.uc.reg_write(k, v)
@@ -1055,20 +1258,25 @@ def sites(base_img, img, rt, syms):
         return s[m][:lo] + s[m][hi:] == p[m][:lo] + p[m][hi:]
 
     out = {}
-    ids = [24, 25, 26, 0xff, 0xff, 27, 28, 29, 30, 31]
+    ids = [24, 25, 26, 0xff, 32, 27, 28, 18, 30, 31]      # k = 23..32 ; k 27 / 30 -> rangées 32 / 18
     # les indicateurs (CCR) de la comparaison remplacée servent à l'instruction suivante : on va jusqu'au retour de
     # la fonction (adresse de retour 0x400a0a0a) pour qu'elle s'en serve
     out["0x4005a4ea id -> k jusqu'au retour, page LFO 1 (tous les identifiants), page LFO 2 (hors LFO) (rien)"] = all(
         one(0x4005a4ea, 0x400a0a0a, (0x400a0a0a, i), {D[1]: bound}, page=pg)
         for pg in (0, 1) for i in range(bound + 3) if pg == 0 or i not in range(0x1d, 0x25))
-    out["0x4005aa22 identifiant -> k jusqu'au retour, hors pistes 0..5 x identifiants 24..31 (rien)"] = all(
+    out["0x4005aa22 identifiant -> k jusqu'au retour, hors pistes 0..5 x identifiants 18, 24..32 (rien)"] = all(
         one(0x4005aa22, 0x400a0a0a, (0x0d0d0d0d, 0x400a0a0a, t, i), {D[1]: t, D[2]: 6})
-        for t, i in ((6, 25), (7, 24), (2, 5), (0, 23), (0, 32), (5, 40), (3, 0), (0, M32), (6, 31), (9, 0),
+        for t, i in ((6, 25), (7, 24), (2, 5), (0, 23), (0, 33), (5, 40), (3, 0), (0, M32), (6, 31), (9, 0),
                      (6, 0), (6, 4), (6, 5)))
-    out["0x4005b9c6 rangée de p-locks, k = 0..22 (rien)"] = all(
+    out["0x4005b9c6 rangée de p-locks, k = 1..22 (rien)"] = all(
         one(0x4005b9c6, 0x4005b9ce, (), {A[5]: 0x4010ee4c, D[4]: 4 * k, D[0]: k, D[2]: t, A[3]: ROWS})
-        for k in range(23) for t in (0, 5))
-    out["0x4005b9c6 rangée de p-locks, k = 23..32 (rien ; identifiant de plk_id)"] = all(
+        for k in range(1, 23) for t in (0, 5))
+    out["0x4005b9c6 rangée de p-locks, k = 0 (WAVE de LFO 2 -> rangée 29)"] = all(
+        one(0x4005b9c6, 0x4005b9ce, (), {A[5]: 0x4010ee4c, D[4]: 0, D[0]: 0, D[2]: t, A[3]: ROWS},
+            differ=("ROWS",), extra=lambda s, p, t=t: p["ROWS"][:2] == bytes([29, t])
+            and s["ROWS"][1:] == p["ROWS"][1:])
+        for t in (0, 5))
+    out["0x4005b9c6 rangée de p-locks, k = 23..32 (rien ; identifiant de plk_id, k 27 / 30 -> rangées 32 / 18)"] = all(
         one(0x4005b9c6, 0x4005b9ce, (), {A[5]: 0x4010ee4c, D[4]: 4 * k, D[0]: k, D[2]: t, A[3]: ROWS},
             differ=("ROWS",), extra=lambda s, p, k=k, t=t: p["ROWS"][:2] == bytes([ids[k - 23], t])
             and s["ROWS"][1:] == p["ROWS"][1:])
@@ -1082,12 +1290,22 @@ def sites(base_img, img, rt, syms):
     recs = [bytes(range(100))] + [bytes(100)] + [bytes(rnd.getrandbits(8) for _ in range(88)) + struct.pack(
         ">I", packed([rnd.randrange(0x7f01), rnd.randrange(24) << 8, rnd.randrange(7) << 8,
                       rnd.randrange(33) << 8, rnd.randrange(0x7f01)])) + bytes(8) for _ in range(6)]
-    out["0x4005af1c chargement du son (d0, d1, a1 ; k = 28..32 du son)"] = all(
+    out["0x4005af1c chargement du son (d0, d1, a1 ; k = 28, 29, WAVE en k 30, 31, 32 du son)"] = all(
         one(0x4005af1c, 0x4005af22, (), {A[2]: SOUND2, A[3]: REC}, clobber=(D[0], D[1], A[1]), rec=rec,
             differ=("SOUND2",), extra=lambda s, p, rec=rec: outside(s, p, "SOUND2", 76, 86)
             and s["regs"][A[0]] == 0x4010eea8 and list(struct.unpack(">5H", p["SOUND2"][76:86])) ==
             (unpacked(int.from_bytes(rec[88:92], "big")) if rec[88] >> 6 == 2 else DEFAULTS))
         for rec in recs)
+    tail = bytearray(b"\x77" * 100)
+    tail[20:22] = b"\x11\x11"                              # k 0 : la case 18 du son, que l'OS vient d'y mettre
+    tail[80:82] = b"\x06\x00"                              # k 30 : WAVE, posée par upk5
+    out["0x4005af3e fin du chargement du son (a1, a2 ; k 30 -> k 0, k 30 remis à 0)"] = all(
+        one(0x4005af3e, 0x4005af46, (), {A[2]: SOUND2, A[1]: 0x4010eea8}, clobber=(D[0],), snd2=bytes(tail),
+            differ=("SOUND2",), extra=lambda s, p: s["SOUND2"] == bytes(tail)
+            and p["SOUND2"][20:22] == bytes(tail[80:82]) and p["SOUND2"][80:82] == bytes(2)
+            and s["SOUND2"][:20] + s["SOUND2"][22:80] + s["SOUND2"][82:]
+            == p["SOUND2"][:20] + p["SOUND2"][22:80] + p["SOUND2"][82:])
+        for _ in range(4))
     out["0x400618e2 son aux défauts (d0, d1, a0, a1 ; k = 28..32 du son)"] = all(
         one(0x400618e2, 0x400618e8, (), {A[2]: SOUND2, D[3]: m}, clobber=(D[0], D[1], A[0], A[1]),
             differ=("SOUND2",), extra=lambda s, p: outside(s, p, "SOUND2", 76, 86)
@@ -1136,6 +1354,566 @@ def one_ptr(S, P, syms, rnd, ptr, orig, args):
     return ok and S.r32(ptr) == orig
 
 
+# --------------------------------------------------------------------------------- 8. LFO 3/4 par pattern ------
+
+KITS, KIT_SZ, CUR_KIT = 0x409c9c80, 7094, 0x40a78888
+KIT_SAVE, KIT_LOAD, MEMCPY, NEW_PROJ, PROJECT = 0x4005b2ae, 0x4005d080, 0x4008f1f0, 0x40061738, 0x406fa024
+KREC, KREC2, KSCR, KBUF = 0x92100000, 0x92110000, 0x92120000, 0x92130000
+MAGIC = 0x4c463334
+
+
+def kit(n):
+    return KITS + n * KIT_SZ
+
+
+def blk(syms, n):
+    return G.SCR34 + 120 * n
+
+
+def lfo_words(rnd):
+    """5 mots d'un LFO que le format de pk5 garde exactement (SPD, DEP au multiple de 0x80)."""
+    return [rnd.randrange(0x100) << 7, rnd.randrange(24) << 8, rnd.randrange(7) << 8, rnd.randrange(33) << 8,
+            rnd.randrange(0x100) << 7]
+
+
+def fill_blk(r, a, rnd):
+    w = [x for _ in range(12) for x in lfo_words(rnd)]
+    r.uc.mem_write(a, struct.pack(">60H", *w))
+    return w
+
+
+def blk_words(r, a):
+    return list(struct.unpack(">60H", r.rd(a, 120)))
+
+
+def kit_bytes(rnd):
+    """Un kit plausible : nom, 6 niveaux, les 6 sons et 8 sons de la réserve (sound_bytes), bloc FX à zéro."""
+    b = bytearray(KIT_SZ)
+    b[0:16] = bytes(rnd.randrange(65, 91) for _ in range(16))
+    for i in range(6):
+        struct.pack_into(">H", b, 16 + 2 * i, rnd.randrange(0x7f01))
+    for i in list(range(6)) + [6 + j for j in range(8)]:
+        at = 28 + 100 * i if i < 6 else 694 + 100 * (i - 6)
+        b[at:at + 100] = sound_bytes(rnd, lfo_words(rnd))
+    return bytes(b)
+
+
+def no_lfo2(b, rec):
+    """Kit (rec = False) ou son enregistrement (rec = True) sans les octets de LFO 2 de ses 70 sons (mots k = 0 et
+    28..32 du son, +88..+91 de son enregistrement), que le mod écrit déjà (§4)."""
+    b = bytearray(b)
+    for i in range(70):
+        if rec:
+            at = (32 + 100 * i if i < 6 else 712 + 100 * (i - 6)) + 88
+            b[at:at + 4] = bytes(4)
+        else:
+            at = 28 + 100 * i if i < 6 else 694 + 100 * (i - 6)
+            b[at + 20:at + 22] = bytes(2)                       # k 0 : WAVE de LFO 2
+            b[at + 76:at + 86] = bytes(10)                      # k 28..32
+    return bytes(b)
+
+
+def per_kit(base_img, img, rt, syms):
+    S, P = Rig(base_img, rt), Rig(img, rt)
+    rnd = random.Random(12)
+    D12 = DEFAULTS * 12
+    # bloc d'un kit, premier usage
+    P.w32(CUR_KIT, kit(9))
+    a0 = P.uc
+    P.call(syms["cur34"], check="cur34")
+    check(P.uc.reg_read(A[0]) == syms["lfo34"] and P.r8(syms["kready"]) == 0,
+          "kready = 0 : le kit joué lit le bloc de secours, rien n'est initialisé (le moteur et la page n'écrivent "
+          "jamais T34)")
+    P.uc.mem_write(G.SCR34, b"\xa5" * G.SCR34_SIZE)       # pas remise à zéro au démarrage
+    good = True
+    for n in (0, 1, 47, 95):
+        d0 = s32(P.call(syms["blk34"], regs={D[0]: kit(n)}, check="blk34"))
+        good &= d0 == n and P.uc.reg_read(A[0]) == blk(syms, n)
+    for x in (0, kit(0) - 2, kit(3) + 28, kit(96), KSCR):
+        d0 = s32(P.call(syms["blk34"], regs={D[0]: x}))
+        good &= d0 == -1 and P.uc.reg_read(A[0]) == syms["lfo34"]
+    t34 = P.rd(G.SCR34, G.SCR34_SIZE)
+    good &= P.r8(syms["kready"]) == 1 and t34[:11520] == struct.pack(">5H", *DEFAULTS) * 1152 \
+        and t34[11520:11540] == b"\xff" * 16 + bytes(4)
+    P.call(syms["cur34"])
+    good &= P.uc.reg_read(A[0]) == blk(syms, 9)
+    check(good, "blk34 : chacun des 96 kits -> son bloc (rang 0..95), toute autre adresse -> bloc de secours ; premier "
+                "usage : les 96 blocs aux défauts, aucun tampon retenu ; puis cur34 = bloc du kit joué (*0x40a78888)")
+
+    # moteur et page sur le bloc du kit joué
+    base = {k: 0x4000 for k in range(9, 23)}
+    l1 = [lfo(spd=0x5800, mult=3 + t, wave=t % 6, dest=14, dep=0x6000) for t in range(6)]
+    l3 = [lfo(spd=0x6400 - 0x300 * t, mult=5 + t, wave=(t + 1) % 6, dest=11, dep=0x7000) for t in range(6)]
+    l4 = [lfo(spd=0x4c00 + 0x200 * t, mult=2 + t, wave=t % 6, dest=12, dep=0x2000) for t in range(6)]
+    sched = masks_schedule(5, 150)
+    tg = tracks(l1, None, base)
+    outs = []
+    for cur in (kit(9), kit(10)):
+        P.reset_lfo(syms)                               # états à zéro (ready), T34 gardé
+        P.w32(CUR_KIT, cur)
+        P.uc.mem_write(blk(syms, 9), table34(l3, l4))
+        P.uc.mem_write(blk(syms, 10), table34([lfo()] * 6, [lfo()] * 6))
+        outs.append(run(P, tg, sched, [11, 12], 150))
+    P.reset_lfo(syms)
+    P.w32(CUR_KIT, 0)
+    P.w8(syms["kready"], 0)
+    ref = run(P, tg, sched, [11, 12], 150, syms, table34(l3, l4))
+    P.w8(syms["kready"], 1)
+    moved = len({tuple(map(tuple, o)) for o in outs[0]})
+    check(outs[0] == ref and outs[1] != ref and moved > 50,
+          f"moteur : LFO 3/4 tournent depuis le bloc du kit joué (kit 9 = la même sortie que la même table dans le bloc "
+          f"de secours, {moved} sorties ; kit 10 aux défauts : rien)")
+    sel = [4]
+    for addr, fn in ((CUR_PROJ, lambda a: PROJ), (PROJ_SEQ, lambda a: SEQ), (SEL_TRACK, lambda a: sel[0])):
+        P.stub(addr, fn)
+    P.stub(NEEDS_REDRAW, lambda a: 0)
+    P.w32(CUR_KIT, kit(9))
+    good = True
+    for pg in (2, 3):
+        P.w8(syms["page"], pg)
+        for i, pid in enumerate((0x1d, 0x1e, 0x21, 0x20, 0x24)):
+            v = rnd.randrange(0x7f01)
+            P.call(P.r32(P_SET), THIS, pid, v, 0, 0, check="set")
+            good &= P.r16(blk(syms, 9) + 60 * (pg - 2) + 40 + 2 * i) == v
+            good &= s32(P.call(P.r32(P_GET), THIS, pid)) == v
+    check(good, "page : get/set des pages 3/4 lisent et écrivent le bloc du kit joué (piste sélectionnée)")
+
+    # Clear LFO de l'OS (vtable [12] de l'accesseur, 0x4000a5c0 -> 0x4000b30e -> 0x4000b274 -> set) sur les pages 3/4
+    setup_track(P)
+    P.uc.mem_write(KBUF, struct.pack(">II", 0x401004c0, 0x401004dc))
+    notify = P.r32(ACC_VT + 72)                          # 0x4000b942 : suite de 0x4000b274 vers le pattern (bouchon)
+    P.stub(notify, lambda a: 0)
+    good = True
+    for pg in (2, 3):
+        P.w8(syms["page"], pg)
+        at = blk(syms, 9) + 60 * (pg - 2) + 40
+        w = lfo_words(rnd)
+        w = [w[0] or 0x80, w[1] | 0x100, w[2] | 0x100, w[3] | 0x100, w[4] or 0x80]
+        P.uc.mem_write(at, struct.pack(">5H", *w))
+        P.call(P.r32(ACC_VT + 12), THIS, KBUF, check="Clear LFO")
+        got = list(struct.unpack(">5H", P.rd(at, 10)))
+        good &= got == [w[0]] + DEFAULTS[1:]
+    P.w8(syms["page"], 0)
+    for addr in (CUR_PROJ, PROJ_SEQ, SEL_TRACK, NEEDS_REDRAW, notify):
+        P.stub(addr, None)
+    check(good, "Clear LFO de l'OS (identifiants 0x1e..0x24, 0x401004c0) sur les pages 3/4 : MULT, WAVE, DEST, DEP "
+                "du LFO affiché aux défauts (SPD gardé, comme pour LFO 1)")
+
+    # sauvegarde / chargement d'un kit
+    kb = kit_bytes(rnd)
+    for r in (S, P):
+        r.uc.mem_write(kit(5), kb)
+    vals = fill_blk(P, blk(syms, 5), rnd)
+    recs = []
+    for r in (S, P):
+        r.uc.mem_write(KREC, b"\xa5" * 0x1e00)
+        ok = r.call(KIT_SAVE, KREC, kit(5), 0, check="sauvegarde du kit") & 0xff
+        recs.append((ok, r.rd(KREC, 0x1e00)))
+    (oks, rs), (okp, rp) = recs
+    gap = struct.pack(">I", MAGIC) + b"".join(struct.pack(">I", packed(vals[5 * i:5 * i + 5])) for i in range(12))
+    ns, np_ = no_lfo2(rs, True), no_lfo2(rp, True)
+    check(oks == okp == 1 and ns[:648] == np_[:648] and ns[700:] == np_[700:] and rs[646:700] == b"\xa5" * 54
+          and rp[648:700] == gap,
+          "vraie sauvegarde d'un kit (0x4005b2ae) : enregistrement = l'origine (hors LFO 2 de ses sons, §4), sauf "
+          "+648..+699 = « LF34 » + les 12 LFO empaquetés (l'origine n'écrit rien en +646..+699)")
+    loads = {}
+    for name, r, rec in (("ss", S, rs), ("pp", P, rp), ("sp", S, rp), ("ps", P, rs)):
+        r.uc.mem_write(KREC2, rec)
+        r.uc.mem_write(kit(60), b"\x55" * KIT_SZ)
+        if r is P:
+            P.uc.mem_write(blk(syms, 60), b"\x33" * 120)
+        ok = r.call(KIT_LOAD, kit(60), KREC2, check="chargement du kit") & 0xff
+        loads[name] = (ok, no_lfo2(r.rd(kit(60), KIT_SZ), False), blk_words(P, blk(syms, 60)) if r is P else None)
+    check(loads["ss"][0] == loads["pp"][0] == 1 and loads["ss"][1] == loads["pp"][1] and loads["pp"][2] == vals
+          and blk_words(P, blk(syms, 5)) == vals,
+          "vrai chargement (0x4005d080) de l'enregistrement du mod dans le kit 60 : kit = l'origine (hors LFO 2), bloc LFO 3/4 = "
+          "celui du kit 5 (aller-retour exact)")
+    check(loads["sp"][1] == loads["ss"][1],
+          "l'OS d'origine relit un kit sauvé avec le mod comme le sien (+648..+699 ignorés)")
+    check(loads["ps"][1] == loads["ss"][1] and loads["ps"][2] == D12,
+          "enregistrement sauvé sans le mod (trou plein de 0xa5) : kit = l'origine, LFO 3/4 aux défauts")
+    good = True
+    for g in (bytes(52), b"\xff" * 52, bytes(range(52)), struct.pack(">I", MAGIC ^ 1) + gap[4:]):
+        rec = bytearray(rp)
+        rec[648:700] = g
+        P.uc.mem_write(KREC2, bytes(rec))
+        P.uc.mem_write(blk(syms, 60), b"\x33" * 120)
+        P.call(KIT_LOAD, kit(60), KREC2)
+        good &= blk_words(P, blk(syms, 60)) == D12
+    check(good, "sans la marque « LF34 » (trou nul, plein, au hasard, marque voisine) : défauts")
+    rec = bytearray(rp)
+    rec[0] = 9                                            # version inconnue : chargement refusé
+    P.uc.mem_write(KREC2, bytes(rec))
+    P.uc.mem_write(blk(syms, 60), b"\x33" * 120)
+    okp = P.call(KIT_LOAD, kit(60), KREC2) & 0xff
+    S.uc.mem_write(KREC2, bytes(rec))
+    oks = S.call(KIT_LOAD, kit(60), KREC2) & 0xff
+    check(okp == oks == 0 and P.rd(blk(syms, 60), 120) == b"\x33" * 120,
+          "chargement refusé par l'OS (version inconnue) : même résultat, bloc pas touché")
+    P.uc.mem_write(KSCR, P.rd(kit(5), KIT_SZ))
+    P.uc.mem_write(KREC, b"\xa5" * 0x1e00)
+    P.call(KIT_SAVE, KREC, KSCR, 0)
+    dgap = struct.pack(">I", MAGIC) + struct.pack(">I", packed(DEFAULTS)) * 12
+    t34 = P.rd(G.SCR34, G.SCR34_SIZE)
+    P.uc.mem_write(KREC2, rp)
+    P.call(KIT_LOAD, KSCR, KREC2)
+    check(P.rd(KREC + 648, 52) == dgap and P.rd(G.SCR34, G.SCR34_SIZE) == t34,
+          "kit hors des 96 (tampon) : sauvé avec les défauts ; chargé : aucun bloc touché")
+
+    # son remis aux défauts (0x40061866) sur le son d'une piste
+    vals7 = fill_blk(P, blk(syms, 7), rnd)
+    P.call(SND_INIT, kit(7) + 28 + 300, M32, 0, check="son aux défauts")
+    exp = list(vals7)
+    for lf in (0, 1):
+        exp[30 * lf + 15:30 * lf + 20] = DEFAULTS
+    good = blk_words(P, blk(syms, 7)) == exp
+    for snd in (kit(7) + 28 + 600, kit(7) + 28 + 202, kit(7) + 10, SOUND2):
+        P.call(SND_INIT, snd, M32, 0)
+        good &= blk_words(P, blk(syms, 7)) == exp
+    check(good, "vrai son aux défauts (0x40061866, effacement du son d'une piste) sur le son de la piste 3 du kit 7 : "
+                "ses LFO 3 et 4 aux défauts, le reste du bloc gardé ; son de la réserve, adresse décalée, autre : rien")
+
+    # memcpy
+    good = True
+    for n in (0, 1, 16, 100, 7093, 7095, 30710):
+        src = bytes(rnd.getrandbits(8) for _ in range(n))
+        res = []
+        for r in (S, P):
+            r.uc.mem_write(KBUF, src)
+            r.uc.mem_write(KBUF + 0x8000, b"\x11" * (n + 8))
+            d0 = r.call(MEMCPY, KBUF + 0x8000, KBUF, n, check="memcpy")
+            res.append((d0, r.rd(KBUF + 0x8000, n + 8)))
+        good &= res[0] == res[1]
+    t34 = P.rd(G.SCR34, G.SCR34_SIZE)
+    check(good and P.rd(G.SCR34, G.SCR34_SIZE) == t34, "vrai memcpy (0x4008f1f0), autres tailles que 7 094 : = "
+                                                     "l'origine (résultat, octets), registres et pile rendus")
+    v0 = fill_blk(P, blk(syms, 0), rnd)
+    kb = kit_bytes(rnd)
+    for r in (S, P):
+        r.uc.mem_write(kit(0), kb)
+        r.call(MEMCPY, kit(1), kit(0), KIT_SZ, check="memcpy d'un kit")
+    good = S.rd(kit(1), KIT_SZ) == P.rd(kit(1), KIT_SZ) == kb and blk_words(P, blk(syms, 1)) == v0
+    P.call(MEMCPY, KBUF, kit(1), KIT_SZ)                  # copie dans un tampon
+    fill_blk(P, blk(syms, 1), rnd)                        # modifié entre-temps
+    P.call(MEMCPY, kit(20), KBUF, KIT_SZ)                 # collage
+    good &= blk_words(P, blk(syms, 20)) == v0
+    v21 = fill_blk(P, blk(syms, 21), rnd)
+    P.call(MEMCPY, kit(21), KBUF + 0x9000, KIT_SZ)        # source inconnue
+    good &= blk_words(P, blk(syms, 21)) == v21
+    for i in range(6):
+        P.call(MEMCPY, KBUF + 0x10000 + 0x2000 * i, kit(i), KIT_SZ)
+    P.call(MEMCPY, kit(30), KBUF, KIT_SZ)                 # tampon oublié (plus de 4 depuis)
+    good &= blk_words(P, blk(syms, 30)) != v0
+    P.call(MEMCPY, kit(31), KBUF + 0x10000 + 0x2000 * 5, KIT_SZ)
+    good &= blk_words(P, blk(syms, 31)) == blk_words(P, blk(syms, 5))
+    check(good, "memcpy d'un kit entier : octets = l'origine ; bloc kit -> kit, kit -> tampon -> kit (collage), source "
+                "inconnue : gardé ; les 4 derniers tampons retenus")
+
+    # nouveau projet
+    for r in (S, P):
+        r.uc.mem_write(kit(0), kb)
+    for n in (0, 3, 50, 95):
+        fill_blk(P, blk(syms, n), rnd)
+    try:
+        S.call(NEW_PROJ, PROJECT)
+    except Exception as e:                                # noqa: BLE001
+        print(f"  --    nouveau projet (0x40061738) non émulé avec cette combinaison : l'origine elle-même s'arrête "
+              f"sous ce banc ({e}) ; vérifié seul et avec Model-TG")
+    else:
+        P.call(NEW_PROJ, PROJECT, check="nouveau projet")
+        same = all(no_lfo2(S.rd(kit(n), KIT_SZ), False) == no_lfo2(P.rd(kit(n), KIT_SZ), False)
+                   for n in (0, 1, 50, 95))
+        check(same and all(blk_words(P, blk(syms, n)) == D12 for n in range(96)),
+              "vrai nouveau projet (0x40061738) : kits = l'origine (hors LFO 2) ; les 96 blocs LFO 3/4 aux défauts "
+              "(kit 0 par ses sons remis aux défauts, kits 1..95 par la copie du kit 0)")
+    check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
+
+
+# ----------------------------------------------------------------------- 9. [LFO] + potard, diode DEST ------
+
+LEARN, LED_PAINT = 0x4001eaa2, 0x400261aa                     # affectation par potard ; diode de la page LFO
+KIT_OF, TRACK_OF, MACHINE_OF, REC_OF = 0x4000eb9c, 0x40009c1a, 0x40014042, 0x4004df76
+ACC_OF, KEYS_HELD, SEQ_STATE, TRIG_HELD, TRIG_HELD2 = 0x400097f0, 0x4007faf4, 0x400cf9a8, 0x4006b978, 0x4006b736
+LED_CTL, LED_SET, TRIG_SCAN, FN_DTOR = 0x400cfaf4, 0x40005f86, 0x4006be48, 0x400cf044
+UI_INIT, KEY_BITS = 0x400de244, 0x40f95744                    # objets d'interface et enregistrements ; MACHINES = bit 0
+KIT_OBJ, TRACK_OBJ2, LEDS, FCODE2 = FAKE + 0x20000, FAKE + 0x21000, FAKE + 0x22000, FAKE + 0x23000
+ATK, FLT, RES, PITCH, FTUN = 0x0d, 0x0c, 0x0b, 42, 43
+# Model-TG : loop_mode, descr_done, sampler_descr, sampler_descr_atk (tools/sampler_mode_filter.py, qui les vérifie,
+# et tools/emu/test_sampler_mode_filter.py)
+SMF_LOOP_MODE, SMF_DESCR_DONE, SMF_DESCR, SMF_DESCR_ATK = 0x401b2408, 0x401abe98, 0x401abe9a, 0x401abee6
+SMF_UI_GRAN = 0x401bccbc          # ui_gran : le mode de la piste sélectionnée que tient gran_watch (1..4 = 3..6)
+
+
+def learn_rig(img, rt, sel, machine, held):
+    """Rig dont l'interface tourne : enregistrements et objets d'interface construits (0x400de244), piste sel[0] dans
+    le kit 9 (son = kit(9) + 28 + 100 t), machine machine[0] ; held : touches tenues (0x4007faf4)."""
+    r = Rig(img, rt)
+    for a, ret in ((FN_DTOR, 0), (0x400c9afc, 0), (0x400f4dc6, 1), (0x400f4e22, 0)):
+        r.stub(a, lambda x, ret=ret: ret)
+    r.call(UI_INIT)
+    r.stub(0x400f4dc6, None)
+    r.stub(0x400f4e22, None)
+    setup_track(r)
+    r.w32(CUR_KIT, kit(9))
+    r.stub(FCODE, lambda a: kit(9) + 28 + 100 * sel[0])
+    r.stub(CUR_PROJ, lambda a: PROJ)
+    r.stub(PROJ_SEQ, lambda a: SEQ)
+    r.stub(SEL_TRACK, lambda a: sel[0])
+    r.stub(KIT_OF, lambda a: KIT_OBJ)
+    r.stub(ACC_OF, lambda a: THIS)
+    r.stub(TRACK_OF, lambda a: TRACK_OBJ2 if a[:2] == (KIT_OBJ, sel[0]) else r.log.append(("track_of", a[:2])) or 0)
+    # 0x40014042 ne vaut que pour l'objet de la piste (0x40009c1a) : l'accesseur (0x400097f0, THIS) l'a fait planter
+    # sur l'appareil (EXCEPTION V03 en 0x40014070) ; tout autre argument est noté
+    r.stub(MACHINE_OF, lambda a: machine[0] if a[0] == TRACK_OBJ2 else r.log.append(("machine_of", a[0])) or -1)
+    r.stub(KEYS_HELD, lambda a: 1 if a[0] in held else 0)
+    r.stub(SEQ_STATE, lambda a: SEQ)
+    r.stub(TRIG_HELD, lambda a: 0)
+    r.stub(TRIG_HELD2, lambda a: 0)
+    r.stub(TRIG_SCAN, lambda a: 0)
+    r.stub(NEEDS_REDRAW, lambda a: 0)
+    r.stub(LED_CTL, lambda a: LEDS)
+    r.stub(LED_SET, lambda a: r.log.append(("led", a[1], a[2])) or 0)
+    r.stub(r.r32(ACC_VT + 72), lambda a: 0)            # 0x4000b942 : suite de 0x4000b274 vers le pattern (bouchon)
+    r.w32(VIEWOBJ + 56, FAKEVT)
+    r.w32(FAKEVT + 128, FCODE2)
+    r.stub(FCODE2, lambda a: THIS)
+    return r
+
+
+def learn_led(base_img, img, rt, syms, tg):
+    """[LFO] tenue + un potard (0x4001eaa2, le vrai code) et la diode de la destination (0x400261aa, le vrai code), sur
+    la machine montée : Attack, Filtre, Résonance sous MACHINES (Model-TG), le lo-fi de MACRO, destinations prises."""
+    sel, machine, held = [3], [0], set()
+    S, P = learn_rig(base_img, rt, sel, machine, held), learn_rig(img, rt, sel, machine, held)
+    P.call(syms["blk34"], regs={D[0]: kit(9)})
+    page = syms["page"]
+    snd = lambda: kit(9) + 28 + 100 * sel[0]          # noqa: E731
+    macro = [m for m in range(6, 16) if P.r32(P.call(REC_OF, m) + 72) == FTUN]
+    if macro:
+        check(len(macro) == 1 and S.r32(S.call(REC_OF, macro[0]) + 72) == FTUN,
+              f"MACRO = machine {macro} : son enregistrement (0x4004df76) porte FINE (43) en entrée 16, la seule")
+    macro = macro[0] if macro else None
+
+    def mod(on):
+        for r in (S, P):
+            r.w8(KEY_BITS, 1 if on else 0)
+            if tg:
+                r.w32(tg["mod_held"], 1 if on else 0)
+
+    def dest(r, pg):
+        r.w8(page, pg) if r is P else None
+        return s32(r.call(syms["lfo_get"] if r is P else ORIG_GET, THIS, 0x20)) >> 8
+
+    def set_dest(r, pg, k):
+        if pg == 0:
+            r.w8(snd() + 28, k)
+        elif pg == 1:
+            r.w8(snd() + 82, k)
+        else:
+            r.w8(page, pg)
+            r.call(syms["lfo_set"], THIS, 0x20, k << 8)
+
+    def learn(r, pg, knob):
+        if r is P:
+            r.w8(page, pg)
+        r.call(LEARN, VIEWOBJ + 56, knob, 1, check="affectation par potard")
+        return dest(r, pg)
+
+    def clear(r):
+        r.uc.mem_write(snd(), sound_bytes(random.Random(1), DEFAULTS))
+        r.w8(snd() + 38, machine[0])
+        r.w8(snd() + 28, 0)
+        r.w8(snd() + 82, 0)
+        if r is P:
+            for pg in (2, 3):
+                set_dest(r, pg, 0)
+
+    P.w8(page, 0)
+    k_of = {i: s32(P.call(ID2K, i)) for i in (ATK, FLT, RES, PITCH, FTUN)}
+    expect_k = {PITCH: 10, FTUN: 17}
+    if tg:
+        expect_k.update({ATK: 23, FLT: 24, RES: 25})
+    check(all(k_of[i] == expect_k[i] for i in expect_k) and all(s32(S.call(ID2K, i)) == expect_k[i] for i in expect_k),
+          f"id -> k : {expect_k} ({k_of})")
+    # 1. affectation : la destination du LFO affiché
+    good, n = True, 0
+    for m in list(range(6)) + ([macro] if macro is not None else []):
+        machine[0] = m
+        for on in (False, True):
+            mod(on)
+            for knob in range(12):
+                ref = None
+                for pg in range(4):
+                    for r in (S, P):
+                        clear(r)
+                    got = learn(P, pg, knob)
+                    if pg == 0:
+                        ref = learn(S, 0, knob)
+                        good &= got == ref or (on and knob == 0)
+                    others = [dest(P, x) for x in range(4) if x != pg]
+                    good &= others == [0, 0, 0] and (got == ref or (on and knob == 0))
+                    if on and tg and knob in (1, 2, 3, 4, 5):
+                        good &= got == {1: 23, 2: 27, 3: 30, 4: 24, 5: 25}[knob]
+                    if on and knob == 0:
+                        good &= got == 17          # FINE : le lo-fi de MACRO, l'accord fin ailleurs (id 43 partout)
+                    if not on and knob == 0:
+                        good &= got == 10
+                    n += 1
+    P.w8(page, 0)
+    mod(False)
+    # FUNC + PITCH : reste stock (PITCH, k = 10) sans MACHINES ; sous MACHINES (Model-TG), FINE (k 17) comme sans FUNC :
+    # l'enregistrement sous MACHINES porte FINE en position 0 (notes/86 §8)
+    good_func = True
+    for m in list(range(6)) + ([macro] if macro is not None else []):
+        machine[0] = m
+        for on in (False, True):
+            mod(on)
+            held.add(2)
+            clear(P)
+            got = learn(P, 0, 0)
+            good_func &= got == (17 if on and tg else 10)
+            held.discard(2)
+    mod(False)
+    machine[0] = 0
+    check(good and good_func and n > 300, f"[LFO] + potard, machines 0..5 et MACRO, 12 potards, LFO 1..4, MACHINES tenue ou non ({n} cas) : "
+                                          "la destination du LFO affiché, celle de l'OS d'origine sur LFO 1, les autres LFO pas "
+                                          "touchés ; MACHINES + DECAY / SWEEP / CONTOUR -> Attack / Filtre / Résonance (k 23, 24, 25), "
+                                          "MACHINES + COLOR / SHAPE -> Lo-Fi Rate / Bits (k 27, 30)"
+                                          + ("" if tg else " [sans Model-TG : pas vérifié]")
+                                          + " ; MACHINES + PITCH -> FINE (k 17, le lo-fi de MACRO et l'accord fin ailleurs) "
+                                          "sur toutes les machines, PITCH (k 10) sans MACHINES ; FUNC + PITCH -> PITCH (k 10), FINE sous MACHINES")
+    # 2. destination déjà prise par un autre LFO de la piste : admise (cumul de plusieurs LFO)
+    machine[0] = 0
+    mod(bool(tg))
+    good, n = True, 0
+    for pg in range(4):
+        for other in range(4):
+            if other == pg:
+                continue
+            for knob, k in (((1, 23), (4, 24), (5, 25)) if tg else ((2, 11), (3, 12), (4, 13))):
+                clear(P)
+                set_dest(P, other, k)
+                set_dest(P, pg, 14 if k != 14 else 15)
+                got = learn(P, pg, knob)
+                good &= got == k and dest(P, other) == k
+                n += 1
+    clear(S)
+    S.w8(snd() + 82, 23 if tg else 11)
+    s_dup = learn(S, 0, 1 if tg else 2)
+    mod(False)
+    check(good and s_dup == (23 if tg else 11),
+          f"destination déjà prise par un autre des 4 LFO ({n} cas) : admise (le cumul s'additionne, comme l'OS d'origine)")
+    # 3. diode de la page LFO
+    good, rows = True, []
+    for m in list(range(6)) + ([macro] if macro is not None else []):
+        machine[0] = m
+        for k in [0] + list(range(9, 26)) + [27, 30]:
+            lit = []
+            for pg in range(4):
+                for r in (S, P):
+                    clear(r)
+                set_dest(P, pg, k)
+                P.log.clear()
+                P.w8(page, pg)
+                P.call(LED_PAINT, VIEWOBJ, check="diode de la page LFO")
+                lit.append([a for t, a, _ in P.log if t == "led"])
+            set_dest(S, 0, k)
+            S.log.clear()
+            S.call(LED_PAINT, VIEWOBJ)
+            ls = [a for t, a, _ in S.log if t == "led"]
+            want = ({23: [37], 24: [40], 25: [41], 27: [38], 30: [39], 17: [36]}.get(k) if tg else None) or ([36] if k == 17 else ls)
+            good &= all(x == want for x in lit)
+            if want != ls:
+                rows.append((m, k, ls, lit[0]))
+    machine[0] = 0
+    P.w8(page, 0)
+    desc = "; ".join(f"m{m} k{k} : {ls} -> {lp}" for m, k, ls, lp in rows[:3] + [x for x in rows if x[0] == macro])
+    nm = 6 + (macro is not None)
+    check(good and len(rows) == (6 * nm if tg else nm),       # FINE -> PITCH sur toutes les machines (notes/86 §8)
+          "diode de la destination (0x400261aa), machines 0..5 et MACRO, k = 0, 9..25, 27, 30, LFO 1..4 : Attack -> DECAY (37), "
+          "Filtre -> SWEEP (40), Résonance -> CONTOUR (41), Lo-Fi Rate -> COLOR (38), Bits -> SHAPE (39), FINE -> PITCH (36, toutes les machines) ; tout le reste = l'OS "
+          f"d'origine, sur les 4 pages ({len(rows)} différences, avant -> après : {desc})")
+    # 3b. le Sampler (machine 6) : SWEEP / CONTOUR sous MACHINES règlent son filtre (k 13/14) en modes 0..2, celui de
+    # la piste (k 24/25) en modes 3..6 (sampler_mode_filter, notes/83 §3) ; [LFO] + le même potard doit donner le même
+    # k, que la page LFO nomme (paramIdFor, 0x4005a692) et dont elle allume la diode
+    if tg:
+        lm = SMF_LOOP_MODE + 4 * sel[0]
+        machine[0] = 6
+        # Les deux descripteurs du Sampler, que sampler_pre construit sur le fil audio (puis descr_done = 1) : ici
+        # l'enregistrement que rend l'OS avant cela, avec Attack (0x0d) en position 1 pour la variante MACHINES et
+        # Filtre / Résonance du Sampler (0x49 / 0x4a) en positions 4 et 5, comme dans test_sampler_mode_filter.py
+        mod(False)
+        for r in (S, P):
+            rec = r.rd(r.call(0x4004df5c, 7), 76)
+            for a, atk in ((SMF_DESCR, False), (SMF_DESCR_ATK, True)):
+                r.uc.mem_write(a, rec)
+                r.uc.mem_write(a + 24, struct.pack(">II", 0x49, 0x4a))
+                if atk:
+                    r.w32(a + 12, ATK)
+            r.w8(SMF_DESCR_DONE, 1)
+        good, bad = True, []
+        for mode in range(7):
+            for r in (S, P):
+                r.w32(lm, mode)
+                r.w32(SMF_UI_GRAN, mode - 2 if mode >= 3 else 0)
+            want = (24, 25) if mode >= 3 else (13, 14)
+            for on in (True, False):
+                mod(on)
+                for pg in range(4):
+                    for knob, k in zip((4, 5, 2, 3), (want if on else (13, 14)) + ((27, 30) if on else ())):
+                        clear(P)
+                        P.log.clear()
+                        got = learn(P, pg, knob)
+                        wrong = [x for x in P.log if x[0] in ("machine_of", "track_of")]
+                        if got != k or wrong:
+                            bad.append((mode, on, pg, knob, got, wrong[:1]))
+            mod(False)
+            ids = [s32(P.call(K2ID, k, 6)) for k in (24, 25, 13, 14)]
+            good &= ids == ([FLT, RES] if mode >= 3 else [0, 0]) + [0x49, 0x4a]
+            for k, led in ((24, 40), (25, 41), (13, 40), (14, 41), (27, 38), (30, 39)):
+                if k in (24, 25) and mode < 3:
+                    continue
+                for pg in range(4):
+                    clear(P)
+                    set_dest(P, pg, k)
+                    P.log.clear()
+                    P.w8(page, pg)
+                    P.call(LED_PAINT, VIEWOBJ, check="diode de la page LFO")
+                    lit = [a for t, a, _ in P.log if t == "led"]
+                    if lit != [led]:
+                        bad.append(("led", mode, k, pg, lit))
+        for r in (S, P):
+            r.w32(lm, 0)
+            r.w32(SMF_UI_GRAN, 0)
+            r.w8(SMF_DESCR_DONE, 0)
+        machine[0] = 0
+        P.w8(page, 0)
+        check(good and not bad,
+              "Sampler, modes 0..6, LFO 1..4 : [LFO] + MACHINES + SWEEP / CONTOUR -> k 13/14 (son filtre) en modes 0..2, "
+              "k 24/25 (filtre de piste) en modes 3..6, k 13/14 sans MACHINES, COLOR / SHAPE -> Lo-Fi Rate / Bits (k 27 / 30) sous MACHINES, la machine lue sur l'objet de la piste "
+              "(0x40009c1a), pas sur l'accesseur ; DST nomme 24/25 Filtre / Résonance (0x0c / "
+              f"0x0b) en modes 3..6 seulement ; diode SWEEP (40) / CONTOUR (41), COLOR (38) / SHAPE (39) pour Rate / Bits {bad[:3]}")
+    # 4. sauvegarde et rechargement : LFO 1 -> Attack, LFO 2 -> Filtre, LFO 3 -> Résonance
+    if tg:
+        mod(True)
+        clear(P)
+        got = [learn(P, 0, 1), learn(P, 1, 4), learn(P, 2, 5)]
+        mod(False)
+        P.uc.mem_write(KREC, b"\xa5" * 0x1e00)
+        ok = P.call(KIT_SAVE, KREC, kit(9), 0, check="sauvegarde du kit") & 0xff
+        rec = P.rd(KREC, 0x1e00)
+        P.uc.mem_write(kit(9), b"\x55" * KIT_SZ)
+        P.uc.mem_write(blk(syms, 9), b"\x33" * 120)
+        P.uc.mem_write(KREC2, rec)
+        ok2 = P.call(KIT_LOAD, kit(9), KREC2, check="chargement du kit") & 0xff
+        back = [dest(P, pg) for pg in range(4)]
+        P.w8(page, 0)
+        check(ok == ok2 == 1 and got == [23, 24, 25] and back == [23, 24, 25, 0],
+              f"par potard sous MACHINES : LFO 1 -> Attack, LFO 2 -> Filtre, LFO 3 -> Résonance (k {got}) ; kit sauvé "
+              f"(0x4005b2ae) puis rechargé (0x4005d080) : {back[:3]}, LFO 4 None")
+    check(not (S.bad or P.bad or S.asserts or P.asserts), "aucun accès hors mémoire, aucune assertion de l'OS")
+
+
 # ------------------------------------------------------------------------------------------------ main -----------
 
 def payload_runtimes(tweaks, stock, syntakt_path):
@@ -1168,16 +1946,20 @@ def main():
     rt = payload_runtimes(others, stock, args.syntakt)
     syms = {k: int(v, 16) for k, v in tweak["symbols"].items()}
     david = T.main_os_from_syx(args.david) if args.david else None
-    only = {int(x) for x in args.only.split(",") if x} or set(range(8))
+    only = {int(x) for x in args.only.split(",") if x} or set(range(10))
+    tg = next((t["symbols"] for t in others if "mod_held" in t.get("symbols", {})), None)
+    tg = {k: int(v, 16) for k, v in tg.items()} if tg else None
     print(f"firmware : {', '.join(t['id'] for t in sorted(others + [tweak], key=lambda t: t['order']))}")
     steps = ((0, "écritures", lambda: writes_ok(stock, img, tweak, every, rt)),
              (1, "bloc audio sans LFO de plus = l'origine", lambda: audio_identity(base, img, rt, syms)),
              (2, "LFO 2, 3, 4", lambda: audio_extra(base, img, rt, syms)),
-             (3, "interface", lambda: ui(base, img, rt, syms)),
-             (4, "LFO 2 dans le son", lambda: sound(base, img, rt, syms, david)),
+             (3, "interface", lambda: ui(base, img, rt, syms, tg)),
+             (4, "LFO 2 dans le son", lambda: sound(base, img, rt, syms, tg, david)),
              (5, "p-locks dans le pattern", lambda: plocks(base, img, rt)),
              (6, "coût", lambda: cost(base, img, rt, syms)),
-             (7, "accroches au milieu des fonctions", lambda: sites(base, img, rt, syms)))
+             (7, "accroches au milieu des fonctions", lambda: sites(base, img, rt, syms)),
+             (8, "LFO 3/4 par pattern", lambda: per_kit(base, img, rt, syms)),
+             (9, "[LFO] + potard, diode DEST", lambda: learn_led(base, img, rt, syms, tg)))
     for n, name, fn in steps:
         if n in only:
             print(f"{n}. {name}")

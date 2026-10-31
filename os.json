@@ -19,7 +19,8 @@
     "midi-live-both",
     "mod-settings",
     "lfo-plus",
-    "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid"
+    "tempo-sync",
+    "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-retrosyn"
   ],
   "machines": [
     { "code": "sampler", "name": "Sampler", "label": "Model-TG sampler" },
@@ -29,13 +30,16 @@
     { "code": "bits", "name": "SYBit", "label": "SY BITS" },
     { "code": "swarm", "name": "SYSwm", "label": "SY SWARM" },
     { "code": "macro", "name": "MACRO", "label": "47 models from Braids" },
-    { "code": "acid", "name": "ACID", "label": "acid bass in the style of the TB-303" }
+    { "code": "acid", "name": "ACID", "label": "acid bass in the style of the TB-303" },
+    { "code": "retrosyn", "name": "RETROSYN", "label": "chiptune voices in the style of the Game Boy, NES and SNES" }
   ],
   "features": [
     { "id": "model-tg", "cat": "sound", "tweaks": ["model-tg-st"], "status": "experimental",
       "credit": { "kind": "by", "who": "TinyGregAudio", "repo": "TinyGregAudio/Model-TG" }, "license": "LICENSE-Model-TG",
       "guide": "model-tg", "notes": "notes/31" },
-    { "id": "syntakt", "cat": "sound", "tweaks": ["syntakt-tg-sd-cp-toy-bits-swarm-macro-acid"], "status": "tested",
+    { "id": "track-lofi", "cat": "sound", "tweaks": [], "status": "experimental", "credit": null,
+      "guide": "track-lofi", "notes": "notes/86" },
+    { "id": "syntakt", "cat": "sound", "tweaks": ["syntakt-tg-sd-cp-toy-bits-swarm-macro-acid-retrosyn"], "status": "tested",
       "credit": null, "needs": "syntakt", "guide": "syntakt", "notes": "notes/17, 18, 19, 20, 21, 22, 31" },
     { "id": "macro", "cat": "sound", "tweaks": [], "status": "tested",
       "credit": { "kind": "based", "who": "Émilie Gillet", "repo": "pichenettes/eurorack" }, "license": "LICENSE-Braids",
@@ -43,8 +47,13 @@
     { "id": "acid", "cat": "sound", "tweaks": [], "status": "tested",
       "credit": { "kind": "based", "who": "Robin Schmidt", "repo": "RobinSchmidt/Open303" }, "license": "LICENSE-Open303",
       "guide": "acid", "notes": "notes/54" },
+    { "id": "retrosyn", "cat": "sound", "tweaks": [], "status": "experimental",
+      "credit": { "kind": "by", "who": "AveyCole", "repo": "AveyCole/Modded-Cycles" },
+      "notes": "notes/84" },
     { "id": "lfo-plus", "cat": "sound", "tweaks": ["lfo-plus"], "status": "tested",
       "credit": { "kind": "based", "who": "DavidCaruso" }, "guide": "lfo-plus", "notes": "notes/56" },
+    { "id": "tempo-sync", "cat": "sound", "tweaks": ["tempo-sync"], "status": "experimental", "credit": null,
+      "guide": "tempo-sync", "notes": "notes/82" },
     { "id": "trig-preview", "cat": "seq", "tweaks": [], "status": "tested",
       "credit": { "kind": "by", "who": "drumkilla", "repo": "drumkilla/elektron-model-tweaks" }, "license": "LICENSE-elektron-model-tweaks",
       "guide": "preview", "notes": "notes/15, 34" },

@@ -14,6 +14,11 @@
  *     revient à ML_X pour la ligne suivante.
  *   - ml_icon (jsr depuis 0x400a576e, à la place de 0x40071da4) : l'icône de dossier (25x22) ou de l'entrée spéciale
  *     (24x22) ne tient pas sur une ligne ; un petit repère de 7 px la remplace, devant le nom.
+ *   - ml_name (jsr depuis 0x400a578c, dans un second masque) : le nom de la ligne a4. Le getter de la racine de +Drive
+ *     (vt[16] = 0x400a4184) donne le nom de l'entrée spéciale (LOCKS) dès que la SÉLECTION est la dernière entrée
+ *     (0x400a4132 : vt[36] == nombre - 1), quel que soit l'index demandé : avec une ligne, c'était la même chose ;
+ *     avec ML_ROWS lignes, toutes affichaient LOCKS, et la dernière ligne n'avait pas de nom quand le curseur était
+ *     ailleurs. Le temps de l'appel, la sélection (16(a2)) vaut a4 ; vt[36] réécrit 24(a2) : les deux reviennent.
  *
  * Contrat : on est dans le cadre de 0x400a539c (%fp, a2 = le navigateur, d2 = l'écran, a3 = x du nom, a4 = le nom,
  * d4 = la chaîne de travail -16(%fp), d7 = son chargé, -32(%fp) = caractères qui tiennent, -40(%fp) = destructeur de
@@ -22,7 +27,7 @@
  * changent pas. ml_after remet a3 à ML_X pour la ligne suivante et, pour le son chargé, met sa largeur dans a4 comme
  * l'original (0x400a55d2 ; a4 est rechargé en 0x400a5634) ; a5 = -40(%fp) en repartant en 0x400a5608, comme
  * l'original (0x400a55ac). */
-	.globl	ml_row, ml_after, ml_icon, ml_bound
+	.globl	ml_row, ml_after, ml_icon, ml_bound, ml_name
 
 	.section .text.multiline_browser, "ax"
 
@@ -155,6 +160,23 @@ ml_icon:
 	bne.s	2b
 	movem.l	(%sp), %d2-%d4/%a2
 	lea	16(%sp), %sp
+	rts
+
+/* 0x400a578c : jsr ml_name ; nop, à la place de « move.l d0,-32(fp) ; movea.l d5,a0 ; jsr (a1) ». a1 = vt[16] (le
+ * getter du nom), d0 = les caractères qui tiennent, (a2, a4) déjà empilés : ils y restent, comme à l'origine. */
+	.section .text.ml_name, "ax"
+ml_name:
+	move.l	%d0, -32(%fp)
+	move.l	16(%a2), -(%sp)			/* la sélection */
+	move.l	24(%a2), -(%sp)			/* sélection - 1re ligne, que vt[36] réécrit */
+	move.l	%a4, 16(%a2)			/* le temps de l'appel : la ligne demandée */
+	move.l	%a4, -(%sp)
+	move.l	%a2, -(%sp)
+	movea.l	%d5, %a0			/* le nom rendu par valeur */
+	jsr	(%a1)
+	addq.l	#8, %sp
+	move.l	(%sp)+, 24(%a2)
+	move.l	(%sp)+, 16(%a2)
 	rts
 
 	.section .rodata.multiline_browser, "a"

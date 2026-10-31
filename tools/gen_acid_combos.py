@@ -132,7 +132,7 @@ def build_macro_acid(img, repo, tg=None):
         mblob, msyms, mend = gm.compile_machine(tmp, repo, pay)
         if mend > acid["at"]:
             raise SystemExit(f"!! MACRO jusqu'à {mend:#x} : ACID commence à {acid['at']:#x}")
-        macro = dict(gm.MACHINE, label="MACRO", update=msyms["macro_update"], render=msyms["macro_render"])
+        macro = dict(gm.machine(msyms), label="MACRO")
         writes, append = gm.added_machine(img, tg, [macro, acid["machine"]], tmp,
                                           [(pay, mblob), (acid["at"], acid["blob"])], acid["end"])
     if tg and acid["end"] > pay + gms.TG_ROOM:
@@ -169,11 +169,12 @@ def build_macro_acid(img, repo, tg=None):
     return out, dict(ndesc=g7.NDESC + 10, size=append["size"], packed=segs, end=at + segs)
 
 
-def build_engines(img, st_img, repo, codes, tg=None, macro=True):
-    """Les moteurs codes, MACRO si macro, puis ACID (gen_macro_syntakt.build_tweak)."""
+def build_engines(img, st_img, repo, codes, tg=None, macro=True, more=()):
+    """Les moteurs codes, MACRO si macro, puis ACID (gen_macro_syntakt.build_tweak). more : d'autres machines après
+    ACID (RETROSYN, tools/gen_retrosyn.py) ; l'appelant complète alors l'id, le nom et la description."""
     pay = gs.PAY_TG if tg else gs.PAY_ALONE
     acid = acid_part(pay)
-    out, info = gms.build_tweak(img, st_img, repo, codes, tg, macro=macro, acid=acid)
+    out, info = gms.build_tweak(img, st_img, repo, codes, tg, macro=macro, acid=acid, more=more)
     macro_syms = gms.compile_macro(repo, pay)[1] if macro else None
     first = gs.TG_FIRST if tg else 6
     names = [gs.CATALOG[c]["name"] for c in codes]

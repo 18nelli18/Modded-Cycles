@@ -3,9 +3,11 @@
 
 Idée et premier essai de DavidCaruso (son .syx « Model-TG-VA-DR-v1 », envoyé à Maxime en octobre 2026, sans source
 ni licence) : réécrit ici à partir de l'analyse de son binaire, sans reprendre ses octets. Sur la page LFO, chaque
-appui sur [LFO] passe à LFO 2, 3, 4 (grand chiffre dans le cadre de gauche), le 5e ferme la page ; SPD, MULT, WAVE,
-DEST, DEP sont propres à chaque LFO de plus, FADE/SPH/MODE (et le retrig) sont ceux de LFO 1. LFO 2 est sauvé avec
-le son et p-lockable ; LFO 3 et 4 vivent en mémoire (pas sauvés, pas de p-lock).
+appui bref sur [LFO] passe, au relâchement, à LFO 2, 3, 4 (grand chiffre dans le cadre de gauche), le 5e ferme la
+page ; [LFO] tenue avec un potard tourné (affectation de destination de l'OS) garde la page ; SPD, MULT, WAVE, DEST,
+DEP sont propres à chaque LFO de plus, FADE/SPH/MODE (et le retrig) sont ceux de LFO 1. LFO 2 est sauvé avec le son
+et p-lockable ; LFO 3 et 4 ont un bloc par pattern (kit), sauvé dans l'enregistrement du kit, remis aux défauts avec
+le son de la piste, emporté par les copies de kit ; pas de p-lock (notes/56 §3.11).
 
 Différences voulues avec la version de David, pour qu'il s'installe avec tous nos mods (avec ou sans Model-TG,
 avec les machines ajoutées, MACRO, arp, accords…) sans écrire un seul octet qu'un autre tweak écrit :
@@ -18,7 +20,8 @@ avec les machines ajoutées, MACRO, arp, accords…) sans écrire un seul octet 
 
 tools/machines/lfo_plus/lfo_plus.S, assemblé (m68k-linux-gnu-gcc -mcpu=54418) ; ses sections sont réparties dans
 les masques de sprites 34x34 libérés de MASKS (premier qui convient, plus grosses d'abord), chacun redirigé vers le
-masque gardé (tools/sprites.py). Mémoire de travail (états des LFO, faux obj) : SCR, au-dessus du BSS de l'OS.
+masque gardé (tools/sprites.py). Mémoire de travail (états des LFO, faux obj) : SCR ; blocs LFO 3/4 des 96 kits :
+SCR34 ; les deux au-dessus du BSS de l'OS.
 
     python3 tools/gen_lfo_plus.py --cycles model-cycles_OS1.13.syx [--check]
 """
@@ -45,14 +48,23 @@ OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "60-lfo-plus.json"
 BASE = gx.BASE
 # Les masques 34x34 (272 o) réservés à ce mod, remplis dans cet ordre ; ceux qui restent vides ne sont pas touchés.
 MASKS = (0x4016f8c8, 0x40173848, 0x401780a8, 0x401784e8, 0x401835b8,
-         0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618)
+         0x40184df8, 0x40185308, 0x40185f48, 0x40186238, 0x40189618, 0x4018af88, 0x4018b1a8,
+         0x4018ff64)                   # 13e : WAVE de LFO 2 en k 0 (notes/86), le dernier 34x34 libre
 ROOM = 272
+# Sections mises d'office dans un masque (ajouts après coup : les autres restent à leur place, leurs adresses ne
+# bougent pas) : [LFO] + potard et la diode de la destination (notes/56 §3.13).
+PINNED = {".text.learn": 0x4018af88}
 # Mémoire de travail (1 180 o) : trou de 32 Ko entre la fin du BSS de l'OS (0x423380b0) et ses premiers tampons
 # DMA (0x42340000, alias sans cache 0x4a340000), que rien ne vise (notes/56 §3, notes/44). Pas remise à zéro au
 # démarrage : lfo_plus.S la met à zéro au premier usage, tant que l'octet ready (dans un masque, donc rechargé à 0
 # depuis la flash à chaque démarrage) vaut 0.
-SCR = 0x4233f000
+SCR = 0x4233e000
 SCR_SIZE = 1180
+# Blocs LFO 3/4 des 96 kits (96 × 120 o), puis 4 tampons de kit retenus (adresses, prochaine case, 4 × 120 o) :
+# 12 020 o dans le bas du même trou, sous SCR (notes/56 §3.11). Pas remis à zéro au démarrage : lfo_plus.S les met
+# aux défauts au premier usage, tant que l'octet kready (dans un masque) vaut 0.
+SCR34 = 0x4233b000
+SCR34_SIZE = 12020
 # (adresse, octets d'origine, symbole, instruction, rôle)
 HOOKS = (
     (0x400597c6, "4eb940091ab2", "lfo_audio", 0x4eb9,
@@ -69,6 +81,9 @@ HOOKS = (
      "sauvegarde du son, format 1 (0x4005b054) : move.w 94(a3),92(a2) -> jsr lfo_pack"),
     (0x4005af1c, "41f94010eea8", "lfo_unpack", 0x4eb9,
      "chargement du son (0x4005aecc) : lea 0x4010eea8,a0 -> jsr lfo_unpack"),
+    (0x4005af3e, "712a001c20310c00", "lfo_tail", 0x4eb9,
+     "fin du chargement du son (0x4005aecc) : mvs.b 28(a2),d0 ; move.l (a1,d0.l*4),d0 -> jsr lfo_tail ; nop "
+     "(WAVE de LFO 2 en k 0, notes/86)"),
     (0x400618e2, "e18b35430026", "lfo_init", 0x4eb9,
      "son aux défauts (0x40061866) : lsl.l #8,d3 ; move.w d3,38(a2) -> jsr lfo_init"),
     (0x40025e10, "4feffff02f0a", "lfo_gate", 0x4ef9,
@@ -77,8 +92,19 @@ HOOKS = (
      "création de la vue LFO : jsr 0x40025798 -> jsr lfo_ctor"),
     (0x400d97f8, "2f4a0008245f", "lfo_dtor", 0x4ef9,
      "destruction de la vue LFO (0x400d979a) : move.l a2,8(sp) ; movea.l (sp)+,a2 -> jmp lfo_dtor"),
+    (0x4001eb50, "2f024eb94005a4e8588f20532400e18a", "lfo_learn", 0x4ef9,
+     "affectation par [LFO] + potard (0x4001eaa2) : move.l d2,-(sp) ; jsr 0x4005a4e8 ; addq.l #4,sp ; "
+     "movea.l (a3),a0 ; move.l d0,d2 ; lsl.l #8,d2 -> jmp lfo_learn ; nop × 5"),
+    (0x400262ac, "4fef000c200f", "lfo_led", 0x4ef9,
+     "diode de la destination, page LFO (0x400261aa) : lea 12(sp),sp ; move.l sp,d0 -> jmp lfo_led"),
     (0x4000c140, "4e56ffe0202e000c", "lfo_dest", 0x4ef9,
      "pas de la liste des destinations (DEST) : link.w fp,#-32 ; move.l 12(fp),d0 -> jmp lfo_dest ; nop"),
+    (0x4005b2ae, "4fefffe448d77c0c", "kit_save", 0x4ef9,
+     "sauvegarde d'un kit : lea -28(sp),sp ; movem.l d2-d3/a2-a6,(sp) -> jmp kit_save ; nop"),
+    (0x4005d080, "4fefffdc48d77c3c", "kit_load", 0x4ef9,
+     "chargement d'un kit : lea -36(sp),sp ; movem.l d2-d5/a2-a6,(sp) -> jmp kit_load ; nop"),
+    (0x4008f1f0, "226f0004206f0008", "kit_copy", 0x4ef9,
+     "memcpy : movea.l 4(sp),a1 ; movea.l 8(sp),a0 -> jmp kit_copy ; nop"),
 )
 # (adresse du pointeur, valeur d'origine, symbole, rôle)
 PTRS = (
@@ -88,8 +114,9 @@ PTRS = (
     (0x401016ec, 0x400426fa, "lfo_draw", "vtable de la vue LFO 0x401016dc [4] : dessin"),
 )
 SYMBOLS = ("lfo_audio", "lfo_id2k", "lfo_get", "lfo_set", "lfo_key", "lfo_draw", "lfo_ctor", "lfo_dtor", "lfo_gate",
-           "lfo_dest", "lfo_pack", "lfo_unpack", "lfo_init", "lfo_plk_save", "lfo_plk_load", "page", "eat", "ready", "view",
-           "lfo34")
+           "lfo_dest", "lfo_pack", "lfo_unpack", "lfo_init", "lfo_plk_save", "lfo_plk_load", "page", "pend", "ready", "view",
+           "lfo34", "kready", "cur34", "blk34", "snd34", "pk5", "upk5", "kit_save", "kit_load", "kit_copy", "lfo_learn",
+           "lfo_led", "m5", "lfo_tail")
 
 
 CONFLICTS = ["track-filter"]   # mêmes k 28..31 et mêmes octets +88..+91 du son (notes/56 §3.6, notes/47 §4)
@@ -109,13 +136,15 @@ def compile_lfo():
     with tempfile.TemporaryDirectory() as d:
         d = pathlib.Path(d)
         obj, elf, ld = d / "lfo.o", d / "lfo.elf", d / "lfo.ld"
-        gx.run([gx.CROSS + "gcc", "-mcpu=54418", f"-Wa,--defsym,SCR={SCR:#x}", "-c", str(SRC), "-o", str(obj)])
+        gx.run([gx.CROSS + "gcc", "-mcpu=54418", f"-Wa,--defsym,SCR={SCR:#x}", f"-Wa,--defsym,SCR34={SCR34:#x}", "-c", str(SRC), "-o", str(obj)])
         parts = [(n, s, max(a, 2)) for n, s, _, a in sections(obj) if n.startswith((".text.", ".data."))]
         if [n for n, *_ in sections(obj) if not n.startswith((".text.", ".data."))]:
             raise SystemExit("!! section inattendue dans lfo_plus.o")
         bins = [{"at": va, "size": 0, "parts": []} for va in MASKS]
-        for name, size, align in sorted(parts, key=lambda p: (-p[1], p[0])):
+        for name, size, align in sorted(parts, key=lambda p: (p[0] not in PINNED, -p[1], p[0])):
             for b in bins:
+                if PINNED.get(name, b["at"]) != b["at"] or (name not in PINNED and b["at"] in PINNED.values()):
+                    continue
                 at = (b["size"] + align - 1) & -align
                 if at + size <= ROOM:
                     b["parts"].append((name, align))
@@ -180,20 +209,31 @@ def build_tweak(stock):
         "order": 60,
         "name": "LFO 2, 3, 4 : trois LFO de plus par piste (idée de DavidCaruso)",
         "description": [
-            "Page LFO : chaque appui sur [LFO] passe à LFO 2, puis 3, puis 4 (grand chiffre dans le cadre de gauche) ; "
-            "le 5e ferme la page.",
+            "Page LFO : chaque appui bref sur [LFO] passe, au relâchement, à LFO 2, puis 3, puis 4 (grand chiffre dans "
+            "le cadre de gauche) ; le 5e ferme la page. [LFO] tenue avec un potard tourné (affectation de destination "
+            "de l'OS) ou une autre touche : la page reste.",
             "Chaque LFO de plus a ses SPD, MULT, WAVE, DEST, DEP ; FADE, SPH, MODE et le retrig sont ceux de LFO 1. "
             "Même calcul que LFO 1 (la fonction des LFO de l'OS, avec son état à part).",
             "LFO 2 : sauvé avec le son (kit, réserve de sons ; 4 octets libres de l'enregistrement, même format que "
-            "DavidCaruso), p-lockable. LFO 3 et 4 : un réglage par piste en mémoire, pas sauvé, pas de p-lock, "
-            "remis aux défauts au démarrage.",
-            "Un LFO de plus réglé sur la destination de LFO 1 ne fait rien ; la molette DEST saute les destinations "
-            "déjà prises par un autre LFO de la piste. LFO 2 non calculé quand aucune piste n'a de destination.",
+            "DavidCaruso), p-lockable. LFO 3 et 4 : un réglage par piste et par pattern (kit), sauvé dans 52 octets "
+            "inutilisés de l'enregistrement du kit (+648..+699), remis aux défauts avec le son de la piste (effacement, "
+            "nouveau projet), emporté par les copies de kit entier (nouveau projet, copie de pattern) ; pas de p-lock.",
+            "Plusieurs LFO réglés sur la même destination s'additionnent (y compris sur la destination de LFO 1) ; "
+            "la molette DEST saute les destinations déjà prises par un autre LFO de la piste. LFO 2 non calculé "
+            "quand aucune piste n'a de destination.",
+            "[LFO] tenue + un potard (affectation de l'OS) : MACHINES + PITCH donne FINE (l'accord fin, le lo-fi sur "
+            "MACRO) sur toutes les machines ; la destination choisie peut être libre ou déjà prise par un autre LFO "
+            "(le cumul s'additionne). La diode de la destination s'allume aussi pour Attack, Filtre, Résonance "
+            "(potards DECAY, SWEEP, CONTOUR) et le lo-fi (PITCH), réglés sous MACHINES (notes/56 §3.13).",
+            "Pendant le geste [LFO] tenue + MACHINES + potard, MACHINES n'ouvre plus l'écran des machines par-dessus "
+            "la page : elle est le modificateur du geste. Posée seule sur la page LFO, elle ouvre l'écran des "
+            "machines comme d'origine (notes/56 §3.14).",
             "Corrige au passage les p-locks d'Attack, Filtre et Résonance de Model-TG dans le pattern (relus en None, "
             "LFO Speed, Multiplier).",
             "D'après le Model-TG-VA-DR-v1 de DavidCaruso (octobre 2026), réécrit ; s'installe avec ou sans Model-TG.",
             f"Code et données : {used} o dans {len(placed)} masques de sprites 34x34 libérés ({masks}) ; "
-            f"mémoire de travail {SCR:#x}..{SCR + SCR_SIZE:#x} (au-dessus du BSS). "
+            f"mémoire de travail {SCR:#x}..{SCR + SCR_SIZE:#x}, blocs LFO 3/4 {SCR34:#x}..{SCR34 + SCR34_SIZE:#x} "
+            "(au-dessus du BSS). "
             "Généré par tools/gen_lfo_plus.py, notes/56 §3.",
             "Pas avec le filtre par piste : les deux rangent leurs réglages en k 28..31 et en +88..+91 du son (notes/56 §3.6).",
         ],

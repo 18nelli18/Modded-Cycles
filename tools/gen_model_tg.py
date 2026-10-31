@@ -39,6 +39,10 @@ import gen_sdvintage_exact as gx   # noqa: E402
 import gen_syntakt_engines as gs   # noqa: E402
 import usb_steady                  # noqa: E402
 import voice_loop                  # noqa: E402
+import popup_view                  # noqa: E402
+import sampler_mode_filter          # noqa: E402
+import track_lofi                  # noqa: E402
+import trig_machines               # noqa: E402
 import test_sdvintage as T         # noqa: E402
 
 DEV = HERE.parent / "tweaks" / "model-cycles_OS1.13"
@@ -118,7 +122,230 @@ vq_nop:
     bnes    vq_envf               | stems are taken before the mixer: never its gains
     movel   %d2,%sp@-             | the mixer's gains for this track
 '''
+# Dans les deux tweaks (notes/85) : la résonance ne fait plus baisser le volume, sur toutes les machines (le Sampler,
+# ladder_run, et les machines d'origine, gflt_run). Le filtre en échelle à contre-réaction fb (Q12, k = fb/4096) a
+# un gain de 1/(1+k) dans sa bande passante : 0,21 à fb = 15000. Model-TG n'en compensait que la moitié, à l'entrée
+# (filt_mkt, jusqu'à 2,1x) : au-delà, x * makeup déborde 32 bits et le pic de résonance tape dans les bornes. La
+# compensation passe à la sortie et devient entière : y4 * (1 + fb/4096), exacte (gain 1 en continu quelle que soit la
+# résonance), et l'échelle elle-même tourne comme avec makeup = 1, donc tape moins dans ses bornes qu'avant. Le pic
+# de résonance (jusqu'à ~14x la bande passante) est arrondi par mc_sat, un écrêtage doux quadratique (linéaire jusqu'à
+# 0,75 de la pleine échelle, puis v - (v - 0,75)^2, qui rejoint la pleine échelle à pente nulle) au lieu de la borne
+# dure. mc_sat prend la place de la table filt_mkt, devenue inutile (256 o) : chaque retouche garde sa taille
+# (bourrage tpf hors de la boucle), aucun symbole de Model-TG ne bouge. Résonance 0 : boucles rapides inchangées
+# (filt_mk / gflt_mk valent toujours 4096) ; filtre grand ouvert sans résonance : toujours contourné.
+RES_PATCHES = (
+    ("src/model_tg.s", '''    movel   %d0,%d4               | resonance makeup: the ladder's passband
+    asrl    #7,%d4                | drops to 0.23x at full feedback, which is
+    lea.l   filt_mkt,%a0          | why resonance sounds thin. Half-compensate
+    mvzw    %a0@(0,%d4:l:2),%d4   | (to ~0.48x) - full compensation needs 4.4x
+''', '''    movel   #4096,%d4             | Modded-Cycles: the resonance makeup is
+    tpfl    #0                    | applied in full at the ladder's output
+    tpf                           | now (sv_f4l, mc_sat); filt_mk stays 1.0,
+                                  | which keeps the fast loop at Resonance 0
+''', "filtre : makeup de résonance (sp_flt_go) : filt_mk reste 1,0, la compensation passe à la sortie"),
+    ("src/model_tg.s", '''sv_flt:
+    movel   %a1@,%d6              | x = buf >> 13, then resonance makeup
+    asrl    #8,%d6
+    asrl    #5,%d6
+    mulsl   %a0@,%d6
+    asrl    %d7,%d6
+    movea.l %d6,%a2
+''', '''sv_flt:
+    movel   %a1@,%d6              | x = buf >> 13 (makeup: at the output)
+    asrl    #8,%d6
+    asrl    #5,%d6
+    movea.l %d6,%a2
+''', "filtre du Sampler : plus de makeup à l'entrée de l'échelle"),
+    ("src/model_tg.s", '''    movel   %d5,%d6               | output = y4, at the buffer's full scale
+    asrl    %d7,%d6
+    cmpil   #131068,%d6
+    bles    sv_flt_oh
+    movel   #131068,%d6
+sv_flt_oh:
+    cmpil   #-131068,%d6
+    bges    sv_flt_ol
+    movel   #-131068,%d6
+sv_flt_ol:
+    asll    #8,%d6
+    asll    #5,%d6
+    movel   %d6,%a1@+
+    movel   %d6,%a1@+
+    cmpal   %a3,%a1
+    bnew    sv_flt
+lr_st:
+''', '''    movel   %d5,%d6               | output = y4 * (1 + fb/4096): the full
+    asrl    %d7,%d6               | makeup, the passband back at 1.0 (y4 is
+    movea.l %d6,%a2               | within +-131072 and fb <= 15000: no
+    mulsl   %d1,%d6               | overflow)
+    asrl    %d7,%d6
+    addl    %a2,%d6
+    cmpil   #98304,%d6            | past 3/4 of full scale: the soft clip
+    bgts    sv_flt_oh
+    cmpil   #-98304,%d6
+    bges    sv_flt_ol
+sv_flt_oh:
+    jsr     mc_sat                | (far: jsr abs.l)
+sv_flt_ol:
+    asll    #8,%d6
+    asll    #5,%d6
+    movel   %d6,%a1@+
+    movel   %d6,%a1@+
+    cmpal   %a3,%a1
+    bnew    sv_flt
+    tpf                           | (same size as before)
+lr_st:
+''', "filtre du Sampler : makeup entier à la sortie, y4 * (1 + fb/4096), et écrêtage doux (mc_sat)"),
+    ("src/model_tg.s", '''gr2_loop:
+    movel   %a1@,%d6              | x = s >> 14, then makeup (Q12)
+    asrl    #8,%d6
+    asrl    #6,%d6
+    mulsl   %a0@,%d6
+    asrl    %d7,%d6
+    movea.l %d6,%a5
+''', '''gr2_loop:
+    movel   %a1@,%d6              | x = s >> 14 (makeup: at the output)
+    asrl    #8,%d6
+    asrl    #6,%d6
+    movea.l %d6,%a5
+''', "filtre des machines d'origine : plus de makeup à l'entrée de l'échelle"),
+    ("src/model_tg.s", '''    movel   %d5,%d6               | output = y4
+    asrl    %d7,%d6
+    cmpil   #131068,%d6
+    bles    gr2_oh
+    movel   #131068,%d6
+gr2_oh:
+    cmpil   #-131068,%d6
+    bges    gr2_ol
+    movel   #-131068,%d6
+gr2_ol:
+    asll    #8,%d6
+    asll    #6,%d6
+    movel   %d6,%a1@+
+    cmpal   %a2,%a1
+    bnew    gr2_loop
+gr2_st:
+''', '''    movel   %d5,%d6               | output = y4 * (1 + fb/4096), as sv_f4l
+    asrl    %d7,%d6
+    movea.l %d6,%a5
+    mulsl   %d1,%d6
+    asrl    %d7,%d6
+    addl    %a5,%d6
+    cmpil   #98304,%d6
+    bgts    gr2_oh
+    cmpil   #-98304,%d6
+    bges    gr2_ol
+gr2_oh:
+    bsrw    mc_sat                | (near: bsr.w, spelled out)
+gr2_ol:
+    asll    #8,%d6
+    asll    #6,%d6
+    movel   %d6,%a1@+
+    cmpal   %a2,%a1
+    bnew    gr2_loop
+    tpfw    #0                    | (same size as before)
+gr2_st:
+''', "filtre des machines d'origine : makeup entier à la sortie et écrêtage doux (mc_sat)"),
+    ("src/model_tg.s", '''    movel   %d0,%d4               | resonance makeup
+    asrl    #7,%d4
+    lea.l   filt_mkt,%a0
+    mvzw    %a0@(0,%d4:l:2),%d4
+    lea.l   gflt_mk,%a0
+''', '''    movel   #4096,%d4             | resonance makeup: at the output now
+    tpfl    #0
+    lea.l   gflt_mk,%a0
+''', "filtre des machines d'origine : gflt_mk reste 1,0 (gflt_coef)"),
+    ("src/model_tg.s", '''filt_mkt:                         | feedback (>>7) -> makeup, half compensation
+    .word 4096,4149,4201,4253,4305,4356,4407,4458
+    .word 4509,4559,4609,4659,4709,4758,4806,4855
+    .word 4903,4951,4998,5045,5092,5138,5185,5230
+    .word 5276,5321,5366,5411,5455,5499,5543,5586
+    .word 5629,5672,5715,5757,5799,5841,5883,5924
+    .word 5965,6006,6047,6087,6127,6167,6207,6246
+    .word 6286,6325,6363,6402,6440,6478,6516,6554
+    .word 6592,6629,6666,6703,6740,6777,6813,6849
+    .word 6885,6921,6957,6993,7028,7063,7098,7133
+    .word 7168,7203,7237,7271,7305,7339,7373,7407
+    .word 7440,7474,7507,7540,7573,7606,7639,7671
+    .word 7704,7736,7768,7800,7832,7864,7896,7927
+    .word 7958,7990,8021,8052,8083,8114,8145,8175
+    .word 8206,8236,8266,8297,8327,8357,8387,8416
+    .word 8446,8476,8505,8534,8564,8593,8598,8598
+    .word 8598,8598,8598,8598,8598,8598,8598,8598
+''', '''filt_mkt:                         | Modded-Cycles: the half-makeup table is
+                                  | gone (full makeup, at the output); its
+                                  | 256 bytes hold mc_sat
+| mc_sat(d6): soft clip of the ladder's output, in its units (full scale
+| 131072). Linear up to +-98304 (3/4), then v - (v - 98304)^2 / 131072, which
+| meets full scale with a zero slope at +-163840; bounded at +-131068 (<< 14
+| must fit). Keeps every register but d6; no flags are read after it.
+mc_sat:
+    tstl    %d6
+    bpls    ms_pos
+    negl    %d6
+    bsrs    ms_pos
+    negl    %d6
+    rts
+ms_pos:
+    cmpil   #98304,%d6
+    bles    ms_ret
+    cmpil   #163840,%d6
+    bges    ms_top
+    movel   %d0,%sp@-
+    movel   %d6,%d0
+    subil   #98304,%d0
+    asrl    #1,%d0
+    mulsl   %d0,%d0               | ((v - T) / 2)^2 <= 2^30
+    asrl    #8,%d0
+    asrl    #7,%d0
+    subl    %d0,%d6
+    movel   %sp@+,%d0
+    cmpil   #131068,%d6
+    bles    ms_ret
+ms_top:
+    movel   #131068,%d6
+ms_ret:
+    rts
+    .space  256 - (. - filt_mkt)
+''', "filtre : mc_sat, l'écrêtage doux, à la place de la table filt_mkt (même taille)"),
+)
 MC_PATCHES = (
+    ("src/model_tg.s",
+     'wp_stock:\n    jmp     0x4001d818\n',
+     f'wp_stock:\n    jmp     {popup_view.MASK:#x}            | Modded-Cycles: popup_view (tools/popup_view.py)\n',
+     "fenêtre de valeur : Attack, Filtre et Résonance passent par tools/popup_view.py (grand nombre, points, courbe), "
+     "même taille, notes/82"),
+    ("src/model_tg.s",
+     'dh_atk:\n    movel   #sampler_descr_atk,%d0\n    rts\n',
+     f'dh_atk:\n    jmp     {sampler_mode_filter.DESCR:#x}            | Modded-Cycles: smf_descr (tools/sampler_mode_filter.py)\n    nop\n',
+     "descripteur Sampler sous MACHINES : Filtre et Résonance en modes Granular/Stretch/Pluck/Wave (notes/83)"),
+    ("src/model_tg.s",
+     'dbh_atk:\n    movel   #sampler_descr_atk,%d0\n    rts\n',
+     f'dbh_atk:\n    jmp     {sampler_mode_filter.DESCR:#x}            | Modded-Cycles: smf_descr (tools/sampler_mode_filter.py)\n    nop\n',
+     "descripteur Sampler B sous MACHINES : Filtre et Résonance en modes Granular/Stretch/Pluck/Wave (notes/83)"),
+    ("src/model_tg.s",
+     '    cmpil   #6,%d1\n    beqs    gc_store              | the Sampler: off\n',
+     f'    jmp     {sampler_mode_filter.GFLT:#x}            | Modded-Cycles: smf_gflt (tools/sampler_mode_filter.py)\n    nop\n',
+     "filtre de piste Sampler : actif uniquement en modes Granular/Stretch/Pluck/Wave (notes/83)"),
+    ("src/model_tg.s",
+     '    jmp     0x4005a6ac            | none\n',
+     f'    jmp     {sampler_mode_filter.COM:#x}            | Modded-Cycles: smf_com (tools/sampler_mode_filter.py)\n',
+     "liste DEST des LFO du Sampler : Filtre et Résonance de piste (k 24/25) en modes Granular/Stretch/Pluck/Wave, "
+     "même taille (notes/83 §3)"),
+    ("src/model_tg.s",
+     '    cmpil   #6,%d0\n    beqs    rs_skip\n',
+     '    cmpil   #6,%d0\n    nop                           | Modded-Cycles: the Sampler is restored too\n',
+     "écran des machines : revenir au Sampler d'origine sans quitter l'écran remet ses réglages, comme pour toute "
+     "machine (le retour au stock sautait le Sampler), même taille (notes/83 §4)"),
+    ("src/model_tg.s",
+     'str_greso:     .asciz "Resonance"\n',
+     'str_greso:     .asciz "Res"\n    .byte 0,0,0,0,0,0     | padding: same length as "Resonance"\n',
+     "noms : le Resonance de la piste ne tient pas sur la plaque du popup ; Res tient, et l'entree du "
+     "sampler garde son nom long (son popup est plus large)"),
+    ("src/model_tg.s",
+     '    btst    #5,%d1\n    bnew    kh_eat                | the long press: no Save pattern prompt\n    lea.l   set_held,%a1\n',
+     "    btst    #5,%d1\n    beqs    kh_mod_short          | Modded-Cycles: not the long press\n    btst    #1,%d1                | Modded-Cycles: FUNC held with SETTINGS?\n    beqs    kh_eat                | alone: still the chords' modifier\nkh_mod_short:\n    lea.l   set_held,%a1\n",
+     "keys: SETTINGS held with FUNC gives back the stock Save pattern prompt; SETTINGS alone stays the "
+     "chords' modifier (notes/81)"),
     ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
      "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
      "mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente"),
@@ -127,6 +354,104 @@ MC_PATCHES = (
     ("src/model_tg.s", VQ_OLD, VQ_NEW,
      "audio USB multipiste : une piste mutée ou au volume 0 n'est plus coupée net sur sa piste USB (voice_quiet)"),
 )
+MC_PATCHES += RES_PATCHES
+# --- l'état du Sampler sur k 26 + sound+86 (notes/86) ---
+# Le Sampler range ses modes dans UN long en sound+72, c'est-à-dire sur les mots k 26 et 27. Le lo-fi de piste prend
+# k 27 (Lo-Fi Rate) : la moitié basse de l'état passe en sound+86..+87, deux octets du son en mémoire que ni l'OS (aucun
+# accès @(86) dans son code), ni Model-TG, ni nos mods ne touchent, hors du miroir lissé de 66 o (k 0..32). Sur le
+# disque rien ne change : moitié haute en +84, basse en +86, comme le long d'avant. Au passage, le test « ce son a déjà
+# un état » du changement de machine regardait le bit 7 de l'étiquette, que seule l'ancienne (0xF) a : l'actuelle (0x7)
+# passait pour « pas d'état », et un Sampler quitté puis repris perdait ses modes. Les deux étiquettes ont 0x70.
+ST_SPLIT_PATCHES = (
+    ("src/model_tg.s",
+     '    orl     #ST_TAG,%d3\n    movel   %d3,%a2@(72)\n',
+     '    orl     #ST_TAG,%d3\n    movew   %d3,%a2@(86)          | Modded-Cycles: low half at +86 (k27 = Lo-Fi Rate)\n'
+     '    swap    %d3\n    movew   %d3,%a2@(72)          | high half (the tag) on k26\n',
+     "état du Sampler : moitié basse en sound+86, k 27 libre pour Lo-Fi Rate (state_store)"),
+    ("src/model_tg.s",
+     'st_apply_c:\n    movel   %a2@(72),%d0\n',
+     'st_apply_c:\n    movew   %a2@(72),%d0          | Modded-Cycles: the state is k26 (high) + sound+86 (low)\n'
+     '    swap    %d0\n    movew   %a2@(86),%d0\n',
+     "état du Sampler : relu de k 26 + sound+86 (st_apply_c)"),
+    ("src/model_tg.s",
+     '    movel   %a2@(72),%d3\n    movel   %d3,%d0\n    andil   #ST_TAGMASK,%d0\n',
+     '    movew   %a2@(72),%d3          | Modded-Cycles: k26 (high) + sound+86 (low)\n    swap    %d3\n'
+     '    movew   %a2@(86),%d3\n    movel   %d3,%d0\n    andil   #ST_TAGMASK,%d0\n',
+     "état du Sampler : relu de k 26 + sound+86 (st_apply)"),
+    ("src/model_tg.s",
+     '    movel   %a1@(72),%d1          | the Sample machine\'s packed state (k=26/27,\n'
+     '    movel   %d1,%a0@(84)          | see state_store) -> slots 28 and 29\n',
+     '    movew   %a1@(72),%d1          | the Sample machine\'s packed state: k26 (high)\n'
+     '    movew   %d1,%a0@(84)          | -> slot 28, sound+86 (low) -> slot 29 (Modded-Cycles)\n'
+     '    movew   %a1@(86),%d1\n    movew   %d1,%a0@(86)\n',
+     "état du Sampler : enregistré de k 26 + sound+86 dans les mêmes cases 28/29 (snd_save_post)"),
+    ("src/model_tg.s",
+     '    movel   %a0@(84),%d1          | packed state; zero in older records, which\n'
+     '    movel   %d1,%a1@(72)          | then fall back to the name token\n',
+     '    movew   %a0@(84),%d1          | packed state; zero in older records, which\n'
+     '    movew   %d1,%a1@(72)          | then fall back to the name token. High half\n'
+     '    movew   %a0@(86),%d1          | on k26, low half at sound+86 (Modded-Cycles)\n'
+     '    movew   %d1,%a1@(86)\n',
+     "état du Sampler : relu dans k 26 + sound+86 (snd_load_post)"),
+    ("src/model_tg.s",
+     '    tstb    %a0@(72)\n    bmis    mch_hasst\n    movel   %d1,%sp@-\n    movel   #ST_DEFAULT,%d1\n'
+     '    movel   %d1,%a0@(72)\n    movel   %sp@+,%d1\n',
+     '    movel   %d1,%sp@-             | Modded-Cycles: a state is a tag 0x7 or 0xF,\n'
+     '    moveb   %a0@(72),%d1          | both have 0x70 (bit 7 alone missed 0x7)\n'
+     '    andil   #0x70,%d1\n    cmpil   #0x70,%d1\n    beqs    mch_hasst_r\n'
+     '    movel   #ST_DEFAULT,%d1\n    movew   %d1,%a0@(86)          | low half at +86, high on k26\n'
+     '    swap    %d1\n    movew   %d1,%a0@(72)\nmch_hasst_r:\n    movel   %sp@+,%d1\n',
+     "changement de machine : l'état existant est reconnu (étiquette 0x7 ou 0xF) et le défaut s'écrit en deux "
+     "moitiés (k 26 + sound+86) ; corrige la perte des modes d'un Sampler quitté puis repris"),
+)
+MC_PATCHES += ST_SPLIT_PATCHES
+# Son build vérifie que chaque branchement 16 bits tombe sur une étiquette, en désassemblant tout le bloc ; les tables
+# de .long dans le code sont sautées par leur étiquette (_DATA_LABELS). rtg_names (pointeurs vers les noms du retrig)
+# n'y était pas : décalée de quelques octets par ST_SPLIT_PATCHES, un pointeur 0x401b6d00 s'y lit « bltw » et le build
+# refuse. C'est une table, pas du code.
+MC_PATCHES += (
+    ("build.py",
+     "_DATA_LABELS={'st_fields','st_fields_end','st_reset','key_value_strings',\n",
+     "_DATA_LABELS={'st_fields','st_fields_end','st_reset','key_value_strings','rtg_names',\n",
+     "build : rtg_names (table de pointeurs) parmi les tables de données que la vérification des branchements saute"),
+)
+# --- lo-fi de piste (notes/86 §4, tools/track_lofi.py) ---
+# Lo-Fi Rate (k 27) et Lo-Fi Bits (k 30) : nos descripteurs 1 et 2 posés par son build.py à côté des siens ; rangés
+# dans la case 18 de l'enregistrement par la fin de snd_save_post / snd_load_post (déjà retouchée par
+# ST_SPLIT_PATCHES : ces entrées viennent après), qui saute dans notre code, même taille ; et dst_ours garde aussi
+# comme destination de LFO 1 / vélocité les k 26..32 (Rate, Bits), pas seulement 23..25.
+TL_PATCHES = (
+    ("src/model_tg.s",
+     '    movew   %a1@(86),%d1\n    movew   %d1,%a0@(86)\n    movel   %sp@,%d0\n    addql   #8,%sp\n    rts\n',
+     f'    movew   %a1@(86),%d1\n    movew   %d1,%a0@(86)\n'
+     f'    jmp     {track_lofi.SAVE:#x}            | Modded-Cycles: tl_save (tools/track_lofi.py)\n',
+     "lo-fi de piste : Rate / Bits (k 27 / 30) rangés dans la case 18 de l'enregistrement (snd_save_post)"),
+    ("src/model_tg.s",
+     '    movew   %a0@(86),%d1          | on k26, low half at sound+86 (Modded-Cycles)\n'
+     '    movew   %d1,%a1@(86)\n    movel   %sp@,%d0\n    addql   #8,%sp\n    rts\n',
+     '    movew   %a0@(86),%d1          | on k26, low half at sound+86 (Modded-Cycles)\n'
+     f'    movew   %d1,%a1@(86)\n    jmp     {track_lofi.LOAD:#x}            | Modded-Cycles: tl_load\n',
+     "lo-fi de piste : Rate / Bits (k 27 / 30) relus de la case 18 de l'enregistrement (snd_load_post)"),
+    ("src/model_tg.s",
+     '    subil   #23,%d1\n    cmpil   #2,%d1\n    blss    do_keep\n',
+     '    subil   #23,%d1\n    cmpil   #9,%d1                | Modded-Cycles: 23..32 (track lo-fi on 27, 30)\n'
+     '    blss    do_keep\n',
+     "destinations de LFO 1 / vélocité gardées à la sauvegarde : k 23..32 (Lo-Fi Rate / Bits compris), même taille"),
+    ("src/model_tg.s",
+     '    movel   %d1,%a0@(28)          | position 5: Resonance, not Contour\n    movel   #other_descr,%d0\n',
+     '    movel   %d1,%a0@(28)          | position 5: Resonance, not Contour\n'
+     f'    jsr     {track_lofi.DH:#x}            | Modded-Cycles: tl_dh, COLOR / SHAPE -> Lo-Fi Rate / Bits\n',
+     "MACHINES + COLOR / SHAPE -> Lo-Fi Rate / Bits sur les machines d'origine (dh_pass), même taille"),
+    ("src/model_tg.s",
+     '    moveq   #0x0d,%d1\n    movel   %d1,%a0@(12)          | position 1: Attack, not Amp Decay\n',
+     f'    jsr     {track_lofi.ATK:#x}            | Modded-Cycles: tl_atk, Attack + Lo-Fi Rate / Bits\n',
+     "MACHINES + COLOR / SHAPE -> Lo-Fi Rate / Bits sur le Sampler (sampler_descr_atk), même taille"),
+    ("build.py",
+     '    print(f"  param id 0x{_id:02x} -> k={_k}, trackData+{2*_k}")\n',
+     '    print(f"  param id 0x{_id:02x} -> k={_k}, trackData+{2*_k}")\n' + track_lofi.build_rows(),
+     "descripteurs 1 et 2 : Lo-Fi Rate (k 27) et Lo-Fi Bits (k 30), groupe 7, drapeaux 0x600 (notes/86 §4)"),
+)
+MC_PATCHES += TL_PATCHES
 # --- version combinée (notes/31 §4) ---
 # Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)
 # s'arrête 1 Mo plus bas, pour nos moteurs du Syntakt (gen_syntakt_engines.PAY_TG = 0x46700000). Tout ce qu'il y
@@ -146,6 +471,15 @@ ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_e
 # Symboles dont l'écoute des samples a besoin (tools/gen_sample_preview.py, notes/46), dans les deux tweaks : son code
 # appelle ces fonctions et lit ces variables de Model-TG, aux mêmes adresses dans les deux builds.
 PV_SYMBOLS = ("tok_of", "sound_obj", "ensure_loaded", "slot_hash", "pd_mode", "ld_busy", "pad_load_hook")
+# Symboles de l'état du Sampler (k 26 + sound+86), que tools/emu/test_sampler_state.py appelle (notes/86).
+SS_SYMBOLS = ("state_store", "st_apply", "st_apply_c", "st_fields", "mc_commit_hook", "mch_hasst", "restore_hook")
+# Symboles du filtre en échelle que tools/emu/test_model_tg_res.py appelle directement (notes/85) : ils n'ont pas bougé
+# avec RES_PATCHES, la preuve s'en sert aussi sur le tweak d'avant.
+FLT_SYMBOLS = ("ladder_run", "filt_coef", "filt_fbmax", "filt_mkt", "filt_mk", "filt_y1", "gflt_run", "gflt_f",
+               "gflt_q", "gflt_mk", "gflt_y1", "voice_ptr", "mc_sat")
+# Symboles dont la synchro au tempo du délai et des LFO a besoin (tools/gen_tempo_sync.py, notes/82), dans les deux
+# tweaks : SETTINGS tenu (set_held) et « un accord a servi » (mod_used, qui évite le Config Menu au relâchement).
+TS_SYMBOLS = ("set_held", "mod_used")
 
 
 def export(cycles, repo, patches=()):
@@ -215,18 +549,23 @@ def adapt_st(tw, stock, syms):
             *[f"  - {f} : {why}" for f, _, _, why in MC_PATCHES + ST_PATCHES],
             "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
+            popup_view.NOTE,
+            sampler_mode_filter.NOTE,
+            track_lofi.NOTE,
+            trig_machines.NOTE,
             "Base de la version combinée Model-TG + moteurs du Syntakt (notes/31) : ne s'installe qu'avec un tweak",
             "syntakt-tg-…, qui s'ajoute après lui et chaîne ses détours.",
         ],
         "conflicts": others,
-        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS + tuple(n for n in PV_SYMBOLS if n not in ST_SYMBOLS)},
+        "symbols": {n: f"{syms[n]:#x}" for n in ST_SYMBOLS + tuple(n for n in PV_SYMBOLS + TS_SYMBOLS + SS_SYMBOLS
+                                                                    if n not in ST_SYMBOLS)},
     })
     return out
 
 
 def adapt(tw, stock, syms):
     """Format et métadonnées de ce dépôt ; vérifie que le tweak redonne l'image exportée."""
-    missing = [n for n in PV_SYMBOLS if n not in syms]
+    missing = [n for n in PV_SYMBOLS + FLT_SYMBOLS + TS_SYMBOLS + SS_SYMBOLS if n not in syms]
     if missing:
         raise SystemExit(f"!! symboles absents du build de Model-TG : {missing}")
     patched, _ = build.apply_writes(stock, [tw])
@@ -240,12 +579,16 @@ def adapt(tw, stock, syms):
     # Envoi à l'USB à heure fixe (notes/35) : la charge de Model-TG varie beaucoup (pistes au repos, mutes, effets
     # éteints) et l'OS envoie chaque bloc à l'USB juste après l'avoir calculé. Mêmes écritures que 6ch-usbup.
     # Et la division des pistes par 2 plus courte de la boucle des voix (notes/36), comme 6ch-usbup.
-    steady = usb_steady.writes() + voice_loop.writes()
+    sampler_mode_filter.check_syms(syms)
+    track_lofi.check_syms(syms)
+    steady = (usb_steady.writes() + voice_loop.writes() + popup_view.writes(stock) + sampler_mode_filter.writes(stock)
+              + track_lofi.writes(stock) + trig_machines.writes(stock))
     taken = [(w["off"], w["off"] + len(w["new"]) // 2) for w in tw["writes"]]
     for w in steady:
         a, b = w["off"], w["off"] + len(w["new"]) // 2
         if any(a < y and x < b for x, y in taken):
-            raise SystemExit(f"!! envoi à heure fixe, boucle des voix : 0x{a + BASE:08x} déjà écrit par Model-TG")
+            raise SystemExit(f"!! envoi à heure fixe, boucle des voix, popup_view, sampler_mode_filter, track_lofi, trig_machines : 0x{a + BASE:08x} déjà écrit par "
+                             "Model-TG")
     writes = sorted(tw["writes"] + steady, key=lambda w: w["off"])
     return {
         "id": "model-tg",
@@ -262,6 +605,10 @@ def adapt(tw, stock, syms):
             "écoute d'un pas, défilement des noms). Avec les moteurs du Syntakt, le flasher prend model-tg-st (notes/31).",
             "Plus l'envoi à l'USB à heure fixe de ce dépôt (tools/usb_steady.py, notes/35), comme 6ch-usbup,",
             "et la division des pistes par 2 plus courte de la boucle des voix (tools/voice_loop.py, notes/36).",
+            popup_view.NOTE,
+            sampler_mode_filter.NOTE,
+            track_lofi.NOTE,
+            trig_machines.NOTE,
             "Généré par tools/gen_model_tg.py. Aucun octet Elektron dans le code de Model-TG.",
         ],
         "version": tw["version"],
@@ -273,7 +620,7 @@ def adapt(tw, stock, syms):
         "conflicts": others,
         "writes": writes,
         "append": tw["append"],
-        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS},
+        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS + FLT_SYMBOLS + TS_SYMBOLS + SS_SYMBOLS},
     }
 
 

@@ -75,9 +75,11 @@ MODELS = ("CSAW", "MORPH", "SAW_SQUARE", "SINE_TRIANGLE", "BUZZ", "SQUARE_SUB", 
 
 # --- la machine (comme une entrée de gs.CATALOG) -----------------------------------------------------------
 # knobs : COLOR, SHAPE, SWEEP, CONTOUR = (nom long, nom court, défaut[, min, max]) ; decay : défaut de l'Amp Decay ;
-# image : celle de TONE (l'OS n'en a que 6), dont MACRO reprend la chaîne d'ampli ; lofi : FUNC + PITCH règle FINE
-# (gs.lofi_asm, notes/55 §8)
-MACHINE = dict(name="MACRO", image=4, decay=50, lofi=True,
+# image : celle de TONE (l'OS n'en a que 6), dont MACRO reprend la chaîne d'ampli ; lofi : MACHINES + PITCH règle
+# FINE en lo-fi propre à MACRO (gs.lofi_asm, notes/55 §8) ; machine() y met alors les adresses de lofi_asm, lié avec
+# MACRO. Éteint depuis le lo-fi de piste (notes/86 §8) : FINE redevient l'accord fin de MACRO, comme sur toute machine,
+# MACHINES + PITCH le règle partout, et le lo-fi est Rate / Bits sur toutes les machines.
+MACHINE = dict(name="MACRO", image=4, decay=50, lofi=False,
                knobs=(("Timbre", "TIMB", 64), ("Model", "MODL", 0, 0, len(MODELS) - 1), ("Color", "COLR", 64),
                       ("Env Timbre", "ENVT", 0)))
 
@@ -97,6 +99,7 @@ LINK = """SECTIONS
 """
 TG_FIRST = gs.TG_FIRST
 BRAIDS_RENDER = "_ZN6braids15MacroOscillator6RenderEPKhPsj"      # MacroOscillator::Render(sync, buffer, size)
+LOFI = ("lofi_step", "lofi_fmt", "lofi_draw", "lofi_name", "lofi_knob")        # gs.lofi_asm, lié avec MACRO
 
 
 def git(repo, *args):
@@ -139,10 +142,17 @@ def compile_machine(tmp, repo, pay, bss_at=None, code_end=None):
     o = tmp / "rt.o"
     gx.run([gx.CROSS + "gcc", *CFLAGS_RT, "-c", str(SRC / "rt.c"), "-o", str(o)])
     objs.append(o)
+    # le lo-fi (gs.lofi_asm) : avec le code de MACRO, où qu'il soit, plutôt que dans les détours (STUBS..DATA,
+    # pleins avec Model-TG, les 5 moteurs, MACRO et ACID)
+    if MACHINE["lofi"]:
+        src, o = tmp / "lofi.S", tmp / "lofi.o"
+        src.write_text(gs.lofi_asm())
+        gx.run([gx.CROSS + "gcc", "-mcpu=54418", "-c", str(src), "-o", str(o)])
+        objs.append(o)
     ld, elf, out = tmp / "link.ld", tmp / "macro.elf", tmp / "macro.bin"
     ld.write_text(LINK.format(code=pay, bss=bss_at))
     gx.run([gx.CROSS + "ld", "-T", str(ld), "--gc-sections", "--no-warn-rwx-segments", "-e", "macro_update",
-            "-u", "macro_render", "-o", str(elf), *map(str, objs)])
+            "-u", "macro_render", *(f"-u{s}" for s in LOFI if MACHINE["lofi"]), "-o", str(elf), *map(str, objs)])
     secs = {}
     for line in gx.run([gx.CROSS + "objdump", "-h", str(elf)]).splitlines():
         f = line.split()
@@ -164,6 +174,14 @@ def compile_machine(tmp, repo, pay, bss_at=None, code_end=None):
     if bss[0] != bss_at:
         raise SystemExit("!! BSS")
     return blob, syms, (bss[0] + bss[1] + 3) & ~3
+
+
+def machine(syms):
+    """MACHINE avec les adresses de MACRO compilé (compile_machine) : update, render, et celles du lo-fi s'il est là."""
+    m = dict(MACHINE, update=syms["macro_update"], render=syms["macro_render"])
+    if MACHINE["lofi"]:
+        m["lofi"] = {s: syms[s] for s in LOFI}
+    return m
 
 
 def dispatch_tg_asm(syms, rnd_at, tg):
@@ -244,8 +262,9 @@ def added_machine(img, tg, machines, tmp, blobs, bss_end):
     u32 = lambda va: struct.unpack_from(">I", cur, va - BASE)[0]
     names_at, upd_at, rnd_at, map_at = gs.DATA, gs.DATA + 4 * nm, gs.DATA + 8 * nm, gs.DATA + 16 * nm
     stubs, ssyms = assemble(tmp, "det", gs.detours_asm(n, [m["image"] for m in machines],
-                                                       [76 + 5 * i for i in range(n)], tg, lofi=gs.lofi_index(machines))
+                                                       [76 + 5 * i for i in range(n)], tg, lofi=gs.lofi_of(machines))
                             + (dispatch_tg_asm(None, rnd_at, tg) if tg else ""), gs.STUBS)
+    import sys as _s; print(f'@@STUBS {gs.STUBS:#x} len {len(stubs)} DATA {gs.DATA:#x} free {gs.DATA-gs.STUBS-len(stubs)}', file=_s.stderr)
     if gs.STUBS + len(stubs) > gs.DATA:
         raise SystemExit("!! détours trop grands")
 
@@ -376,6 +395,11 @@ def added_machine(img, tg, machines, tmp, blobs, bss_end):
     if struct.unpack_from(">I", final, alg)[0] != (first - 1) << 8:
         raise SystemExit("!! max du paramètre Algorithm")
     struct.pack_into(">I", final, alg, top << 8)
+    lofi = gs.lofi_of(machines)
+    if lofi is not None:
+        ftun = gs.FTUN * g7.DSTRIDE + 0x2c
+        struct.pack_into(">I", final, ftun, lofi[1]["lofi_name"])
+        struct.pack_into(">I", final, ftun + 8, lofi[1]["lofi_name"])
     reloc = [[f"{gs.DESCN + k:#x}", orig[k:k + 4].hex(), final[k:k + 4].hex()]
              for k in range(0, len(final), 4) if final[k:k + 4] != orig[k:k + 4]]
     size = bss_end - pay
@@ -407,8 +431,7 @@ def build_tweak(img, repo, tg=None):
     with tempfile.TemporaryDirectory() as d:
         tmp = pathlib.Path(d)
         blob, syms, bss_end = compile_machine(tmp, repo, pay)
-        writes, append = added_machine(img, tg, [dict(MACHINE, update=syms["macro_update"],
-                                                      render=syms["macro_render"])], tmp, [(pay, blob)], bss_end)
+        writes, append = added_machine(img, tg, [machine(syms)], tmp, [(pay, blob)], bss_end)
     segs = [(int(a_, 16), n_) for a_, n_ in append["pack"]]
     tid = "macro-tg" if tg else "macro"
     ids = other_ids() | {"macro", "macro-tg", "model-tg"} | (set() if tg else {"model-tg-st"})

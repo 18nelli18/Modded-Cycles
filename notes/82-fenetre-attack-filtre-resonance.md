@@ -1,0 +1,111 @@
+# 82 — Fenêtre de valeur d'Attack, du Filtre et de la Résonance (Model-TG)
+
+Rapport d'un utilisateur (27/10/2026, sa propre machine) : sous MACHINES + DECAY / SWEEP / CONTOUR, Model-TG montre
+Attack, Filtre et Résonance sur toutes les machines, mais leur fenêtre de valeur n'a ni grand nombre ni courbe : un
+petit potard décalé vers le bas à la place. Les Filtre et Résonance du Sampler (One shot) sont bien dessinés. Demande :
+le même dessin pour les trois, et pour Attack la courbe de Decay retournée de gauche à droite, qui suit la valeur.
+Code : `tools/popup_view.py`, `tools/machines/popup_view/`, une entrée de `MC_PATCHES` dans `tools/gen_model_tg.py`.
+Preuve : `tools/emu/test_popup_view.py`. Adresses : VA de l'OS 1.13.
+
+## Réponse courte
+
+Les trois paramètres sont des identifiants « Error » de l'OS (0x0d, 0x0c, 0x0b) que Model-TG met dans les
+positions DECAY / SWEEP / CONTOUR quand MACHINES est tenu (`dh_pass`, `dh_atk`). Leur objet d'interface n'a pas de
+dessin. Le dessin de la fenêtre emprunte maintenant celui d'un vrai paramètre : Filtre et Résonance ceux du Sampler,
+Attack celui d'Amp Decay, courbe retournée. Le nom reste celui de Model-TG. Aucun symbole de Model-TG ne bouge.
+
+## 1. La fenêtre de valeur dans l'OS `[FAIT]`
+
+- Slot 144 de la vtable de ParameterPageView (`0x4001d818`), appelé par le rendu `0x4001e40a` en
+  (vue, écran, id, valeur, verrou, 1), après le cadre du nom ; le rendu finit par inverser le carré de gauche
+  (`0x40070dea(écran, 0, 0, 63, 63, -1)`). Model-TG le détourne (`wf_popup`) pour Start/End du Sampler et saute au
+  code d'origine par `wp_stock` sinon.
+- Objet d'interface d'un identifiant : `0x40a71754 + id * 100`. `+0x2c` non nul : vt[64] (`0x4000a66a`) dessine un
+  potard 19 × 17 en (96, 34) et rend 1, le grand nombre n'est pas écrit. `+0x5c` / `+0x60` : la courbe.
+- Amp Decay (0x18) : sprite 50 × 22 du vecteur `0x40fe401c` (15 sprites) choisi par la valeur, centré en (32, 19),
+  donc x 7..56, y 8..29 (l'écran compte y depuis le bas). Filtre du Sampler (0x49) : `0x40fe3ce0`, 7 sprites 48 × 22 ;
+  Résonance (0x4a) : `0x40fe3364`, 11 sprites 48 × 22. Grand nombre 0..127 et cinq points pour les trois.
+- 0x0b, 0x0c, 0x0d : `+0x2c` = `0x40047b6c`, `+0x5c` = 0 ; leurs bornes (`0x4010dce0 + id * 56`) vont bien de 0 à
+  0x7f00, les points se dessinent.
+
+Relevé de l'OS : agent agy (rapport `popup-envelope-re.md` du bus des agents), mesuré au banc par l'agent DSH ;
+une affirmation du rapport était fausse (bornes 0..0), corrigée par la mesure.
+
+## 2. La retouche `[FAIT en émulation]`
+
+- `MC_PATCHES` : `wp_stock: jmp 0x4001d818` devient `jmp 0x401592bc` (même taille : la chaîne des moteurs du Syntakt,
+  qui lit des adresses de Model-TG, n'est pas à régénérer).
+- `pv_popup` (`0x401592bc`, masque de sprite 48 × 22 libéré, 192 o) : 0x0c → 0x49 et 0x0b → 0x4a sur la pile, puis
+  le code d'origine ; 0x0d : la fenêtre d'Amp Decay sur une copie des six arguments, avec la vraie valeur, puis, dans
+  l'écran (`16(écran)`, colonnes de `12(écran)` mots), les colonnes 7..56 échangées deux à deux sur les bits de
+  y 8..29 (`0x00fffffc`). Retourner après coup est sûr : la fenêtre est redessinée en entier à chaque image.
+- Trames en sens inverse sans toucher au grand nombre : `0x4001d818` dessine la courbe par vt[68] (`0x4000a6b0`),
+  qui appelle le `std::function` de l'objet d'interface (`+0x54` foncteur, `+0x5c` gestionnaire, `+0x60`
+  invocateur) en (foncteur, écran, x, y, valeur), à part du formateur du nombre (vt[60]). L'invocateur d'Amp Decay,
+  `0x4004e40c`, prend la trame `(valeur >> 8) * 13 / 127` du vecteur `0x40fe401c` écrit en dur dans le code (pas de
+  champ à retourner). Le temps de l'appel, `pv_attack` met `pv_curve` dans `+0x60` d'Amp Decay (`0x40a72114`) et
+  remet l'ancien au retour ; `pv_curve` remplace la valeur par `0x7f00 - valeur` et saute à `0x4004e40c`. Valeur 0 :
+  trame 13 ; 0x7f00 : trame 0 ; le nombre affiché reste la vraie valeur. 188 o sur 192.
+- Le code et la redirection du sprite sont écrits avec Model-TG (`30-model-tg`, `30-model-tg-st`), comme
+  `usb_steady` et `voice_loop`.
+
+## 3. Preuve en émulation `[FAIT en émulation]`
+
+`tools/emu/test_popup_view.py` appelle le vrai slot 144 (donc `wf_popup` de Model-TG, puis `pv_popup`) dans un vrai
+écran de 128 × 64, polices et vecteurs de sprites construits par l'OS, valeurs 0, 0x2000, 0x4000, 0x7f00 :
+
+| Identifiant | Avant | Après |
+|---|---|---|
+| 0x0c Filtre | potard 19 × 17, pas de nombre | pixel pour pixel la fenêtre de 0x49 ; « 0 », « 32 », « 64 », « 127 » |
+| 0x0b Résonance | idem | pixel pour pixel la fenêtre de 0x4a |
+| 0x0d Attack | idem | trames d'Amp Decay 13, 9, 6, 0, retournées (x 7..56, y 8..29) ; hors de la courbe, la fenêtre d'Amp Decay pixel pour pixel, « 0 », « 32 », « 64 », « 127 » ; invocateur d'Amp Decay remis |
+
+Avec Model-TG seul, et avec model-tg-st et les cinq moteurs du Syntakt. `--png` écrit les fenêtres.
+
+## 4. À vérifier sur la machine
+
+- MACHINES + DECAY / SWEEP / CONTOUR sur une machine d'origine, du Syntakt, MACRO, ACID et le Sampler (Attack) :
+  nom, grand nombre, points, courbe qui suit le potard.
+- Que le nom (cadre de gauche) reste « Attack », « Filter », « Res ».
+- Non testé sur la machine de Maxime.
+
+Rapport d'un utilisateur (27/10/2026, sa propre machine, `fastflash.py`, OS avec Model-TG, FUNC + SETTINGS, LFO
+2/3/4, navigateur multiligne) : Attack, Filtre et Résonance ont leur grand nombre, leurs points et leur courbe sur
+les machines essayées ; l'animation d'Attack est celle voulue. Reste : la valeur enregistrée de Filtre et Résonance
+s'affiche `83.00` (avec décimales) là où le potard montre `83`.
+
+## 5. La valeur enregistrée de Filtre et Résonance `[FAIT en émulation]`
+
+Rapport de la même machine (27/10/2026) : le potard affiche « 83 » pendant qu'on tourne, mais la valeur enregistrée de
+Filtre et de Résonance s'affiche « 83.00 », avec deux décimales ; Attack est à vérifier. Le dessin du popup n'est pas
+en cause : c'est le **chemin texte de la page**, `0x4000a70e` (slot `+0x10` des vtables de ParameterPageView), qui
+formate la valeur par le champ `UI_REC +0x20`.
+
+- Pour `0x0b`, `0x0c` et `0x0d`, ce champ vaut `0x4004a440`. Cette fonction convertit le 16.16 en partie entière et
+  centièmes et imprime `%s%d.%02d` (`0x40128641`, signe vide `0x4012bc6f` ou « - » `0x401272fc`) : `0x5300` donne
+  « 83.00 », `0` donne « 0.00 » par le cas nul `0x4004a4b2` (« 0.00 », `0x40128e6f`).
+- Les vrais paramètres Sampler `0x49`/`0x4a` et Amp Decay `0x18` ont le formateur entier `0x400456c8`
+  (`valeur >> 8`, `%d` `0x4012a9ea`) : « 83 ». C'est la seule différence de texte ; les identifiants stockés par
+  `dh_pass` / `dh_atk` ne sont pas touchés.
+
+La retouche (toujours avec Model-TG, sans déplacer aucun de ses symboles) ajoute un second masque de sprite 48×22
+libéré, `0x40168a84` (192 o ; vérifié libre sur `refs/heads`, `origin/*` et `upstream/*`). Son code `pv_text` est
+appelé par `0x4004a448` (`movel 24(%sp),%d2 ; movel 28(%sp),%d3`), devenu `jmp 0x40168a84` : le premier argument est
+l'objet d'interface (`UI_REC + id*100 + 0x14`) ; pour `0x0b`/`0x0c`/`0x0d` il rend la pile d'entrée et saute au
+formateur entier `0x400456c8` avec les mêmes arguments, sinon il refait les deux chargements et reprend à
+`0x4004a450`. Le cas « valeur nulle » passe donc aussi par le formateur entier. Aucune écriture d'identifiant, aucun
+changement de taille : `30-model-tg` et `30-model-tg-st` ne gagnent que les deux masques, la redirection de leurs
+sprites et le saut du formateur.
+
+Preuve : `tools/emu/test_popup_view.py` appelle le vrai chemin `0x4000a70e` (vtable factice dont le slot `+0x18`
+accepte la valeur) sur l'OS d'origine et sur l'image Model-TG, valeurs 0, `0x5300`, `0x7f00` :
+
+| Identifiant | Avant (OS d'origine) | Après (Model-TG) | Référence |
+|---|---|---|---|
+| 0x0b Résonance | `0.00`, `83.00`, `127.00` | `0`, `83`, `127` | 0x4a : `0`, `83`, `127` |
+| 0x0c Filtre | `0.00`, `83.00`, `127.00` | `0`, `83`, `127` | 0x49 : `0`, `83`, `127` |
+| 0x0d Attack | `0.00`, `83.00`, `127.00` | `0`, `83`, `127` | 0x18 : `0`, `83`, `127` |
+
+Avec Model-TG seul, puis avec `model-tg-st,syntakt-tg-sd-cp-toy-bits-swarm` et `Syntakt_OS1.42.syx` : `TOUT OK` dans
+les deux cas. La vérification « la valeur enregistrée sort entière 0, 83, 127 » échouait sur l'ancien code, qui
+imprimait `83.00`. Reste à confirmer sur la machine de Maxime.
