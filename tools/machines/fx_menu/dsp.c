@@ -1,4 +1,8 @@
 #include "fx.h"
+
+/* Masque derive des gains courants ET cibles : conserver les rampes de sortie.
+ * Proprietaire unique IRQ audio ; aucun setter UI ni adresse native supposee. */
+u32 fx_aux_active_mask;
 extern volatile u32 fx_side,fx_side_on;
 extern u8 ch_state[];
 struct vinyl_state {s32 ring[2][2048];u32 w,filled,phase,seed; s32 delay,last[2];};
@@ -16,7 +20,7 @@ static s32 dust_sample(u32 c,u32 amount){
  u32 r=dust_rand(c),r2=dust_rand(c);s32 pulse=0;
  /* Grain fin de poussiere : environ 3..282 petits evenements/seconde. */
  if((r&65535u)<4+3*amount){s32 a=(s32)((8192u+((r>>16)&65535u))*amount>>7);pulse=(r&0x10000u)?a:-a;}
- /* Pop plus rare, petite rafale bruitÃƒÂ©e amortie plutot qu'un grave thump. */
+ /* Pop plus rare, petite rafale bruitee amortie plutot qu'un grave thump. */
  if((r2&1048575u)<1+(amount>>2))dust_pop[c]=(s32)((65536u+((r>>16)&65535u))*amount>>7);
  if(dust_pop[c]){s32 burst=(s32)(r2>>20)-2048;pulse+=(burst*(dust_pop[c]>>3))>>8;dust_pop[c]-=dust_pop[c]>>4;if(dust_pop[c]<4)dust_pop[c]=0;}
  /* Bande poussiere audible : deux poles differents, sans grave ni DC.
@@ -97,7 +101,7 @@ static void aux_pair(s32*out,const s32*ls,const s32*rs,s32 target[2][6]){
 }
 #endif
 static u32 make_aux(const u16*mix,const s32*dl,const s32*dr,u32 mode){
- s32 target[2][6];u32 nonzero=0;const s32*mid=(const s32*)0x80001858,*side=(const s32*)fx_side;const u32*on=(const u32*)fx_side_on;
+ s32 target[2][6];u32 nonzero=0,track_mask=0;const s32*mid=(const s32*)0x80001858,*side=(const s32*)fx_side;const u32*on=(const u32*)fx_side_on;
 #ifdef FX_DUST
  dust_target[0]=dust_target[1]=0;
 #endif
@@ -106,7 +110,7 @@ static u32 make_aux(const u16*mix,const s32*dl,const s32*dr,u32 mode){
   for(u32 c=0;c<2;c++){
    s32 dry=((const s32*)(c?0x40a78be8:0x40a78c08))[t];dry=(s32)((u32)dry+((u32)(c?dr:dl)[t]<<5));
    if(dry>0||(*(volatile u8*)0x404e9b53&(1u<<t)))dry=0;
-   target[c][t]=scaled(dry,a);if(target[c][t]||gain_aux[c][t])nonzero=1;
+   target[c][t]=scaled(dry,a);if(target[c][t]||gain_aux[c][t]){nonzero=1;track_mask|=1u<<t;}
 #ifdef FX_DUST
    if(mode==3||mode==4){u32 level=mix[t]>>8;if(level>127)level=127;u32 p=*(const u16*)((const u8*)mix+58+66*t)>>8;if(p>127)p=127;
     u32 weight=dry?((a*level*level)/16129u):0;weight=weight*(c?p:127-p)/127u;
@@ -123,9 +127,9 @@ static u32 make_aux(const u16*mix,const s32*dl,const s32*dr,u32 mode){
  if(nonzero){
   /* Sources mono : mixer directement le bus natif, sans384copies prealables.
    * Source side stereo : reconstruire exactement les deux bus historiques. */
-  u32 stereo=0;if(side&&on)for(u32 t=0;t<6;t++)stereo|=on[t];
+  u32 stereo=0;if(side&&on)for(u32 t=0;t<6;t++)if(track_mask&(1u<<t))stereo|=on[t];
   if(stereo){
-   for(u32 t=0;t<6;t++)for(u32 i=0;i<32;i++){u32 j=32*t+i;s32 m=mid[j],s=on[t]?side[j]:0;left[j]=s?q31((m>>11)+(s>>11)):m;right[j]=s?q31((m>>11)-(s>>11)):m;}
+   for(u32 t=0;t<6;t++)if(track_mask&(1u<<t))for(u32 i=0;i<32;i++){u32 j=32*t+i;s32 m=mid[j],s=on[t]?side[j]:0;left[j]=s?q31((m>>11)+(s>>11)):m;right[j]=s?q31((m>>11)-(s>>11)):m;}
    aux_pair(aux,left,right,target);
   }else aux_pair(aux,mid,mid,target);
  }
@@ -133,6 +137,7 @@ static u32 make_aux(const u16*mix,const s32*dl,const s32*dr,u32 mode){
  if(nonzero){sum_bus(aux,left,gain_aux[0],target[0]);sum_bus(aux+1,right,gain_aux[1],target[1]);}
 #endif
  else for(u32 i=0;i<64;i++)aux[i]=0;
+ fx_aux_active_mask=track_mask;
  return nonzero;
 }
 void fx_reverb(s32*out,const s32*in,const s16*params,const u16*mix,const s32*dl,const s32*dr){

@@ -39,6 +39,8 @@ static const struct recipe recipes[25]={
  {13,11,11,60,35}   /* Estus: transient snap */
 };
 struct phase {u32 machine,age,on;};static struct phase phase[6];
+/* Machines0..5 : PUNCH natif intact, jamais de transient supplementaire. */
+volatile u32 pp_custom_mask;
 struct saved {u16 *where,value;};
 static void change(struct saved*s,u32*n,u16*p,u32 field,s32 amount,u32 env){
  u16*at=p+field;s32 v=(s32)*at+((amount*256*(s32)env)>>16);
@@ -46,11 +48,19 @@ static void change(struct saved*s,u32*n,u16*p,u32 field,s32 amount,u32 env){
  if(v!=*at){s[*n].where=at;s[*n].value=*at;(*n)++;*at=(u16)v;}
 }
 void pp_voice_loop(s32*out,u16*frame,u32 trig,u32 release){
- struct saved saved[18];u32 count=0;
+ struct saved saved[18];u32 count=0,mask=0,remap=0;
+ for(u32 t=0;t<6;t++){
+  const u16*p=frame+7+t*33;u32 machine=p[9]>>8;
+  if(PP_REMOVE_LEGACY&&machine==21)remap|=1u<<t;
+  if(PP_UNIQUE&&machine>=6&&machine<25&&p[15]&&recipes[machine].ticks)mask|=1u<<t;
+  else phase[t].on=0;
+ }
+ pp_custom_mask=mask;
+ if(!(mask|remap)){mf_old_voice_playability(out,frame,trig,release);return;}
  for(u32 t=0;t<6;t++){
   u16*p=frame+7+t*33;u32 machine=p[9]>>8;
   if(PP_REMOVE_LEGACY&&machine==21){saved[count].where=p+9;saved[count++].value=p[9];p[9]=4<<8;machine=4;}
-  if(!PP_UNIQUE)continue;
+  if(!(mask&(1u<<t)))continue;
   struct phase*s=&phase[t];u32 on=p[15]!=0;
   if(!on||machine>=25||!recipes[machine].ticks){s->on=0;s->machine=machine;s->age=255;continue;}
   if(!s->on||s->machine!=machine||(trig&(1u<<t)))s->age=0;
