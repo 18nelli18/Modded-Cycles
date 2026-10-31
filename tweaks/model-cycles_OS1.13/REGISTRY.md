@@ -6,9 +6,9 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 284 tweaks, 31 810 écritures.
+- 284 tweaks, 31 811 écritures.
 - Masques de sprites libérables : 164 (35 960 o), dont 66 pris (20 688 o) et **98 libres (15 272 o)**.
-- Crochets sur l'OS : 110 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- Crochets sur l'OS : 111 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
 - Pointeurs réécrits : 58 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
 
@@ -81,7 +81,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x4018b9c8` | `0x400ad048` | pris (114/192 o) | tempo-sync (114 o) |
 | `0x4018bb48` | `0x400ad028` | pris (117/192 o) | tempo-sync (117 o) |
 | `0x4018cbc8` | `0x400acdce` | pris (plein) | tempo-sync (192 o) |
-| `0x4018d038` | `0x400acd92` | pris (122/192 o) | tempo-sync (122 o) |
+| `0x4018d038` | `0x400acd92` | pris (plein) | tempo-sync (192 o) |
 | `0x4018d798` | `0x400acd3a` | pris (152/192 o) | step-rec (152 o) |
 | `0x4018f80c` | `0x400ac894` | pris (128/192 o) | step-rec (128 o) |
 | `0x40190184` | `0x400ac7e0` | pris (100/192 o) | step-rec (100 o) |
@@ -567,6 +567,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4001d25e` | `4eb940016086` | jsr | masque `0x4018a788` +0x1a | arp | notes/32 |
 | `0x4001d8ae` | `280f06840000003c` | jsr | masque `0x40192a24` +0x94 `ts_face` | tempo-sync | notes/82 |
 | `0x4001d8d6` | `4eb940071a04` | jsr | masque `0x4019089c` +0x90 `ts_draw` | tempo-sync | notes/82 |
+| `0x4001d91c` | `2045e78ced8891c1` | jsr | masque `0x4018d038` +0x7a `ts_dots` | tempo-sync | notes/82 |
 | `0x4001e8da` | `202f0020226a0068` | jsr | charge utile (mémoire), 28 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x40021f56` | `2f034e944879404a8cb8…` | jsr | charge utile (image) +0x4f16 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4002249c` | `4eb940072490` | jsr | masque `0x4015c044` +0x28 `th_press` | trig-hold | notes/33 |
@@ -786,5 +787,5 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
 | lfo-plus | 30 | 0 | 12 | 4 | 7 | 7 | 0 |  | notes/56 |
-| tempo-sync | 32 | 0 | 8 | 0 | 12 | 12 | 0 |  | notes/82 |
+| tempo-sync | 33 | 0 | 9 | 0 | 12 | 12 | 0 |  | notes/82 |
 
