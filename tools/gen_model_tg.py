@@ -120,6 +120,192 @@ vq_nop:
     bnes    vq_envf               | stems are taken before the mixer: never its gains
     movel   %d2,%sp@-             | the mixer's gains for this track
 '''
+# Dans les deux tweaks (notes/85) : la résonance ne fait plus baisser le volume, sur toutes les machines (le Sampler,
+# ladder_run, et les machines d'origine, gflt_run). Le filtre en échelle à contre-réaction fb (Q12, k = fb/4096) a
+# un gain de 1/(1+k) dans sa bande passante : 0,21 à fb = 15000. Model-TG n'en compensait que la moitié, à l'entrée
+# (filt_mkt, jusqu'à 2,1x) : au-delà, x * makeup déborde 32 bits et le pic de résonance tape dans les bornes. La
+# compensation passe à la sortie et devient entière : y4 * (1 + fb/4096), exacte (gain 1 en continu quelle que soit la
+# résonance), et l'échelle elle-même tourne comme avec makeup = 1, donc tape moins dans ses bornes qu'avant. Le pic
+# de résonance (jusqu'à ~14x la bande passante) est arrondi par mc_sat, un écrêtage doux quadratique (linéaire jusqu'à
+# 0,75 de la pleine échelle, puis v - (v - 0,75)^2, qui rejoint la pleine échelle à pente nulle) au lieu de la borne
+# dure. mc_sat prend la place de la table filt_mkt, devenue inutile (256 o) : chaque retouche garde sa taille
+# (bourrage tpf hors de la boucle), aucun symbole de Model-TG ne bouge. Résonance 0 : boucles rapides inchangées
+# (filt_mk / gflt_mk valent toujours 4096) ; filtre grand ouvert sans résonance : toujours contourné.
+RES_PATCHES = (
+    ("src/model_tg.s", '''    movel   %d0,%d4               | resonance makeup: the ladder's passband
+    asrl    #7,%d4                | drops to 0.23x at full feedback, which is
+    lea.l   filt_mkt,%a0          | why resonance sounds thin. Half-compensate
+    mvzw    %a0@(0,%d4:l:2),%d4   | (to ~0.48x) - full compensation needs 4.4x
+''', '''    movel   #4096,%d4             | Modded-Cycles: the resonance makeup is
+    tpfl    #0                    | applied in full at the ladder's output
+    tpf                           | now (sv_f4l, mc_sat); filt_mk stays 1.0,
+                                  | which keeps the fast loop at Resonance 0
+''', "filtre : makeup de résonance (sp_flt_go) : filt_mk reste 1,0, la compensation passe à la sortie"),
+    ("src/model_tg.s", '''sv_flt:
+    movel   %a1@,%d6              | x = buf >> 13, then resonance makeup
+    asrl    #8,%d6
+    asrl    #5,%d6
+    mulsl   %a0@,%d6
+    asrl    %d7,%d6
+    movea.l %d6,%a2
+''', '''sv_flt:
+    movel   %a1@,%d6              | x = buf >> 13 (makeup: at the output)
+    asrl    #8,%d6
+    asrl    #5,%d6
+    movea.l %d6,%a2
+''', "filtre du Sampler : plus de makeup à l'entrée de l'échelle"),
+    ("src/model_tg.s", '''    movel   %d5,%d6               | output = y4, at the buffer's full scale
+    asrl    %d7,%d6
+    cmpil   #131068,%d6
+    bles    sv_flt_oh
+    movel   #131068,%d6
+sv_flt_oh:
+    cmpil   #-131068,%d6
+    bges    sv_flt_ol
+    movel   #-131068,%d6
+sv_flt_ol:
+    asll    #8,%d6
+    asll    #5,%d6
+    movel   %d6,%a1@+
+    movel   %d6,%a1@+
+    cmpal   %a3,%a1
+    bnew    sv_flt
+lr_st:
+''', '''    movel   %d5,%d6               | output = y4 * (1 + fb/4096): the full
+    asrl    %d7,%d6               | makeup, the passband back at 1.0 (y4 is
+    movea.l %d6,%a2               | within +-131072 and fb <= 15000: no
+    mulsl   %d1,%d6               | overflow)
+    asrl    %d7,%d6
+    addl    %a2,%d6
+    cmpil   #98304,%d6            | past 3/4 of full scale: the soft clip
+    bgts    sv_flt_oh
+    cmpil   #-98304,%d6
+    bges    sv_flt_ol
+sv_flt_oh:
+    jsr     mc_sat                | (far: jsr abs.l)
+sv_flt_ol:
+    asll    #8,%d6
+    asll    #5,%d6
+    movel   %d6,%a1@+
+    movel   %d6,%a1@+
+    cmpal   %a3,%a1
+    bnew    sv_flt
+    tpf                           | (same size as before)
+lr_st:
+''', "filtre du Sampler : makeup entier à la sortie, y4 * (1 + fb/4096), et écrêtage doux (mc_sat)"),
+    ("src/model_tg.s", '''gr2_loop:
+    movel   %a1@,%d6              | x = s >> 14, then makeup (Q12)
+    asrl    #8,%d6
+    asrl    #6,%d6
+    mulsl   %a0@,%d6
+    asrl    %d7,%d6
+    movea.l %d6,%a5
+''', '''gr2_loop:
+    movel   %a1@,%d6              | x = s >> 14 (makeup: at the output)
+    asrl    #8,%d6
+    asrl    #6,%d6
+    movea.l %d6,%a5
+''', "filtre des machines d'origine : plus de makeup à l'entrée de l'échelle"),
+    ("src/model_tg.s", '''    movel   %d5,%d6               | output = y4
+    asrl    %d7,%d6
+    cmpil   #131068,%d6
+    bles    gr2_oh
+    movel   #131068,%d6
+gr2_oh:
+    cmpil   #-131068,%d6
+    bges    gr2_ol
+    movel   #-131068,%d6
+gr2_ol:
+    asll    #8,%d6
+    asll    #6,%d6
+    movel   %d6,%a1@+
+    cmpal   %a2,%a1
+    bnew    gr2_loop
+gr2_st:
+''', '''    movel   %d5,%d6               | output = y4 * (1 + fb/4096), as sv_f4l
+    asrl    %d7,%d6
+    movea.l %d6,%a5
+    mulsl   %d1,%d6
+    asrl    %d7,%d6
+    addl    %a5,%d6
+    cmpil   #98304,%d6
+    bgts    gr2_oh
+    cmpil   #-98304,%d6
+    bges    gr2_ol
+gr2_oh:
+    bsrw    mc_sat                | (near: bsr.w, spelled out)
+gr2_ol:
+    asll    #8,%d6
+    asll    #6,%d6
+    movel   %d6,%a1@+
+    cmpal   %a2,%a1
+    bnew    gr2_loop
+    tpfw    #0                    | (same size as before)
+gr2_st:
+''', "filtre des machines d'origine : makeup entier à la sortie et écrêtage doux (mc_sat)"),
+    ("src/model_tg.s", '''    movel   %d0,%d4               | resonance makeup
+    asrl    #7,%d4
+    lea.l   filt_mkt,%a0
+    mvzw    %a0@(0,%d4:l:2),%d4
+    lea.l   gflt_mk,%a0
+''', '''    movel   #4096,%d4             | resonance makeup: at the output now
+    tpfl    #0
+    lea.l   gflt_mk,%a0
+''', "filtre des machines d'origine : gflt_mk reste 1,0 (gflt_coef)"),
+    ("src/model_tg.s", '''filt_mkt:                         | feedback (>>7) -> makeup, half compensation
+    .word 4096,4149,4201,4253,4305,4356,4407,4458
+    .word 4509,4559,4609,4659,4709,4758,4806,4855
+    .word 4903,4951,4998,5045,5092,5138,5185,5230
+    .word 5276,5321,5366,5411,5455,5499,5543,5586
+    .word 5629,5672,5715,5757,5799,5841,5883,5924
+    .word 5965,6006,6047,6087,6127,6167,6207,6246
+    .word 6286,6325,6363,6402,6440,6478,6516,6554
+    .word 6592,6629,6666,6703,6740,6777,6813,6849
+    .word 6885,6921,6957,6993,7028,7063,7098,7133
+    .word 7168,7203,7237,7271,7305,7339,7373,7407
+    .word 7440,7474,7507,7540,7573,7606,7639,7671
+    .word 7704,7736,7768,7800,7832,7864,7896,7927
+    .word 7958,7990,8021,8052,8083,8114,8145,8175
+    .word 8206,8236,8266,8297,8327,8357,8387,8416
+    .word 8446,8476,8505,8534,8564,8593,8598,8598
+    .word 8598,8598,8598,8598,8598,8598,8598,8598
+''', '''filt_mkt:                         | Modded-Cycles: the half-makeup table is
+                                  | gone (full makeup, at the output); its
+                                  | 256 bytes hold mc_sat
+| mc_sat(d6): soft clip of the ladder's output, in its units (full scale
+| 131072). Linear up to +-98304 (3/4), then v - (v - 98304)^2 / 131072, which
+| meets full scale with a zero slope at +-163840; bounded at +-131068 (<< 14
+| must fit). Keeps every register but d6; no flags are read after it.
+mc_sat:
+    tstl    %d6
+    bpls    ms_pos
+    negl    %d6
+    bsrs    ms_pos
+    negl    %d6
+    rts
+ms_pos:
+    cmpil   #98304,%d6
+    bles    ms_ret
+    cmpil   #163840,%d6
+    bges    ms_top
+    movel   %d0,%sp@-
+    movel   %d6,%d0
+    subil   #98304,%d0
+    asrl    #1,%d0
+    mulsl   %d0,%d0               | ((v - T) / 2)^2 <= 2^30
+    asrl    #8,%d0
+    asrl    #7,%d0
+    subl    %d0,%d6
+    movel   %sp@+,%d0
+    cmpil   #131068,%d6
+    bles    ms_ret
+ms_top:
+    movel   #131068,%d6
+ms_ret:
+    rts
+    .space  256 - (. - filt_mkt)
+''', "filtre : mc_sat, l'écrêtage doux, à la place de la table filt_mkt (même taille)"),
+)
 MC_PATCHES = (
     ("src/model_tg.s",
      'wp_stock:\n    jmp     0x4001d818\n',
@@ -151,6 +337,7 @@ MC_PATCHES = (
     ("src/model_tg.s", VQ_OLD, VQ_NEW,
      "audio USB multipiste : une piste mutée ou au volume 0 n'est plus coupée net sur sa piste USB (voice_quiet)"),
 )
+MC_PATCHES += RES_PATCHES
 # --- version combinée (notes/31 §4) ---
 # Une seule : sa zone d'échantillons (0x4a800000..0x4e800000, vue sans cache des 64 Mo 0x42800000..0x46800000)
 # s'arrête 1 Mo plus bas, pour nos moteurs du Syntakt (gen_syntakt_engines.PAY_TG = 0x46700000). Tout ce qu'il y
@@ -170,6 +357,10 @@ ST_SYMBOLS = ("blob_start", "reserved_end", "REGION_END", "param_table", "boot_e
 # Symboles dont l'écoute des samples a besoin (tools/gen_sample_preview.py, notes/46), dans les deux tweaks : son code
 # appelle ces fonctions et lit ces variables de Model-TG, aux mêmes adresses dans les deux builds.
 PV_SYMBOLS = ("tok_of", "sound_obj", "ensure_loaded", "slot_hash", "pd_mode", "ld_busy", "pad_load_hook")
+# Symboles du filtre en échelle que tools/emu/test_model_tg_res.py appelle directement (notes/85) : ils n'ont pas bougé
+# avec RES_PATCHES, la preuve s'en sert aussi sur le tweak d'avant.
+FLT_SYMBOLS = ("ladder_run", "filt_coef", "filt_fbmax", "filt_mkt", "filt_mk", "filt_y1", "gflt_run", "gflt_f",
+               "gflt_q", "gflt_mk", "gflt_y1", "voice_ptr", "mc_sat")
 
 
 def export(cycles, repo, patches=()):
@@ -252,7 +443,7 @@ def adapt_st(tw, stock, syms):
 
 def adapt(tw, stock, syms):
     """Format et métadonnées de ce dépôt ; vérifie que le tweak redonne l'image exportée."""
-    missing = [n for n in PV_SYMBOLS if n not in syms]
+    missing = [n for n in PV_SYMBOLS + FLT_SYMBOLS if n not in syms]
     if missing:
         raise SystemExit(f"!! symboles absents du build de Model-TG : {missing}")
     patched, _ = build.apply_writes(stock, [tw])
@@ -303,7 +494,7 @@ def adapt(tw, stock, syms):
         "conflicts": others,
         "writes": writes,
         "append": tw["append"],
-        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS},
+        "symbols": {n: f"{syms[n]:#x}" for n in PV_SYMBOLS + FLT_SYMBOLS},
     }
 
 
