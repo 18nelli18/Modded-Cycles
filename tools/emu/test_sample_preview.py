@@ -112,10 +112,11 @@ TRACK_LOCK = 0x401ada36           # octet par piste : cette note joue le sample 
 TRACK_HASH = 0x401be3a0           # sample de chaque piste ; track_slot juste après
 TRACK_SLOT = 0x401be3b8           # case jouée par chaque piste (-1 : silence)
 KIT_OK = 0x401befcc
-PL_DIRTY = 0x401b3b84             # sp_lock n'a pas trouvé le sample nommé : le préchargeur est relancé
-SP_LOCK_SHA = "724c8066261e528536b015ca2e331a5e4140bb63aecd1b6cacc093f748032a2d"   # sp_lock .. track_lock + 8
+PL_DIRTY = 0x401b3b88             # sp_lock n'a pas trouvé le sample nommé : le préchargeur est relancé
+                                  # (+4 : la retouche FUNC+SETTINGS de kh_mod, notes/81 ; avant 0x401b3b84)
+SP_LOCK_SHA = "5162a485f83d651af24481d5efdd95645f13d3709dd9e241b51288f8d942bb03"   # sp_lock .. track_lock + 8
 SP_LOCK_REFS = {"kit_ok": "b0b9401befcc", "track_slot": "41f9401be3b8", "track_hash": "41f9401be3a0",
-                "pl_dirty": "23c0401b3b84", "slot_hash": "41f9401be4a0", "CUR_SNDS": "0680800017ec",
+                "pl_dirty": "23c0401b3b88", "slot_hash": "41f9401be4a0", "CUR_SNDS": "0680800017ec",
                 "CUR_KIT": "203940a78888"}
 # --- le banc ------------------------------------------------------------------------------------------------------
 STOP = 0x40780000                 # mcengine.STOP
