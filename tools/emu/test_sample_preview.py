@@ -107,8 +107,8 @@ UIS_PTR = 0x40fe4218              # état de l'interface (live rec : octet +359,
 EV_LOOP, EV_END = 0x40058d46, 0x400591e4
 # --- Model-TG v1.1.0 : adresses absentes de « symbols », les mêmes dans les deux versions ; le code de sp_lock est
 # vérifié (empreinte SP_LOCK_SHA) dans la charge utile de chacune, avec ses références absolues à cet état.
-# Adresses de Model-TG avec ST_SPLIT_PATCHES (gen_model_tg.py, notes/86) : pl_dirty +0x14, les données d'après
-# +0x34 (avant : 0x401b3b84, 0x401be3a0, 0x401be3b8, 0x401befcc, slot_hash 0x401be4a0).
+# Adresses de Model-TG avec ST_SPLIT_PATCHES (gen_model_tg.py, notes/86) et FUNC+SETTINGS (#113) : pl_dirty +0x14
+# (dont +4 de #113), les données d'après +0x34 (sur main : 0x401b3b84, 0x401be3a0, 0x401be3b8, 0x401befcc, slot_hash 0x401be4a0).
 SP_LOCK = 0x401ad958              # le son de la note (CUR_SNDS) nomme-t-il un sample en mémoire ?
 TRACK_LOCK = 0x401ada36           # octet par piste : cette note joue le sample d'un son verrouillé
 TRACK_HASH = 0x401be3d4           # sample de chaque piste ; track_slot juste après
