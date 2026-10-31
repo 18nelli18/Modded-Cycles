@@ -1,4 +1,4 @@
-/* Modded-Cycles â€” shared page behaviour: language, version, the Model:Cycles drawings and the
+/* Modded-Cycles — shared page behaviour: language, version, the Model:Cycles drawings and the
  * small demos of the guide. Each part runs only if its elements are on the page.
  * The flasher handles its own language switch (app.js); here it only gets the version. */
 (function () {
@@ -70,7 +70,7 @@ function renderRelease() {
     el.innerHTML = "";
     if (!rel.changes.length) {
       const p = document.createElement("p");
-      p.textContent = lang() === "fr" ? "PremiÃ¨re version : rien Ã  comparer pour l'instant."
+      p.textContent = lang() === "fr" ? "Première version : rien à comparer pour l'instant."
         : "First release: nothing to compare with yet.";
       el.appendChild(p);
       return;
@@ -78,7 +78,7 @@ function renderRelease() {
     const p = document.createElement("p");
     p.textContent = rels[1]
       ? (lang() === "fr" ? "Changements depuis la " : "Changes since ") + rels[1].version
-      : (lang() === "fr" ? "DerniÃ¨res nouveautÃ©s" : "Latest changes");
+      : (lang() === "fr" ? "Dernières nouveautés" : "Latest changes");
     const ul = document.createElement("ul");
     rel.changes.forEach((c) => {
       const li = document.createElement("li");
@@ -101,17 +101,6 @@ const devices = $$("[data-device]").map((host) => {
   const dev = D.render(host, { seq: host.dataset.device === "seq", lit: split(host.dataset.lit), lcd: host.dataset.lcd });
   if (host.dataset.scenes) dev.scenes(host.dataset.scenes, +host.dataset.ms || 1100);
   return dev;
-});
-
-// home: hovering a mod lights the controls it touches and changes the screen
-const bench = devices[0];
-$$("[data-hl]").forEach((a) => {
-  const on = () => { if (bench) { bench.light(split(a.dataset.hl)); bench.show(a.dataset.capture ? "capture:" + a.dataset.capture : (document.querySelector("[data-device]").dataset.lcd || a.dataset.lcd)); } };
-  const off = () => { if (bench) { bench.light([]); bench.show(document.querySelector("[data-device]").dataset.lcd || "logo"); } };
-  a.addEventListener("mouseenter", on);
-  a.addEventListener("focus", on);
-  a.addEventListener("mouseleave", off);
-  a.addEventListener("blur", off);
 });
 
 // ---------------------------------------------------------------------------
@@ -244,8 +233,8 @@ $$("[data-engines]").forEach((box) => {
 });
 
 // ---------------------------------------------------------------------------
-// Guide: CPU time of one audio block, measured on the hardware (notes/31 Â§7, notes/36):
-// mix, effects and the rest â‰ˆ 40 %, an original voice â‰ˆ 6 %, a Syntakt voice â‰ˆ 7 %. The governor stops dying
+// Guide: CPU time of one audio block, measured on the hardware (notes/31 §7, notes/36):
+// mix, effects and the rest ≈ 40 %, an original voice ≈ 6 %, a Syntakt voice ≈ 7 %. The governor stops dying
 // voices earlier above 72 % and fades a voice out when the load stays above 86 %.
 // ---------------------------------------------------------------------------
 $$("[data-load]").forEach((box) => {
