@@ -117,6 +117,7 @@ retrig page, menus) are listed with that page as context.
 | **SETTINGS** tapped | Opens its usual menu, with one more line at the end: **Mods** (a puzzle piece) | Mod Settings | Stock menu, extended |
 | **SETTINGS** held | No longer brings up the pattern save prompt; it is Model-TG's modifier key | Model-TG | Stock, changed (Model-TG's guide and this project's guide) |
 | **SETTINGS** + **BACK** | Turns the master effects off from anywhere (*Master FX off*) | Model-TG | Anywhere |
+| **SETTINGS** + **DELAY TIME** or **LFO SPEED** (turn) | Right: the value becomes a note value that follows the tempo (the nearest one: 1/128 .. 2 BAR for the delay, 1/128 .. 16 BAR per LFO cycle, the retrig's straight, triplet and dotted values; a minus sign plays the LFO backwards). Left: back to the usual values. In note values the knob alone steps from one to the next; saved with the pattern. A delay over 8 s is cut and shows ">" | Delay and LFO in note values (experimental, notes/82) | Parameter page knob 15 (DELAY TIME), knob 10 and LFO pages 1–4 (SPD); MULT does not count in note values; p-locks keep usual values |
 | **SETTINGS** + **MACHINES** | Playback mode menu (One shot, Loop, Slice, Granular, Stretch, Pluck, Wave) | Model-TG Sampler | Sampler track |
 | **SETTINGS** + **PUNCH** | Options of the current playback mode | Model-TG Sampler | Sampler track |
 | **SETTINGS** + **REC** | Resample menu | Model-TG | Anywhere; the take goes onto the track you opened it on |
