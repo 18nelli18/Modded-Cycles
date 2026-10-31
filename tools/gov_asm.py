@@ -178,8 +178,10 @@ def add_to(tweak, tg_syms=None):
     for src in sorted(PIECES, key=lambda s_: -sizes[s_]):
         size, al = sizes[src], ALIGN.get(src, 2)
         spot = next((f for f in free if f[3] - (-f[0] % al) >= size), None)
-        if spot is None:
-            raise SystemExit(f"!! régulateur : pas de place pour {src} ({size} o)")
+        if spot is None:                    # la place libre vient de ce que laisse le code compilé : si ce code n'est
+                                            # pas celui qu'on attend, voir le compilateur avant la disposition
+            raise SystemExit(f"!! régulateur : pas de place pour {src} ({size} o) — charge utile compilée par un autre "
+                             f"GCC ? (m68k-elf-gcc 16.2, gen_syntakt_engines.require_elf_gcc, notes/36)")
         pad = -spot[0] % al
         where_[src] = (spot[0] + pad, spot[1], spot[2] + pad)
         spot[0] += pad + size

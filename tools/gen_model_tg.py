@@ -329,6 +329,11 @@ MC_PATCHES = (
      'str_greso:     .asciz "Res"\n    .byte 0,0,0,0,0,0     | padding: same length as "Resonance"\n',
      "noms : le Resonance de la piste ne tient pas sur la plaque du popup ; Res tient, et l'entree du "
      "sampler garde son nom long (son popup est plus large)"),
+    ("src/model_tg.s",
+     '    btst    #5,%d1\n    bnew    kh_eat                | the long press: no Save pattern prompt\n    lea.l   set_held,%a1\n',
+     "    btst    #5,%d1\n    beqs    kh_mod_short          | Modded-Cycles: not the long press\n    btst    #1,%d1                | Modded-Cycles: FUNC held with SETTINGS?\n    beqs    kh_eat                | alone: still the chords' modifier\nkh_mod_short:\n    lea.l   set_held,%a1\n",
+     "keys: SETTINGS held with FUNC gives back the stock Save pattern prompt; SETTINGS alone stays the "
+     "chords' modifier (notes/81)"),
     ("src/model_tg.s", "mq_toggle:\n    movel   %sp@(8),%d0\n    cmpil   #MAX_TRK,%d0\n",
      "mq_toggle:\n    jmp     0x40013904            | Modded-Cycles: the stock toggle, at once\n    nop\n    nop\n",
      "mode mute : chaque touche de piste mute tout de suite (mq_toggle -> 0x40013904 d'origine), sans file d'attente"),

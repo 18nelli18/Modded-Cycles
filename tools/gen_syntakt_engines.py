@@ -1064,9 +1064,22 @@ def sram_sections(elf, tails):
     return [tuple(o) for o in out if o[2]]
 
 
+def require_elf_gcc():
+    """m68k-elf-gcc seulement : la passerelle est du C qui appelle l'OS, lequel rend ses pointeurs dans d0 (ABI
+    m68k-elf) ; m68k-linux-gnu-gcc (ABI SVR4) les rend dans a0, donc ses octets sont faux (DEVELOPMENT.md). Et les
+    31-* versionnés sont ceux de GCC 16.2 : le régulateur de charge (gov_asm) ne se range que dans la place libre
+    que ce code-là laisse, si bien qu'un autre compilateur échoue loin de sa cause, sur un « pas de place pour
+    gov_cut.S » (notes/36). build/regen.sh le passe déjà pour cette étape."""
+    if not gx.CROSS.startswith("m68k-elf-"):
+        raise SystemExit(f"!! moteurs : m68k-elf-gcc 16.2 requis, or M68K_CROSS={gx.CROSS!r} (autre ABI, autre code : "
+                         f"le régulateur ne se range plus). M68K_CROSS=m68k-elf- python3 tools/gen_syntakt_engines.py … "
+                         f"(voir build/regen.sh)")
+
+
 def compile_code(tmp, machines, payload_longs, meter=None, rnd_at=None, nm=0, run=None, lay=None, tg=None, segs=None):
     """run : adresse d'exécution d'une fonction du Syntakt ; lay : disposition (layout()) : zones de SRAM que le
     crochet de démarrage remplit (stub.S), adresses des états de voix."""
+    require_elf_gcc()
     defs = [f"-DST_VINIT_AT={run(0x40002544):#x}", f"-DST_RESET_AT={run(0x40003ee0):#x}",
             f"-DST_PREP_AT={run(0x4000255e):#x}"] + [f"-DST_VOICE_{i}={v:#x}" for i, v in enumerate(lay["voices"])]
     for m in machines:
