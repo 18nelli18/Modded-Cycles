@@ -75,6 +75,16 @@ F0 = 200.0                         # plancher de la fréquence de coupure d'Open
 C0, C1 = 313.8152786059267, 2394.411986817546      # CUTOFF au minimum, au maximum (mesures d'Open303)
 DECAY_MS = (200.0, 2000.0)         # DECAY : décroissance de l'enveloppe du filtre
 SLIDE_TAU = 0.0217                 # slide : 90 % de l'écart en 50 ms
+# articulation et profil Devil Fish (notes/88, Mod Settings : Slide, Tie, Accent, Decay)
+SLIDE_MS = (60, 120, 180, 240, 360)   # Slide 2..6 : temps audible du slide de la Devil Fish (60 .. 360 ms, manuel p. 4)
+SLIDE_T_TAU = 60 / 22.726             # ... = 2,64 constantes de temps (103,3 k x 0,22 µF = 22,7 ms pour 60 ms, p. 16)
+DECAY_DF_MS = (30.0, 3000.0)          # Decay DF : décroissance du MEG, plus large que celle de la 303
+ACC_CHARGE_TAU = 0.147                # accent sweep : C13 (1 µF) chargée par 47 k + 100 k (303-unique, « Accent Sweep »)
+ACC_DISCHARGE_TAU = 0.100             # ... et vidée par 100 k : elle garde de la charge d'un accent au suivant
+ACC_DIRECT = 100 / 147                # potard au minimum : 0,68 du MEG arrive tout droit (moins la charge)
+ACC_OCT = (1.0, 2.0, 3.0)             # Accent LOW, MID, HIGH : montée de la coupure pour un MEG plein, octaves
+ACC_VEL = 110                         # une note est accentuée à partir de ce gain de vélocité (0..127) : au-dessus
+                                      # des 100 par défaut de l'OS
 DUTY = (1 - 4.37 / 70.0) / 2       # SQUARE303 = -tanh(70 x scie + 4,37) : haut sur 46,9 % du cycle
 # niveau de sortie : 1,0 du modèle (sortie du filtre d'Open303 pour une scie de +-0,125) = 4 x pleine échelle, avant
 # la saturation. Réglages résonants (~0,1 du modèle) : ~0,4 de la pleine échelle (notes/54).
@@ -130,6 +140,13 @@ def tables():
         "ACID_INC": [int(round(2 ** 32 * 440 * 2 ** ((n - 69) / 12) / FS)) for n in range(129)],
         "ACID_RES": lut(lambda x: q31((1 - math.exp(-3 * x)) / (1 - math.exp(-3)))),
         "ACID_DEC": lut(lambda x: q31(math.exp(-BLK / (FS * DECAY_MS[0] / 1000 * (DECAY_MS[1] / DECAY_MS[0]) ** x)))),
+        "ACID_DEC_DF": lut(lambda x: q31(math.exp(-BLK / (FS * DECAY_DF_MS[0] / 1000
+                                                         * (DECAY_DF_MS[1] / DECAY_DF_MS[0]) ** x)))),
+        # Slide : 0 = 303 (Open303), 1 = OFF (la hauteur saute), puis SLIDE_MS
+        "ACID_SLIDE_T": [q31(1 - math.exp(-BLK / (FS * SLIDE_TAU))), 0x7fffffff]
+                        + [q31(1 - math.exp(-BLK * SLIDE_T_TAU / (FS * ms / 1000))) for ms in SLIDE_MS],
+        # Accent : 0 = aucun, puis ACC_OCT (1/16 d'octave << 16 = 2^20 par octave)
+        "ACID_ACC_T": [0] + [int(round(o * 2 ** 20)) for o in ACC_OCT],
         "ACID_ENVLO": lut(lambda e: int(round((3.773996325111173 * e + 0.736965594166206) * 2 ** 20))),
         "ACID_ENVHI": lut(lambda e: int(round((4.194548788411135 * e + 0.864344900642434) * 2 ** 20))),
         # saturation : u = x x m (Q28, 1,0 = le seuil), passe-bas (Q31), niveau x 0,75 (z x 8 x niveau, compté
@@ -146,6 +163,10 @@ def tables():
         "ACID_K17": q31(128 / (17 * 8)),
         "ACID_AMP_ENV": q31(0.45 / 8 * OUT_GAIN), "ACID_AMP_ONE": q31(1 / 8 * OUT_GAIN),
         "ACID_SLIDE_A": q31(1 - math.exp(-BLK / (FS * SLIDE_TAU))),
+        "ACID_ACC_CHG": q31(1 - math.exp(-BLK / (FS * ACC_CHARGE_TAU))),
+        "ACID_ACC_DIS": q31(1 - math.exp(-BLK / (FS * ACC_DISCHARGE_TAU))),
+        "ACID_ACC_DIRECT": q31(ACC_DIRECT),
+        "ACID_ACC_VEL": ACC_VEL,
         "ACID_DUTY": int(round(DUTY * 2 ** 32)),
         "ACID_SAT": 2 ** 29 // 3,                      # 2/3 en Q28 : le haut de la courbe
     }

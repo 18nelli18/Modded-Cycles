@@ -11,7 +11,14 @@
  * mode is set up (usb_boot, mods_hooks.S), or when the setting changes, with the USB stopped as for a change of USB
  * mode (0x40004e04). The bytes they replace are kept first and put back for 2CH. In 2CH nothing of this code runs
  * after start-up: the driver is the OS's own, byte for byte.
+ *
+ * ACID (notes/88): a line ACID opens a page of its own (a MenuView pushed by the Mod Settings page, as the Config
+ * Menu pushes Mod Settings) with four lines, Slide, Tie, Accent and Decay, settings 1..4 of the record, read by the
+ * ACID machine at each trig (tools/machines/acid/acid.c). LEVEL/DATA pressed steps to the next value; 0, the
+ * default, is the machine as before.
  */
+
+
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef int s32;
@@ -56,7 +63,7 @@ void cache_sync(void);
 #define REC     ((volatile u8 *)0x404e9b80)
 #define MAGIC   0x4d4f4453                    /* "MODS" */
 enum { R_VER = 4, R_SET = 5, R_N = 10, R_CHK = 15, VERSION = 1 };
-enum { S_USB6 = 0 };
+enum { S_USB6 = 0, S_ACID = 1 };
 
 static u8 rec_sum(void)
 {
@@ -164,6 +171,90 @@ static void usb6_set(u32 on)
 	USB_RESTART();
 }
 
+/* --- ACID (notes/88) --- */
+struct acid_row {
+	const char *name;
+	u32 k, n;                                 /* setting, number of values */
+	const char *const *val;
+};
+
+static const char *const V_SLIDE[] = { "303", "OFF", "60", "120", "180", "240", "360" };
+static const char *const V_LEGATO[] = { "ON", "OFF" };
+static const char *const V_ACCENT[] = { "OFF", "LOW", "MID", "HIGH" };
+static const char *const V_DECAY[] = { "303", "DF" };
+static const struct acid_row ACID_ROWS[4] = {
+	{ "Slide", S_ACID + 0, 7, V_SLIDE },
+	{ "Tie", S_ACID + 1, 2, V_LEGATO },
+	{ "Accent", S_ACID + 2, 4, V_ACCENT },
+	{ "Decay", S_ACID + 3, 2, V_DECAY },
+};
+static u8 *acid_page;                         /* the ACID page, for the redraw */
+static u32 acid_h[2];                         /* its shared pointer, child of the Mod Settings page */
+
+static u32 acid_value(const struct acid_row *r)
+{
+	u32 x = mods_get(r->k);
+
+	return x < r->n ? x : 0;
+}
+
+/* Lines ACID …: LEVEL/DATA pressed steps to the next value, the last one back to the first. */
+void acid_press(void **st)
+{
+	const struct acid_row *r = *(const struct acid_row **)*st;
+	u32 x = acid_value(r) + 1;
+
+	mods_put(r->k, x < r->n ? x : 0);
+	VIEW_REDRAW(acid_page + 56);
+}
+
+void acid_draw(void **st, u32 a, void *canvas, s32 x, s32 y)
+{
+	const struct acid_row *r = *(const struct acid_row **)*st;
+
+	(void)a;
+	VALUE_TEXT(canvas, 0x401429ec, x, y - 12, 1, 0, (const char *)0x401301e6, r->val[acid_value(r)]);
+}
+
+/* Line ACID of Mod Settings: opens the ACID page (as mods_open the Mod Settings page). */
+void acid_open(void **st)
+{
+	void *parent = *(void **)*st;
+	u32 tmp[2];
+
+	HANDLE_COPY(tmp, acid_h);
+	VIEW_PUSH(parent, tmp);
+	HANDLE_RELEASE(&tmp[1]);
+}
+
+void add_item(void *view, void *const inv[3], const u32 clo[3]);
+static u8 icon_bm[28];                        /* (menus, below) */
+
+/* The ACID page and its four lines, then the line ACID of Mod Settings (page). */
+void acid_menu_add(u8 *page)
+{
+	static void *const ACID_INV[3] = { item_label, acid_press, acid_draw };
+	static void *const OPEN_INV[3] = { item_label, acid_open, item_icon };
+	u32 title, clo[3], i;
+	u8 alloc;
+
+	acid_page = NEW(0x23c);
+	STRING(&title, "ACID", &alloc);
+	MENU_VIEW(acid_page, "AcidMenu", 1, &title, icon_bm);
+	STRING_DTOR(&title);
+	VIEW_KEYS(acid_page + 56, 3);
+	for (i = 0; i < 4; i++) {
+		clo[0] = (u32)ACID_ROWS[i].name;
+		clo[1] = clo[2] = (u32)&ACID_ROWS[i];
+		add_item(acid_page, ACID_INV, clo);
+	}
+	make_handle(acid_h, page, acid_page + 56);
+	clo[0] = (u32)"ACID";
+	clo[1] = (u32)page;
+	clo[2] = (u32)icon_bm;
+	add_item(page, OPEN_INV, clo);
+}
+
 /* --- menus --- */
 static u8 icon_bm[28];                        /* Bitmap: the icon of the Mods line and of the page */
 static u32 page_h[2];                         /* shared pointer to the page, as the Config Menu's own (+600..) */
@@ -196,7 +287,7 @@ void mods_open(void **st)
 }
 
 /* A line: label, press, display (each with a 4-byte closure), no change function (as the Config Menu's lines). */
-static void add_item(void *view, void *const inv[3], const u32 clo[3])
+void add_item(void *view, void *const inv[3], const u32 clo[3])
 {
 	fn_t f[4];
 	void *item;
@@ -241,6 +332,7 @@ void mods_menu_add(void *cfg)
 		clo[1] = (u32)page;
 		clo[2] = 0;
 		add_item(page, USB_INV, clo);
+		acid_menu_add(page);
 		make_handle(page_h, cfg, page + 56);
 	}
 	{

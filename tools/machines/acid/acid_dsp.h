@@ -9,6 +9,10 @@
  * 46,9 %, celui de SQUARE303) a bords adoucis (polyBLEP). Puis la saturation (DRIVE, la notre) : un gain, une
  * courbe cubique u - u^3 / 3 qui ecrete en douceur, un passe-bas d'un pole qui adoucit les harmoniques aigues,
  * un niveau qui compense en partie le gain. DRIVE a zero : gain 1, la courbe sert seulement de limiteur doux.
+ * Articulation et profil Devil Fish (notes/88, reglages de Mod Settings) : temps du slide, glissement avec
+ * l'enveloppe du filtre relancee (legato coupe), accent sweep (une charge que les notes accentuees remplissent et
+ * qui monte la coupure, cumulee d'un accent a l'autre), decroissance plus large. Reglages a 0 : le code d'avant,
+ * au bit pres.
  *
  * Ce fichier sert deux fois : compile pour le Cycles (acid.c, -mcpu=54418 : l'EMAC en mode fractionnaire
  * signe sature, MACSR = 0xa0 pendant la boucle des voix) et pour l'ordinateur (tools/emu/acid_ref.c) avec la
@@ -73,6 +77,7 @@ typedef struct {
 	s32 env;           /* enveloppe du filtre (MEG), Q31 */
 	s32 edec;          /* MEG : multiplicateur par bloc de la note en cours */
 	s32 z;             /* saturation : sortie du passe-bas, Q28 (1,0 = le seuil d'ecretage) */
+	s32 as;            /* accent sweep : la charge, Q31 */
 } acid_t;
 
 /* reglages d'un bloc */
@@ -81,11 +86,17 @@ typedef struct {
 	s32 tune;          /* + PITCH et FINE, demi-tons << 16, sans glissement */
 	s32 cut, res, envmod, decay, drive;    /* potards 0..32767 */
 	s32 wave;          /* 0 : scie, 1 : carre */
-	s32 trig;          /* 0 : rien ; ACID_TRIG : nouvelle note ; ACID_SLIDE : note liee (glisse, sans MEG) */
+	s32 trig;          /* 0 : rien ; ACID_TRIG : nouvelle note ; ACID_SLIDE : note liee (glisse, sans MEG) ;
+			      ACID_GLIDE : la hauteur glisse, le MEG repart */
+	s32 slide_a;       /* glissement de la hauteur par bloc, Q31 (ACID_SLIDE_A : celui d'Open303) */
+	const s32 *dec;    /* decroissance du MEG selon DECAY (ACID_DEC, ou ACID_DEC_DF) */
+	s32 acc;           /* accent sweep : montee de la coupure a pleine charge, 1/16 d'octave << 16 ; 0 : aucun */
+	s32 accent;        /* la note est accentuee : elle remplit la charge */
 } acid_in_t;
 
 #define ACID_TRIG  1
 #define ACID_SLIDE 2
+#define ACID_GLIDE 3
 #define ACID_ATK_SH 5      /* fondu d'entree d'une nouvelle note : 2^5 = 32 echantillons (~0,7 ms) */
 
 static inline s32 acid_lut17(const s32 *t, s32 x)        /* 17 points sur 0..32767, interpoles */
@@ -115,6 +126,7 @@ static inline void acid_reset(acid_t *s)
 	s->y1 = s->y2 = s->y3 = s->y4 = 0;
 	s->env = s->z = 0;
 	s->b = s->k = s->g = 0;
+	s->as = 0;
 }
 
 /* un bloc de 32 echantillons dans out (Q31, avant la chaine d'ampli de l'OS) */
@@ -126,15 +138,16 @@ static inline void acid_block(acid_t *s, const acid_in_t *in, s32 *out)
 
 	/* --- note : hauteur et MEG (Open303 : triggerNote / slideToNote) */
 	if (in->trig) {
-		if (in->trig == ACID_TRIG) {
-			s->key = in->note;
+		if (in->trig != ACID_SLIDE) {
+			if (in->trig == ACID_TRIG)
+				s->key = in->note;
 			s->env = ACID_ONE;
 		}
-		s->edec = acid_lut17(ACID_DEC, in->decay);
+		s->edec = acid_lut17(in->dec, in->decay);
 	}
-	if (in->trig != ACID_TRIG)
+	if (in->trig == 0 || in->trig == ACID_SLIDE)
 		s->env = qmul(s->env, s->edec);
-	s->key += qmul(in->note - s->key, ACID_SLIDE_A);       /* slide : 90 % en 50 ms environ */
+	s->key += qmul(in->note - s->key, in->slide_a);        /* slide : 90 % en 50 ms environ d'origine */
 	t = s->key + in->tune;
 	inc = acid_inc(t < 0 ? 0 : (t > (127 << 16) ? 127 << 16 : t));
 
@@ -145,6 +158,18 @@ static inline void acid_block(acid_t *s, const acid_in_t *in, s32 *out)
 	e += qmul(t - e, c << 16);
 	lc = ACID_LC0 + qmul(c << 16, ACID_LCSPAN)            /* log2(cutoff / 200 Hz) x 16, Q16 */
 	   + qmul(s->env - (ACID_EOFF0 + qmul(c << 16, ACID_EOFFSPAN)), e);
+	if (in->acc) {                     /* accent sweep (notes/88) : C13 chargee par une diode vers le MEG des notes
+					      accentuees, videe sinon ; la coupure recoit le melange que fait la 2e section du
+					      potard de RESONANCE : impulsion directe (0,68 MEG - charge) en bas, charge en haut */
+		e = in->accent ? s->env : 0;
+		if (e > s->as)
+			s->as += qmul(e - s->as, ACID_ACC_CHG);
+		else
+			s->as -= qmul(s->as, ACID_ACC_DIS);
+		t = qmul(e, ACID_ACC_DIRECT) - s->as;
+		t = qmul(in->res << 16, s->as) + qmul((32767 - in->res) << 16, t < 0 ? 0 : t);
+		lc += qmul(t, in->acc);
+	}
 	lc = lc < 0 ? 0 : (lc > ((ACID_NCUT - 1) << 16) - 1 ? ((ACID_NCUT - 1) << 16) - 1 : lc);
 	i = lc >> 16;
 	f = (lc & 0xffff) << 15;

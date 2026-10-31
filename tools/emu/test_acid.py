@@ -71,7 +71,23 @@ check = t7.check                    # échecs : t7.FAIL (et tms.FAIL pour l'inte
 # la passerelle (tools/machines/acid/acid.c)
 MARK = 0x41434431
 IDLE_LEVEL = 1 << 14
-TRIG, SLIDE = 1, 2
+TRIG, SLIDE, GLIDE = 1, 2, 3
+MODS = 0x404e9b80                  # enregistrement de Mod Settings (notes/72) : réglages ACID en octets 6..9 (notes/88)
+ACFG_N = (7, 2, 4, 2)              # Slide, Legato, Accent, Decay : nombre de valeurs
+
+
+def acid_cfg(rec):
+    """Réglages ACID lus par la passerelle dans les 16 o de l'enregistrement MODS (0 sans enregistrement valide)."""
+    ok = rec[:4] == b"MODS" and rec[15] == (0x5a + sum(rec[4:15])) & 0xff
+    return [rec[6 + i] if ok and rec[6 + i] < ACFG_N[i] else 0 for i in range(4)]
+
+
+def mods_record(slide=0, legato=0, accent=0, decay=0):
+    """Un enregistrement MODS valide (mods.c : MAGIC, version 1, réglages, octet de contrôle)."""
+    r = bytearray(b"MODS" + bytes(12))
+    r[4], r[6:10] = 1, bytes((slide, legato, accent, decay))
+    r[15] = (0x5a + sum(r[4:15])) & 0xff
+    return bytes(r)
 # chaîne d'ampli de l'OS, appelée par la passerelle comme par TONE : fonctions sans appel (début, fin)
 AMP = ((0x400a9252, 0x400a9302), (0x400a9430, 0x400a9498), (0x400a967a, 0x400a9756))
 TONE = 4
@@ -246,7 +262,10 @@ class Bridge:
     l'entrée de acid_update et de acid_render : les réglages du cœur, et ses écritures dans l'OS."""
 
     def __init__(self):
-        self.st = [dict(idle=0, held=0, left=0, mach=0, gain=0, ramp=0, note=0, trig=0) for _ in range(6)]
+        self.st = [dict(idle=0, held=0, left=0, mach=0, gain=0, ramp=0, note=0, trig=0, glide=0, slide_a=0, acc=0,
+                        accent=0, cfg_dec=0) for _ in range(6)]
+        t, k = ga.tables()
+        self.slide_t, self.acc_t, self.acc_vel = t["ACID_SLIDE_T"], t["ACID_ACC_T"], k["ACID_ACC_VEL"]
 
     def update(self, t, pmod, vb, pb, g):
         s = self.st[t]
@@ -254,14 +273,24 @@ class Bridge:
         p16 = lambda o: struct.unpack_from(">h", pb, o)[0]
         s8 = lambda o: struct.unpack_from(">b", pb, o)[0]
         init = v32(0x2c) != MARK
+
+        def setcfg():                    # les réglages de la note, à son trig (notes/88)
+            cfg = acid_cfg(g["mods"])
+            s.update(slide_a=self.slide_t[cfg[0]], acc=self.acc_t[cfg[2]],
+                     accent=int(bool(cfg[2] and g["gain_next"] >= self.acc_vel)), cfg_dec=cfg[3])
+            return cfg
         if init:                         # 1re note sur la machine : celle du trig qui l'a choisie
-            s.update(idle=1, held=int(v32(0x38) != 0), ramp=0, mach=s8(0x12))
+            s.update(idle=1, held=int(v32(0x38) != 0), ramp=0, mach=s8(0x12), glide=0)
+            setcfg()
         left, s["left"] = s["left"], g["left"]
         t34, slide, gain_next = v32(0x34), 0, g["gain_next"]
         if t34:
+            cfg = setcfg()
             slide = int(bool(s["held"] and not s["idle"] and (left == 0 or left > 2 * g["T"])
                              and s8(0x12) == s["mach"]))
-            s.update(held=1, ramp=0)
+            s.update(held=1, ramp=0, glide=int(bool(slide and cfg[1])))
+            if s["glide"]:
+                slide = 0
             if slide:
                 t34 = 0
                 s.update(gain=g["gain_next"], ramp=1)
@@ -274,10 +303,13 @@ class Bridge:
             s["held"] = 0
         if not t34:
             s["note"] = min(max(pmod, 0), 127 << 16)
-        s["trig"] = SLIDE if slide else TRIG if v32(0x38) else 0
+        s["trig"] = SLIDE if slide else (GLIDE if s["glide"] else TRIG) if v32(0x38) else 0
         return dict(note=s["note"], tune=(p16(0x14) << 8) + ((p16(0x22) - 0x4000) << 3) - (64 << 16),
-                    cut=knob(p16(0x16)), res=knob(p16(0x18)), envmod=knob(p16(0x1a)), decay=knob(p16(0x24)),
+                    cut=knob(p16(0x16)), res=knob(p16(0x18)), envmod=knob(p16(0x1a)),
+                    decay=0 if s["accent"] else knob(p16(0x24)),
                     drive=knob(p16(0x1c)), wave=int(p16(0x1e) != 0), trig=s["trig"], init=init,
+                    slide_a=s["slide_a"], dec_df=int(bool(s["cfg_dec"] and not s["accent"])), acc=s["acc"],
+                    accent=s["accent"],
                     v34=0 if slide else v32(0x34), gain_next=gain_next)
 
     def render(self, t, vb, rec):
@@ -295,7 +327,7 @@ class Bridge:
     @staticmethod
     def line(t, r):
         return (f"{t} {r['note']} {r['tune']} {r['cut']} {r['res']} {r['envmod']} {r['decay']} {r['drive']} "
-                f"{r['wave']} {r['trig']} {r['reset']}\n")
+                f"{r['wave']} {r['trig']} {r['slide_a']} {r['dec_df']} {r['acc']} {r['accent']} {r['reset']}\n")
 
 
 class Probe:
@@ -319,7 +351,7 @@ class Probe:
             if t not in self.tracks:
                 return
             g = dict(vel=r16(S.VEL + 2 * t), gain=r16(S.GAIN + 2 * t), gain_next=r16(S.GAIN_NEXT + 2 * t),
-                     left=r32(S.LEN_LEFT + 4 * t), T=r32(S.TEMPO))
+                     left=r32(S.LEN_LEFT + 4 * t), T=r32(S.TEMPO), mods=bytes(uc.mem_read(MODS, 16)))
             v = arg(2)
             r = self.spec.update(t, struct.unpack(">i", struct.pack(">I", arg(1)))[0], bytes(uc.mem_read(v, E.VSTRIDE)),
                                  bytes(uc.mem_read(arg(3), 0x40)), g)
@@ -355,7 +387,7 @@ class Probe:
             self.reads.append((self.block, addr - v0, bytes(uc.mem_read(addr, size))))
 
     def kinds(self, t=0):
-        return "".join("T" if r["trig"] == TRIG else "S" for r in self.recs[t] if r["trig"])
+        return "".join({TRIG: "T", SLIDE: "S", GLIDE: "G"}[r["trig"]] for r in self.recs[t] if r["trig"])
 
     def verify(self, ref):
         """[] si tout est conforme ; sinon ce qui ne l'est pas. Rend aussi la crête avant la chaîne d'ampli."""
@@ -614,11 +646,13 @@ def mixed(fw, ref_fw, label, sampler=False):
 
 
 # --- 4. son, avec le séquenceur de l'OS --------------------------------------------------------------------------
-def sequence(fw, bpm, steps, frac=0.33, kw=None, live=None, tail=40, track=0):
+def sequence(fw, bpm, steps, frac=0.33, kw=None, live=None, tail=40, track=0, mods=None):
     """La piste track sur ACID (réglages kw), jouée par le vrai séquenceur : steps = [(pas, réglages du pas)]
     (vel, length, note, word, locks {slot : valeur 8.8}), le pas 0 à frac bloc dans le bloc 2 ; live = {bloc :
     [(1 appui | 2 relâché, note, vel)]}. Rend (infos du banc par bloc, Probe, accès hors mémoire)."""
     e = fw.engine(solo=track)
+    if mods is not None:                         # l'enregistrement de Mod Settings (notes/88)
+        e.uc.mem_write(MODS, mods)
     rig = S.Rig(e, bpm, keep=fw.keep)
     for k, v in dict(KW, machine=fw.index, **(kw or {})).items():
         if k in E.SLOT:
@@ -746,6 +780,87 @@ def sequencer(fw, ref, label, quick):
                    f"avant la chaîne d'ampli, identique à la référence à chaque bloc {bad[:3]}")
 
 
+def articulation(fw, ref, label):
+    """Articulation et Devil Fish (notes/88) : les réglages ACID de Mod Settings, lus par la passerelle à chaque trig
+    ; avant la chaîne d'ampli, la sortie reste exactement la référence à chaque bloc."""
+    L, bad = S, []
+    t, k = ga.tables()
+    one = 0x7fffffff
+    tie = [(0, dict(note=36, length=L.LEN_106)), (1, dict(note=48, length=L.LEN_106)), (2, dict(note=41))]
+    acc = [(s_, dict(note=36, vel=127 if s_ < 3 else 64)) for s_ in range(4)]
+    todo = [
+        ("enregistrement absent", None, tie, None, "TSS", lambda r: r["slide_a"] == k["ACID_SLIDE_A"]),
+        ("enregistrement faux (octet de contrôle)", mods_record(slide=1)[:15] + b"\0", tie, None, "TSS",
+         lambda r: r["slide_a"] == k["ACID_SLIDE_A"] and not r["acc"] and not r["dec_df"]),
+        ("valeurs hors bornes : 303", mods_record(slide=9, legato=5, accent=7, decay=3), tie, None, "TSS",
+         lambda r: r["slide_a"] == k["ACID_SLIDE_A"] and not r["acc"] and not r["dec_df"]),
+        ("Slide OFF : lié, la hauteur saute", mods_record(slide=1), tie, None, "TSS",
+         lambda r: r["slide_a"] == one),
+        ("Slide 360 ms", mods_record(slide=6), tie, None, "TSS",
+         lambda r: r["slide_a"] == t["ACID_SLIDE_T"][6]),
+        ("Tie OFF : l'OS voit les trigs liés, la hauteur glisse, le MEG repart", mods_record(legato=1), tie,
+         None, "TGG", lambda r: True),
+        ("Tie OFF + Slide 240 ms", mods_record(slide=5, legato=1), tie, None, "TGG",
+         lambda r: r["slide_a"] == t["ACID_SLIDE_T"][5]),
+        ("Accent HIGH, vélocités 127 x 3 puis 64", mods_record(accent=3), acc, dict(shape=120, decay=60),
+         "TTTT", lambda r: r["acc"] == t["ACID_ACC_T"][3]),
+        ("Accent LOW sur un slide accentué", mods_record(accent=1),
+         [(0, dict(note=36, length=L.LEN_106, vel=64)), (1, dict(note=48, vel=127))], None, "TS",
+         lambda r: r["acc"] == t["ACID_ACC_T"][1]),
+        ("Decay DF", mods_record(decay=1), [(0, dict(note=36)), (2, dict(note=48))], dict(decay=0), "TT",
+         lambda r: r["dec_df"] == 1),
+        ("tout à la fois", mods_record(slide=3, legato=1, accent=2, decay=1), tie + [(4, dict(note=36, vel=127))],
+         dict(shape=100), "TGGT", lambda r: True),
+    ]
+    for name, mods, steps, kw, kinds, ok in todo:
+        infos, pr, unm = sequence(fw, 300, steps, kw=kw, mods=mods)
+        why, peak = pr.verify(ref)
+        trigs = [r for r in pr.recs[0] if r["trig"]]
+        extra = [] if trigs and all(ok(r) for r in trigs) else ["réglages du cœur"]
+        if name.startswith("Accent HIGH"):
+            flags = [r["accent"] for r in trigs]
+            dec = [r["decay"] for r in trigs]
+            extra += [] if flags == [1, 1, 1, 0] and dec[:3] == [0, 0, 0] and dec[3] else [f"accents {flags} {dec}"]
+        if name.startswith("Tie OFF :"):
+            extra += [] if all(r["v34"] for r in pr.recs[0] if r.get("v34_got")) else ["trig caché à l'OS"]
+        if why or unm or pr.kinds() != kinds or extra or peak < 1 << 22:
+            bad.append(name)
+            print(f"        ECART {name} : {why[:2]} trigs {pr.kinds()} (attendu {kinds}), {extra}, hors mémoire "
+                  f"{unm[:2]}")
+    check(not bad, f"{label}, articulation et Devil Fish (Mod Settings) : {len(todo)} séquences : sans "
+                   "enregistrement, faux ou hors bornes = la 303 ; Slide OFF / 360 ms, Legato OFF (trigs vus de "
+                   "l'OS, glissement), Accent (vélocité >= 110, décroissance courte), Decay DF ; avant la chaîne "
+                   f"d'ampli, identique à la référence à chaque bloc {bad[:3]}")
+    accent_sweep(ref)
+
+
+def accent_sweep(ref):
+    """Le cœur seul (la référence) : l'accent sweep. La charge de C13 (acid_t.as) monte plus haut à chaque note
+    accentuée de suite (elle ne se vide pas entre deux), redescend après une note sans accent ; la coupure en est
+    montée (sortie plus brillante) ; Accent réglé sans note accentuée = la 303 au bit près."""
+    t, k = ga.tables()
+    def lines(accents, acc=t["ACID_ACC_T"][3], res=30000):
+        out = []
+        for n, a in enumerate(accents):
+            for b in range(150):                         # 100 ms par note
+                out.append(f"0 {36 << 16} 0 6000 {res} 20000 0 0 0 {TRIG if b == 0 else 0} {k['ACID_SLIDE_A']} 0 "
+                           f"{acc} {a} {int(n == 0 and b == 0)}\n")
+        return out
+    def charge(ls):
+        r = subprocess.run([str(ref.exe)], input="".join(ls).encode(), capture_output=True, check=True,
+                           env={"ACID_REF_STATE": "1"})
+        v = np.array([int(x) for x in r.stderr.split()], np.int64)
+        return [int(v[n * 150:(n + 1) * 150].max()) for n in range(len(v) // 150)]
+    peaks = charge(lines([1, 1, 1, 0]))
+    hf = lambda o: float(np.abs(np.diff(o.astype(float), axis=1)).mean())
+    bright, plain = hf(ref.run(lines([1]))), hf(ref.run(lines([0], acc=0)))
+    same = np.array_equal(ref.run(lines([0, 0])), ref.run(lines([0, 0], acc=0)))
+    check(peaks[0] < peaks[1] < peaks[2] and peaks[3] < peaks[2] and bright > 1.05 * plain and same,
+          f"accent sweep (cœur seul) : crêtes de la charge sur 3 accents de suite puis une note sans accent "
+          f"{[round(p_ / 2 ** 31, 3) for p_ in peaks]} (cumul, puis elle se vide) ; note accentuée plus brillante "
+          f"({bright / plain:.2f} x) ; Accent réglé sans note accentuée = la 303 au bit près")
+
+
 # --- 5. coût ---------------------------------------------------------------------------------------------------
 def cost(fw, label):
     """Instructions par bloc d'une voix (boucle des voix entière, moins la même boucle sans voix), pile."""
@@ -844,6 +959,8 @@ def main():
         mixed(alone, off, "ACID seule")
         print("séquenceur")
         sequencer(alone, ref, "ACID seule", args.quick)
+        print("articulation (notes/88)")
+        articulation(alone, ref, "ACID seule")
         print("coût")
         cost(alone, "ACID seule")
 

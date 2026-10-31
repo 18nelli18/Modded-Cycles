@@ -29,6 +29,14 @@
  * 0x400a7ab8) et quand la voix s'est tue. Une voix muette (enveloppe d'ampli fermee, pas de trig) n'est pas
  * calculee.
  *
+ * Articulation et Devil Fish (notes/88) : quatre reglages de Mod Settings (notes/72), lus a chaque trig dans
+ * l'enregistrement MODS (0x404e9b80, octets 6..9 ; sans enregistrement valide, ou sans Mod Settings : tous a 0, le
+ * comportement d'avant). Slide : temps du glissement (303, OFF, 60..360 ms). Tie OFF : un trig lie
+ * n'est plus cache a l'OS (l'ampli et le MEG repartent), seule la hauteur glisse depuis la note d'avant. ACID
+ * Accent : une note dont le gain de velocite atteint ACID_ACC_VEL est accentuee : son MEG remplit l'accent sweep, et
+ * sa decroissance est la plus courte de la 303 (200 ms), comme le circuit d'accent. Decay DF : DECAY couvre
+ * 30 ms .. 3 s au lieu de 200 ms .. 2 s.
+ *
  * GOV_SKIP (avec les moteurs du Syntakt, notes/54 par. 11) : leur regulateur de charge cesse d'appeler update et
  * render d'une voix restee faible, ou eteinte par un fondu sous la surcharge, jusqu'a son prochain trig. ACID ne
  * voit alors ni la fin de la note, ni que la voix s'est tue : sans ce test, ce trig glisserait depuis une note
@@ -51,6 +59,9 @@
 #define LEN_LEFT    ((const s32 *)0x800017b4)        /* reste de la longueur du trig (0 : INF, live ou fini) */
 #define LEN_STEP    (*(const s32 *)0x40149310)       /* ce que le decompte perd a chaque bloc */
 
+#define MODS        ((const volatile unsigned char *)0x404e9b80)   /* enregistrement de Mod Settings (notes/72) */
+#define MODS_MAGIC  0x4d4f4453                       /* "MODS" */
+
 #define V32(o)      (*(s32 *)(v + (o)))
 #define P16(o)      (*(const s16 *)(p + (o)))
 
@@ -69,6 +80,8 @@ struct track {
 	s32 mach;                                        /* MACHINE (p+0x12) qui a choisi ACID sur cette voix */
 	s32 gain;                                        /* gain de velocite vise apres un slide ; ramp : en route */
 	s32 ramp;
+	s32 glide;                                       /* trig lie, Tie OFF : au bloc suivant, ACID_GLIDE */
+	s32 cfg_dec;                                     /* Decay DF */
 #ifdef GOV_SKIP
 	u32 seen;                                        /* minuteur au dernier appel */
 #endif
@@ -80,6 +93,31 @@ static inline s32 knob(s32 x)                        /* 8.8, 0..127 -> 0..32766 
 {
 	x = x < 0 ? 0 : (x > 0x7f00 ? 0x7f00 : x);
 	return x + (x >> 7);
+}
+
+/* Reglages ACID de Mod Settings (k = 1..4), bornes ; 0 sans enregistrement valide (mods.c : rec_ok, mods_get) */
+static void acid_cfg(u32 cfg[4])
+{
+	static const unsigned char n[4] = { 7, 2, 4, 2 };
+	u32 i, sum = 0x5a;
+
+	for (i = 4; i < 15; i++)
+		sum += MODS[i];
+	for (i = 0; i < 4; i++) {
+		u32 x = MODS[6 + i];
+
+		cfg[i] = *(const volatile u32 *)MODS == MODS_MAGIC && MODS[15] == (unsigned char)sum && x < n[i] ? x : 0;
+	}
+}
+
+/* Les reglages d'une note, a son trig : glissement, accent (gain de velocite de la note), table de decroissance */
+static void acid_set(struct track *tr, s32 t, u32 cfg[4])
+{
+	acid_cfg(cfg);
+	tr->in.slide_a = ACID_SLIDE_T[cfg[0]];
+	tr->in.acc = ACID_ACC_T[cfg[2]];
+	tr->in.accent = cfg[2] && VGAIN_NEXT[t] >= ACID_ACC_VEL;
+	tr->cfg_dec = cfg[3];
 }
 
 static inline u32 mag(s32 x)
@@ -98,7 +136,13 @@ void acid_update(s32 pmod, char *v, const char *p)
 		tr->held = V32(0x38) != 0;
 		tr->ramp = 0;
 		tr->mach = (s8)p[0x12];
+		tr->glide = 0;
 		V32(MARK_OFF) = MARK;
+		{
+			u32 cfg[4];
+
+			acid_set(tr, t, cfg);                /* la note de ce trig */
+		}
 	}
 #ifdef GOV_SKIP
 	{
@@ -126,9 +170,15 @@ void acid_update(s32 pmod, char *v, const char *p)
 	left = tr->left;
 	tr->left = LEN_LEFT[t];
 	if (V32(0x34)) {
+		u32 cfg[4];
+
+		acid_set(tr, t, cfg);
 		slide = tr->held && !tr->idle && (left == 0 || left > 2 * LEN_STEP) && (s8)p[0x12] == tr->mach;
 		tr->held = 1;
 		tr->ramp = 0;
+		tr->glide = slide && cfg[1];             /* Tie OFF : le trig reste a l'OS, la hauteur glisse */
+		if (tr->glide)
+			slide = 0;
 		if (slide) {
 			V32(0x34) = 0;                       /* l'OS ne voit pas ce trig */
 			tr->gain = VGAIN_NEXT[t];            /* le gain de la nouvelle velocite, rejoint pas a pas */
@@ -153,9 +203,10 @@ void acid_update(s32 pmod, char *v, const char *p)
 	tr->in.res = knob(P16(0x18));
 	tr->in.envmod = knob(P16(0x1a));
 	tr->in.drive = knob(P16(0x1c));
-	tr->in.decay = knob(P16(0x24));
+	tr->in.decay = tr->in.accent ? 0 : knob(P16(0x24));     /* note accentuee : la decroissance la plus courte */
+	tr->in.dec = tr->cfg_dec && !tr->in.accent ? ACID_DEC_DF : ACID_DEC;
 	tr->in.wave = P16(0x1e) != 0;
-	tr->in.trig = slide ? ACID_SLIDE : (V32(0x38) ? ACID_TRIG : 0);
+	tr->in.trig = slide ? ACID_SLIDE : (V32(0x38) ? (tr->glide ? ACID_GLIDE : ACID_TRIG) : 0);
 }
 
 void acid_render(s32 *out, char *v)

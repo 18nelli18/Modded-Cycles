@@ -276,7 +276,7 @@ def menu_tests(img, os_img_without, ms, png):
     shots.append(u.draw(page))
     title = u.cstr(u.u32(page + 148)), u.cstr(u.u32(page + 556))
     values = [u.cstr(a[7]) for name, a in u.trace if name == "value"]
-    check(plabels == ["USB Audio"] and values == ["2CH"] and title == ("Mod", "Settings"),
+    check(plabels == ["USB Audio", "ACID"] and values == ["2CH"] and title == ("Mod", "Settings"),
           f"page {' '.join(title)}: lines {plabels}, value {values}")
     pushed = []
     u.hooks[0x40075754] = lambda a: pushed.append((a[0], u.u32(a[1]), u.u32(a[1] + 4)))
@@ -290,6 +290,67 @@ def menu_tests(img, os_img_without, ms, png):
           f"Mods pressed: the Config Menu pushes the page's view ({page + 56:#x}); the copy of the shared pointer is "
           f"released (use count {uses})")
     return u, cfg, page, shots
+
+
+ACID_LINES = (("Slide", ("303", "OFF", "60", "120", "180", "240", "360")), ("Tie", ("ON", "OFF")),
+              ("Accent", ("OFF", "LOW", "MID", "HIGH")), ("Decay", ("303", "DF")))
+
+
+def acid_tests(u, page, ms, shots):
+    """The four ACID lines (notes/88): LEVEL/DATA pressed steps through the values and back to the first, each
+    saved in the record (setting 1..4, check byte) as USB Audio's; the display draws the value; the USB is not
+    touched."""
+    print("4a. ACID page (Mod Settings › ACID: Slide, Tie, Accent, Decay)")
+    s = {k: int(v, 16) for k, v in ms["symbols"].items()}
+    apage = u.u32(s["acid_h"]) - 56
+    alabels = [u.label(i) for i in u.items(apage)]
+    atitle = u.cstr(u.u32(apage + 148))
+    pushed = []
+    u.hooks[0x40075754] = lambda a: pushed.append((a[0], u.u32(a[1]), u.u32(a[1] + 4)))
+    ctrl = u.u32(s["acid_h"] + 4)
+    uses = u.u32(ctrl + 4)
+    st0, clo0 = u.alloc(16), u.alloc(4)
+    u.w32(clo0, page)
+    u.w32(st0, clo0)
+    u.call(s["acid_open"], st0)
+    del u.hooks[0x40075754]
+    check(alabels == [n for n, _ in ACID_LINES] and atitle == "ACID" and pushed == [(page, apage + 56, ctrl)]
+          and u.u32(ctrl + 4) == uses,
+          f"page {atitle}: lines {alabels}; ACID pressed on Mod Settings pushes it ({apage + 56:#x}), the copy of "
+          f"the shared pointer released (use count {uses})")
+    log = []
+    u.hooks[0x400449b8] = lambda a: log.append("save")
+    u.hooks[0x40004d9a] = lambda a: log.append("stop")
+    u.hooks[0x40004db4] = lambda a: log.append("restart")
+    u.uc.mem_write(REC, bytes(16))
+    bad = []
+    for i, (name, vals) in enumerate(ACID_LINES):
+        st, clo = u.alloc(16), u.alloc(4)
+        u.w32(clo, s["ACID_ROWS"] + 16 * i)
+        u.w32(st, clo)
+        seen = []
+        for _ in range(len(vals) + 1):
+            u.trace.clear()
+            u.watch = {0x40071c10: "value"}
+            u.call(s["acid_draw"], st, 0, CANVAS, 64, 40)
+            seen.append(u.cstr([a for nm, a in u.trace if nm == "value"][0][7]))
+            log.clear()
+            u.call(s["acid_press"], st)
+            rec = bytes(u.uc.mem_read(REC, 16))
+            ok = rec[:4] == b"MODS" and rec[15] == (0x5a + sum(rec[4:15])) & 0xff and log == ["save"]
+            if not ok:
+                bad.append(f"{name}: record {rec.hex()}, {log}")
+        rec = bytes(u.uc.mem_read(REC, 16))
+        if seen != list(vals) + [vals[0]] or rec[6 + i] != 1 % len(vals):
+            bad.append(f"{name}: {seen}, setting {rec[6 + i]}")
+    u.move(page, 1)
+    shots.append(u.draw(page))
+    u.move(page, -1)
+    shots.append(u.draw(apage))
+    check(not bad and not u.bad, f"ACID lines: each press steps to the next value and back to the first "
+                                 f"({', '.join(f'{n} {len(v)}' for n, v in ACID_LINES)}), saved in the record with its "
+                                 f"check byte, USB untouched {bad[:2]}")
+    u.uc.mem_write(REC, bytes(16))
 
 
 def switch_tests(u, page, ms, sites, n, shots):
@@ -429,6 +490,7 @@ def main():
     writes_tests(stock, os_sec, six_sec, ms, six, sites)
     boot_tests(img, ms, sites, n)
     u, cfg, page, shots = menu_tests(img, img_without, ms, args.png)
+    acid_tests(u, page, ms, shots)
     after, back = switch_tests(u, page, ms, sites, n, shots)
     settings_tests(img, ms)
     stream_tests(stock, ms, after, back, args.seconds)

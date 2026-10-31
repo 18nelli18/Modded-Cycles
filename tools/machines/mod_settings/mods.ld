@@ -11,8 +11,23 @@ SECTIONS
   .cave_b 0x4016b9e8 : {
     *(.text.usb6_apply) *(.text.copy) *(.text.usb_draw) *(.rodata.usb_draw*)
   }
+  .cave_i 0x40170ad8 : {                              /* 46x31 masks (184 bytes): the ACID lines, notes/88 */
+    *(.text.acid_press) *(.text.acid_draw)
+  }
+  .cave_j 0x40171bc8 : {
+    *(.rodata.ACID_ROWS) *(.rodata.V_*) *(.rodata.ACID_INV*) *(.rodata.OPEN_INV*)
+  }
+  .cave_l 0x40167c50 : {                              /* the ACID page (a 35x35 mask, 280 bytes) */
+    *(.text.acid_menu_add)
+  }
+  .cave_m 0x40184988 : {
+    *(.text.acid_open) . = ALIGN(4); *(.bss.acid_h) *(.bss.acid_page)
+  }
+  .cave_k 0x401728f8 : {                              /* the strings (m68k-elf-gcc: one .rodata) */
+    *(.rodata) *(.rodata.str1.1) *(.rodata.mods_menu_add*)
+  }
   .cave_c 0x40171f30 : {
-    *(.text.mods_menu_add) . = ALIGN(4); *(.rodata.MODS_INV*) *(.rodata.USB_INV*) *(.rodata.mods_menu_add*)
+    *(.text.mods_menu_add) . = ALIGN(4); *(.rodata.MODS_INV*) *(.rodata.USB_INV*)
   }
   .cave_d 0x40172608 : {
     *(.text.add_item) *(.text.mods_open) *(.rodata.*str*)
