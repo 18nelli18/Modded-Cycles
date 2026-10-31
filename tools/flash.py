@@ -62,6 +62,12 @@ def verify(raw, path):
     print(f"  messages     : {len(msgs):,}")
     print(f"  fabricant    : Elektron (00 20 3c)")
     print(f"  produit      : 0x{dev:02x} ({name})")
+    # un octet >= 0x80 entre F0 et F7 n'est pas du MIDI : le bootstrap perd le fil (bloqué sur RECEIVING...)
+    bad = [n for n, m in enumerate(msgs) if any(b & 0x80 for b in m[1:-1])]
+    if bad:
+        raise SystemExit(f"!! {len(bad)} message(s) SysEx invalide(s), à partir du n° {bad[0]} (octet >= 0x80 : "
+                         "numéro de séquence débordé au-delà de ~16 140 paquets)\n"
+                         f"   répare le fichier : python3 tools/rewrap_syx.py {path}")
     # vérification profonde via mtlib : chaque checksum de paquet + structure
     try:
         from mtlib.syx import unwrap

@@ -51,6 +51,13 @@ def checksum(msg, V, C0):
     return (C0 - sum(msg[i] ^ m[i] for i in range(8, 126))) & 0x7F
 
 
+def device_checksum(msg, dev):
+    """Packet checksum as the receivers compute it (bootstrap 0x80003622, OS 0x40081cda): bytes 7..125,
+    ((k + dev) ^ byte), plus dev, 7 bits. Equal to checksum() while byte 7 (top of the 21-bit sequence number)
+    is 0; only this one stays right past sequence 16383."""
+    return (dev + sum(((k + dev) & 0xFF) ^ msg[7 + k] for k in range(119))) & 0x7F
+
+
 def _split(raw):
     msgs, i = [], 0
     while True:
@@ -94,7 +101,7 @@ def unwrap(raw):
     for n, m in enumerate(data):
         if len(m) != MSG_LEN:
             raise ValueError('message %d: length %d' % (n, len(m)))
-        if m[CS_OFF] != checksum(m, V, C0):
+        if m[CS_OFF] != device_checksum(m, dev):
             raise ValueError('message %d: checksum mismatch' % n)
         body += unpack7(m[PAYLOAD_OFF:PAYLOAD_END])
     return bytes(body), dict(product=prod, name=name, start_seq=start, count=count)
@@ -111,11 +118,30 @@ def wrap(body, product, start_seq=START_SEQ):
     out += pre + b'\x7f\x01' + bytes((dev,)) + _p21(start_seq) + _p21(count) + b'\xf7'
     for n in range(count):
         seq = start_seq + n
-        m = bytearray(pre + b'\x7e\x00' + bytes((seq >> 7, seq & 0x7F)))
+        # 21-bit sequence number, like the 7F 01 / 7F 02 markers (read that way by the bootstrap at 0x8000355c
+        # and the OS at 0x40081c5c). An unmasked `seq >> 7` put 0x80 inside the SysEx past seq 16383.
+        m = bytearray(pre + b'\x7e' + _p21(seq))
         m += pack7(body[n * BYTES_PER_MSG:(n + 1) * BYTES_PER_MSG])
         m.append(0)
         m.append(0xF7)
-        m[CS_OFF] = checksum(m, V, C0)
+        m[CS_OFF] = device_checksum(m, dev)
         out += m
     out += pre + b'\x7f\x02' + bytes((dev,)) + _p21(start_seq) + _p21(count) + b'\xf7'
     return bytes(out)
+
+
+def invalid_messages(raw):
+    """Indexes of messages holding a data byte >= 0x80 between F0 and F7 (invalid SysEx)."""
+    return [n for n, m in enumerate(_split(raw)) if any(b & 0x80 for b in m[1:-1])]
+
+
+def rewrap(raw):
+    """Same stream, product and start sequence through wrap(): repairs a file whose sequence number overflowed
+    (published Supermodel images above ~16,140 packets). Container and MAIN OS are unchanged."""
+    if not invalid_messages(raw):
+        return bytes(raw)
+    body, info = unwrap(raw)
+    out = wrap(body, info['product'], info['start_seq'])
+    if invalid_messages(out) or unwrap(out)[0] != body:
+        raise ValueError('rewrap: re-read differs')
+    return out

@@ -152,6 +152,14 @@ function msgChecksum(msg, V, C0) {
   for (let i = 8; i < 126; i++) acc += msg[i] ^ ((V - i) & 0x3f);
   return (C0 - acc) & 0x7f;
 }
+/* Checksum d'un paquet de donnees tel que le recalculent les recepteurs (bootstrap 0x80003622, OS 0x40081cda) :
+ * sur les 119 octets 7..125, ((k + dev) ^ octet), plus dev, sur 7 bits. Identique a msgChecksum (8..125) tant que
+ * l'octet 7, haut du numero de sequence, vaut 0 ; seul celui-ci reste juste au-dela de la sequence 16 383. */
+function devChecksum(msg, dev) {
+  let acc = dev;
+  for (let k = 0; k < 119; k++) acc += ((k + dev) & 0xff) ^ msg[7 + k];
+  return acc & 0x7f;
+}
 function splitRaw(raw) {
   const msgs = [];
   let i = 0;
@@ -185,7 +193,7 @@ function unwrap(raw) {
   for (let n = 0; n < data.length; n++) {
     const m = data[n];
     if (m.length !== MSG_LEN) throw new Error(`message ${n} : longueur ${m.length}`);
-    if (m[CS_OFF] !== msgChecksum(m, V, C0)) throw new Error(`message ${n} : checksum invalide`);
+    if (m[CS_OFF] !== devChecksum(m, dev)) throw new Error(`message ${n} : checksum invalide`);
     const dec = unpack7(m.subarray(PAYLOAD_OFF, PAYLOAD_END));
     for (const x of dec) body.push(x);
   }
@@ -202,14 +210,35 @@ function wrap(body, product, startSeq = START_SEQ) {
   for (let n = 0; n < count; n++) {
     const seq = startSeq + n;
     const m = new Uint8Array(MSG_LEN);
-    m.set(concat(pre, Uint8Array.of(0x7e, 0x00, seq >> 7, seq & 0x7f)), 0); // seq>>7 non masque (comme mtlib)
+    // Numero de sequence sur 21 bits (3 octets de 7 bits), comme les marqueurs 7F 01 / 7F 02 : le bootstrap
+    // (0x8000355c) et l'OS (0x40081c5c) le lisent ainsi. Au-dela de 16 383 (Supermodel 2.62+, ~16 140 paquets
+    // depuis la sequence 242), l'ancien `seq >> 7` non masque ecrivait 0x80 dans le SysEx.
+    m.set(concat(pre, Uint8Array.of(0x7e), p21(seq)), 0);
     m.set(pack7(body.subarray(n * BYTES_PER_MSG, (n + 1) * BYTES_PER_MSG)), PAYLOAD_OFF);
     m[MSG_LEN - 1] = 0xf7;
-    m[CS_OFF] = msgChecksum(m, V, C0);
+    m[CS_OFF] = devChecksum(m, dev);
     chunks.push(m);
   }
   chunks.push(concat(pre, Uint8Array.of(0x7f, 0x02, dev), p21(startSeq), p21(count), Uint8Array.of(0xf7)));
   return concat(...chunks);
+}
+
+/* Octets de donnees >= 0x80 entre F0 et F7 : un SysEx invalide (Web MIDI le refuse, le bootstrap perd le fil).
+ * Renvoie la liste des index de messages fautifs (vide si le fichier est sain). */
+function invalidMessages(raw) {
+  const bad = [];
+  splitRaw(raw).forEach((m, n) => { for (let i = 1; i < m.length - 1; i++) if (m[i] & 0x80) { bad.push(n); break; } });
+  return bad;
+}
+
+/* Meme flux, meme produit, meme sequence de depart, reemballe par wrap() : repare le transport d'un .syx
+ * dont le numero de sequence a deborde (images publiees de plus de ~16 140 paquets). Conteneur et MAIN OS inchanges. */
+function rewrap(raw) {
+  if (!invalidMessages(raw).length) return raw;
+  const u = unwrap(raw);
+  const out = wrap(u.stream, u.product, u.start_seq);
+  if (invalidMessages(out).length || !eq(unwrap(out).stream, u.stream)) throw new Error("reemballage : relecture differente");
+  return out;
 }
 
 // ===========================================================================
@@ -964,7 +993,7 @@ function samplesBack(cycRaw, smpRaw) {
 }
 
 // ---- Export node / navigateur ---------------------------------------------
-const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, aplibDepack, aplibRepack, aplibPack, parseContainer, findKey,
+const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, rewrap, invalidMessages, devChecksum, aplibDepack, aplibRepack, aplibPack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
               build, crossflash, cyclesForSamples, modsForSamples, samplesBack, syntaktSection, syntaktVersion, buildPayload,
               hex, fromHex, PRODUCTS, BASE };

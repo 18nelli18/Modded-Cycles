@@ -343,3 +343,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [210 - Parite stock et choix MACHINES](210-parite-stock-et-machines-confirmees.md) : PUNCH natif, masques LFO, Wizard USB et confirmation DATA ; prototype Full2.65 et preuves natives.
 
 - [211 - Comparaisons DSP EMAC et reverbes](211-comparaisons-dsp-emac-reverbes.md) : deux comparaisons Full, parite PCM, couts instructions et audit SRAM/USB/panneau.
+
+- [212 - Numero de sequence SysEx sur 21 bits](212-sequence-sysex-21-bits.md) : images de plus de ~16 140 paquets invalides (Web MIDI, RECEIVING...), encodage 21 bits, reemballage et refus avant envoi.
