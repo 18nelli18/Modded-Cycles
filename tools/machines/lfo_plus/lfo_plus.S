@@ -1,10 +1,12 @@
 /* LFO 2, 3, 4 : trois LFO de plus par piste (idée de DavidCaruso, Model-TG-VA-DR-v1 ; réécrit ici, notes/56 §3).
  *
- * Sur la page LFO, chaque appui sur [LFO] passe de LFO 1 à LFO 2, 3, 4 (un grand chiffre dans le cadre de gauche),
- * le 5e ferme la page. Chaque LFO de plus a ses réglages SPD, MULT, WAVE, DEST, DEP ; FADE, SPH, MODE (et le
- * retrig) sont ceux de LFO 1. LFO 2 est rangé dans les mots k = 28..32 du son (libres dans l'OS et sous Model-TG) :
- * sauvé avec le son (4 octets libres de l'enregistrement, +88..+91) et p-lockable. LFO 3 et LFO 4 vivent en mémoire
- * (un réglage par piste, remis aux défauts à chaque démarrage, ni sauvés ni p-lockables).
+ * Sur la page LFO, chaque appui bref sur [LFO] passe de LFO 1 à LFO 2, 3, 4 au relâchement (un grand chiffre dans le
+ * cadre de gauche), le 5e ferme la page ; [LFO] tenue avec un potard tourné (l'affectation de destination de l'OS)
+ * ou une autre touche garde la page. Chaque LFO de plus a ses réglages SPD, MULT, WAVE, DEST, DEP ; FADE, SPH, MODE
+ * (et le retrig) sont ceux de LFO 1. LFO 2 est rangé dans les mots k = 28..32 du son (libres dans l'OS et sous
+ * Model-TG) : sauvé avec le son (4 octets libres de l'enregistrement, +88..+91) et p-lockable. LFO 3 et LFO 4 ont un
+ * bloc par kit (les 96 patterns du projet) en mémoire (T34), sauvé dans 52 octets inutilisés de l'enregistrement du
+ * kit, remis aux défauts avec le son de la piste, emporté par les copies de kit entier ; pas de p-lock.
  *
  * Moteur (interruption audio) : pour chaque LFO de plus utilisé, un faux « obj » (même forme que celui de la
  * fonction audio : 14 o + 6 pistes × 66 o) reçoit ses réglages et FADE/SPH/MODE de LFO 1 ; on met son état à la
@@ -12,9 +14,11 @@
  * l'état, puis on ajoute la modulation calculée au vrai mot de la piste (borné 0..0x7f00 comme l'OS), sauf si la
  * destination est celle de LFO 1. Les LFO de plus passent avant LFO 1 : ils peuvent moduler ses réglages.
  *
- * Mémoire de travail (états, faux obj) : SCR, au-dessus du BSS de l'OS (0x423380b0) et sous ses tampons DMA
+ * Mémoire de travail (états, faux obj) : SCR ; blocs LFO 3/4 des 96 kits et tampons de kit retenus : SCR34 (sous SCR).
+ * Les deux au-dessus du BSS de l'OS (0x423380b0) et sous ses tampons DMA
  * (0x42340000), où ni l'OS ni aucun autre mod n'écrit (notes/56 §3) ; pas remise à zéro au démarrage : les états
- * sont mis à zéro au premier usage après chaque démarrage (drapeau « ready » dans un masque, que le démarrage
+ * sont mis à zéro (et les blocs LFO 3/4 aux défauts, drapeau « kready ») au premier usage après chaque démarrage
+ * (drapeau « ready » dans un masque, que le démarrage
  * recharge à 0 depuis la flash ; un mot magique en SDRAM pourrait survivre à une coupure brève). Le reste (code,
  * réglages de LFO 3/4, variables de la page) est dans des masques de sprites libérés (tools/gen_lfo_plus.py les
  * place) ; ces zones de l'image sont rechargées de la flash à chaque démarrage.
@@ -41,11 +45,23 @@
 	.equ	S_FOBJ, SCR + 768		/* faux obj : 14 + 6 × 66 = 410 o */
 	.equ	S_END, SCR + 1180
 
+	.equ	CUR_KIT, 0x40a78888		/* le kit joué (pointeur) */
+	.equ	KITS, 0x409c9c80		/* les 96 kits du projet, KIT_SZ o chacun */
+	.equ	KIT_SZ, 7094
+	.equ	L34_MAGIC, 0x4c463334		/* « LF34 », en +648 de l'enregistrement d'un kit */
+	.equ	T34, SCR34			/* 96 blocs de 120 o : LFO 3 puis LFO 4, 6 pistes × 5 mots */
+	.equ	BUFK, SCR34 + 11520		/* 4 tampons de kit retenus (adresses ; -1 : aucun) */
+	.equ	BUFN, SCR34 + 11536		/* prochaine case à reprendre */
+	.equ	BUFD, SCR34 + 11540		/* leurs blocs (4 × 120 o) */
+	.equ	S34_END, SCR34 + 12020
+
 	.equ	K28, 56				/* octet du mot k = 28 dans une piste (2k) */
 
 	.globl	lfo_audio, lfo_id2k, lfo_get, lfo_set, lfo_key, lfo_draw, lfo_ctor, lfo_dtor, lfo_gate, lfo_dest
 	.globl	lfo_pack, lfo_unpack, lfo_init, lfo_plk_save, lfo_plk_load
-	.globl	page, eat, ready, view, lfo34, slots, sel_track, slot_of_id, copy192, run_set, taken, audio_sets, audio_done
+	.globl	page, pend, ready, kready, view, lfo34, slots, sel_track, slot_of_id, copy192, run_set, taken, audio_sets
+	.globl	audio_done, cur34, blk34, snd34, pk5, upk5, dflt5, kit_save, kit_load, kit_copy, buf_find, buf_put
+	.globl	lfo_learn, lfo_led
 
 /* ================================================================== moteur, interruption audio ============ */
 
@@ -76,7 +92,8 @@ lfo_audio:
 	andi.l	#0xff00, %d2
 	sne	%d2
 	andi.l	#1, %d2
-	lea	lfo34+6, %a0			/* destinations de LFO 3 puis LFO 4, 6 pistes chacun */
+	jsr	cur34				/* bloc du kit joué : destinations de LFO 3 puis LFO 4, */
+	addq.l	#6, %a0				/* 6 pistes chacun */
 	moveq	#2, %d3
 	moveq	#2, %d4				/* deux tables */
 	moveq	#0, %d5
@@ -130,14 +147,15 @@ audio_sets:
 7:	move.l	%a6, %d0
 	btst	#1, %d0
 	beq.s	8f
-	lea	lfo34, %a0			/* LFO 3 */
+	jsr	cur34				/* LFO 3, du kit joué */
 	moveq	#10, %d0
 	lea	S_ST3, %a5
 	jsr	run_set
 8:	move.l	%a6, %d0
 	btst	#2, %d0
 	beq.s	10f
-	lea	lfo34+60, %a0			/* LFO 4 */
+	jsr	cur34				/* LFO 4 */
+	lea	60(%a0), %a0
 	moveq	#10, %d0
 	lea	S_ST4, %a5
 	jsr	run_set
@@ -186,9 +204,6 @@ run_set:
 	moveq	#32, %d1
 	cmp.l	%d0, %d1
 	bcs.s	3f				/* > 32 (non signé) : aucune */
-	mvs.b	8(%a2), %d1			/* destination de LFO 1 (octet fort du mot k = 4) */
-	cmp.l	%d1, %d0
-	beq.s	3f				/* la même : LFO 1 seul la module */
 	add.l	%d0, %d0
 	mvs.w	(%a2, %d0.l), %d1
 	add.l	20(%a5), %d1
@@ -203,6 +218,7 @@ run_set:
 	subq.l	#1, %d5
 	bne.s	2b
 	rts
+	.space	8
 
 	.section .text.copy192, "ax"
 
@@ -262,8 +278,8 @@ slot_of_id:
 
 	.section .text.param2, "ax"
 
-/* d0 = id -> a0 = adresse de son réglage de LFO 3 ou 4 pour la piste sélectionnée, ou 0 (autre page, autre id,
- * piste >= 6). Détruit d0-d1/a1. */
+/* d0 = id -> a0 = adresse de son réglage de LFO 3 ou 4 pour la piste sélectionnée, dans le bloc du kit joué, ou 0
+ * (autre page, autre id, piste >= 6). Détruit d0-d1/a1. */
 slot34:
 	moveq	#0, %d1
 	move.b	page, %d1
@@ -281,8 +297,9 @@ slot34:
 	bcc.s	9f
 	mulu.w	#10, %d0
 	add.l	%d1, %d0
-	lea	lfo34, %a0
-	adda.l	%d0, %a0
+	move.l	%d0, -(%sp)
+	jsr	cur34
+	adda.l	(%sp)+, %a0
 	rts
 9:	suba.l	%a0, %a0
 	rts
@@ -328,44 +345,77 @@ lfo_set:
 
 	.section .text.view, "ax"
 
-/* Pointeur 0x401016e4 (vtable de la vue LFO 0x401016dc [2], 0x40024e86) : touche(vue, événement). Code 8 (la
- * touche [LFO]), sans FUNC : l'appui passe à la page suivante (LFO 2, 3, 4) et son relâchement est avalé ; sur
- * LFO 4, l'appui va à l'original (le relâchement ferme la page, comme d'origine). La répétition automatique va à
- * l'original (qui l'avale). Indicateurs de l'événement (+16, lus par 0x40072470/0x40072490/0x400724a0) : bit 0
- * enfoncée, bit 1 FUNC, bit 3 répétition. */
+/* Pointeur 0x401016e4 (vtable de la vue LFO 0x401016dc [2], 0x40024e86) : touche(vue, événement). L'original
+ * (0x40024e0c sur vue - 56) : l'appui de [LFO] est pris et remet à 0 le drapeau « tenue » de la vue (objet + 604,
+ * vue + 548) ; un potard tourné [LFO] tenue le met (0x40024db6, c'est l'affectation de destination de l'OS) ; le
+ * relâchement ferme la page si le drapeau est à 0, sinon le remet à 0. Ici, code 8 (la touche [LFO]) sans FUNC :
+ * l'appui va à l'original et est noté (pend) ; à son relâchement, si le drapeau est resté à 0 (appui bref), page
+ * suivante (LFO 2, 3, 4) et redessin au lieu de fermer ; s'il est mis (tenue, potard tourné), l'original : la page
+ * reste. Une autre touche pendant que [LFO] est tenue (le Clear LFO de l'OS, 0x4001fb16, remet les identifiants
+ * 0x1e..0x24 aux défauts par 0x4000b274, donc ceux de la page affichée) annule la note : le relâchement va à
+ * l'original. Sur LFO 4 tout va à l'original (un appui bref ferme la page, comme d'origine). La répétition
+ * automatique va à l'original (qui l'avale). Indicateurs de l'événement (+16, lus par 0x40072470/0x40072490/
+ * 0x400724a0) : bit 0 enfoncée, bit 1 FUNC, bit 3 répétition. */
 lfo_key:
 	move.l	8(%sp), -(%sp)
 	jsr	KEY_CODE
 	addq.l	#4, %sp
-	moveq	#8, %d1
+	cmp.l	#5, %d0			/* MACHINES : modificateur du geste [LFO] tenue + potard, mais seulement dans ce
+						   geste. Posée seule sur la page LFO, elle ouvre l'écran des machines (0x40075822)
+						   comme d'origine. Un appui avalé avale aussi son relâchement (m5) : l'OS ne voit
+						   jamais un relâchement sans appui. atk_watch/KEY_BITS lit l'état physique */
+	bne.s	0f
+	tst.b	m5
+	bne.s	7f			/* déjà avalée : son relâchement l'est aussi */
+	move.b	KEY_BITS, %d1
+	btst	#3, %d1			/* [LFO] tenue : bit 3 de KEY_BITS (table 0x4010ae5c[8]) */
+	beq.w	9f			/* [LFO] pas tenue : l'original, qui ouvre les machines */
+7:	movea.l	8(%sp), %a0
+	move.l	16(%a0), %d1		/* indicateurs : mot long (bit 0 enfoncée, bit 1 FUNC, bit 3 répétition) */
+	btst	#0, %d1
+	bne.s	8f
+	clr.b	m5			/* relâchement (aussi après le lâcher de [LFO]) */
+	bra.s	6f
+8:	moveq	#1, %d1
+	move.b	%d1, m5
+6:	clr.b	pend			/* comme toute autre touche : plus d'appui bref */
+	moveq	#1, %d0
+	rts
+0:	moveq	#8, %d1
 	cmp.l	%d0, %d1
-	bne.s	9f
-	movea.l	8(%sp), %a0
+	beq.s	1f
+	clr.b	pend				/* autre touche : pas un appui bref */
+	bra.s	9f
+1:	movea.l	8(%sp), %a0
 	move.l	16(%a0), %d1
 	btst	#1, %d1
 	bne.s	9f
 	btst	#0, %d1
-	bne.s	1f
-	tst.b	eat				/* relâchement */
+	bne.s	2f
+	tst.b	pend				/* relâchement d'un appui passé à l'original ? */
 	beq.s	9f
-	clr.b	eat
-	bra.s	8f
-1:	btst	#3, %d1
+	clr.b	pend
+	movea.l	4(%sp), %a0
+	tst.b	548(%a0)			/* potard tourné [LFO] tenue : l'original */
+	bne.s	9f
+	moveq	#0, %d0				/* appui bref : page suivante */
+	move.b	page, %d0
+	addq.l	#1, %d0
+	move.b	%d0, page
+	move.l	4(%sp), -(%sp)
+	jsr	NEEDS_REDRAW
+	addq.l	#4, %sp
+	moveq	#1, %d0
+	rts
+2:	btst	#3, %d1
 	bne.s	9f
 	moveq	#0, %d0
 	move.b	page, %d0
 	moveq	#3, %d1
 	cmp.l	%d1, %d0
 	beq.s	9f
-	addq.l	#1, %d0
-	move.b	%d0, page
 	moveq	#1, %d0
-	move.b	%d0, eat
-	move.l	4(%sp), -(%sp)
-	jsr	NEEDS_REDRAW
-	addq.l	#4, %sp
-8:	moveq	#1, %d0
-	rts
+	move.b	%d0, pend
 9:	jmp	0x40024e86
 
 	.section .text.draw, "ax"
@@ -419,7 +469,7 @@ lfo_ctor:
 	addi.l	#56, %d0
 1:	move.l	%d0, view
 	clr.b	page
-	clr.b	eat
+	clr.b	pend
 	jmp	0x40025798
 
 /* 0x400d97f8, fin du destructeur de la vue LFO (0x400d979a ; a2 = l'objet) : jmp lfo_dtor à la place de
@@ -431,7 +481,7 @@ lfo_dtor:
 	bne.s	1f
 	clr.l	view
 	clr.b	page
-	clr.b	eat
+	clr.b	pend
 1:	move.l	%a2, 8(%sp)
 	movea.l	(%sp)+, %a2
 	jmp	0x400d97fe
@@ -548,8 +598,10 @@ taken:
 	cmpi.l	#6, %d0
 	bcc.s	1f
 	mulu.w	#10, %d0
-	lea	lfo34+6, %a0
-	adda.l	%d0, %a0
+	move.l	%d0, -(%sp)
+	jsr	cur34				/* bloc du kit joué (garde d2) */
+	adda.l	(%sp)+, %a0
+	addq.l	#6, %a0
 	moveq	#0, %d1
 	move.b	(%a0), %d1			/* LFO 3 */
 	lsl.l	#8, %d1
@@ -567,100 +619,190 @@ taken:
 9:	moveq	#0, %d0
 	rts
 
+/* ================================================================== [LFO] + potard, diode DEST ============= */
+
+	.equ	KEY_BITS, 0x40f95744		/* état des touches que lit 0x4007faf4 ; MACHINES (code 5) = bit 0 */
+	.equ	PITCH_ID, 42			/* PITCH, sous le potard PITCH de toutes les machines */
+	.equ	FTUN_ID, 43			/* FINE : le lo-fi de MACRO (entrée 16 de son enregistrement) */
+
+	.section .text.learn, "ax"
+
+/* 0x4001eb50, dans l'affectation par potard (0x4001eaa2, [LFO] tenue + un potard ; d2 = l'identifiant sous le
+ * potard, lu dans l'enregistrement de KICK que Model-TG change tant que MACHINES est tenue : Attack, Filtre, Résonance
+ * en positions 1, 4, 5 ; d7 = piste, a3 = l'accesseur des réglages de la piste) : jmp lfo_learn à la place de
+ * move.l d2,-(sp) ; jsr 0x4005a4e8 ; addq.l #4,sp ; movea.l (a3),a0 ; move.l d0,d2 ; lsl.l #8,d2.
+ *  - MACHINES tenue (bit 0 de KEY_BITS) sur PITCH (position 0) d'une piste MACRO (son enregistrement, 0x4004df76,
+ *    porte FINE en entrée 16) : FINE (id 43), le lo-fi, comme MACHINES + PITCH le règle sur la page ;
+ *    FUNC+PITCH (a5 != 0) reste le stock PITCH ; autres machines inchangées.
+ *  - affectation libre ou déjà prise : admise (la molette DEST saute les prises, mais l'affectation directe par
+ *    potard autorise le cumul, notes/56 §3.13).
+ * d0-d1/a0-a1 libres ; d3-d6, a2-a5 gardés (la suite s'en sert). */
+lfo_learn:
+	tstl	68(%sp)				/* potard 0 seulement (PITCH) */
+	bne.s	1f
+	moveq	#PITCH_ID, %d0
+	cmp.l	%d2, %d0
+	bne.s	1f
+	tstl	%a5				/* FUNC tenue : reste stock */
+	bne.s	1f
+	move.b	KEY_BITS, %d0
+	btst	#0, %d0				/* MACHINES tenue */
+	beq.s	1f
+	/* LO-FI n'est PAS une destination de LFO (décision du propriétaire) : sur n'importe quelle machine,
+	   MACHINES + PITCH tenu donne FINE (id 43), la vraie fonction stock. MACHINES + PITCH sans LFO reste
+	   le lo-fi de MACRO, par knob_vec. */
+	moveq	#FTUN_ID, %d2
+1:	move.l	%d2, -(%sp)
+	jsr	0x4005a4e8			/* id -> k */
+	addq.l	#4, %sp
+	move.l	%d0, %d2
+	lsl.l	#8, %d2
+	movea.l	(%a3), %a0
+	jmp	0x4001eb60
+
+/* 0x400262ac, dans la diode de la page LFO (0x400261aa ; d2 = l'identifiant de la destination, a2 = les 17
+ * identifiants de l'enregistrement de la machine, que l'OS vient de copier et où il va le chercher ; sa position
+ * donne la diode) : jmp lfo_led à la place de lea 12(sp),sp ; move.l sp,d0. L'enregistrement est celui de la
+ * machine, sans le changement de Model-TG (MACHINES n'est plus tenue) : Attack, Filtre, Résonance n'y sont pas, et
+ * FINE de MACRO y est en entrée 16, sans potard ; sans diode, ou une diode hors des potards. On cherche donc
+ * l'identifiant du potard qui les règle sous MACHINES : DECAY (1) pour Attack, SWEEP (4) pour Filtre, CONTOUR (5)
+ * pour Résonance, PITCH (0) pour FINE de MACRO. d0-d1 libres ; d0 = sp à la sortie, comme l'OS. */
+lfo_led:
+	lea	12(%sp), %sp
+	move.l	%d2, %d0
+	moveq	#0x0b, %d1
+	sub.l	%d1, %d0
+	moveq	#2, %d1
+	cmp.l	%d0, %d1
+	bcs.s	1f
+	mvs.b	led_pos(%pc, %d0.l), %d0
+	move.l	(%a2, %d0.l*4), %d2
+	bra.s	9f
+1:	moveq	#FTUN_ID, %d0
+	cmp.l	%d2, %d0
+	bne.s	9f
+	cmp.l	64(%a2), %d0
+	bne.s	9f
+	move.l	(%a2), %d2
+9:	move.l	%sp, %d0
+	jmp	0x400262b2
+led_pos:	.byte	5, 4, 1			/* Résonance (0x0b), Filtre (0x0c), Attack (0x0d) */
+	.align	2
+
 /* ================================================================== son et pattern ======================== */
 
 	.section .text.store, "ax"
 
 /* 0x4005b028 (sauvegarde du son, format 2, 0x4005afa0) et 0x4005b0dc (format 1, 0x4005b054) : jsr lfo_pack à la
  * place de move.w 94(a3),92(a2). a2 = l'enregistrement (100 o), a3 = le son. LFO 2 (k = 28..32, son + 76..85) en
- * un long en +88 (les deux dernières cases libres, que la sauvegarde vient de mettre à zéro, comme sous Model-TG) :
- * bits 31-30 = 10 (marque), 29-22 SPD >> 7, 21-17 MULT, 16-14 WAVE, 13-8 DEST, 7-0 DEP >> 7 (même format que
- * DavidCaruso : ses sons se relisent ici). Garde tout sauf d0 (d1, a1, a4 servent ensuite). */
+ * un long en +88 (les deux dernières cases libres, que la sauvegarde vient de mettre à zéro, comme sous Model-TG),
+ * par pk5. Garde tout sauf d0 (d1, a1, a4 servent ensuite). */
 lfo_pack:
 	move.w	94(%a3), 92(%a2)
 	move.l	%d1, -(%sp)
+	move.l	%a1, -(%sp)
+	lea	76(%a3), %a1
+	bsr.s	pk5
+	move.l	%d0, 88(%a2)
+	movea.l	(%sp)+, %a1
+	move.l	(%sp)+, %d1
+	rts
+
+/* a1 = les 5 mots d'un LFO {SPD, MULT, WAVE, DEST, DEP} -> d0 = un long : bits 31-30 = 10 (marque), 29-22 SPD >> 7,
+ * 21-17 MULT, 16-14 WAVE, 13-8 DEST, 7-0 DEP >> 7 (même format que DavidCaruso : ses sons se relisent ici). Sert à
+ * LFO 2 dans le son et à LFO 3/4 dans le kit. Détruit d1. */
+pk5:
 	moveq	#2, %d0				/* marque */
 	moveq	#0, %d1
-	move.w	76(%a3), %d1			/* SPD */
+	move.w	(%a1), %d1			/* SPD */
 	lsr.l	#7, %d1
 	andi.l	#0xff, %d1
 	lsl.l	#8, %d0
 	or.l	%d1, %d0
 	moveq	#0, %d1
-	move.b	78(%a3), %d1			/* MULT */
+	move.b	2(%a1), %d1			/* MULT */
 	andi.l	#0x1f, %d1
 	lsl.l	#5, %d0
 	or.l	%d1, %d0
-	move.b	80(%a3), %d1			/* WAVE */
+	move.b	4(%a1), %d1			/* WAVE */
 	andi.l	#7, %d1
 	lsl.l	#3, %d0
 	or.l	%d1, %d0
-	move.b	82(%a3), %d1			/* DEST */
+	move.b	6(%a1), %d1			/* DEST */
 	andi.l	#0x3f, %d1
 	lsl.l	#6, %d0
 	or.l	%d1, %d0
-	move.w	84(%a3), %d1			/* DEP */
+	move.w	8(%a1), %d1			/* DEP */
 	lsr.l	#7, %d1
 	andi.l	#0xff, %d1
 	lsl.l	#8, %d0
 	or.l	%d1, %d0
-	move.l	%d0, 88(%a2)
-	move.l	(%sp)+, %d1
 	rts
 
 	.section .text.unpack, "ax"
 
 /* 0x4005af1c, chargement du son (0x4005aecc ; a2 = le son, a3 = l'enregistrement, mots k = 0..32 du son déjà mis à
- * zéro par 0x4008f238) : jsr lfo_unpack à la place de lea 0x4010eea8,a0. LFO 2 relu de +88 s'il porte la marque,
- * sinon (tout son plus ancien) ses défauts. d0-d1/a1 libres ; a0 rendu comme l'instruction remplacée. */
+ * zéro par 0x4008f238) : jsr lfo_unpack à la place de lea 0x4010eea8,a0. LFO 2 relu de +88 par upk5 (sans la marque,
+ * tout son plus ancien : ses défauts). d0-d1/a1 libres ; a0 rendu comme l'instruction remplacée. */
 lfo_unpack:
 	move.l	88(%a3), %d0
+	lea	76(%a2), %a1
+	bsr.s	upk5
+	lea	0x4010eea8, %a0
+	rts
+
+/* d0 = un long au format de pk5 -> les 5 mots d'un LFO en a1 ; marque autre que 10 : les défauts (dflt5). Détruit
+ * d0-d1/a0. */
+upk5:
 	move.l	%d0, %d1
 	andi.l	#0xc0000000, %d1
 	cmpi.l	#0x80000000, %d1
-	bne.s	1f
-	move.l	%d0, %d1			/* DEP */
+	beq.s	1f
+	movea.l	%a1, %a0
+	bra.s	dflt5
+1:	move.l	%d0, %d1			/* DEP */
 	andi.l	#0xff, %d1
 	lsl.l	#7, %d1
-	move.w	%d1, 84(%a2)
+	move.w	%d1, 8(%a1)
 	lsr.l	#8, %d0
 	move.l	%d0, %d1			/* DEST */
 	andi.l	#0x3f, %d1
 	lsl.l	#8, %d1
-	move.w	%d1, 82(%a2)
+	move.w	%d1, 6(%a1)
 	lsr.l	#6, %d0
 	move.l	%d0, %d1			/* WAVE */
 	andi.l	#7, %d1
 	lsl.l	#8, %d1
-	move.w	%d1, 80(%a2)
+	move.w	%d1, 4(%a1)
 	lsr.l	#3, %d0
 	move.l	%d0, %d1			/* MULT */
 	andi.l	#0x1f, %d1
 	lsl.l	#8, %d1
-	move.w	%d1, 78(%a2)
+	move.w	%d1, 2(%a1)
 	lsr.l	#5, %d0				/* SPD */
 	andi.l	#0xff, %d0
 	lsl.l	#7, %d0
-	move.w	%d0, 76(%a2)
-	bra.s	2f
-1:	bsr.s	lfo2_defaults
-2:	lea	0x4010eea8, %a0
+	move.w	%d0, (%a1)
+	rts
+
+/* Défauts d'un LFO en a0, a0 avancé de 10 : ceux du LFO d'origine (descripteurs 0x1d..0x24) : SPD 0x7000, MULT 4,
+ * WAVE 0, DEST None, DEP 0x4000 (profondeur nulle). Ne détruit rien d'autre. */
+dflt5:
+	move.l	#0x70000400, (%a0)+
+	clr.l	(%a0)+
+	move.w	#0x4000, (%a0)+
 	rts
 
 /* 0x400618e2, fin de l'initialisation d'un son aux défauts (0x40061866 ; a2 = le son) : jsr lfo_init à la place de
  * lsl.l #8,d3 ; move.w d3,38(a2). Les deux instructions, puis les défauts de LFO 2 (l'OS y a mis 0 : aucun
- * descripteur ne vise k = 28..32). d0-d1/a0-a1 libres ensuite. */
+ * descripteur ne vise k = 28..32), puis ceux de LFO 3 et 4 si c'est le son d'une piste d'un des 96 kits (snd34).
+ * d0-d1/a0-a1 libres ensuite. */
 lfo_init:
 	lsl.l	#8, %d3
 	move.w	%d3, 38(%a2)
-/* Défauts de LFO 2 dans le son a2 : ceux du LFO d'origine (descripteurs 0x1d..0x24) : SPD 0x7000, MULT 4, WAVE 0,
- * DEST None, DEP 0x4000 (profondeur nulle). */
-lfo2_defaults:
-	move.l	#0x70000400, %d0
-	move.l	%d0, 76(%a2)
-	clr.l	80(%a2)
-	move.w	#0x4000, 84(%a2)
-	rts
+	lea	76(%a2), %a0
+	bsr.w	dflt5
+	jmp	snd34
 
 	.section .text.plk, "ax"
 
@@ -701,21 +843,309 @@ lfo_plk_load:
 	jmp	0x4005aa28
 plk_k:	.byte	23, 24, 25, 28, 29, 30, 31, 32
 
+/* ================================================================== LFO 3/4 par pattern ===================== */
+
+	.section .text.k34, "ax"
+
+/* a0 = le bloc LFO 3/4 du kit joué (*CUR_KIT). Tant que T34 n'est pas aux défauts (kready = 0 : aucun kit chargé,
+ * sauvé, copié ni remis aux défauts depuis le démarrage), le bloc de secours lfo34 : le moteur (interruption audio)
+ * et la page n'écrivent jamais T34 eux-mêmes. Détruit d0-d1. */
+cur34:
+	tst.b	kready
+	bne.s	1f
+	lea	lfo34, %a0
+	rts
+1:	move.l	CUR_KIT, %d0
+	move.l	%d2, -(%sp)
+	bra.s	2f
+/* d0 = un kit -> a0 = son bloc LFO 3/4 dans T34 et d0 = son rang (0..95) s'il est l'un des 96 kits du projet ; sinon
+ * a0 = lfo34 (bloc de secours dans un masque) et d0 = -1. Premier usage depuis le démarrage : init34. Détruit d1. */
+blk34:
+	move.l	%d2, -(%sp)
+	tst.b	kready
+	bne.s	2f
+	move.l	%d0, -(%sp)
+	bsr.s	init34
+	move.l	(%sp)+, %d0
+2:	move.l	%d0, %d2
+	subi.l	#KITS, %d0
+	bcs.s	8f
+	move.l	#KIT_SZ, %d1
+	divu.l	%d1, %d0
+	cmpi.l	#96, %d0
+	bcc.s	8f
+	mulu.l	%d0, %d1			/* juste au début d'un kit ? */
+	addi.l	#KITS, %d1
+	cmp.l	%d2, %d1
+	bne.s	8f
+	move.l	%d0, %d1
+	mulu.w	#120, %d1
+	lea	T34, %a0
+	adda.l	%d1, %a0
+	bra.s	9f
+8:	lea	lfo34, %a0
+	moveq	#-1, %d0
+9:	move.l	(%sp)+, %d2
+	rts
+
+/* T34 aux défauts (96 × 12 LFO), aucun tampon de kit retenu, kready = 1. SCR34 n'est pas remise à zéro au
+ * démarrage ; kready, dans un masque, l'est (rechargé de la flash). Le chargement du projet au démarrage passe par
+ * kit_load, qui appelle blk34 : les blocs sont aux défauts avant d'être relus. Détruit d0-d1/a0. */
+init34:
+	lea	T34, %a0
+	move.l	#96 * 12, %d1
+1:	jsr	dflt5
+	subq.l	#1, %d1
+	bne.s	1b
+	moveq	#-1, %d0			/* BUFK suit T34 */
+	move.l	%d0, (%a0)+
+	move.l	%d0, (%a0)+
+	move.l	%d0, (%a0)+
+	move.l	%d0, (%a0)+
+	clr.l	(%a0)				/* BUFN */
+	moveq	#1, %d0
+	move.b	%d0, kready
+	rts
+
+	.section .text.snd34, "ax"
+
+/* Fin de lfo_init (a2 = le son remis aux défauts) : si c'est le son de la piste t (0..5) d'un des 96 kits (kit + 28 +
+ * 100 t : effacement du son d'une piste, des sons d'un pattern, nouveau kit, nouveau projet), LFO 3 et LFO 4 de
+ * cette piste aux défauts, comme LFO 1 et 2. Garde d2-d7/a2-a6. */
+snd34:
+	move.l	%d2, -(%sp)
+	move.l	%a2, %d0
+	subi.l	#KITS, %d0
+	bcs.s	9f
+	move.l	%d0, %d2
+	move.l	#KIT_SZ, %d1
+	divu.l	%d1, %d0			/* le kit */
+	cmpi.l	#96, %d0
+	bcc.s	9f
+	mulu.l	%d0, %d1
+	sub.l	%d1, %d2			/* décalage dans le kit */
+	subi.l	#28, %d2
+	bcs.s	9f
+	movea.l	%d2, %a1
+	moveq	#100, %d1
+	divu.l	%d1, %d2			/* la piste */
+	cmpi.l	#6, %d2
+	bcc.s	9f
+	mulu.l	%d2, %d1			/* juste au début de son son ? */
+	cmp.l	%a1, %d1
+	bne.s	9f
+	move.l	%a2, %d0
+	sub.l	%a1, %d0
+	subi.l	#28, %d0			/* le kit */
+	jsr	blk34
+	mulu.w	#10, %d2
+	adda.l	%d2, %a0
+	jsr	dflt5				/* LFO 3 */
+	lea	50(%a0), %a0
+	jsr	dflt5				/* LFO 4 */
+9:	move.l	(%sp)+, %d2
+	rts
+
+	.section .text.kit, "ax"
+
+/* 0x4005b2ae, entrée de la sauvegarde d'un kit dans son enregistrement (enregistrement, kit, ?) : jmp kit_save ; nop
+ * à la place de lea -28(sp),sp ; movem.l d2-d3/a2-a6,(sp). Les trois arguments recopiés au-dessus d'un retour vers
+ * kit_saved, les deux instructions, puis la suite en 0x4005b2b6. L'enregistrement (format 4) : nom, niveaux, les 6
+ * sons en +32, le bloc FX en +632 (0x4005b266 en écrit +632..+645 et +700..+707), la réserve de sons en +708 ; rien
+ * n'écrit ni ne lit +646..+699 (le chargement du bloc FX, 0x4005b21a, lit +632..+645). */
+kit_save:
+	move.l	12(%sp), -(%sp)
+	move.l	12(%sp), -(%sp)
+	move.l	12(%sp), -(%sp)
+	pea	kit_saved
+	lea	-28(%sp), %sp
+	movem.l	%d2-%d3/%a2-%a6, (%sp)
+	jmp	0x4005b2b6
+
+/* Retour de la sauvegarde (d0.b = 1 si faite ; enregistrement 0(sp), kit 4(sp), puis le 3e argument) : LFO 3/4 du
+ * kit en +648..+699 de l'enregistrement : L34_MAGIC, puis les 12 LFO par pk5 (LFO 3 pistes 0..5, puis LFO 4). Kit
+ * hors des 96 : les défauts. d0 rendu. */
+kit_saved:
+	tst.b	%d0
+	beq.s	9f
+	lea	-16(%sp), %sp
+	movem.l	%d0/%d2-%d3/%a2, (%sp)
+	move.l	20(%sp), %d0
+	jsr	blk34
+	movea.l	%a0, %a1
+	moveq	#10, %d2			/* pas d'un LFO au suivant */
+	tst.l	%d0
+	bpl.s	1f
+	lea	dflt, %a1			/* hors des 96 : les défauts, 12 fois */
+	moveq	#0, %d2
+1:	movea.l	16(%sp), %a2
+	move.l	#L34_MAGIC, %d0
+	move.l	%d0, 648(%a2)
+	lea	652(%a2), %a2
+	moveq	#12, %d3
+2:	jsr	pk5
+	move.l	%d0, (%a2)+
+	adda.l	%d2, %a1
+	subq.l	#1, %d3
+	bne.s	2b
+	movem.l	(%sp), %d0/%d2-%d3/%a2
+	lea	16(%sp), %sp
+9:	lea	12(%sp), %sp
+	rts
+
+	.section .text.kit2, "ax"
+
+/* 0x4005d080, entrée du chargement d'un kit (kit, enregistrement) : jmp kit_load ; nop à la place de
+ * lea -36(sp),sp ; movem.l d2-d5/a2-a6,(sp). Comme kit_save ; retour vers kit_loaded. */
+kit_load:
+	move.l	8(%sp), -(%sp)
+	move.l	8(%sp), -(%sp)
+	pea	kit_loaded
+	lea	-36(%sp), %sp
+	movem.l	%d2-%d5/%a2-%a6, (%sp)
+	jmp	0x4005d088
+
+/* Retour du chargement (d0.b = 1 si fait ; kit 0(sp), enregistrement 4(sp)) : un des 96 kits reçoit les 12 LFO de
+ * +652..+699 si +648 porte L34_MAGIC ; sinon (tout enregistrement plus ancien, quoi que le trou contienne) les
+ * défauts. Kit hors des 96 : rien. d0 rendu. */
+kit_loaded:
+	tst.b	%d0
+	beq.s	9f
+	lea	-16(%sp), %sp
+	movem.l	%d0/%d2-%d3/%a2, (%sp)
+	move.l	16(%sp), %d0
+	jsr	blk34
+	tst.l	%d0
+	bmi.s	8f
+	movea.l	%a0, %a1
+	movea.l	20(%sp), %a2
+	lea	652(%a2), %a2
+	moveq	#4, %d2
+	move.l	-4(%a2), %d0
+	cmpi.l	#L34_MAGIC, %d0
+	beq.s	1f
+	lea	zero, %a2			/* sans la marque : un long nul (sans marque) -> défauts */
+	moveq	#0, %d2
+1:	moveq	#12, %d3
+2:	move.l	(%a2), %d0
+	adda.l	%d2, %a2
+	jsr	upk5
+	lea	10(%a1), %a1
+	subq.l	#1, %d3
+	bne.s	2b
+8:	movem.l	(%sp), %d0/%d2-%d3/%a2
+	lea	16(%sp), %sp
+9:	addq.l	#8, %sp
+	rts
+
+	.section .text.copy, "ax"
+
+/* 0x4008f1f0, entrée de memcpy (destination, source, n) : jmp kit_copy ; nop à la place de movea.l 4(sp),a1 ;
+ * movea.l 8(sp),a0. n autre que KIT_SZ : les deux instructions et la suite en 0x4008f1f8. n = KIT_SZ (un kit
+ * entier : le nouveau projet copie le kit 0 dans les kits 1..95, la copie / le collage de pattern et leurs
+ * annulations passent par des tampons à eux) : la copie, puis le bloc LFO 3/4 de la source (un des 96 kits, ou un
+ * tampon retenu) va à la destination (un des 96 kits, sinon un tampon retenu : les 4 derniers remplis) ; source
+ * inconnue : rien. Rend la destination dans d0, comme memcpy ; garde d2-d7/a2-a6. */
+kit_copy:
+	move.l	12(%sp), %d0
+	cmpi.l	#KIT_SZ, %d0
+	beq.s	1f
+mc_orig:
+	movea.l	4(%sp), %a1
+	movea.l	8(%sp), %a0
+	jmp	0x4008f1f8
+1:	move.l	12(%sp), -(%sp)
+	move.l	12(%sp), -(%sp)
+	move.l	12(%sp), -(%sp)
+	bsr.s	mc_orig				/* la copie */
+	lea	12(%sp), %sp
+	move.l	%a2, -(%sp)
+	move.l	12(%sp), %d0			/* la source */
+	jsr	blk34
+	tst.l	%d0
+	bpl.s	2f
+	move.l	12(%sp), %d0
+	jsr	buf_find
+	move.l	%a0, %d0
+	beq.s	9f				/* inconnue */
+2:	movea.l	%a0, %a2
+	move.l	8(%sp), %d0			/* la destination */
+	jsr	blk34
+	tst.l	%d0
+	bpl.s	3f
+	move.l	8(%sp), %d0
+	jsr	buf_put
+3:	moveq	#29, %d1
+4:	move.l	(%a2)+, (%a0)+
+	subq.l	#1, %d1
+	bpl.s	4b
+9:	movea.l	(%sp)+, %a2
+	move.l	4(%sp), %d0
+	rts
+
+	.section .text.buf, "ax"
+
+/* d0 = un tampon -> a0 = le bloc de sa case dans BUFD, ou 0 s'il n'est pas retenu. Détruit d0-d1. */
+buf_find:
+	move.l	%d2, -(%sp)
+	lea	BUFK, %a0
+	moveq	#0, %d1
+1:	cmp.l	(%a0)+, %d0
+	beq.s	2f
+	addq.l	#1, %d1
+	moveq	#4, %d2
+	cmp.l	%d1, %d2
+	bne.s	1b
+	suba.l	%a0, %a0
+	bra.s	9f
+2:	mulu.w	#120, %d1
+	lea	BUFD, %a0
+	adda.l	%d1, %a0
+9:	move.l	(%sp)+, %d2
+	rts
+
+/* d0 = un tampon -> a0 = le bloc de sa case : la sienne, sinon la plus ancienne, qui devient la sienne. Détruit
+ * d0-d1. */
+buf_put:
+	move.l	%d0, -(%sp)
+	bsr.s	buf_find
+	move.l	%a0, %d0
+	bne.s	9f
+	move.l	BUFN, %d1			/* la plus ancienne */
+	lea	BUFK, %a0
+	move.l	(%sp), %d0
+	move.l	%d0, (%a0, %d1.l*4)
+	move.l	%d1, %d0
+	addq.l	#1, %d0
+	andi.l	#3, %d0
+	move.l	%d0, BUFN
+	mulu.w	#120, %d1
+	lea	BUFD, %a0
+	adda.l	%d1, %a0
+9:	addq.l	#4, %sp
+	rts
+
 /* ================================================================== données (masques, image) ============== */
 
 	.section .data.lfo, "aw"
 	.balign	4
 view:	.long	0				/* la vue LFO ouverte (objet + 56), 0 sinon */
 page:	.byte	0				/* 0..3 : LFO 1..4 affiché */
-eat:	.byte	0				/* avaler le relâchement de [LFO] */
+pend:	.byte	0				/* appui de [LFO] passé à l'original : bref ou tenu ? */
+m5:	.byte	0				/* appui de MACHINES avalé (geste [LFO] tenue + potard) : son relâchement aussi */
 ready:	.byte	0				/* états de SCR mis à zéro depuis le démarrage */
+kready:	.byte	0				/* blocs de T34 aux défauts depuis le démarrage */
 /* id 0x1d..0x24 -> rang du réglage : SPD, MULT, (FADE), DEST, WAVE, (SPH), (MODE), DEP */
 slots:	.byte	0, 1, -1, 3, 2, -1, -1, 4
 digits:	.asciz	"2"
 	.asciz	"3"
 	.asciz	"4"
 	.balign	2
-/* LFO 3 puis LFO 4 : 6 pistes × {SPD, MULT << 8, WAVE << 8, DEST << 8, DEP}, défauts du LFO d'origine */
+/* Bloc LFO 3/4 de secours (blk34 pour un kit hors des 96) : LFO 3 puis LFO 4, 6 pistes × {SPD, MULT << 8,
+ * WAVE << 8, DEST << 8, DEP}, défauts du LFO d'origine */
 lfo34:	.rept	12
 	.short	0x7000, 0x0400, 0, 0, 0x4000
 	.endr
+dflt:	.short	0x7000, 0x0400, 0, 0, 0x4000	/* un LFO aux défauts (kit_saved) */
+	.balign	4
+zero:	.long	0				/* un LFO sans marque (kit_loaded) */

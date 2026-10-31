@@ -27,11 +27,11 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.0: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "82a79f453151cbaceffdd047a646c96721f3ae3849a28f7821928bfbd4a1cca9",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "e63a57011a81bfb0c563add0ebb26b3d336a662ba55cc4b52ded39ea6459ff55",
 };
 const REF_MODS = {
-  "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
-  "sample-preview-st": {"w": "f9aaf10e71f3a06e22b608405eeca967c254a7400b4e8ba0557cddf7eb6166e3"},
+  "model-tg-st": {"w": "75bc6da1d7f9ae81c0de172fa6e21bf741913f060a66e02abb2d455b868dd584", "p": "8518c46885d394ee50cb8cdeb029488547383613bf69c12b5657354274a889cd"},
+  "sample-preview-st": {"w": "24a6235c0b24db668eec6134fb4dd0706ccb0fabe66bd7976ad63b07ca3cf0b7"},
   "trig-hold": {"w": "c9a9aafba763ea25ac3c35e33c55f34a18c0eda94cc726fa344ce6bdd06271f8"},
   "arp": {"w": "5bf9b805de8757164548fd4d77a3c2e8419d914e8164ac363ab10c9fe105ca80"},
   "step-rec": {"w": "204827a53af0ed0336cc5c430507386b94c5f449a108968fcd126a16d2617ff1"},
@@ -42,8 +42,8 @@ const REF_MODS = {
   "trigless-dim": {"w": "4efc73f035aab33963e8ae8f3f6343925e2cd5149b4cad6780051d0c185e32e1"},
   "midi-live-both": {"w": "e7dfae924d6474abea22b375002ff58b1e3cde301aa9ca8a2ec980593316c942"},
   "mod-settings": {"w": "c3c023276e80295a9338a80d22711469620d4b4315ae2b1e0a85c9a61e31e9bb"},
-  "lfo-plus": {"w": "8443b08fdb4ce7cf1ba26821b27e7df3ab4ca5396e35e7e9a8e591fc430569b6"},
-  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": {"w": "045d7a3afb79336a765556762de67b49d1b3143dc5ee89559fae1b08529e6afe", "p": "c1f8b90c879c09659c843589daf4213c7e32696f94a80f64679c7a3e90473060"},
+  "lfo-plus": {"w": "07fe0ef63e303d68bfc28b73143dbbfaedc55d75be6feb1c33caa8254af20ca5"},
+  "syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": {"w": "f4ccbbef5e98efacf38a58fe4b3bc6f4318c6e19de8f92b61b47dbe408c9b5da", "p": "3880c5de3d8e393d20e231774f281efacb5a34b61caff6f1963261982d42b004"},
 };
 
 // "Samples OS" tab: official Model:Samples OS 1.13 inside the official Model:Cycles container

@@ -82,7 +82,7 @@ retrig page, menus) are listed with that page as context.
 | **FUNC** + **MACHINES** with a step held, then pick a sample | Sample lock on that step | Model-TG Sampler | Sampler track |
 | **FUNC** + **MACHINES**, cursor on a sample file, then press the track's pad (or its trig keys in keyboard mode) | Plays the highlighted sample with the track's settings | Sample preview | Sampler tracks only. Nothing plays while scrolling |
 | **FUNC** + **PAGE** | Scale menu, as stock, with two added items **Scl** and **Key** (Scale Lock) | Model-TG Scale Lock | Stock menu, extended |
-| **FUNC** + **PITCH** (turn) | Lo-fi: OFF in the middle, sample rate on the left (46K down to 4K), bit depth on the right (12B down to 2B) | MACRO | **MACRO tracks only.** Stock, changed: on every other machine FUNC + PITCH still moves the note by semitones |
+| **MACHINES** + **PITCH** (turn) | Lo-fi (the popup plate reads **Lo-Fi**): OFF in the middle, sample rate on the left (46K down to 4K), bit depth on the right (12B down to 2B) | MACRO | **MACRO tracks only.** The code sits with MACRO and asks the OS whether MACHINES is held, so it costs nothing in the detours |
 | **FUNC** + **RETRIG** | Retrig Setup menu, now with two more rows under Rte, Len, A.On: **Arp** (direction) and **Oct** (octaves) | Arpeggiator | Stock menu, extended |
 | **FUNC** + trig key on an empty step | Places a trigless trig (stock); the key now lights dimmed | Dimmed trigless trigs | Grid mode |
 | **FUNC** + trig key (on a step with a trig) | Stock change applied on release; now decided within 0.5 s instead of 0.2 s | Easier trig removal | Grid mode |
@@ -107,7 +107,7 @@ retrig page, menus) are listed with that page as context.
 | **PAGE** with a trig key held | Plays that step (note, length, p-locks, sound lock) instead of turning the page | Trig preview | Sequencer stopped or paused. Stock, changed |
 | **PATTERN** | Closes the retrig page so you can choose a pattern | Model-TG retrig page | Retrig page only |
 | **PLAY** | Skips the current step (it stays as it was) | Step record | In step record, no note held |
-| **PITCH** (turn) on a MACRO track | Note, as stock; the fine-tune parameter moved under FUNC + PITCH | MACRO | MACRO tracks |
+| **PITCH** (turn) on a MACRO track | Note, as stock; the lo-fi lives under MACHINES + PITCH | MACRO | MACRO tracks |
 | **PUNCH** | Arms tap slicing (*ARMED*), or stops it | Model-TG slice editor | Slice editor only |
 | **REC** pressed twice quickly | Starts step record (*Step-rec: ON*): the notes played go one by one on the blinking step | Step record | Sequencer stopped (or paused). Stock, changed: the second press used to turn grid recording back off |
 | **REC** | Stops step record (*Step-rec: OFF*) | Step record | In step record |
@@ -140,7 +140,7 @@ Known collisions and raw spots, collected from the sources:
 - **SETTINGS held** lost the stock pattern save prompt (Model-TG guide; this project's guide repeats it).
 - **FUNC + PAGE** (Scale menu) carries Model-TG's Scale Lock. Chord Keys also changed the notes of the trig keys; the
   flasher listed that as their clash ("both change the notes of the TRIG keys").
-- **FUNC + PITCH** means two different things depending on the machine (lo-fi on MACRO, semitones elsewhere).
+- **FUNC + PITCH** is stock semitones on every machine; the lo-fi moved to **MACHINES + PITCH** on MACRO tracks.
 - **FUNC + LEVEL/DATA**: turned on the main screen it is the pan (with a number); pressed on the OUT/THRU row it is
   the MIDI toggle. Different gestures and screens, so no clash, but the same pair of keys.
 - **BACK on the retrig page** resets instead of closing, unlike everywhere else.
@@ -263,7 +263,7 @@ that code on a computer.
 4. **CONTOUR** (Env Timbre) lets the amp envelope open the timbre: "at 0, nothing; turned up, each note starts brighter
    and closes as it fades."
 5. **PITCH** and the keys set the note as on the original machines. **DECAY**, **GATE** and **PUNCH** work as on Tone.
-6. Lo-fi: hold **FUNC** and turn **PITCH**. Middle (default) = unchanged, screen shows **OFF**. Left = **RATE**, the
+6. Lo-fi: hold **MACHINES** and turn **PITCH**. Middle (default) = unchanged, screen shows **OFF**. Left = **RATE**, the
    sample rate drops step by step from 48 kHz to about 4 kHz (screen **46K** down to **4K**). Right = **BITS**, from
    12 bits down to 2 (screen **12B** down to **2B**). Shown in the large value window, one step per knob click.
    Can be p-locked.
@@ -370,8 +370,8 @@ with or without Model-TG.
   its SPD and DEP are stored a little less finely than LFO 1's (whole values shown come back exactly).
 - **LFO 3 and 4 are for live play**: one setting per track whatever the pattern, kit or sound; not saved, back to
   defaults at power-on; cannot be p-locked ("turning a knob with a trig held changes the setting itself").
-- An extra LFO aimed at LFO 1's destination does nothing. DEST skips destinations another LFO of the track already
-  uses (NONE is always available). Two extra LFOs loaded onto the same destination add up.
+- Holding **[LFO]** + turning a knob assigns that destination to the displayed LFO (holding **MACHINES** + **PITCH** on a MACRO track assigns Lo-Fi). Knob LEDs on the LFO page light up for Attack, Filter, Resonance and Lo-Fi.
+- Multiple LFOs assigned to the same destination stack and add up, including LFO 1's destination: each LFO adds its delta and saturates (cascaded 0..0x7f00). The DEST wheel skips taken destinations, but direct knob assignment allows stacking any LFOs.
 - Old sounds load with LFO 2 at no destination. Sounds saved with DavidCaruso's firmware keep their LFO 2. The
   official OS loads sounds saved with this mod and ignores LFO 2.
 - **Fixes a Model-TG bug**: p-locks on Attack, Filter and Resonance used to come back after reloading a pattern as

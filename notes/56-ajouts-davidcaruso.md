@@ -24,6 +24,8 @@ VA de l'OS 1.13 ; « chez David » renvoie à la section 3 de son `.syx`, dépaq
   régénéré avec ce tweak.
 - **Testé sur la machine (11/10/2026)** par Maxime : « ça marche nickel ». **Licence** : MIT, accord de David
   transmis par Maxime le 11/10/2026 (§1.3).
+- **Mise à jour (14/10/2026, §3.11), expérimentale** : appui bref / tenu sur [LFO], LFO 3 et 4 sauvés avec le pattern,
+  remis aux défauts comme LFO 1 ; prouvée en émulation, à essayer sur la machine.
 
 ## 1. Le firmware de David
 
@@ -82,8 +84,9 @@ Tweak `60-lfo-plus.json`, id `lfo-plus`, seul, avec ou sans Model-TG, et avec to
 - **LFO 2 est sauvé avec le son et se p-locke.** Il est rangé dans 4 octets libres de l'enregistrement du son, au
   même format que chez David : ses sons se relisent ici, et inversement. L'OS d'origine relit ces sons sans rien
   perdre d'autre.
-- **LFO 3 et 4 vivent en mémoire.** Ils ont un réglage par piste, ne sont pas sauvés, ne se p-lockent pas et
-  reviennent aux défauts à chaque démarrage.
+- **LFO 3 et 4 sont sauvés avec le pattern** (depuis le 14/10/2026, §3.11). Un réglage par piste et par kit, rangé
+  dans 52 octets inutilisés de l'enregistrement du kit ; pas de p-lock. Avant : un réglage par piste en mémoire, pas
+  sauvé, remis aux défauts au démarrage.
 - **Écarts voulus avec David**, pour l'installer avec tous nos mods sans écrire un octet qu'un autre tweak écrit :
   - les accroches sont déplacées (§3.4) ;
   - LFO 2 n'est plus calculé quand aucune piste ne lui donne de destination ;
@@ -201,13 +204,13 @@ Analyse détaillée hors dépôt (scratchpad du coordinateur, `analysis/lfo.md`)
    3. faux obj : en-tête et mots des pistes recopiés de obj, avec les réglages du jeu en k = 1, 2, 4, 5, 8 ;
    4. `0x40091ab2(faux obj, tempo, masque)` ;
    5. état du jeu repris, état de l'OS remis ;
-   6. pour chaque piste, si DEST ≤ 32 et ≠ DEST de LFO 1 : le vrai mot de obj reçoit la modulation (mot du faux obj
+   6. pour chaque piste, si DEST ≤ 32 : le vrai mot de obj reçoit la modulation (mot du faux obj
       moins mot d'avant), borné à 0..0x7f00.
 5. **Puis LFO 1**, par l'appel d'origine. Les LFO de plus passent avant lui. Ils peuvent donc moduler ses réglages
    (SPD, DEP…), mais la liste DEST de l'OS n'en propose aucun. Cette modulation croisée n'est atteignable que par
    des données, pas depuis l'interface.
 
-Deux LFO de plus sur la même destination s'additionnent, chacun borné : `borne(borne(base + q2) + q3)`.
+Deux LFO de plus sur la même destination s'additionnent, y compris sur la destination de LFO 1, chacun borné : `borne(borne(base + q2) + q3)`.
 
 #### 3.3.2 Écarts avec David dans le moteur
 
@@ -223,10 +226,14 @@ Deux LFO de plus sur la même destination s'additionnent, chacun borné : `borne
 
 - **Variables.** `page` (0 à 3), `eat` (relâchement à avaler) et `view` (la vue ouverte, objet + 56, ou 0) sont
   dans un masque. Elles valent 0 dans l'image, donc à chaque démarrage.
-- **Touche** (pointeur `0x401016e4`). Code 8 sans FUNC :
-  - un appui sur LFO 1, 2 ou 3 passe à la page suivante et redessine ; son relâchement est avalé ;
-  - sur LFO 4, l'appui va à l'original, qui ferme la page au relâchement, comme d'origine ;
-  - la répétition automatique, FUNC et les autres touches vont à l'original.
+- **Touche** (pointeur `0x401016e4`). Code 8 sans FUNC (depuis le 14/10/2026, §3.11.1 ; avant : la page changeait à
+  l'appui et le relâchement était avalé) :
+  - un appui sur LFO 1, 2 ou 3 va à l'original et est noté (`pend`) ; à son relâchement, si le drapeau « tenue » de
+    la vue est resté à 0 (appui bref), page suivante et redessin ; s'il est mis (potard tourné [LFO] tenue), l'original :
+    la page reste ;
+  - une autre touche pendant que [LFO] est tenue efface la note : le relâchement va à l'original ;
+  - sur LFO 4, tout va à l'original, qui ferme la page au relâchement, comme d'origine ;
+  - la répétition automatique et FUNC vont à l'original.
 - **Dessin** (pointeur `0x401016ec`). D'abord l'original. Puis, sur les pages 2 à 4 :
   1. le cadre gauche (0, 0)-(63, 63), inversé par l'OS, est désinversé ;
   2. le chiffre est centré en (32, 34) avec la police du nom de page ;
@@ -299,9 +306,9 @@ déjà sauvés avec le défaut gardent leurs rangées fausses.
 
 #### 3.3.6 LFO 3 et 4
 
-Deux tables dans un masque, de 6 pistes × {SPD, MULT << 8, WAVE << 8, DEST << 8, DEP} chacune, aux défauts dans
-l'image. Une valeur par piste, globale : ni par son, ni par kit, ni par pattern, et pas de p-lock. Elle est gardée
-au changement de projet et revient aux défauts au démarrage.
+Jusqu'au 14/10/2026 : deux tables dans un masque, de 6 pistes × {SPD, MULT << 8, WAVE << 8, DEST << 8, DEP}
+chacune, aux défauts dans l'image ; une valeur par piste, globale, pas sauvée. Depuis : un bloc de cette forme par
+kit (§3.11) ; la table de l'image reste comme bloc de secours.
 
 ### 3.4 Accroches
 
@@ -326,6 +333,9 @@ registres, pile et drapeaux quand ils servent (§3.7, section 7 de la preuve).
 | pointeur `0x400fd190` | `0x4000ba7a` | `lfo_set` | set, pages 3/4 | idem |
 | pointeur `0x401016e4` | `0x40024e86` | `lfo_key` | touche de la vue LFO | idem |
 | pointeur `0x401016ec` | `0x400426fa` | `lfo_draw` | dessin de la vue LFO | idem |
+| `0x4005b2ae` | `lea -28(sp),sp ; movem.l d2-d3/a2-a6,(sp)` | `jmp kit_save ; nop` | sauvegarde d'un kit (§3.11) | dans son code |
+| `0x4005d080` | `lea -36(sp),sp ; movem.l d2-d5/a2-a6,(sp)` | `jmp kit_load ; nop` | chargement d'un kit (§3.11) | dans son code |
+| `0x4008f1f0` | `movea.l 4(sp),a1 ; movea.l 8(sp),a0` | `jmp kit_copy ; nop` | memcpy : copie d'un kit entier (§3.11) | dans son code |
 
 `[FAIT]` : aucun branchement ni constante de l'OS ou des charges utiles ne vise l'intérieur d'une instruction
 remplacée.
@@ -470,7 +480,7 @@ Chez David, mesuré de la même façon : +1 566 toujours, +4 734 avec les trois.
   - le passage des mots k = 28..32 du son vers les cibles audio (notification par vt[16]) ;
   - la pose du p-lock par `0x4000f4b8` sur la page 2. Le get/set de l'OS, lui, est exécuté et écrit les bons k.
 - **Rappels `0x40025e10`** : on ne sait pas exactement ce qui les déclenche.
-- **LFO 3 et 4** sont globaux par piste et perdus à l'extinction. Trig tenu, un potard change la valeur de jeu.
+- **LFO 3 et 4** : voir §3.11.6. Trig tenu, un potard change la valeur de jeu.
 - **SPD et DEP de LFO 2** sont sauvés sur 8 bits (pas de 0x80). Les valeurs entières de l'écran reviennent
   exactement, un réglage plus fin est arrondi.
 - **Phase de LFO 2** arrêtée tant qu'aucune piste ne lui donne de destination (§3.3.2).
@@ -505,7 +515,241 @@ Flasher `lfo-plus` seul, puis avec `model-tg` (et MACRO ou arp, au choix).
 9. **Charge.** 6 pistes avec LFO 2, 3 et 4 sur chacune : pas de craquement de plus.
 10. **Sons de David.** Si Maxime a des sons sauvés avec le firmware de David : leur LFO 2 revient.
 
+### 3.11 Mise à jour du 14/10/2026 : appui bref / tenu, LFO 3 et 4 par pattern
+
+Demande de DavidCaruso (14/10/2026), d'après ses essais :
+
+1. « Holding down the LFO button and turning one of the settings should apply that destination on the LFO. But
+   pressing the LFO button switches LFO's » : maintenir [LFO] et tourner un potard (l'affectation de destination de
+   l'OS) ne doit pas changer de LFO ;
+2. effacer une piste ou commencer un nouveau projet doit remettre les quatre LFO aux défauts, comme LFO 1 ;
+3. sauver LFO 3 et 4 avec le projet.
+
+Même mise à jour dans son firmware Model-TG-VA-Edition (branche `plaits`), d'où ce code est porté.
+
+#### 3.11.1 Appui bref ou tenu `[FAIT]`
+
+- La vue LFO (vue = objet + 56) a un drapeau « tenue » en objet + 604 (vue + 548) :
+  - l'appui de [LFO] le remet à 0 (`0x40024e0c`) ;
+  - chaque événement de potard le met à « [LFO] tenue » (`0x40024db6`, `0x4007faf4(8)`) ;
+  - le relâchement ferme la page s'il est à 0, sinon le remet à 0.
+- L'affectation « [LFO] tenue + potard » est `0x4001eb52..0x4001ec66` : k du potard par id → k, << 8, lu et écrit
+  pour l'identifiant 0x20 (DEST) par vt[28] et `0x4000b274` (→ vt[92]). Elle passe donc par id → k sur la page 2
+  (mot k = 31) et par `lfo_get` / `lfo_set` sur les pages 3/4 : elle vise le LFO affiché.
+- Le Clear LFO de l'OS (`0x4001fb16`, [LFO] tenue + une touche) remet les identifiants 0x1e..0x24 (table
+  `0x401004c0`) aux défauts par vt[12] → vt[16] → `0x4000b274` : sur les pages 2 à 4, c'est le LFO affiché (SPD
+  gardé, comme pour LFO 1).
+- `lfo_key` laisse l'appui à l'original (noté `pend`) et décide au relâchement (§3.3.3). Sur LFO 4, tout est
+  d'origine.
+
+#### 3.11.2 Où mettre LFO 3 et 4 `[FAIT]`
+
+- **Le son est plein** : ses 33 mots k servent tous (0..22 l'OS, 23..27 Model-TG, 28..32 LFO 2) ; son
+  enregistrement (100 o) n'a que la case 18 de libre (16 bits), que le chargement recopie dans k = 0.
+- **Le kit a de la place.** Les 96 kits du projet sont en RAM, `0x409c9c80 + n × 7 094` (pattern n en
+  `0x406fa040 + n × 30 710`, couples construits en `0x4002017c`) ; le kit joué est `*0x40a78888` ; les sons des
+  pistes sont en kit + 28 + 100 t, ceux que la page modifie (Model-TG l'a vérifié, `kit_ok`).
+- **L'enregistrement d'un kit** (format 4, 0x1e00 o par pattern dans le fichier) est écrit par `0x4005b2ae`
+  (enregistrement, kit, ?) : version en +0, nom et niveaux, les 6 sons en +32, le bloc FX en +632, la réserve de
+  sons en +708. Le bloc FX (`0x4005b266`) écrit +632..+635 (0), +636..+645 (table `0x4010ee04..0x4010ee38` : cases
+  0..4) et +700..+707 (0) : **rien n'écrit +646..+699**. Le chargement (`0x4005d080`, kit, enregistrement) n'y lit
+  rien (bloc FX `0x4005b21a` : +632..+645). La preuve le montre en faisant tourner les deux (§3.11.5).
+
+#### 3.11.3 Conception
+
+- **T34** : un bloc de 120 o par kit (LFO 3 puis LFO 4, pistes 0..5, {SPD, MULT, WAVE, DEST, DEP}), en
+  `0x4233c000..0x4233ecff`, dans le bas du trou au-dessus du BSS (§3.5.2), suivi de 4 tampons de kit retenus
+  (`0x4233ed00..0x4233eef3`). Pas remis à zéro au démarrage : `blk34` les met aux défauts au premier usage, tant que
+  l'octet `kready` (dans un masque, rechargé à 0) vaut 0. Le chargement du projet au démarrage passe par `kit_load`,
+  donc par là.
+- **Le kit joué** : `cur34` rend le bloc de `*0x40a78888`. Moteur (`lfo_audio`, `audio_sets`), get/set des pages
+  3/4 et destinations prises le lisent. Tant que `kready` vaut 0, `cur34` rend le bloc de secours de l'image : le
+  moteur et la page n'écrivent jamais T34.
+- **Sauvegarde** (`kit_save`, entrée de `0x4005b2ae`) : la fonction d'origine, puis « LF34 » en +648 et les 12 LFO en
+  +652..+699 au format de LFO 2 (`pk5`, SPD et DEP au pas de 0x80). Un kit hors des 96 (tampon) sauve les défauts.
+- **Chargement** (`kit_load`, entrée de `0x4005d080`) : la fonction d'origine, puis les 12 LFO si « LF34 » est là,
+  sinon les défauts (`upk5`) ; un enregistrement plus ancien n'a jamais cette marque (le trou garde ce que le tampon
+  contenait). Kit hors des 96 : rien.
+- **Remise aux défauts** (`snd34`, à la fin de `lfo_init`, donc de `0x40061866`) : si le son est celui de la piste t
+  d'un des 96 kits, LFO 3 et 4 de cette piste aux défauts. Cela couvre l'effacement du son d'une piste
+  (`0x400149fa`), des sons d'un pattern (`0x40009d24` → `0x40061374`), le kit 0 d'un nouveau projet, et le son qui
+  n'a pas pu être relu.
+- **Copies** (`kit_copy`, entrée de memcpy `0x4008f1f0`) : une copie de 7 094 o (un kit entier) emporte le bloc de la
+  source (un des 96 kits ou un tampon retenu) vers la destination (un des 96 kits, sinon un tampon retenu, les 4
+  derniers). Cela couvre les kits 1..95 du nouveau projet (copies du kit 0, `0x40061798`) et les copies / collages /
+  annulations de pattern, qui gardent le kit dans un tampon à eux (`0x40010b12`, `0x40010b7e`, `0x40010d4e`,
+  `0x400119b6`, `0x40011b44`). Les autres tailles vont droit à memcpy : 3 instructions de plus par appel.
+
+#### 3.11.4 Place
+
+- Code et données : 2 612 o dans les dix masques réservés à ce mod (`0x40185f48`, `0x40186238`, `0x40189618`, qui
+  restaient vides, sont maintenant pris).
+- Mémoire : `0x4233c000..0x4233eef3` (12 020 o), sous la mémoire de travail de §3.5.2, déclarée dans
+  `tools/registry.py`.
+- Octets +648..+699 de l'enregistrement d'un kit, déclarés dans `tools/registry.py`.
+
+#### 3.11.5 Preuve `[FAIT en émulation]`
+
+`tools/emu/test_lfo_plus.py`, section 3 (touche) et nouvelle section 8, sur le vrai code de l'OS :
+
+| Ce qui est vérifié | Résultat |
+|---|---|
+| touche : appui → l'original (noté) ; relâchement d'un appui bref → page suivante ; drapeau « tenue » mis ou autre touche entre-temps → l'original, la page reste ; FUNC, répétition, LFO 4 → l'original | ok |
+| `blk34` : chacun des 96 kits → son bloc, toute autre adresse → secours ; premier usage : défauts ; moteur sans `kready` : rien d'écrit (section 1) | ok |
+| moteur : LFO 3/4 depuis le bloc du kit joué = même sortie que la même table de secours | identique |
+| get/set des pages 3/4 sur le bloc du kit joué ; vrai Clear LFO (vt[12], table `0x401004c0`) sur les pages 3/4 | ok |
+| vraie sauvegarde d'un kit : enregistrement = l'origine hors +648..+699 (et LFO 2 des sons, §4) ; vrai chargement : kit = l'origine, bloc exact ; OS d'origine sur l'enregistrement du mod = sur le sien ; sans marque (0xa5, nul, plein, au hasard, marque voisine) : défauts ; chargement refusé : bloc intact ; kit hors des 96 | ok |
+| vrai son aux défauts (`0x40061866`) sur le son de la piste 3 du kit 7 : ses LFO 3/4 aux défauts, rien d'autre ; son de la réserve, adresse décalée : rien | ok |
+| vrai memcpy : autres tailles = l'origine ; kit → kit, kit → tampon → kit, source inconnue, 4 tampons retenus | ok |
+| vrai nouveau projet (`0x40061738`) : kits = l'origine, les 96 blocs aux défauts | ok |
+
+Combinaisons passées (« TOUT OK ») : seul ; `model-tg` ; `macro` ;
+`6ch-usbup,model-tg-st,macro-tg,arp,trig-hold,tempo-max,boot-anim,multiline-browser,level-pan-values,trigless-dim,sample-preview-st` ;
+`model-tg,sample-preview,arp,tempo-max` ; `chord-keys,arp,trig-hold,tempo-max,6ch-multiout,level-pan-values` (le
+nouveau projet n'y est pas émulé : l'origine elle-même s'arrête sous le banc avec `chord-keys`). Pas de fichier
+Syntakt sous la main : les combinaisons avec les moteurs du Syntakt ne sont pas repassées, et leurs empreintes
+`REF_MAINOS` (287 lignes avec `lfo-plus`) et celles de `BUILD.md` sont **à régénérer** avec
+`tools/ref_mainos.py --syntakt` avant la fusion. Coût : +142 instructions par bloc sans LFO de plus (+137 avant).
+
+#### 3.11.6 Limites
+
+- LFO 3/4 ne font pas partie du son : charger un preset ou coller un son ne les apporte pas ; annuler l'effacement
+  d'un son ramène LFO 1 et 2, pas LFO 3 et 4.
+- Un tampon de kit qui n'est pas l'un des 4 derniers remplis par memcpy est oublié : son collage garde les LFO 3/4 du
+  kit de destination.
+- SPD et DEP de LFO 3/4 sont sauvés au pas de 0x80, comme LFO 2.
+- `[HYP]` Le chargement du projet au démarrage passe par `0x4005d080` pour les 96 kits (`0x400107a4`) ; sinon les
+  blocs restent au secours jusqu'au premier chargement, effacement ou copie d'un kit.
+
+#### 3.11.7 À essayer sur la machine
+
+1. Page LFO, appuis brefs sur [LFO] : 2, 3, 4, puis fermeture, comme avant.
+2. Sur chaque page, [LFO] tenue + un potard (PITCH, DECAY…) : la destination va au LFO affiché, la page ne change
+   pas au relâchement.
+3. [LFO] tenue + la touche du Clear LFO sur la page 3 : LFO 3 effacé.
+4. Régler LFO 3/4 différemment sur deux patterns, passer de l'un à l'autre : chacun joue les siens.
+5. Sauver le projet, éteindre, rallumer : LFO 3/4 reviennent.
+6. Effacer le son d'une piste, puis un nouveau projet : LFO 3/4 aux défauts.
+7. Copier un pattern et le coller ailleurs : ses LFO 3/4 suivent.
+8. Ouvrir un projet sauvé avec la version précédente : LFO 3/4 aux défauts. L'OS officiel ouvre un projet sauvé avec
+   cette version.
+
 ---
 
 *Pour l'intégrateur* — ligne proposée pour `notes/README.md` :
 `| 53 | **LFO 2, 3, 4 : trois LFO de plus par piste** (idée de DavidCaruso) | [LFO] répété → pages 2/3/4 ; vraie fonction des LFO de l'OS avec son état ; LFO 2 sauvé dans le son (+88..+91) et p-lockable, LFO 3/4 en mémoire ; corrige les p-locks Attack/Filtre/Résonance de Model-TG ; 1 844 o dans 7 masques, 1 180 o en 0x4233f000 ; +0,13 % sans LFO de plus, +3,5 % avec les trois | expérimental, prouvé en émulation |`
+
+### 3.12 Mise à jour du 20/10/2026 : portage sur l'OS 2.0 (conflit de mémoire avec step-record)
+
+Le 18–19/10, l'OS est devenu un OS unique (notes/71) et deux features y sont entrées : `mod-settings` (notes/72) et
+`step-rec` (notes/73). Cette branche, écrite le 14/10 sur l'ancienne organisation, a été reportée sur le nouveau
+`main` : les sources (assembly, générateur, preuve, cette note) sont reprises telles quelles, les fichiers générés
+(`tweaks.js`, `REGISTRY.md`, `REF_MAINOS`/`REF_MODS`, `60-lfo-plus.json`) sont **régénérés** par les outils, jamais
+fusionnés à la main.
+
+**Le conflit, trouvé par la preuve** (`test_lfo_plus.py`, section 0) : les blocs LFO 3/4 des 96 kits occupaient
+`0x4233c000..0x4233eef4` et la mémoire de travail `0x4233f000..0x4233f49c`, alors que **`step-rec` range son état à
+partir de `0x4233e800`**. Les deux se recouvraient sur 1 780 octets : LFO 3/4 aurait fonctionné seul, et les deux
+features se seraient corrompues dès qu'on les aurait utilisées ensemble — exactement ce qu'un essai « une feature à la
+fois » ne montre pas.
+
+**Correction** : les deux plages passent sous `step-rec`, toujours entre la fin du BSS (`0x423380b0`) et les tampons
+DMA (`0x4a340000`), sans recouvrement entre elles :
+
+| | Avant | Après |
+|---|---|---|
+| blocs LFO 3/4 (96 kits, 12 020 o) | `0x4233c000..0x4233eef4` | `0x4233b000..0x4233def4` |
+| mémoire de travail (1 180 o) | `0x4233f000..0x4233f49c` | `0x4233e000..0x4233e49c` |
+
+La vérification de la preuve ne demande plus que **le trou entier** soit libre — il ne l'est plus — mais que **nos deux
+plages** ne soient citées ni par l'OS, ni par les écritures des autres tweaks, ni par le code ou les relocalisations de
+leurs charges utiles.
+
+**État** : preuve entièrement verte (`ok` sur les 9 sections, `0. écritures` compris), `gen_lfo_plus --check`,
+`gen_flasher_tweaks --check`, `check_overlaps`, `registry --check` et `relocate_6ch --check` passent ; l'OS 2.0 se
+construit avec ce tweak et le firmware a été flashé.
+
+**Essai d'un utilisateur** (20/10/2026, OS 2.0 avec ce tweak, Model:Cycles de l'utilisateur, pas celui de Maxime) :
+appui bref et appui tenu avec rotation d'un potentiomètre, Clear LFO sur la page affichée, LFO 3/4 conservés d'un
+pattern à l'autre et à travers une extinction — conforme à ce qui est décrit ici. **Maxime n'a pas encore essayé cette
+version** : la carte reste `experimental` jusqu'à son rapport.
+
+### 3.13 Mise à jour du 29/10/2026 : affectation directe [LFO] + potard, lo-fi sur MACRO et diode de la destination
+
+Deux ajustements ergonomiques vérifiés sur le matériel et intégrés :
+
+1. **Diode de la destination sur la page LFO** (`0x400261aa` → hook `lfo_led` en `0x400262ac`, masque `0x4018af88`) :
+   sur la page LFO, l'OS allume la diode du potentiomètre qui correspond à la destination actuelle du LFO affiché.
+   Pour les paramètres stock, cela fonctionne d'origine. Pour les paramètres substitués sous `MACHINES` (Attack, Filtre,
+   Résonance via Model-TG) ou le lo-fi de MACRO (assigné en entrée 16 de l'enregistrement), la recherche d'identifiant
+   de l'OS échouait car l'enregistrement classique de la machine ne les contient pas aux positions 0..11.
+   Le hook `lfo_led` intercepte la recherche :
+   - Attack (`0x0d`) renvoie vers la position de DECAY (knob 1, diode 37) ;
+   - Filtre (`0x0c`) renvoie vers SWEEP (knob 4, diode 40) ;
+   - Résonance (`0x0b`) renvoie vers CONTOUR (knob 5, diode 41) ;
+   - Lo-Fi de MACRO (`FTUN_ID` = 43) renvoie vers PITCH (knob 0, diode 36) sur la machine MACRO.
+   La diode s'allume ainsi fidèlement lorsque la page LFO est ouverte.
+
+2. **Lo-Fi sur MACRO via MACHINES + PITCH** (`0x4001eaa2` → hook `lfo_learn` en `0x4001eb50`, masque `0x4018af88`) :
+   lors du geste d'affectation directe (`[LFO]` maintenu + potentiomètre), tourner le potentiomètre PITCH (position 0)
+   avec `MACHINES` maintenu sur une piste MACRO assigne le paramètre Lo-Fi (`FINE`, identifiant 43) au lieu de Pitch
+   (identifiant 42). Si `FUNC` est maintenu (`FUNC + PITCH`), le comportement stock (Pitch) est conservé. Les autres
+   machines ne sont pas touchées. L'édition de la valeur de Lo-Fi reste confiée à `lofi_knob`.
+
+3. **Vérité sur le cumul / surimpression des LFO (comportement moteur vérifié sur le code)** :
+   - Un LFO supplémentaire (LFO 2, 3 ou 4) réglé sur la même destination que LFO 1 est ignoré par le moteur audio
+     (`0x400597c6` / `run_set`) : LFO 1 reste le seul maître sur sa destination.
+   - En revanche, si plusieurs LFO parmi 2, 3 et 4 ciblent la même destination, leurs modulations **s'additionnent**
+     successivement avec bornage intermédiaire : `borne(borne(base + q2) + q3)`.
+   - La molette `DEST` saute les destinations déjà prises par un autre LFO de la piste (pour faciliter la navigation).
+     En revanche, l'affectation directe par potentiomètre (`[LFO]` maintenu + potard) **autorise** le cumul : elle ne
+     refuse pas une destination déjà prise. L'utilisateur a vérifié sur le matériel que le cumul s'entend et constitue
+     une possibilité sonore volontaire.
+
+### 3.14 Mise à jour du 29/10/2026 : MACHINES avalée sur la page LFO, FINE (FTUN) sur toutes les machines
+
+Deux corrections de comportement, décidées par le propriétaire après essai sur la machine, et le défaut que la preuve
+a trouvé sur la première version.
+
+1. **`MACHINES` n'ouvre plus l'écran des machines pendant le geste `[LFO]` + `MACHINES` + potard** (`lfo_key`,
+   `0x40024e86` remplacé, même place) : l'original passe le code 5 à `0x40075822` ; pendant le geste, l'écran des
+   machines s'ouvrait donc par-dessus la page LFO (la destination était posée, la page et sa diode partaient). La
+   touche n'est avalée que **`[LFO]` tenue** : le test est le bit 3 de `KEY_BITS` (`0x40f95744`, table
+   `0x4010ae5c[8]`, celle de `0x4007faf4`) ; l'appui est rendu pris (1) sans atteindre l'original, et un octet `m5`
+   retient l'appui avalé pour que **son relâchement le soit aussi**, même si `[LFO]` est lâchée entre-temps : l'OS ne
+   voit jamais un relâchement sans appui. **Posée seule sur la page LFO, `MACHINES` va à l'original et ouvre l'écran
+   des machines**, comme d'origine (retour du propriétaire, 29/10 : la première version l'avalait toujours). L'état
+   « MACHINES tenue » que lisent Model-TG (`atk_watch` → `mod_held`), `lfo_learn` et `knob_vec` est celui des touches
+   (`KEY_BITS`), pas cet événement : il suit la touche comme avant, et les substituts de potentiomètres sous
+   `MACHINES` continuent de fonctionner.
+
+2. **`MACHINES` + `PITCH` tenu donne `FINE` (identifiant 43) sur toutes les machines** (`lfo_learn`) : la version
+   du 26/10 cherchait l'enregistrement de la piste et ne substituait que sur MACRO ; c'est faux, `FINE` est une
+   destination de LFO stock qui doit rester elle-même partout, et c'est sur MACRO qu'elle est le lo-fi. Le test de
+   l'enregistrement est donc retiré (il coûtait aussi 52 o et une lecture de kit par affectation). Sans `[LFO]`
+   tenue, `MACHINES` + `PITCH` reste le lo-fi de MACRO, par `knob_vec`, inchangé.
+
+3. **`FTUN` garde son nom sur la page LFO** : renommer la destination en « Lo-Fi » par `DESCN` (essayé le 29/10)
+   faisait lire « Lo-Fi » à la place de `FTUN` sur **toutes** les machines, alors que la plaque `MACHINES` lit
+   `param_table` et affiche déjà `Lo-Fi` sur MACRO seule. L'écriture dans `DESCN` a été retirée : la liste `DEST`
+   affiche `FTUN`, la plaque affiche `Lo-Fi` sur MACRO.
+
+**Défaut trouvé par la preuve, corrigé** : la première version avalait le code 5 par un saut vers un bloc commun
+placé après `move.b %d0, pend` de l'appui de `[LFO]` ; ce bloc **tombait dans la branche de l'appui**, qui
+n'atteignait donc plus l'original : `pend` restait à 0, l'appui de `[LFO]` n'était plus noté et la page ne cyclait
+plus (LFO 1 → 2 → 3 → 4) à l'appui bref. La preuve en émulation (`touche [LFO]`) l'a signalé sur les quatre pages.
+Le code 5 est maintenant traité sur place (`bne.s 0f` puis `rts`), sans saut vers un bloc partagé.
+
+**Preuve `[FAIT en émulation]`** : `tools/emu/test_lfo_plus.py`, `TOUT OK` seul et avec les treize autres tweaks de
+`os.json` (`--with …`) :
+- `touche [LFO]` : la séquence de l'original (appui bref, tenue, répétition, `FUNC`, LFO 4, autre touche) est
+  inchangée ; `MACHINES` **pendant `[LFO]` tenue** : appui et relâchement rendus pris (1), l'original jamais appelé,
+  l'appui bref de `[LFO]` annulé, la page ne bouge pas ; **`[LFO]` lâchée** : appui et relâchement vont à l'original
+  (l'écran des machines) ; appui avalé puis `[LFO]` lâchée : le relâchement reste avalé (`m5` retombé) ;
+- `[LFO] + potard` : 576 cas (machines 0..5 et MACRO, 12 potards, LFO 1..4, `MACHINES` tenue ou non) ;
+  `MACHINES` + `PITCH` → `k` 17 (`FINE`) sur **toutes** les machines, `PITCH` (`k` 10) sans `MACHINES` ;
+  `FUNC + PITCH` → `PITCH` ;
+- diode de la destination, destinations déjà prises (cumul admis), place, sauvegarde des kits : inchangés et verts.
+
+**Place** : aucun masque de plus (`lfo_key` et `lfo_learn` restent dans `0x4018af88`, `lfo_led` suit) ; la
+suppression de la lecture de kit rend 52 o.
