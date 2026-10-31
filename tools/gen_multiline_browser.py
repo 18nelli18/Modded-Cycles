@@ -9,8 +9,9 @@ dossier, trop hautes pour une ligne, deviennent un repère de 7 px.
 
 Idée et adresses de départ : un script d'un membre de la communauté qui modifiait 30-model-tg-st.json (notes/40 §1).
 
-tools/machines/multiline_browser/ : multiline_browser.S (dessin des lignes, quatre accroches), lié par
-multiline_browser.ld dans le masque de sprite 47x47 libéré 0x401904b4 (tools/sprites.py).
+tools/machines/multiline_browser/ : multiline_browser.S (dessin des lignes, cinq accroches), lié par
+multiline_browser.ld dans le masque de sprite 47x47 libéré 0x401904b4, et ml_name dans le masque 48x22 libéré
+0x40152d38 (tools/sprites.py).
 
     python3 tools/gen_multiline_browser.py --cycles model-cycles_OS1.13.syx [--check]
 """
@@ -35,6 +36,7 @@ SRC = HERE / "machines" / "multiline_browser"
 OUT = HERE.parent / "tweaks" / "model-cycles_OS1.13" / "44-multiline-browser.json"
 BASE = gx.BASE
 MASK = 0x401904b4                                      # masque 47x47 libéré (376 o)
+MASK2 = 0x40152d38                                     # masque 48x22 libéré (192 o) : ml_name
 ROWS = 3                                               # lignes visibles (1 à l'origine)
 ROW_H = 13                                             # pas entre deux lignes (px)
 Y0 = 40                                                # y de la 1re ligne (l'écran compte y depuis le bas)
@@ -56,6 +58,10 @@ HOOKS = (
      "0x400a561a..0x400a5623 n'est plus exécuté)"),
     (0x400a576e, "4eb940071da4", "ml_icon", 0x4eb9, "",
      "icône de dossier ou d'entrée spéciale : jsr 0x40071da4 -> jsr ml_icon (repère de 7 px)"),
+    (0x400a578c, "2d40ffe020454e91", "ml_name", 0x4eb9, "4e71",
+     "nom de la ligne : move.l d0,-32(fp) ; movea.l d5,a0 ; jsr (a1) -> jsr ml_name ; nop (le getter de la racine "
+     "de +Drive, 0x400a4184, rend LOCKS dès que la sélection est la dernière entrée : le temps de l'appel, la "
+     "sélection vaut la ligne demandée)"),
 )
 # (adresse, octets d'origine, nouveaux octets, rôle) : des constantes, et la liste dans un sous-dossier de +Drive
 PATCHES = (
@@ -76,14 +82,14 @@ PATCHES = (
     (0x400a5776, "001b", f"{X_MARK:04x}", "décalage après une icône : lea 27(a3),a3 -> lea X_MARK(a3),a3"),
     (0x400a69b4, "0001", f"{ROWS:04x}", "lignes visibles de la liste : pea 1 -> pea ROWS (constructeur 0x400a68fc)"),
 )
-SYMBOLS = ("ml_row", "ml_after", "ml_icon", "ml_bound")            # pour tools/emu/test_multiline_browser.py
+SYMBOLS = ("ml_row", "ml_after", "ml_icon", "ml_bound", "ml_name")            # pour tools/emu/test_multiline_browser.py
 
 
 def compile_browser():
-    """(adresse, octets) de la section .cave, et les symboles."""
+    """[(adresse, octets)] des sections .cave et .cave2, et les symboles."""
     with tempfile.TemporaryDirectory() as d:
         d = pathlib.Path(d)
-        obj, elf, out = d / "ml.o", d / "ml.elf", d / "cave.bin"
+        obj, elf = d / "ml.o", d / "ml.elf"
         gx.run([gx.CROSS + "gcc", "-mcpu=54418", f"-DML_X={X_TEXT}", f"-DML_CUR_X={CUR_X}", f"-DML_Y0={Y0}",
                 f"-DML_ROWH={ROW_H}", f"-DML_ROWS={ROWS}", "-c", str(SRC / "multiline_browser.S"), "-o", str(obj)])
         gx.run([gx.CROSS + "ld", "-T", str(SRC / "multiline_browser.ld"), "--no-warn-rwx-segments", "-o", str(elf),
@@ -93,19 +99,26 @@ def compile_browser():
             p = line.split()
             if len(p) == 3:
                 syms[p[2]] = int(p[0], 16)
-        gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", ".cave", str(elf), str(out)])
-        addr = int(subprocess.run([gx.CROSS + "objdump", "-h", str(elf)], capture_output=True, text=True,
-                                  check=True).stdout.split(".cave")[1].split()[1], 16)
-        return addr, out.read_bytes(), syms
+        heads = subprocess.run([gx.CROSS + "objdump", "-h", str(elf)], capture_output=True, text=True,
+                               check=True).stdout
+        caves = []
+        for sec in (".cave", ".cave2"):
+            out = d / (sec[1:] + ".bin")
+            gx.run([gx.CROSS + "objcopy", "-O", "binary", "-j", sec, str(elf), str(out)])
+            caves.append((int(heads.split(sec + " ")[1].split()[1], 16), out.read_bytes()))
+        return caves, syms
 
 
 def build_tweak(stock):
-    addr, code, syms = compile_browser()
-    room = sprites.zone(MASK)[1]
-    if addr != MASK or len(code) > room:
-        raise SystemExit(f"!! {len(code)} o à {addr:#x}, place {room} o à {MASK:#x}")
-    old = stock[addr - BASE:addr - BASE + len(code)]
-    writes = [{"off": addr - BASE, "old": old.hex(), "new": code.hex()}, sprites.redirect_write(MASK)]
+    caves, syms = compile_browser()
+    writes = []
+    for (addr, code), mask in zip(caves, (MASK, MASK2)):
+        room = sprites.zone(mask)[1]
+        if addr != mask or len(code) > room:
+            raise SystemExit(f"!! {len(code)} o à {addr:#x}, place {room} o à {mask:#x}")
+        old = stock[addr - BASE:addr - BASE + len(code)]
+        writes += [{"off": addr - BASE, "old": old.hex(), "new": code.hex()}, sprites.redirect_write(mask)]
+    (_, code), (_, code2) = caves
     for va, old_hex, sym, op, tail, _ in HOOKS:
         if stock[va - BASE:va - BASE + len(old_hex) // 2] != bytes.fromhex(old_hex):
             raise SystemExit(f"!! octets d'origine inattendus en {va:#x}")
@@ -125,7 +138,8 @@ def build_tweak(stock):
             "« > » devant le nom sous le curseur ; le son chargé reste inversé ; un dossier a un petit repère devant "
             "son nom. Avec browser-scroll ou Model-TG, seul le nom sous le curseur défile.",
             "Idée et adresses de départ : un script d'un membre de la communauté (notes/40).",
-            f"Code dans le masque de sprite 47x47 libéré 0x401904b4 (tools/sprites.py) : {len(code)} o. "
+            f"Code dans le masque de sprite 47x47 libéré 0x401904b4 : {len(code)} o, et le nom de chaque ligne "
+            f"dans le masque 48x22 libéré 0x40152d38 : {len(code2)} o (tools/sprites.py). "
             "Généré par tools/gen_multiline_browser.py, notes/40.",
         ],
         "device": "Model:Cycles",
