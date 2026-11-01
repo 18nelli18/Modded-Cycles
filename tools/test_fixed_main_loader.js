@@ -14,7 +14,7 @@ async function scenario(responses){
   const run=async(responses)=>{const x=await scenario(edition==='lite'?[raw.full,...responses]:responses);if(edition==='lite')await x.win.MCFixedMainImageReady;return x;};
   let x=await run([r]);let got=await x.win.MCFirmwareImageLoad(edition);assert.equal(builder.hex(builder.sha256(got)),m.syxSha256);
   assert(x.calls.every(c=>c.options.cache==='no-store'));assert(x.calls.at(-1).url.endsWith(m.file));
-  const ctx={window:x.win,meta:x.win.MCFirmwareImages[edition],edition,release:meta.release};vm.runInNewContext(make[0]+'\nglobalThis.prepared=makeFixed();',ctx);const prepared=await ctx.prepared;assert.equal(prepared.name,`Supermodel_${edition==='lite'?'Lite_':''}${meta.release}.syx`);assert.equal(builder.hex(builder.sha256(prepared.raw)),m.syxSha256);
+  const ctx={window:x.win,meta:x.win.MCFirmwareImages[edition],edition,release:meta.release};vm.runInNewContext(make[0]+'\nglobalThis.prepared=makeFixed();',ctx);const prepared=await ctx.prepared;assert.equal(prepared.name,`Supermodel_${edition==='lite'?'Lite_':''}${meta.release}.syx`);const fixed=builder.rewrap(r);assert.equal(builder.hex(builder.sha256(prepared.raw)),builder.hex(builder.sha256(fixed)));assert.equal(builder.hex(builder.sha256(builder.unwrap(prepared.raw).stream)),builder.hex(builder.sha256(builder.unwrap(r).stream)));
   const count=x.calls.length;got[100]^=1;got=await x.win.MCFirmwareImageLoad(edition);assert.equal(builder.hex(builder.sha256(got)),m.syxSha256);assert.equal(x.calls.length,count);
   x=await run([bad,r]);await x.win.MCFirmwareImageLoad(edition);assert(x.calls.at(-1).url.includes('/'+meta.delivery_source_commit+'/'));
   x=await run([null,r]);await x.win.MCFirmwareImageLoad(edition);
