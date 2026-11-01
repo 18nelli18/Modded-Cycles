@@ -6,7 +6,8 @@ extern const u8 rm_order[];extern const u32 rm_count;
 extern u32 mb_native_rotate(u32,s32,u32,u32),mb_native_key(u32,const u32*);
 extern u32 rm_machine_valid,rm_machine_stamp,rm_machine_result;
 extern void fx_notice(const char*);
-volatile u32 mb_silent=1,mb_pending,mb_candidate,mb_lane,mb_all,mb_view;
+/* Stk par defaut ; une preference Sil valide reste restauree par mb_service. */
+volatile u32 mb_silent=0,mb_pending,mb_candidate,mb_lane,mb_all,mb_view;
 static u32 committing,owned;
 static void redraw(void){u32 app=*(volatile u32*)0x40fe4178;if(app)N(0x40076bee)(app+64);}
 void mb_cancel(void){mb_pending=committing=0;}

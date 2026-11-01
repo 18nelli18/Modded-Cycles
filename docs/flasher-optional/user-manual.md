@@ -1,11 +1,11 @@
 # SUPERMODEL
-## User manual · Release 2.75
+## User manual · Release 2.99
 
 Model:Cycles · Full / Lite / Machine Optional
 
 # Contents & conventions
 
-A practical reference for Supermodel 2.75 on Model:Cycles.
+A practical reference for Supermodel 2.99 on Model:Cycles.
 
 Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.
 
@@ -68,7 +68,7 @@ Tap SETTINGS + TRACK, choose Global, then select a row.
 | Num | Off or On. On displays numeric volume and pan values as you adjust them. Default: Off. |
 | Mute | Stk: momentary mute controls. LTC: TRACK + tap FUNC latches mute mode. Default: Stk. |
 | Dly | Stk: normal Delay Time. Div: musical divisions, including dotted and triplet positions. Default: Stk. |
-| DX | Off or On. Enables the diagnostic display gesture. Default: Off. |
+| DX | Off or On. Enables SETTINGS + BACK for the live CPU monitor. Default: Off. |
 | QntM | Enable quantized mute/solo and choose its time division. Default: Off. |
 | Grv | Groove On/Off and Type, plus CHORD Strum. Swing sets groove strength. |
 | LFOs | Choose 1, 2, 3 or 4 audio LFOs per track. Default: 2. |
@@ -86,7 +86,7 @@ BACK closes Mod Setup and saves global preferences. If playback is running, the 
 
 Select and perform tracks while keeping the controls close at hand.
 
-**CTRL-ALL latch** — Double-tap TRACK within 350 ms to latch parameter-knob edits across the included tracks. Press TRACK once or BACK to exit. Track/trig selection remains momentary; DATA and effect selection remain physical. The latch starts Off and is not saved.
+**CTRL-ALL latch** — Double-tap TRACK within 350 ms to latch parameter-knob edits across the included tracks. Press TRACK once or quick double-BACK to exit. Single BACK retains native parameter undo. Track/trig selection remains momentary; DATA and effect selection remain physical. The latch starts Off and is not saved.
 
 ## Mute and solo
 
@@ -726,7 +726,7 @@ Global > Dly > Div displays musical divisions for Delay. It includes dotted and 
 
 ## DX diagnostics
 
-Set Global > DX > On. Tap FUNC, press it again within 350 ms, hold for at least 0.5 seconds, then release. Other controls cancel the gesture. The display shows/resets A/P/O/N: average CPU, peak CPU, overruns and governor voice drops.
+With Global DX On, SETTINGS + BACK opens the live CPU monitor. See the CPU monitor chapter for controls and readings.
 
 **Before powering off** — Stop playback, save the project when needed, and allow pending preference saves to finish. Temporary snapshots are for performance recall, not a substitute for a permanent save.
 
@@ -831,8 +831,26 @@ Choose the index with SHAPE, or parameter-lock a word on each step.
 
 For speech controls and an example phrase, see the SPEAK chapter.
 
+# CPU monitor
+
+Monitor complete audio-block load while using the instrument.
+
+Set Global > DX > On. Hold SETTINGS + BACK to open or close the CPU monitor. PAGE changes load/track-cut pages; press DATA to clear counters. Quick double-BACK also exits; the first BACK keeps native undo. Knob turns, transport and trigs work normally while the monitor stays visible. The load page shows current, peak, mean and sustained CPU, overruns and forced cuts. The track page shows six forced-cut counters (99+ at the limit) and the last T5 cut load. DX Off disables access.
+
+| Readout | Meaning |
+| --- | --- |
+| NOW / PEAK | Latest complete block / highest recorded load, in percent. |
+| MEAN / SUST | Recorded playing-time average / governor sustained estimate. |
+| OVER / CUT | Deadline overruns / forced governor fades. |
+| T1-T6 | Forced cuts by track;99+ is a capped count, not normal note-offs. |
+| LAST T5 S/L | Sustained estimate and block load at the last forced Track5 cut. |
+
+Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.
+
+**Performance status** — Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.
+
 # Find it quickly
 
 An alphabetical guide to the manual.
 
-Supermodel 2.75 • Model:Cycles • English print edition • 31 October 2026.
+Supermodel 2.99 • Model:Cycles • English print edition • 1 November 2026.

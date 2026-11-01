@@ -1,0 +1,277 @@
+{
+  "release": "2.99",
+  "date": "2026-11-01",
+  "hardware_tested": false,
+  "voice_stealing_resolved": false,
+  "editions": {
+    "main-full": {
+      "sha256": "9abe84ff10012a31097c57b09ba85be11ec52c514bdc23b4c540b24c72009f71",
+      "main_os_sha256": "4495e9bd7402385c7c7a4827622a8f1c5d7dccfbc09965fe8af7712caf7b142f",
+      "startup": "2.99",
+      "monitor_code": 1183997952,
+      "monitor_bytes": 2912,
+      "monitor_bss_end": 1184037996,
+      "global_dx_gated": true,
+      "old_func_popup_disabled": true,
+      "stock_pcm_exact": true,
+      "latch_undo": true,
+      "default_machine_mode": "Stk",
+      "new_irq_hooks": 0
+    },
+    "main-lite": {
+      "sha256": "fb5f8b3b593b3db0a8ea25161cf139fbd05bbecde35e23d85615ae5ea2570127",
+      "main_os_sha256": "2cc037e2887174bde5e809bc662c7f511179a666b8e08acac3cecaf2c4b1d64f",
+      "startup": "2.99",
+      "monitor_code": 1183997952,
+      "monitor_bytes": 2912,
+      "monitor_bss_end": 1184037996,
+      "global_dx_gated": true,
+      "old_func_popup_disabled": true,
+      "stock_pcm_exact": true,
+      "latch_undo": true,
+      "default_machine_mode": "Stk",
+      "new_irq_hooks": 0
+    },
+    "optional-full": {
+      "sha256": "8b33616bbb33bbf91278a8e80c4fa8bd398092037a2230aab0fc0210a4b5bb17",
+      "main_os_sha256": "65379a43cb1aa4f959c2b48b996b61684117d680ad49ca9699300299dac1e11f",
+      "startup": "2.99",
+      "monitor_code": 1183997952,
+      "monitor_bytes": 2912,
+      "monitor_bss_end": 1184037996,
+      "global_dx_gated": true,
+      "old_func_popup_disabled": true,
+      "stock_pcm_exact": true,
+      "latch_undo": true,
+      "default_machine_mode": "Stk",
+      "new_irq_hooks": 0
+    },
+    "optional-lite": {
+      "sha256": "3c1592db5cc958b81022de99e694c6a582f829c43e2265fe503153ed63abe8f2",
+      "main_os_sha256": "a53585764521e5b67b4b249d27332b36ddf25f38ac5ed18280e54aec40bdfa0f",
+      "startup": "2.99",
+      "monitor_code": 1183997952,
+      "monitor_bytes": 2912,
+      "monitor_bss_end": 1184037996,
+      "global_dx_gated": true,
+      "old_func_popup_disabled": true,
+      "stock_pcm_exact": true,
+      "latch_undo": true,
+      "default_machine_mode": "Stk",
+      "new_irq_hooks": 0
+    }
+  },
+  "controls": {
+    "enable": "Global DX On",
+    "open_close": "SETTINGS + BACK",
+    "page": "PAGE",
+    "clear": "DATA press",
+    "exit": "quick double-BACK",
+    "back": "first BACK delegates native undo",
+    "native_controls": "all15 rotary events, transport and trigs continue under overlay"
+  },
+  "tests": {
+    "base_editions": 4,
+    "native_machines_per_edition": 6,
+    "pcm_blocks_per_edition": 40,
+    "selected_optional_boots": [
+      "single",
+      "mixed",
+      "all+MD"
+    ],
+    "browser_delivery": {
+      "release": "2.99",
+      "rows": [
+        {
+          "type": "optional",
+          "mask": 0,
+          "sha": "3c1592db5cc958b81022de99e694c6a582f829c43e2265fe503153ed63abe8f2",
+          "flash": 1698640
+        },
+        {
+          "type": "optional",
+          "mask": 524287,
+          "sha": "8b33616bbb33bbf91278a8e80c4fa8bd398092037a2230aab0fc0210a4b5bb17",
+          "flash": 1700720
+        },
+        {
+          "type": "optional",
+          "mask": 1,
+          "sha": "e8453a2f354f22fed863ea4cc99e53a8902abc486feebb02cb418451e4e29b29",
+          "flash": 1702144
+        },
+        {
+          "type": "optional",
+          "mask": 32768,
+          "sha": "b5972fe4478049003fe7c494b4eb4b6996af6686f9be0b21226773b14e50d31a",
+          "flash": 1702144
+        },
+        {
+          "type": "optional",
+          "mask": 2048,
+          "sha": "354ac17c90891c7bf9f8aef35b12b25c47a080558deba858b5ce436c18a97d73",
+          "flash": 1702144
+        },
+        {
+          "type": "optional",
+          "mask": 349525,
+          "sha": "2ffcede13b8482d7b72837ec8e9d8e80923d878d30b29dcc2c332bfbce1536ce",
+          "flash": 1702144
+        },
+        {
+          "type": "md",
+          "mask": 524288,
+          "sha": "33a7ac7359dce1c58c2015f7225bb97599fb0444eaa6f4959f071567b8a67dd0",
+          "flash": 1776960
+        },
+        {
+          "type": "md",
+          "mask": 1048576,
+          "sha": "93143348fd18263cd674ee14cc059c28be5b4ef904e31ba0051ec92b0da638a0",
+          "flash": 1776960
+        },
+        {
+          "type": "md",
+          "mask": 2097152,
+          "sha": "c3c4a30aec4b8425599c9de3b55176b9d3cb60163f9fb90e66fad4ac736ca6a5",
+          "flash": 1776960
+        },
+        {
+          "type": "md",
+          "mask": 3670016,
+          "sha": "ef95c0c53e6eba233ff979aebd8fd631abad059b3fcd5119e5c7677d4539661d",
+          "flash": 1776960
+        },
+        {
+          "type": "md",
+          "mask": 4194303,
+          "sha": "17a6b78e3451f02fb314a44de039ce6ff6ef30ae6569ffad5a33b794902bf846",
+          "flash": 1776976
+        }
+      ],
+      "hardware_tested": false
+    },
+    "model_delivery": {
+      "release": "2.99",
+      "hardware_tested": false,
+      "rows": [
+        {
+          "name": "main-full",
+          "mode": "cycles",
+          "changedMainBytes": 32,
+          "sha": "4bcebc71464357f8c660627cafbb50fba5f481083112b2eda9b7fea34786d33a",
+          "flash": 1647040
+        },
+        {
+          "name": "main-full",
+          "mode": "samples",
+          "changedMainBytes": 32,
+          "sha": "8c072a71526646c7d8da000e4f6ccae07d8ba1d8511e119e5fb68a8a4922a776",
+          "flash": 1647040
+        },
+        {
+          "name": "main-lite",
+          "mode": "cycles",
+          "changedMainBytes": 32,
+          "sha": "72d9944a129433bacefcf37cbc6837b72b87546c81028b415ddf31a9bddd3251",
+          "flash": 1697552
+        },
+        {
+          "name": "main-lite",
+          "mode": "samples",
+          "changedMainBytes": 32,
+          "sha": "e85c6ec463e0715d321b46d812de9ff51eca733240c7784ae368cda21a0c6af3",
+          "flash": 1697552
+        },
+        {
+          "name": "optional-full",
+          "mode": "cycles",
+          "changedMainBytes": 32,
+          "sha": "d7a72ec0e833074d6cd5d1464ff7bd31ead53f27a87b5d6085ceb47ecd16418a",
+          "flash": 1700720
+        },
+        {
+          "name": "optional-full",
+          "mode": "samples",
+          "changedMainBytes": 32,
+          "sha": "2e6140738b6b4b590a486b27aaea42ac4f5b69def3838b8f55f2c829d18fc3c9",
+          "flash": 1700720
+        },
+        {
+          "name": "optional-lite",
+          "mode": "cycles",
+          "changedMainBytes": 32,
+          "sha": "e7b211691c092b7d78c11d8875b040aaed77b3383084cb72be027133dd673e57",
+          "flash": 1698640
+        },
+        {
+          "name": "optional-lite",
+          "mode": "samples",
+          "changedMainBytes": 32,
+          "sha": "e861361d55e0ddd4a873ac437f332389c1b608c08fe31ad436794de49028529f",
+          "flash": 1698640
+        },
+        {
+          "name": "opt-mask-1",
+          "mode": "cycles",
+          "changedMainBytes": 32,
+          "sha": "6d43d44f73c814f6691878939d9a0776d48abff7e1d3a24329523c6357f4cba2",
+          "flash": 1702144
+        },
+        {
+          "name": "opt-mask-1",
+          "mode": "samples",
+          "changedMainBytes": 32,
+          "sha": "dec2b5a916efe48161af9bb303345f7625bd77262743438f2b94662dd4eeb7c4",
+          "flash": 1702144
+        },
+        {
+          "name": "opt-mask-55555",
+          "mode": "cycles",
+          "changedMainBytes": 32,
+          "sha": "aa87230a5f1e4bdb3ce4af723009ce6f184c523ad263e9d1b348475d8a31a5cc",
+          "flash": 1702144
+        },
+        {
+          "name": "opt-mask-55555",
+          "mode": "samples",
+          "changedMainBytes": 32,
+          "sha": "335ee9d035d5a2a722351c04b2a596ab247e134ceca616a72d34763fe7ab8c00",
+          "flash": 1702144
+        },
+        {
+          "name": "md-mask-3fffff",
+          "mode": "cycles",
+          "changedMainBytes": 32,
+          "sha": "626b9ceb9d3be3799b3d174215f6cf50afd8f1c799900575e5d45f044bfc919d",
+          "flash": 1776976
+        },
+        {
+          "name": "md-mask-3fffff",
+          "mode": "samples",
+          "changedMainBytes": 32,
+          "sha": "f835445a3d4655f9391132fdc99c95130f3c63a8cb8d8601b07e84f914beae92",
+          "flash": 1776976
+        }
+      ]
+    },
+    "site": {
+      "release": "2.99",
+      "errors": [],
+      "tracked_catalogue": true
+    },
+    "edition_selector": "real browser; exact Full/Lite downloads, requirements, async selection races, sending lock, French labels; tracked catalogue",
+    "pdfs": {
+      "shortcut_pages": 9,
+      "manual_pages": 35,
+      "visually_reviewed": [
+        "guide DX page",
+        "manual DX page",
+        "manual latch page"
+      ]
+    },
+    "startup_and_flasher_versions": "all4 compiled titles verified2.99",
+    "transport": "21bit7bit-safe sequence/checksum, JS/Python receiver checks",
+    "main_full_reproducible": true
+  }
+}

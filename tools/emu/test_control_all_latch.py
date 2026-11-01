@@ -11,7 +11,10 @@ m=json.loads((a.build/'BUILD.json').read_text());s=m['control_all_latch']['symbo
 bc.ROOT=a.output.parent/'ui-cache';fx.metadata=m;fx.boot=lambda path:bc.boot(next(a.build.glob('*.syx')))
 src=inspect.getsource(fx.fixture).replace("m=json.loads((ROOT/'output/firmware'/(stem+'.json')).read_text())",'m=metadata');exec(src,fx.__dict__)
 r,_,h,log,files,key,turn,data,bind=fx.fixture('unused')
-bind(0x40000542,lambda a:0);r.u.reg_write(C.UC_M68K_REG_A0,0x931b0000);r.call(s['cal_finish'])
+if m.get('bounded_burst_policy') or m.get('governor_key_optimization'):
+ r.u.mem_map(0x80000000,0x20000)
+ for off,at,n in ((0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)):r.u.mem_write(at,bytes(r.u.mem_read(0x46700000+off,n)))
+bind(0x40000542,lambda a:0);r.u.reg_write(C.UC_M68K_REG_A0,0x931b0000);r.call(m['complete_irq_accounting']['boot_target'] if m.get('complete_irq_accounting') else s['cal_finish'])
 for hook in m['control_all_latch']['late_hooks']:assert bytes(r.u.mem_read(hook['at'],6))==b'\x4e\xf9'+struct.pack('>I',hook['target'])
 held=set();keys=[];knobs=[];notices=[]
 bind(s['cal_old_held'],lambda args:int(args[0] in held));bind(s['fx_notice'],lambda args:notices.append(r.string(args[0])) or 0)

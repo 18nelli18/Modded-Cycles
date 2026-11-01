@@ -449,3 +449,15 @@ AveyCole explicitly requests "push wizard p lock fix 2.63 to main". Publish the 
 ## Complete release2.64 (2026-10-30)
 
 AveyCole explicitly requests all features in the builds and main publication, including Song mode, per-track ACID glide/legato, the ACID arp envelope retrigger fix, and Wizard p-lock priority. This authorizes the exact complete Full/Lite and Optional firmware assets and direct main release. Song and shared controls are included in Lite; ACID is present only in Full editions. Startup titles and both flashers display2.64. Preserve Optional choices, bug reporting and the protected blurb. Native audio/UI/storage/browser/signature checks passed; hardware confirmation remains pending. Proofs: docs/flasher/release264-validation.json and docs/flasher-optional/validation264.json.
+
+## AveyCole machine browsing default (2026-10-31)
+
+Machine selection must default to `Mac > Stk` in every future variant. Keep `Sil` selectable and preserve an explicitly saved valid preference. Missing or invalid MachineBrowse.cfg must leave Stk active. Derived private builds must also replace the inherited Sil initializer; changing source alone does not update a pinned binary base.
+
+## AveyCole queued controls and machine audit (2026-10-31)
+
+Preserve native BACK undo during CTRL-ALL latch parameter edits; use quick double-BACK to exit the latch. Audit Estus for one active voice per track. Private test2.95 includes native BACK undo and double-BACK exit on exact2.94. Estus audit confirms one fixed voice per track; synthesis unchanged. Hardware confirmation pending. Do not remove CHORD: the user asked about its costs and then explicitly deferred CHORD work.
+
+## Release2.99 (2026-11-01)
+
+AveyCole explicitly authorizes direct main publication of the live DX monitor while acknowledging that voice stealing remains unresolved. Publish shared DX/CTRL-ALL controls across Full, Lite and Optional; keep Optional extra choices and current model conversion paths. Global DX enables SETTINGS+BACK; PAGE switches pages, DATA press clears, double-BACK exits while first BACK preserves undo. All rotary/transport/trig controls continue under the overlay. Replace the old FUNC popup. Startup and flashers must say2.99. Publish notes/guides/manuals with the unresolved-cut warning; software/emulation validation does not imply hardware parity. This authorizes exact firmware assets/direct main push, including the existing21-bit transport repair without MAIN changes. Full9abe84ff10012a31097c57b09ba85be11ec52c514bdc23b4c540b24c72009f71; Litefb5f8b3b593b3db0a8ea25161cf139fbd05bbecde35e23d85615ae5ea2570127; OptionalFull8b33616bbb33bbf91278a8e80c4fa8bd398092037a2230aab0fc0210a4b5bb17; OptionalLite3c1592db5cc958b81022de99e694c6a582f829c43e2265fe503153ed63abe8f2. Protected feature description remains byte-identical except its separate CTRL-ALL shortcut paragraph, updated for explicitly requested native BACK undo/double-BACK exit.

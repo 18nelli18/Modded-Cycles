@@ -1,6 +1,6 @@
 {
-  "release": "2.75",
-  "stamp": "2026-10-31-guide275",
+  "release": "2.99",
+  "stamp": "2026-11-01-guide299",
   "cards": [
     {
       "en": [
@@ -73,13 +73,13 @@
         {
           "en": [
             "CTRL-ALL latch",
-            "Double-tap TRACK; TRACK once or BACK exits",
-            "Two clean taps within 350 ms latch parameter-knob edits across the included tracks. Track and trig selection stay momentary. DATA and effect-selection knobs stay physical. The latch is Off after boot and is not saved."
+            "Double-tap TRACK; TRACK once or quick double-BACK exits",
+            "Two clean taps within 350 ms latch parameter-knob edits across included tracks. Single BACK retains native parameter undo. Track/trig selection stay momentary; DATA and FX selectors remain physical. Off after boot; not saved."
           ],
           "fr": [
             "Verrou CTRL-ALL",
-            "Double tap TRACK ; TRACK ou BACK quitte",
-            "Deux taps simples en350ms verrouillent les editions par potards sur les pistes incluses. Selection des pistes/trigs momentanee. DATA et selecteurs FX restent physiques. Off au demarrage, non sauvegarde."
+            "Double tap TRACK ; TRACK ou double BACK rapide quitte",
+            "Deux taps simples en350ms verrouillent les editions CTRL-ALL. BACK simple conserve l annulation native. Selection pistes/trigs momentanee ; DATA et selecteurs FX physiques. Off au demarrage, non sauvegarde."
           ]
         },
         {
@@ -1362,12 +1362,12 @@
           "en": [
             "DX",
             "Off / On Default: Off",
-            "With DX On: tap FUNC, press FUNC again within 350 ms, hold at least 0.5 seconds, then release. Other controls cancel the gesture. Shows/resets A/P/O/N: average/peak CPU load, overruns, governor voice drops. Off by default."
+            "With Global DX On, hold SETTINGS and press BACK to open/close the CPU monitor. PAGE switches load/track-cut pages; press DATA to clear counters. Quick double-BACK exits; the first BACK preserves native undo. Knob turns, transport and trigs work normally without covering the monitor. Shows current/peak/mean/sustained CPU, overruns, forced cuts and last T5 cut load. Track counts show 99+ at the limit. DX Off disables access; the old FUNC popup is removed."
           ],
           "fr": [
             "DX",
             "Off / On ; défaut Off",
-            "DX On : appui bref FUNC, second appui sous 350 ms, maintien au moins 0,5 seconde puis relacher. Toute autre commande annule. Affiche/remet a zero A/P/O/N : charge moyenne/pic, overruns, voix coupees par le gouverneur. Remplace ancien raccourci ; verrou retrig sans diagnostic. Off par defaut."
+            "Global DX On : SETTINGS + BACK ouvre/ferme le moniteur CPU. PAGE change de page ; clic DATA remet les compteurs a zero. Double BACK rapide quitte ; BACK simple conserve l annulation native. Potards, transport et trigs fonctionnent sans masquer le moniteur. Charge actuelle/pic/moyenne/soutenue, depassements, coupures forcees et derniere coupure T5. Compteurs par piste limites a99+. DX Off interdit l acces ; ancien popup FUNC retire."
           ]
         },
         {

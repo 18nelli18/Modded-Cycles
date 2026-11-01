@@ -44,10 +44,16 @@ if meta.get('stock_voice_protection',{}).get('enabled') or meta.get('idle_routin
  def native_continue(u,pc,size,data):
   sp=u.reg_read(C.UC_M68K_REG_A7);u.reg_write(C.UC_M68K_REG_PC,int.from_bytes(u.mem_read(sp,4),'big'));u.reg_write(C.UC_M68K_REG_A7,sp+4)
  from unicorn import UC_HOOK_CODE
- e.uc.hook_add(UC_HOOK_CODE,native_continue,begin=0x40000542,end=0x40000542);e.uc.reg_write(C.UC_M68K_REG_SR,0x2700);e.uc.reg_write(C.UC_M68K_REG_A0,E.PARAMS+0x8000);e.call(meta['control_all_latch']['boot_target'] if meta.get('control_all_latch') else meta['activity_masks']['symbols']['am_boot_finish'])
+ e.uc.hook_add(UC_HOOK_CODE,native_continue,begin=0x40000542,end=0x40000542);e.uc.reg_write(C.UC_M68K_REG_SR,0x2700);e.uc.reg_write(C.UC_M68K_REG_A0,E.PARAMS+0x8000);e.call(meta['complete_irq_accounting']['boot_target'] if meta.get('complete_irq_accounting') else meta['control_all_latch']['boot_target'] if meta.get('control_all_latch') else meta['activity_masks']['symbols']['am_boot_finish'])
  if meta.get('stock_voice_protection',{}).get('enabled'):assert e.uc.mem_read(0x8000e8b6,1)==b'\x64'
 if meta.get('one_mod_osc'):
  at=meta['activity_masks']['code'];n=meta['activity_masks']['code_bytes'];f=W/'one-mod-primary.bin';f.write_bytes(e.uc.mem_read(at,n));e.emac.install(emac.disasm(str(f),at,at,at+n));target=meta['activity_masks']['symbols']['om_osc'];assert bytes(e.uc.mem_read(0x400a82cc,6))==b'\x4e\xf9'+struct.pack('>I',target);e.emac.next[0x400a82cc]=target
+if meta.get('static_gain_mixer'):
+ d=meta['static_gain_mixer'];f=W/'static-gain-mixer.bin';f.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']));e.emac.install(emac.disasm(str(f),d['code'],d['code'],d['code']+d['code_bytes']))
+if meta.get('native_second_mod'):
+ d=meta['native_second_mod'];f=W/'native-second-mod.bin';f.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']));e.emac.install(emac.disasm(str(f),d['code'],d['code'],d['code']+d['code_bytes']));assert bytes(e.uc.mem_read(0x400a82cc,6))==b'\x4e\xf9'+struct.pack('>I',d['target']);e.emac.next[0x400a82cc]=d['target']
+if meta.get('sparse_static_mixer'):
+ d=meta['sparse_static_mixer'];f=W/'sparse-static.bin';f.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']));e.emac.install(emac.disasm(str(f),d['code'],d['code'],d['code']+d['code_bytes']));assert bytes(e.uc.mem_read(d['hook'],6))==b'\x4e\xf9'+struct.pack('>I',d['target'])
 stock=tw.engine(real_load(DEV/'firmware/model-cycles_OS1.13.syx'))
 for eng in (stock,e):
  for t in range(6):
