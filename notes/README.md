@@ -365,3 +365,7 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [221 - Bases2.75 et captures](221-bases275-et-captures.md) : quatre editions preparees et validees, Optional/MD controles ; captures poussees, firmware en attente de l exception Git.
 
 - [222 - Numero de sequence SysEx sur 21 bits](222-sequence-sysex-21-bits.md) : images de plus de ~16 140 paquets invalides (Web MIDI, RECEIVING...), encodage 21 bits, reemballage et refus avant envoi.
+
+## Correctif prive3.01
+
+- [223 — Sidechain live sur source mutee](223-sidechain-live-mute.md) : **pads/trigs live autorises avec Mute On**, sequence mutee toujours filtree, queue complete et reset ;288cas par variante ; confirme sur Model:Cycles Optional Full, publie en3.00.

@@ -251,7 +251,7 @@ Str spaces CHORD voices from −80 to +80 ms. The sign reverses strum direction;
 | Atk | Attack: 0–160 ms. |
 | Hld | Hold: 0–120 ms. |
 | Rel | Release: 10 ms–3 s. |
-| Mute | On: muting the source stops its Sidechain action, including exclusion by solo. Off: the source keeps driving Sidechain while muted. Default: Off. |
+| Mute | On: mute or solo exclusion blocks sequencer triggers; manual pad/TRIG hits still drive the full envelope. Off: muted sequencer triggers also drive Sidechain. Default: Off. |
 
 All checked targets use the source’s settings. Multiple sources apply the deepest duck on each destination. Untick every target to disable a source. Routing and controls save per source and pattern.
 

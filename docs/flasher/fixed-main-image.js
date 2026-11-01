@@ -1,4 +1,4 @@
-/* 2026-11-01-main300 : images verifiees par edition, caches et sources independants. */
+/* 2026-11-01-main300-sc1 : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
@@ -6,9 +6,9 @@
     "id": "full",
     "productName": "Supermodel",
     "release": "3.00",
-    "file": "Supermodel_Full_3.00_d9d04fe30eef.syx",
-    "syxSha256": "d9d04fe30eef7838c1e7eefec3ca1e6b0360bda425e385647df53cbb593d102e",
-    "mainOsSha": "8de19e968993bd1db77cc3267a47606c8d072c7c3842739234283118f7cd273f",
+    "file": "Supermodel_Full_3.00_17c197d2b2b9.syx",
+    "syxSha256": "17c197d2b2b943f9b98f151c5a912515ab864412a507f0c19865fd6eb6eed21b",
+    "mainOsSha": "56f57621f2a2077159d1b1996bf2df3b56b29c3a6ebdce67849bd7376728102f",
     "requiresSyntakt": true,
     "source_build": 215,
     "new_clear_filter_defaults": true,
@@ -76,15 +76,17 @@
     "recent_cuts_page": true,
     "wizard_sustained_plocks": true,
     "filter_pattern_storage": true,
-    "smp_export_unclipped": true
+    "smp_export_unclipped": true,
+    "sidechain_muted_live": true,
+    "sidechain_muted_live_hardware_confirmed": false
   },
   "lite": {
     "id": "lite",
     "productName": "Supermodel Lite",
     "release": "3.00",
-    "file": "Supermodel_Lite_3.00_40bd76d276b1.syx",
-    "syxSha256": "40bd76d276b19ffa07d7b3905cb7802360ffdbb5edc9d5ac7dcfcacd49e67f5c",
-    "mainOsSha": "dc221b04ac0667cb77e5d6e7aaf456366393dfd328230c52170df895308e7597",
+    "file": "Supermodel_Lite_3.00_78bd1f2a75f8.syx",
+    "syxSha256": "78bd1f2a75f89e466ca12e015b42354cf4583415fc5706bb1b992f88a978807f",
+    "mainOsSha": "880d2782ea5a2ff7e2a0135639297108165701082b1ba40fbbc4f039c3fe6459",
     "requiresSyntakt": false,
     "source_build": 216,
     "new_clear_filter_defaults": true,
@@ -146,7 +148,9 @@
     "recent_cuts_page": true,
     "wizard_sustained_plocks": true,
     "filter_pattern_storage": true,
-    "smp_export_unclipped": true
+    "smp_export_unclipped": true,
+    "sidechain_muted_live": true,
+    "sidechain_muted_live_hardware_confirmed": false
   }
 };
  for(const meta of Object.values(catalogue))Object.freeze(meta);
@@ -154,7 +158,7 @@
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Supermodel/cca2e5b494bec0841cdcf67e075644c9ddedc889/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Supermodel/09bf0729f62a38ca9f516b965af4d731cee4f5f5/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});

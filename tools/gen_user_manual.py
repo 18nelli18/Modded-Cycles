@@ -138,7 +138,7 @@ page('RHYTHM & DYNAMICS','Groove, Strum & Sidechain','Shape rhythmic feel and le
  S('Select the source track whose trigs will drive the ducking.','Tap <b>SETTINGS + TRACK</b>, then open <b>Track > S.Chn</b>.','Check destination tracks and/or <b>Rev.</b> and <b>Del.</b> to duck effect returns. Click DATA to toggle a target.','Scroll below the targets and set Depth, Attack, Hold and Release. Save the project.'),
  T(['Control','Range and role'],[
  ['Dpt','Depth: 0–100%, in 16 levels.'],['Atk','Attack: 0–160 ms.'],['Hld','Hold: 0–120 ms.'],['Rel','Release: 10 ms–3 s.'],
- ['Mute','On: muting the source stops its Sidechain action, including exclusion by solo. Off: the source keeps driving Sidechain while muted. Default: Off.']],[65,445]),
+ ['Mute','On: mute or solo exclusion blocks sequencer triggers; manual pad/TRIG hits still drive the full envelope. Off: muted sequencer triggers also drive Sidechain. Default: Off.']],[65,445]),
  P('All checked targets use the source’s settings. Multiple sources apply the deepest duck on each destination. Untick every target to disable a source. Routing and controls save per source and pattern.'),
  C('Starting point','Use a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms and Release 150 ms. Sidechain routing and the DUCK delay are separate controls.'))
 

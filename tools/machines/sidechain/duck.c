@@ -13,6 +13,8 @@ extern u32 br_side,br_side_on;
 volatile u8 du_config[6][5];
 volatile u32 du_pending,du_enabled,du_page,du_row,du_edit;
 static u32 owned_data,owned_back,initialized,working;
+/* Pulses live separes : une sequence mutee ne relance jamais cette enveloppe. */
+static u32 du_live_pending,du_live_active;
 #ifdef DU_MUTE
 #define DU_ROWS 10
 static u32 du_follow;
@@ -38,12 +40,18 @@ mask|=1u<<i;du_enabled=mask;
 du_follow=0;for(u32 i=0;i<6;i++)if(du_config[i][0]&64)du_follow|=1u<<i;
 #endif
 }
-void du_reset(void){du_pending=0;for(u32 i=0;i<6;i++){env[i].level=env[i].stage=0;if(!initialized)gain[i]=65536;}initialized=1;du_refresh();}
+void du_reset(void){du_live_pending=du_live_active=0;du_pending=0;for(u32 i=0;i<6;i++){env[i].level=env[i].stage=0;if(!initialized)gain[i]=65536;}initialized=1;du_refresh();}
 /* Le constructeur SCRAMBLE precede la file temporelle : ne pas declencher ici.
  * Le filtre de notes est appele lors de l'echeance, avant le masque mute natif. */
-void du_note(u32*e){if(e&&du_enabled&&e[0]==0&&e[1]==1&&e[2]<6&&e[3]!=0xffffffffu&&(e[3]!=1||(e[10]&1)))du_pending|=1u<<e[2];}
+void du_note(u32*e){if(e&&du_enabled&&e[0]==0&&e[1]==1&&e[2]<6&&e[3]!=0xffffffffu&&(e[3]!=1||(e[10]&1))){u32 bit=(1u<<e[2])&du_enabled;du_pending|=bit;if(e[3]!=1)du_live_pending|=bit;}}
 u32 du_note_filter(u32*e){u32 result=du_previous_note(e);du_note(e);return result;}
-void du_voice_triggers(u32 mask){du_pending|=mask&du_enabled;}
+void du_voice_triggers(u32 mask){mask&=du_enabled;du_pending|=mask;
+#ifdef DU_MUTE
+ /* Le masque voix natif arrive APRES le mute sequence ; une voix jouee
+  * sur une piste mutee provient donc du jeu live. */
+ u32 solo=*(volatile u32*)0x800017b0;du_live_pending|=mask&(solo?~solo:*(volatile u32*)0x800017ac)&du_follow;
+#endif
+}
 static u32 blocks(u32 ms){return (ms*3+1)/2;}
 static void release(struct envelope*e,u32 t){e->stage=3;e->ticks=blocks(du_release_ms[du_config[t][4]]);if(!e->ticks)e->ticks=1;e->step=(e->level+e->ticks-1)/e->ticks;}
 static u32 advance(u32 t,u32 pulse){
@@ -56,16 +64,16 @@ static u32 advance(u32 t,u32 pulse){
 }
 static s32 multiply(s32 x,u32 g){return (s32)((u32)((x>>16)*(s32)g)+((((u32)x&65535)*g)>>16));}
 void du_process(void){
- if(!du_enabled&&!working){du_pending=0;return;}if(!initialized)du_reset();
- u32 pending=du_pending;du_pending=0;u32 goals[6]={65536,65536,65536,65536,65536,65536};
+ if(!du_enabled&&!working){du_live_pending=du_live_active=du_pending=0;return;}if(!initialized)du_reset();
+ u32 pending=du_pending,live=du_live_pending&du_enabled;du_pending=du_live_pending=0;du_live_active=(du_live_active|live)&du_enabled;u32 goals[6]={65536,65536,65536,65536,65536,65536};
 #ifdef DU_MUTE
  u32 muted=0;if(du_follow){u32 solo=*(volatile u32*)0x800017b0;muted=(solo?~solo:*(volatile u32*)0x800017ac)&du_follow;}
 #endif
  for(u32 src=0;src<6;src++)if(du_enabled&(1u<<src)){
 #ifdef DU_MUTE
-  if(muted&(1u<<src)){env[src].level=env[src].stage=env[src].ticks=env[src].step=0;continue;}
+  if(muted&(1u<<src)){pending=(pending&~(1u<<src))|(live&(1u<<src));if(!(du_live_active&(1u<<src))){env[src].level=env[src].stage=env[src].ticks=env[src].step=0;continue;}}
 #endif
-  u32 amount=advance(src,pending&(1u<<src)),mask=du_config[src][0]&~(1u<<src),want=65536-amount;
+  u32 amount=advance(src,pending&(1u<<src));if(!env[src].stage)du_live_active&=~(1u<<src);u32 mask=du_config[src][0]&~(1u<<src),want=65536-amount;
   for(u32 dst=0;dst<6;dst++)if((mask&(1u<<dst))&&want<goals[dst])goals[dst]=want;
  }
  working=0;

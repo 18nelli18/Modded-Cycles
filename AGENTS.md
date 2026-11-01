@@ -476,3 +476,14 @@ fixes, native mixer headroom, generic Recent Cuts and safe SMP WAV export.
 The user confirms unclipped SMP export on v7. ChordKeys hardware power-cycle
 confirmation remains pending; stock long-note cuts and the A09/A10 sound
 comparison remain unresolved. Preserve those limits in release validation.
+
+## Sidechain3.00 hotfix publication (2026-11-01)
+
+AveyCole confirms the private Sidechain manual-trigger fix works and explicitly
+requests direct main publication WITHOUT changing version3.00 anywhere. This
+specific request overrides the usual version-bump rule for this push. Publish
+all four verified variants with startup/flasher/metadata3.00, new content hashes
+and cache stamps. Manual pad/trig hits must drive their complete envelope while
+Mute On continues blocking muted sequencer triggers. Hardware confirmation is
+Machine Optional on Model:Cycles; other editions share the tested logic and
+pass emulation. Preserve all existing features and unrelated work.

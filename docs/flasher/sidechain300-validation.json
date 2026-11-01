@@ -1,0 +1,267 @@
+{
+  "release": "3.00",
+  "version_unchanged": true,
+  "sidechain_muted_live": true,
+  "user_hardware_confirmed_optional_full": true,
+  "variants": [
+    {
+      "scope": "main",
+      "edition": "full",
+      "sha256": "17c197d2b2b943f9b98f151c5a912515ab864412a507f0c19865fd6eb6eed21b",
+      "proof": {
+        "cases": 288,
+        "real_native_voice_hook": true,
+        "stereo": true,
+        "fx_return": true,
+        "live_tail_survives_muted_sequence": true,
+        "muted_sequence_does_not_retrigger": true,
+        "pattern_reset_clears_live": true,
+        "disabled_instructions": 12,
+        "source": "17c197d2b2b943f9b98f151c5a912515ab864412a507f0c19865fd6eb6eed21b",
+        "hardware_tested": false
+      }
+    },
+    {
+      "scope": "main",
+      "edition": "lite",
+      "sha256": "78bd1f2a75f89e466ca12e015b42354cf4583415fc5706bb1b992f88a978807f",
+      "proof": {
+        "cases": 288,
+        "real_native_voice_hook": true,
+        "stereo": true,
+        "fx_return": true,
+        "live_tail_survives_muted_sequence": true,
+        "muted_sequence_does_not_retrigger": true,
+        "pattern_reset_clears_live": true,
+        "disabled_instructions": 12,
+        "source": "78bd1f2a75f89e466ca12e015b42354cf4583415fc5706bb1b992f88a978807f",
+        "hardware_tested": false
+      }
+    },
+    {
+      "scope": "optional",
+      "edition": "full",
+      "sha256": "881d8af355643c93d55dc2a4939b723df4c9948e27714e0d97af5041f80edf03",
+      "proof": {
+        "cases": 288,
+        "real_native_voice_hook": true,
+        "stereo": true,
+        "fx_return": true,
+        "live_tail_survives_muted_sequence": true,
+        "muted_sequence_does_not_retrigger": true,
+        "pattern_reset_clears_live": true,
+        "disabled_instructions": 12,
+        "source": "881d8af355643c93d55dc2a4939b723df4c9948e27714e0d97af5041f80edf03",
+        "hardware_tested": false
+      }
+    },
+    {
+      "scope": "optional",
+      "edition": "lite",
+      "sha256": "d8fe0266f535bc3025eee9f6c2f5d8f7568b84565daa5dd5d5b5460de39808a7",
+      "proof": {
+        "cases": 288,
+        "real_native_voice_hook": true,
+        "stereo": true,
+        "fx_return": true,
+        "live_tail_survives_muted_sequence": true,
+        "muted_sequence_does_not_retrigger": true,
+        "pattern_reset_clears_live": true,
+        "disabled_instructions": 12,
+        "source": "d8fe0266f535bc3025eee9f6c2f5d8f7568b84565daa5dd5d5b5460de39808a7",
+        "hardware_tested": false
+      }
+    }
+  ],
+  "delivery": {
+    "release": "3.00",
+    "rows": [
+      {
+        "type": "optional",
+        "mask": 0,
+        "sha": "d8fe0266f535bc3025eee9f6c2f5d8f7568b84565daa5dd5d5b5460de39808a7",
+        "flash": 1721568
+      },
+      {
+        "type": "optional",
+        "mask": 524287,
+        "sha": "881d8af355643c93d55dc2a4939b723df4c9948e27714e0d97af5041f80edf03",
+        "flash": 1715008
+      },
+      {
+        "type": "optional",
+        "mask": 1,
+        "sha": "98966064c271a922031692ae3af4f7d7c27cd4c0e23af8a6d56054133b2e998b",
+        "flash": 1716368
+      },
+      {
+        "type": "optional",
+        "mask": 32768,
+        "sha": "dc59198e7779e1a0512c6180760c4d113bb0926f1164f2afa6aab97fd41f998f",
+        "flash": 1716368
+      },
+      {
+        "type": "optional",
+        "mask": 2048,
+        "sha": "82fad663dd6ed5dd4173d03be2ec0b3f9e4b209b31f4911292b8bc3025925e7f",
+        "flash": 1716368
+      },
+      {
+        "type": "optional",
+        "mask": 349525,
+        "sha": "738ee8799763fc7b0480341db2822bf5b603dde919149e26aea34d12bbf7a933",
+        "flash": 1716368
+      },
+      {
+        "type": "optional",
+        "mask": 4194304,
+        "sha": "c36585c58bfc6816f1527110caab10f58158930f8da38b59833c0302560c7256",
+        "flash": 1716368
+      },
+      {
+        "type": "optional",
+        "mask": 4194305,
+        "sha": "a30be4e2f46a40094dd5aaa879c371a9ec4ca145551a05a9f8ecd90d17533c8e",
+        "flash": 1716368
+      },
+      {
+        "type": "optional",
+        "mask": 4718591,
+        "sha": "64aa5d3a5807a7e78e0d4f0bcf40e6b0113f91fec6036d7315ceb215eb156b22",
+        "flash": 1716368
+      },
+      {
+        "type": "md",
+        "mask": 524288,
+        "sha": "3e88a03497c0b259d555f8608fd2373f576ce26bbcdbb6e362e34bc60050530c",
+        "flash": 1791104
+      },
+      {
+        "type": "md",
+        "mask": 1048576,
+        "sha": "41344925c7be70be9513031a9138521218b8c75ea8768af82dc55efba75aed2f",
+        "flash": 1791104
+      },
+      {
+        "type": "md",
+        "mask": 2097152,
+        "sha": "a9b56a643c0734170e97ce15a1893480340d05521a58f392249d294cd7b79ba5",
+        "flash": 1791104
+      },
+      {
+        "type": "md",
+        "mask": 3670016,
+        "sha": "dfda23f22d66d07ccc075a7041b844104f79c37d31feb0333112bad4152ba8eb",
+        "flash": 1791104
+      },
+      {
+        "type": "md",
+        "mask": 4194303,
+        "sha": "e03fe9d991d17933941af8c2ca3790639b1764a30f42abfea7af6f184ddee5e3",
+        "flash": 1791104
+      },
+      {
+        "type": "md",
+        "mask": 7864320,
+        "sha": "7d4d118ae462b2483d8ebb4ca424bfcc346f1174c9d5afa93c610f189d099227",
+        "flash": 1791104
+      },
+      {
+        "type": "md",
+        "mask": 8388607,
+        "sha": "f46981cab9f4f352a8f343ecc4061dd7c69aca040cf31bdb84655d1608e54647",
+        "flash": 1791104
+      }
+    ],
+    "hardware_tested": false
+  },
+  "model_conversion": {
+    "release": "3.00",
+    "hardware_tested": false,
+    "rows": [
+      {
+        "name": "main-full",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "0e5163bee08d46e00c8b89aecca1dc0d1576c8a111ea45171f7ab2a08dffa615",
+        "flash": 1658112
+      },
+      {
+        "name": "main-full",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "b182ce40a2e19146347bbd77e5cdec8727548e9c356eaa41d66c8bb8367ea92d",
+        "flash": 1658112
+      },
+      {
+        "name": "main-lite",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "4c8ac1acb7f6b8c799a28ec6edfa8470dde12a4ea81955187df192ec3ad1b177",
+        "flash": 1718144
+      },
+      {
+        "name": "main-lite",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "9f8e349ffacfb42452c0b67a09bfd0e07975e7d92f882d4597ad51148a536906",
+        "flash": 1718144
+      },
+      {
+        "name": "optional-full",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "e80ebd4348b4e15adc93db7e4f19ee9c0c5049724ded4ed94d723eeff1ea556d",
+        "flash": 1715008
+      },
+      {
+        "name": "optional-full",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "d3ebffe89ceecf1b6364106c9cdd05a409f49ed78a5dc0672e5dd0aa3b66b8d7",
+        "flash": 1715008
+      },
+      {
+        "name": "optional-lite",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "bcc4070cefbf14e1eed269d498d83f4b7083ddee06a6799311223ac11de768db",
+        "flash": 1721568
+      },
+      {
+        "name": "optional-lite",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "c862db998a1ce8c214f27a6a6cf06e93eb1315352ebf6083f8348b236cf0e496",
+        "flash": 1721568
+      }
+    ]
+  },
+  "md_native_sidechain": {
+    "cases": 288,
+    "real_native_voice_hook": true,
+    "stereo": true,
+    "fx_return": true,
+    "live_tail_survives_muted_sequence": true,
+    "muted_sequence_does_not_retrigger": true,
+    "pattern_reset_clears_live": true,
+    "disabled_instructions": 12,
+    "source": "f46981cab9f4f352a8f343ecc4061dd7c69aca040cf31bdb84655d1608e54647",
+    "hardware_tested": false
+  },
+  "md_dummy_boot": {
+    "native_MD_Dummy_boot": true,
+    "dynamic_MD_helpers_retained": true,
+    "dummy_selection_bit22": true,
+    "five_masks": true,
+    "hardware_tested": false
+  },
+  "manual_pages": 35,
+  "guide_pages": 9,
+  "manual_sidechain_page_visually_checked": 12,
+  "guide_sidechain_page_visually_checked": 7,
+  "browser_editions": true,
+  "browser_site_all_three_pages": true,
+  "hardware_confirmed_module_identical": true,
+  "unchanged_release": "3.00"
+}
