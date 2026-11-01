@@ -1,11 +1,11 @@
 # SUPERMODEL
-## User manual · Release 2.99
+## User manual · Release 3.00
 
 Model:Cycles · Full / Lite / Machine Optional
 
 # Contents & conventions
 
-A practical reference for Supermodel 2.99 on Model:Cycles.
+A practical reference for Supermodel 3.00 on Model:Cycles.
 
 Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.
 
@@ -275,7 +275,7 @@ Shape a track, or apply the same gesture across your Control All selection.
 
 LOW reduces high frequencies as you lower cutoff. HIGH removes low frequencies. BAND emphasizes a band around cutoff. LO/HI provides the combined low/high response. Use resonance to emphasize the area around the cutoff.
 
-A cleared or freshly initialized sound starts at LOW, cutoff 127 and resonance 0. A saved sound keeps its stored filter type and settings. Sample Wizard uses its own internal filter.
+A cleared or freshly initialized sound starts at LOW, cutoff 127 and resonance 0. Filter modes save with each pattern/project; save the project before switching off. Sample Wizard uses its own internal filter.
 
 ## Modulate filter or attack
 
@@ -604,7 +604,7 @@ On a Sample Wizard track, press SETTINGS + REC to open Resample. Choose recordin
 
 ## Read the display
 
-The home screen shows the sample name, waveform, track and duration. Volume segments show the track volume setting. During playback, pitch, start, end and other parameter locks take priority over CTRL-ALL; CTRL-ALL still edits the base sound for unlocked notes.
+The home screen shows the sample name, waveform, track and duration. Volume segments show the track volume setting. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.
 
 **Before locking a sample** — Open the sample browser first and highlight the exact sample you want. The lock gesture uses the highlighted browser entry.
 
@@ -708,11 +708,12 @@ Match the save operation to the settings you want to keep.
 
 | Operation | What it does |
 | --- | --- |
-| Save Project | Keeps the project, including pattern FX choices, Sidechain routing, Scramble checklists and the pattern/track LFO setup. |
+| Save Project | Keeps pattern FX, filter modes, Sidechain, Scramble, track LFOs and Optional ChordKeys settings. |
 | Hold FUNC + SETTINGS | Opens the permanent pattern-save action. |
 | Short FUNC + SETTINGS | Stores a temporary pattern snapshot. |
 | FUNC + PATTERN | Reloads the temporary snapshot. Available in latched repeat mode. |
 | BACK from Mod Setup | Saves global preferences; a pending save waits for playback to stop. |
+| Export a recording | Select transfer mode SMP, reopen Elektron Transfer, then download /Resampled/ as 48 kHz WAV. Gain is reduced only to avoid export clipping. |
 
 ## USB audio
 
@@ -749,6 +750,12 @@ Use the Machine Optional flasher’s bank importer to import banks.
 On CHORD, open FUNC + RETRIG and set Keys On. Outside grid recording, TRIG 1–16 plays scale-based chord voicings. TRACK + a track pad changes track.
 
 In grid recording, hold a TRIG and press T1–T6 to lock harmony. Repeat the same pad to restore the base harmony.
+
+Keys On, harmony and related settings save per pattern/project. Save the project before switching off.
+
+## Dummy
+
+Tick Dummy in Machine Optional for a silent placeholder with zero machine stats. It skips synthesis and voice rendering. Main and all Lite editions exclude Dummy.
 
 ## Vinyl
 
@@ -835,7 +842,7 @@ For speech controls and an example phrase, see the SPEAK chapter.
 
 Monitor complete audio-block load while using the instrument.
 
-Set Global > DX > On. Hold SETTINGS + BACK to open or close the CPU monitor. PAGE changes load/track-cut pages; press DATA to clear counters. Quick double-BACK also exits; the first BACK keeps native undo. Knob turns, transport and trigs work normally while the monitor stays visible. The load page shows current, peak, mean and sustained CPU, overruns and forced cuts. The track page shows six forced-cut counters (99+ at the limit) and the last T5 cut load. DX Off disables access.
+Set Global > DX > On. Hold SETTINGS + BACK to open or close the CPU monitor. PAGE changes CPU Load, Recent Cuts and Track Totals pages; press DATA to clear counters. Quick double-BACK also exits; the first BACK keeps native undo. Knob turns, transport and trigs work normally while the monitor stays visible. The load page shows current, peak, mean and sustained CPU, overruns and forced cuts. The track page shows six forced-cut counters (99+ at the limit) and recent cuts from all tracks. DX Off disables access.
 
 | Readout | Meaning |
 | --- | --- |
@@ -843,7 +850,7 @@ Set Global > DX > On. Hold SETTINGS + BACK to open or close the CPU monitor. PAG
 | MEAN / SUST | Recorded playing-time average / governor sustained estimate. |
 | OVER / CUT | Deadline overruns / forced governor fades. |
 | T1-T6 | Forced cuts by track;99+ is a capped count, not normal note-offs. |
-| LAST T5 S/L | Sustained estimate and block load at the last forced Track5 cut. |
+| Recent Cuts | Latest forced cuts across all tracks, with sustained and block load. |
 
 Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.
 
@@ -853,4 +860,4 @@ Updates four times per second. Screen formatting runs in the UI, outside the aud
 
 An alphabetical guide to the manual.
 
-Supermodel 2.99 • Model:Cycles • English print edition • 1 November 2026.
+Supermodel 3.00 • Model:Cycles • English print edition • 1 November 2026.

@@ -1,0 +1,302 @@
+{
+  "release": "3.00",
+  "editions": [
+    {
+      "scope": "main",
+      "edition": "full",
+      "sha256": "d9d04fe30eef7838c1e7eefec3ca1e6b0360bda425e385647df53cbb593d102e",
+      "main_os_sha256": "8de19e968993bd1db77cc3267a47606c8d072c7c3842739234283118f7cd273f",
+      "startup_title": "3.00",
+      "native_proofs": [
+        "test_filter300_state",
+        "test_filter300_native_undo",
+        "test_wizard_sustain300",
+        "test_silent_browse300",
+        "test_cpu_history300",
+        "test_control_all_undo",
+        "test_machine_browse_default",
+        "test_wizard_usb_activity",
+        "test_deadline_headroom",
+        "test_transfer_native300",
+        "test_release300_roster",
+        "test_acid_articulation_ui"
+      ],
+      "dummy_available": false,
+      "chordkeys_storage": false
+    },
+    {
+      "scope": "main",
+      "edition": "lite",
+      "sha256": "40bd76d276b19ffa07d7b3905cb7802360ffdbb5edc9d5ac7dcfcacd49e67f5c",
+      "main_os_sha256": "dc221b04ac0667cb77e5d6e7aaf456366393dfd328230c52170df895308e7597",
+      "startup_title": "3.00",
+      "native_proofs": [
+        "test_filter300_state",
+        "test_filter300_native_undo",
+        "test_wizard_sustain300",
+        "test_silent_browse300",
+        "test_cpu_history300",
+        "test_control_all_undo",
+        "test_machine_browse_default",
+        "test_wizard_usb_activity",
+        "test_deadline_headroom",
+        "test_transfer_native300",
+        "test_release300_roster",
+        "test_acid_articulation_ui"
+      ],
+      "dummy_available": false,
+      "chordkeys_storage": false
+    },
+    {
+      "scope": "optional",
+      "edition": "full",
+      "sha256": "aa72156cea0e22d2138be56591cc80d525e30f1697ca003f6ac46d530dd6caf3",
+      "main_os_sha256": "c638dff0430b712ed8b7c21f6dc5e549afcce55395982f72d23f3b92bcc5ded8",
+      "startup_title": "3.00",
+      "native_proofs": [
+        "test_filter300_state",
+        "test_filter300_native_undo",
+        "test_wizard_sustain300",
+        "test_silent_browse300",
+        "test_cpu_history300",
+        "test_control_all_undo",
+        "test_machine_browse_default",
+        "test_wizard_usb_activity",
+        "test_deadline_headroom",
+        "test_transfer_native300",
+        "test_release300_roster",
+        "test_acid_articulation_ui",
+        "test_chordkeys300_storage",
+        "test_dummy300",
+        "test_dummy300_menu"
+      ],
+      "dummy_available": true,
+      "chordkeys_storage": true
+    },
+    {
+      "scope": "optional",
+      "edition": "lite",
+      "sha256": "900cd711b9016970283f9dc9018a7c3908343677bd9d23b248bceb991acc6f26",
+      "main_os_sha256": "b15cc3f3483ed7a2aaf30a2a9ac5410bc8c3497f9e95569132ef891f9246c56b",
+      "startup_title": "3.00",
+      "native_proofs": [
+        "test_filter300_state",
+        "test_filter300_native_undo",
+        "test_wizard_sustain300",
+        "test_silent_browse300",
+        "test_cpu_history300",
+        "test_control_all_undo",
+        "test_machine_browse_default",
+        "test_wizard_usb_activity",
+        "test_deadline_headroom",
+        "test_transfer_native300",
+        "test_release300_roster",
+        "test_acid_articulation_ui",
+        "test_chordkeys300_storage"
+      ],
+      "dummy_available": false,
+      "chordkeys_storage": true
+    }
+  ],
+  "native_proof_count": 52,
+  "hardware_reports": {
+    "SMP_export": "User confirmed v7 export works without added clipping",
+    "ChordKeys_power_cycle": "pending",
+    "Dummy": "native emulator tested"
+  },
+  "known_issues": [
+    "Stock-pattern long-note cuts remain unresolved",
+    "A09/A10 TONE comparison not completed"
+  ],
+  "delivery": {
+    "release": "3.00",
+    "rows": [
+      {
+        "type": "optional",
+        "mask": 0,
+        "sha": "900cd711b9016970283f9dc9018a7c3908343677bd9d23b248bceb991acc6f26",
+        "flash": 1718704
+      },
+      {
+        "type": "optional",
+        "mask": 524287,
+        "sha": "aa72156cea0e22d2138be56591cc80d525e30f1697ca003f6ac46d530dd6caf3",
+        "flash": 1713360
+      },
+      {
+        "type": "optional",
+        "mask": 1,
+        "sha": "d63ee4f3e2568c85889fb1819dcea26ddee52e853c666a246baf2d45a9f4e771",
+        "flash": 1714720
+      },
+      {
+        "type": "optional",
+        "mask": 32768,
+        "sha": "584beae77bd491a909437e401a2516ccb9fbef94f4491c41e70e000d4d416a6e",
+        "flash": 1714720
+      },
+      {
+        "type": "optional",
+        "mask": 2048,
+        "sha": "8d426be7167ba8b55ea1d3ae35ce68f63a612ce0e6c1084f641f814548161e0d",
+        "flash": 1714720
+      },
+      {
+        "type": "optional",
+        "mask": 349525,
+        "sha": "848e23d3331e95f868e14f1ee6d6a1924f5719fefed09065a5211dfd684aa488",
+        "flash": 1714720
+      },
+      {
+        "type": "optional",
+        "mask": 4194304,
+        "sha": "19c811bef687b421de7b0ffdbb921da9fe1136d7c86ff15f95443713cced5ae1",
+        "flash": 1714720
+      },
+      {
+        "type": "optional",
+        "mask": 4194305,
+        "sha": "aa8f1f6144c3ab758b55c422e45e90bc394ed7a3c5dba72d95c37ca4e9d907c9",
+        "flash": 1714720
+      },
+      {
+        "type": "optional",
+        "mask": 4718591,
+        "sha": "b97e3dafd2029287d4f4500389df43325beaf6860b485b5137f991c5e40b5939",
+        "flash": 1714720
+      },
+      {
+        "type": "md",
+        "mask": 524288,
+        "sha": "18f8a20f8c6208198f490b7b7145b985006aac25d344985245b632d717a1cd66",
+        "flash": 1789456
+      },
+      {
+        "type": "md",
+        "mask": 1048576,
+        "sha": "c8ec9be9257d796f8d2429fc7a45c95316fc22382d87df1af60cbbc95bd16dde",
+        "flash": 1789472
+      },
+      {
+        "type": "md",
+        "mask": 2097152,
+        "sha": "2a59664bf8643667b29f411bad149d6ce964f7fb68daed480ac7e00619af5184",
+        "flash": 1789456
+      },
+      {
+        "type": "md",
+        "mask": 3670016,
+        "sha": "28fdeaec934f6be0283d6a6da9ef041fb486178059cf88c6f33bd37ad46f8ec5",
+        "flash": 1789472
+      },
+      {
+        "type": "md",
+        "mask": 4194303,
+        "sha": "ea9820dd376ea5b0128772508998b5f4d71ef4aa5fb223c82c476e76ccc54eec",
+        "flash": 1789472
+      },
+      {
+        "type": "md",
+        "mask": 7864320,
+        "sha": "252afa1f9205b9d230206f41f6aee186bfa890c0de90902e397ec947ba9f0eb8",
+        "flash": 1789472
+      },
+      {
+        "type": "md",
+        "mask": 8388607,
+        "sha": "d37b0c8c7dab88510a624b58b863a4c2d1a5acff6c6b58e43aaf3c886f84cd59",
+        "flash": 1789472
+      }
+    ],
+    "hardware_tested": false
+  },
+  "models": {
+    "release": "3.00",
+    "hardware_tested": false,
+    "rows": [
+      {
+        "name": "main-full",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "d3b2f8cee556240ec15a5665698e27ba8e8c37aa0fc662f67bd6fec547eabeb1",
+        "flash": 1656448
+      },
+      {
+        "name": "main-full",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "07d2f07d676d003a38c04089dd2bdd699a8e929a0fb2fb629c4d9d05e922dfc2",
+        "flash": 1656448
+      },
+      {
+        "name": "main-lite",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "5baaa7815823015ff3cb1ecd82c69c3e4dc4891c84e219bff0fe3f4ee7bf1851",
+        "flash": 1715264
+      },
+      {
+        "name": "main-lite",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "22994eef0ac3e333602c26f24c980bbc2d768a51e20595b8732f46a01065abc8",
+        "flash": 1715264
+      },
+      {
+        "name": "optional-full",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "d2b2cef95fa9d3fada55892b6f2dba6993aa7e3a5d6208f8da23590cff6066e8",
+        "flash": 1713360
+      },
+      {
+        "name": "optional-full",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "f9f1c1ae9e4cc765ed9f4be13a6fe2421b8d9d530f343ba5ab684e617c4ceb3d",
+        "flash": 1713360
+      },
+      {
+        "name": "optional-lite",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "5abdba312aa8ef645b9f38bbd271920ea6a54b998880f610af559c2e5bd05954",
+        "flash": 1718704
+      },
+      {
+        "name": "optional-lite",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "28fd4e47e137bddf9bdb2362442e950a759ce8c825c852c3fb94069f8ef6abf6",
+        "flash": 1718704
+      }
+    ]
+  },
+  "MD_Dummy_native": {
+    "native_MD_Dummy_boot": true,
+    "dynamic_MD_helpers_retained": true,
+    "dummy_selection_bit22": true,
+    "five_masks": true,
+    "hardware_tested": false
+  },
+  "all_edition_combinations_hardware_tested": false,
+  "site_validation": {
+    "release": "3.00",
+    "errors": [],
+    "tracked_catalogue": true
+  },
+  "real_browser_Dummy_checkbox": true,
+  "fixed_image_CI_checks": "pass",
+  "bug_report_tests": "5 passed",
+  "pdf_review": {
+    "manual_pages": 35,
+    "shortcut_pages": 9,
+    "cover_storage_DX_optional_pages_rendered_and_inspected": true
+  },
+  "legacy_generated_checks": {
+    "catalogue": "pass in local workspace; preexisting uncommitted catalogue excluded from release",
+    "overlaps": "pass",
+    "registry_freshness": "fails on unchanged legacy registry",
+    "6ch_recipe_freshness": "fails on unchanged legacy recipe"
+  }
+}

@@ -54,6 +54,8 @@ if meta.get('native_second_mod'):
  d=meta['native_second_mod'];f=W/'native-second-mod.bin';f.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']));e.emac.install(emac.disasm(str(f),d['code'],d['code'],d['code']+d['code_bytes']));assert bytes(e.uc.mem_read(0x400a82cc,6))==b'\x4e\xf9'+struct.pack('>I',d['target']);e.emac.next[0x400a82cc]=d['target']
 if meta.get('sparse_static_mixer'):
  d=meta['sparse_static_mixer'];f=W/'sparse-static.bin';f.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']));e.emac.install(emac.disasm(str(f),d['code'],d['code'],d['code']+d['code_bytes']));assert bytes(e.uc.mem_read(d['hook'],6))==b'\x4e\xf9'+struct.pack('>I',d['target'])
+if meta.get('native_two_mix300'):
+ d=meta['native_two_mix300'];f=W/'native-two-mix300.bin';f.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']));e.emac.install(emac.disasm(str(f),d['code'],d['code'],d['code']+d['code_bytes']));assert bytes(e.uc.mem_read(d['hook'],6))==b'\x4e\xf9'+struct.pack('>I',d['target'])
 stock=tw.engine(real_load(DEV/'firmware/model-cycles_OS1.13.syx'))
 for eng in (stock,e):
  for t in range(6):

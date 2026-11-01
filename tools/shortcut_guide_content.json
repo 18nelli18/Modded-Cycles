@@ -1,6 +1,6 @@
 {
-  "release": "2.99",
-  "stamp": "2026-11-01-guide299",
+  "release": "3.00",
+  "stamp": "2026-11-01-guide300",
   "cards": [
     {
       "en": [
@@ -1106,12 +1106,24 @@
           "en": [
             "P-lock priority",
             "Parameter-lock pitch, sample start, sample end or other Wizard controls",
-            "During playback, the current note uses its p-lock values ahead of CTRL-ALL. CTRL-ALL still edits the underlying sound for unlocked notes."
+            "The active note or sustained loop retains its p-lock values ahead of CTRL-ALL until replaced by another note. CTRL-ALL edits the underlying unlocked sound."
           ],
           "fr": [
             "Priorite des p-locks",
             "Verrouiller pitch, debut, fin ou autres commandes Wizard",
-            "Pendant la lecture, la note utilise ses p-locks avant CTRL-ALL. CTRL-ALL modifie toujours le son de base pour les notes non verrouillees."
+            "La note ou boucle tenue conserve ses p-locks avant CTRL-ALL jusqu a la note suivante. CTRL-ALL modifie le son de base non verrouille."
+          ]
+        },
+        {
+          "en": [
+            "Export a saved recording",
+            "Select Transfer mode SMP; reopen Elektron Transfer after changing mode",
+            "Download from /Resampled/ as a 48 kHz WAV. Stereo is decoded; gain is reduced only when needed to avoid export clipping. Save recordings before exporting."
+          ],
+          "fr": [
+            "Exporter une prise sauvegardee",
+            "Choisir le mode SMP ; rouvrir Elektron Transfer apres changement",
+            "Telecharger /Resampled/ en WAV 48 kHz. Stereo decodee ; gain reduit uniquement pour eviter l ecretage a l export. Sauvegarder les prises avant export."
           ]
         }
       ]
@@ -1362,12 +1374,12 @@
           "en": [
             "DX",
             "Off / On Default: Off",
-            "With Global DX On, hold SETTINGS and press BACK to open/close the CPU monitor. PAGE switches load/track-cut pages; press DATA to clear counters. Quick double-BACK exits; the first BACK preserves native undo. Knob turns, transport and trigs work normally without covering the monitor. Shows current/peak/mean/sustained CPU, overruns, forced cuts and last T5 cut load. Track counts show 99+ at the limit. DX Off disables access; the old FUNC popup is removed."
+            "CPU monitor: Global DX On enables SETTINGS + BACK. PAGE cycles CPU Load, Recent Cuts (all tracks) and Track Totals. DATA clears; double-BACK exits. Transport, knobs and trigs remain available; single BACK preserves undo. DX Off disables access."
           ],
           "fr": [
             "DX",
             "Off / On ; défaut Off",
-            "Global DX On : SETTINGS + BACK ouvre/ferme le moniteur CPU. PAGE change de page ; clic DATA remet les compteurs a zero. Double BACK rapide quitte ; BACK simple conserve l annulation native. Potards, transport et trigs fonctionnent sans masquer le moniteur. Charge actuelle/pic/moyenne/soutenue, depassements, coupures forcees et derniere coupure T5. Compteurs par piste limites a99+. DX Off interdit l acces ; ancien popup FUNC retire."
+            "Global DX On active SETTINGS + BACK. PAGE parcourt charge CPU, coupures recentes de toutes les pistes et totaux. DATA efface ; double BACK quitte. Transport, potards et trigs restent actifs ; BACK simple conserve l annulation. DX Off interdit l acces."
           ]
         },
         {
@@ -1570,12 +1582,12 @@
           "en": [
             "ChordKeys",
             "CHORD: FUNC + RETRIG > Keys ON",
-            "Outside grid record, TRIG1-16 play scale-based chord voicings. TRACK + track pad changes track. Grid record: hold TRIG + T1-T6 to lock harmony; repeat the same pad to restore base harmony."
+            "Outside grid record, TRIG1-16 play scale-based chord voicings. TRACK + track pad changes track. Grid record: hold TRIG + T1-T6 to lock harmony; repeat the same pad to restore base harmony. Keys On, harmony and related settings save per pattern/project; save the project before switching off."
           ],
           "fr": [
             "ChordKeys",
             "CHORD : FUNC + RETRIG > Keys ON",
-            "Hors grid record, TRIG1-16 jouent les accords de la gamme. TRACK + pad change de piste. Grid : TRIG tenu + T1-T6 verrouille l harmonie ; meme pad a nouveau restaure l harmonie de base."
+            "Hors grid record, TRIG1-16 jouent les accords de la gamme. TRACK + pad change de piste. Grid : TRIG tenu + T1-T6 verrouille l harmonie ; meme pad a nouveau restaure l harmonie de base. Keys On, harmonie et reglages associes sont sauvegardes par pattern/projet ; sauvegarder avant extinction."
           ]
         },
         {
@@ -1600,6 +1612,18 @@
             "TRX-B2 / TRX-SD / TRX-CH",
             "Choisir dans Machine Optional ; fournir votre OS Machinedrum UW1.63",
             "Trois moteurs : grosse caisse, caisse claire et charley ferme. Le fichier MD est requis au build. Optional conserve LEGACY, ChordKeys et Vinyl."
+          ]
+        },
+        {
+          "en": [
+            "Dummy",
+            "Tick Dummy in the Machine Optional flasher",
+            "Silent placeholder: skips synthesis and voice rendering, with zero machine stats. Excluded from Main and all Lite builds."
+          ],
+          "fr": [
+            "Dummy",
+            "Cocher Dummy dans le flasheur Machine Optional",
+            "Emplacement silencieux : aucun rendu de synthese, statistiques machine a zero. Absent de Main et de toutes les editions Lite."
           ]
         }
       ]

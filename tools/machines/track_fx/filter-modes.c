@@ -19,15 +19,13 @@ struct coefficients *PF_COEFF_NAME(u32 lane){
  struct coefficients *p=&pf_cache[lane];
  u32 f=((volatile u32*)PF_F_ADDRESS)[lane],q=((volatile u32*)PF_Q_ADDRESS)[lane];
  if(f>4095)f=4095;
- #ifdef PF_WIZARD
- /* Feedback du ladder natif :0..15000 ; meme course de potard, nouveau Q. */
+ /* Le convertisseur natif publie0..15000 pour toutes les pistes.
+  * Normaliser avant les coefficients : ne pas ecreter la moitie haute du potard. */
  if(q>15000)q=15000;
- q=(q*8191)/15000;
-#else
- if(q>8191)q=8191;
-#endif
+ u32 original_q=q;
  u32 original=f,mode=fc_type[lane];
- if(p->f==original&&p->q==q&&p->mode==mode)return p;
+ if(p->f==original&&p->q==original_q&&p->mode==mode)return p;
+ q=(q*8191)/15000;
  u32 index=127;
  if(mode==3&&f){u32 lo=0,hi=127;while(lo<hi){u32 mid=(lo+hi)/2;if(fc_native_table[mid]<f)lo=mid+1;else hi=mid;}index=lo;}
  if(mode==3){if(index==64){p->b=0;return p;}u32 mapped=index<64?index*2:(index-65)*127/62;if(mapped>127)mapped=127;f=fc_native_table[mapped];}
@@ -38,6 +36,6 @@ struct coefficients *PF_COEFF_NAME(u32 lane){
  u32 feedback=(damping*(f*c))>>8;
  u32 denominator=ff+cc+feedback;
  ratios(ff,feedback,denominator,(mode==1||(mode==3&&index>64)?1:mode==2?2:0),&p->b,&p->a1,&p->a2);
- p->f=original;p->q=q;p->mode=mode;return p;
+ p->f=original;p->q=original_q;p->mode=mode;return p;
 }
 

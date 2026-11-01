@@ -2,8 +2,8 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),site=path.join(root,'docs/flasher'),b=require(path.join(site,'builder.js')),f=require(path.join(site,'flasher.js'));
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex'),meta=JSON.parse(fs.readFileSync(path.join(site,'BUILD.json')));
-assert.equal(meta.release,'2.99');assert.deepEqual(Object.keys(meta.editions),['full','lite']);
-const pinned={full:'9abe84ff10012a31097c57b09ba85be11ec52c514bdc23b4c540b24c72009f71',lite:'fb5f8b3b593b3db0a8ea25161cf139fbd05bbecde35e23d85615ae5ea2570127'};
+assert.equal(meta.release,'3.00');assert.deepEqual(Object.keys(meta.editions),['full','lite']);
+const pinned={full:'d9d04fe30eef7838c1e7eefec3ca1e6b0360bda425e385647df53cbb593d102e',lite:'40bd76d276b19ffa07d7b3905cb7802360ffdbb5edc9d5ac7dcfcacd49e67f5c'};
 for(const [id,m] of Object.entries(meta.editions)){
  const raw=fs.readFileSync(path.join(site,m.file));assert.equal(hash(raw),pinned[id]);assert.equal(hash(raw),m.syxSha256);assert(f.verify(raw).count>0);
  const pkg=b.parseContainer(b.unwrap(raw).stream),s=pkg.sections.find(x=>x.id===3),main=b.aplibDepack(pkg.blob.subarray(s.off,s.off+s.size),{bootLayout:true}).data;
@@ -17,6 +17,6 @@ assert(html.includes(`MC_BUILD='${meta.stamp}'`)&&html.includes(meta.release_not
 const blurb=html.slice(html.indexOf('<div class="fixed-features">'),html.indexOf('<div class="super-toolbar">'));
 assert.equal(hash(blurb),'a335af74470da1d999e3c833b0635a2565388662d4cee3deb72626ae6cafc97a');
 for(const m of Object.values(meta.editions))for(const v of [m.file,m.syxSha256,m.mainOsSha])assert(loader.includes(v));
-for(const p of ['docs/assets/release.js','docs/flasher/midi-machine-release.js'])assert(fs.readFileSync(path.join(root,p),'utf8').match(/"version"\s*:\s*"2.99"/));
+for(const p of ['docs/assets/release.js','docs/flasher/midi-machine-release.js'])assert(fs.readFileSync(path.join(root,p),'utf8').match(/"version"\s*:\s*"3.00"/));
 assert(fs.existsSync(path.join(site,meta.release_notes)));assert(fs.existsSync(path.join(site,'lite.html')));
 console.log('PASS Full/Lite metadata, immutable assets, legacy alias, release stamps and approved cleaned description');

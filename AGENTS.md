@@ -461,3 +461,18 @@ Preserve native BACK undo during CTRL-ALL latch parameter edits; use quick doubl
 ## Release2.99 (2026-11-01)
 
 AveyCole explicitly authorizes direct main publication of the live DX monitor while acknowledging that voice stealing remains unresolved. Publish shared DX/CTRL-ALL controls across Full, Lite and Optional; keep Optional extra choices and current model conversion paths. Global DX enables SETTINGS+BACK; PAGE switches pages, DATA press clears, double-BACK exits while first BACK preserves undo. All rotary/transport/trig controls continue under the overlay. Replace the old FUNC popup. Startup and flashers must say2.99. Publish notes/guides/manuals with the unresolved-cut warning; software/emulation validation does not imply hardware parity. This authorizes exact firmware assets/direct main push, including the existing21-bit transport repair without MAIN changes. Full9abe84ff10012a31097c57b09ba85be11ec52c514bdc23b4c540b24c72009f71; Litefb5f8b3b593b3db0a8ea25161cf139fbd05bbecde35e23d85615ae5ea2570127; OptionalFull8b33616bbb33bbf91278a8e80c4fa8bd398092037a2230aab0fc0210a4b5bb17; OptionalLite3c1592db5cc958b81022de99e694c6a582f829c43e2265fe503153ed63abe8f2. Protected feature description remains byte-identical except its separate CTRL-ALL shortcut paragraph, updated for explicitly requested native BACK undo/double-BACK exit.
+
+
+## Release3.00 publication (2026-11-01)
+
+AveyCole explicitly authorizes pushing the combined3.00 release, with Dummy as
+a selectable checkbox in Machine Optional only. Main Full and all Lite builds
+exclude Dummy; Lite retains exactly the six stock sound machines. Optional keeps
+its extra choices and per-pattern/project ChordKeys persistence. This authorizes
+the four checksum-pinned firmware assets and direct main push via the established
+fixed-image release path. Startup and flashers must both display3.00. Include
+filter/pattern storage, sustained Wizard p-lock priority, Sil browsing context
+fixes, native mixer headroom, generic Recent Cuts and safe SMP WAV export.
+The user confirms unclipped SMP export on v7. ChordKeys hardware power-cycle
+confirmation remains pending; stock long-note cuts and the A09/A10 sound
+comparison remain unresolved. Preserve those limits in release validation.

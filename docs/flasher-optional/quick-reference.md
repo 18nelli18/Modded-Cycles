@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 2.99 - 1 November 2026
+Supermodel 3.00 - 1 November 2026
 
-Main 2.99. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
+Main 3.00. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
 
 ## Included features
 
@@ -134,7 +134,8 @@ Main 2.99. Hold the first button while pressing the next button or turning the n
 | Permanent quick save | Hold FUNC + SETTINGS | Open the stock permanent pattern-save action. This is an existing stock shortcut; do not confuse it with the short temporary save or a full Save Project. |
 | Temporary save / reload | Short FUNC + SETTINGS / FUNC + PATTERN | Stock temporary copy save / reload, including while retrig mode is latched. |
 | Resample | On Sample Wizard: SETTINGS + REC | Open the Resample menu. Select the recording options and save the resulting take from that menu. |
-| P-lock priority | Parameter-lock pitch, sample start, sample end or other Wizard controls | During playback, the current note uses its p-lock values ahead of CTRL-ALL. CTRL-ALL still edits the underlying sound for unlocked notes. |
+| P-lock priority | Parameter-lock pitch, sample start, sample end or other Wizard controls | The active note or sustained loop retains its p-lock values ahead of CTRL-ALL until replaced by another note. CTRL-ALL edits the underlying unlocked sound. |
+| Export a saved recording | Select Transfer mode SMP; reopen Elektron Transfer after changing mode | Download from /Resampled/ as a 48 kHz WAV. Stereo is decoded; gain is reduced only when needed to avoid export clipping. Save recordings before exporting. |
 
 ## MIDI Out machine
 
@@ -166,7 +167,7 @@ Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMB
 | Mute | Stk / LTC Default: Stk | Stk keeps the original momentary mute controls. With LTC selected, hold TRACK and tap FUNC to stay in mute mode, then tap track pads to mute or unmute. Tap FUNC again to leave. In latched mute mode, hold FUNC and press a track pad to solo it; press the soloed pad again, or leave mute mode, to restore the previous mutes. |
 | Quantized mute/solo | Tap SETTINGS + TRACK; QntM | Turn it On or Off and select the time division your mutes and solos are quantized to. Off by default. |
 | Delay | Stk / Div Default: Stk | Stk preserves the original Delay Time display and timing. Div displays musical divisions, including dotted and triplet values, and corrects the matching timing positions to exact divisions of the tempo. Other Delay Time positions retain their original timing; this does not quantize every knob position. Applies while using Delay mode. |
-| DX | Off / On Default: Off | With Global DX On, hold SETTINGS and press BACK to open/close the CPU monitor. PAGE switches load/track-cut pages; press DATA to clear counters. Quick double-BACK exits; the first BACK preserves native undo. Knob turns, transport and trigs work normally without covering the monitor. Shows current/peak/mean/sustained CPU, overruns, forced cuts and last T5 cut load. Track counts show 99+ at the limit. DX Off disables access; the old FUNC popup is removed. |
+| DX | Off / On Default: Off | CPU monitor: Global DX On enables SETTINGS + BACK. PAGE cycles CPU Load, Recent Cuts (all tracks) and Track Totals. DATA clears; double-BACK exits. Transport, knobs and trigs remain available; single BACK preserves undo. DX Off disables access. |
 | SCRM | DATA opens; turn and press DATA; BACK returns | Six checkboxes per track: Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay default Off; Color/Shape/Sweep/Contour default On. Each pattern keeps its own six checklists; Save Project preserves them after reloading. Wizard allows Pitch/Decay; its sample/mode controls stay excluded. |
 | Sidechain routing | Select source; tap SETTINGS + TRACK; S.Chn > DATA | Check the five other tracks, Rev. (reverb-slot return), and/or Del. (delay-slot return). DATA toggles each target. Dpt/Atk/Hld/Rel and Mute apply to all selected targets. Choices save per source and pattern with Save Project. Multiple sources use the deepest duck on each target. DUCK is a separate delay type. |
 | Dpt / Atk / Hld / Rel | Scroll below checkboxes; click DATA, turn, click to finish | Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source. |
@@ -194,9 +195,10 @@ BACK closes Mod Setup and saves its global preferences. If playback is running, 
 |---|---|---|
 | Edition availability | Main Full / Lite versus Machine Optional | Full and Lite use their listed audio engines. LEGACY, ChordKeys and Vinyl controls apply when enabled in Machine Optional. |
 | LEGACY bank library | LEGACY: FUNC + MACHINES | Turn DATA to choose a stored DX7 bank; click to load, BACK to cancel. One active32-voice bank is shared by all Legacy tracks. Import banks using the optional flasher bank importer. |
-| ChordKeys | CHORD: FUNC + RETRIG > Keys ON | Outside grid record, TRIG1-16 play scale-based chord voicings. TRACK + track pad changes track. Grid record: hold TRIG + T1-T6 to lock harmony; repeat the same pad to restore base harmony. |
+| ChordKeys | CHORD: FUNC + RETRIG > Keys ON | Outside grid record, TRIG1-16 play scale-based chord voicings. TRACK + track pad changes track. Grid record: hold TRIG + T1-T6 to lock harmony; repeat the same pad to restore base harmony. Keys On, harmony and related settings save per pattern/project; save the project before switching off. |
 | Vinyl | SIZE / FUNC + SIZE / hold FUNC first, then TRACK + SIZE | Crackle / Warble Amount / Warble Speed. REVERB SEND sets Vinyl amount. Vinyl is absent from main Full/Lite. |
 | TRX-B2 / TRX-SD / TRX-CH | Select in Machine Optional; supply your Machinedrum UW OS 1.63 file | Three optional engines: bass drum, snare and closed hi-hat. They require the MD file when building. Retained Optional choices include LEGACY, ChordKeys and Vinyl. |
+| Dummy | Tick Dummy in the Machine Optional flasher | Silent placeholder: skips synthesis and voice rendering, with zero machine stats. Excluded from Main and all Lite builds. |
 
 ## SPEAK word library
 

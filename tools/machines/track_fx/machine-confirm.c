@@ -9,6 +9,10 @@ extern void fx_notice(const char*);
 /* Stk par defaut ; une preference Sil valide reste restauree par mb_service. */
 volatile u32 mb_silent=0,mb_pending,mb_candidate,mb_lane,mb_all,mb_view;
 static u32 committing,owned;
+static u32 anchor_machine,anchor_pattern,anchor_id,anchor_generation;
+static u32 pattern_id(u32 p){return p?*(const u32*)(p+30706):96;}
+static u32 same_context(u32 view,u32 t,u32 machine){u32 p=*(volatile u32*)0x40a7887c;return mb_pending&&mb_view==view&&mb_lane==t&&anchor_machine==machine&&anchor_pattern==p&&anchor_id==pattern_id(p)&&anchor_generation==*(volatile u32*)0x468f6e80;}
+static void anchor(u32 machine){anchor_machine=machine;anchor_pattern=*(volatile u32*)0x40a7887c;anchor_id=pattern_id(anchor_pattern);anchor_generation=*(volatile u32*)0x468f6e80;}
 static void redraw(void){u32 app=*(volatile u32*)0x40fe4178;if(app)N(0x40076bee)(app+64);}
 void mb_cancel(void){mb_pending=committing=0;}
 u32 mb_step(u32 machine,s32 delta){
@@ -22,7 +26,9 @@ u32 mb_step(u32 machine,s32 delta){
 u32 mb_rotate(u32 view,s32 delta,u32 all,u32 arg){
  if(!mb_silent){mb_cancel();return mb_native_rotate(view,delta,all,arg);}
  if(!delta)return 0;u32 root=N(0x400cf866)(),track=root?N(0x40012412)(root+48):6;if(track>=6)return 0;
- if(!mb_pending||mb_lane!=track||mb_view!=view){mb_candidate=N(0x4001e318)(0,track);mb_lane=track;mb_view=view;}
+ u32 machine=N(0x4001e318)(0,track);
+ /* Un changement de pattern/son ne doit pas reprendre un ancien candidat. */
+ if(!same_context(view,track,machine)){mb_candidate=machine;mb_lane=track;mb_view=view;anchor(machine);}
  u32 pos=0;for(u32 i=0;i<rm_count;i++)if(rm_order[i]==mb_candidate)pos=i;
  if(delta>0&&pos+1<rm_count)pos++;if(delta<0&&pos)pos--;mb_candidate=rm_order[pos];mb_all=all;mb_pending=1;redraw();
  return 0;
@@ -30,7 +36,7 @@ u32 mb_rotate(u32 view,s32 delta,u32 all,u32 arg){
 u32 mb_key(u32 view,const u32*e){
  if(!e)return mb_native_key(view,e);u32 code=N(0x4007240c)(e),flags=e[4];
  if(code==32&&(mb_pending||owned)){
-  if((flags&9)==1){owned=1;if(mb_pending&&view==mb_view){u32 root=N(0x400cf866)(),track=root?N(0x40012412)(root+48):6;if(track==mb_lane){committing=1;mb_native_rotate(view,1,mb_all,0);committing=0;}mb_pending=0;redraw();}}
+  if((flags&9)==1){owned=1;if(mb_pending&&view==mb_view){u32 root=N(0x400cf866)(),track=root?N(0x40012412)(root+48):6;if(track<6&&same_context(view,track,N(0x4001e318)(0,track))){committing=1;mb_native_rotate(view,1,mb_all,0);committing=0;}mb_pending=0;redraw();}}
   if(!(flags&1))owned=0;return 1;
  }
  if((flags&9)==1&&(code==12||code==5||(code>=16&&code<22)))mb_cancel();
@@ -38,4 +44,4 @@ u32 mb_key(u32 view,const u32*e){
 }
 
 /* Le dessinateur natif recoit seulement l ID a afficher ; aucun son ecrit. */
-u32 mb_display_machine(u32 machine,u32 view){return mb_pending&&view==mb_view?mb_candidate:machine;}
+u32 mb_display_machine(u32 machine,u32 view){if(mb_pending&&view==mb_view){u32 root=N(0x400cf866)(),t=root?N(0x40012412)(root+48):6;if(t<6&&same_context(view,t,N(0x4001e318)(0,t)))return mb_candidate;mb_cancel();}return machine;}

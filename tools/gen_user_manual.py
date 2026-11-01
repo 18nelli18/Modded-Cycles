@@ -1,4 +1,4 @@
-"""Manuel imprime2.99 : contenu present, couverture vectorielle et controle PDF."""
+"""Manuel imprime3.00 : contenu present, couverture vectorielle et controle PDF."""
 from pathlib import Path
 import json,re,copy
 from html import escape
@@ -11,10 +11,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from pypdf import PdfReader
 
-R=Path(__file__).resolve().parents[1];W=R/'output/manual299';W.mkdir(parents=True,exist_ok=True)
-OUT=R/'output/pdf/Supermodel-2.99-Manual.pdf';OUT.parent.mkdir(parents=True,exist_ok=True)
+R=Path(__file__).resolve().parents[1];W=R/'output/manual300';W.mkdir(parents=True,exist_ok=True)
+OUT=R/'output/pdf/Supermodel-3.00-Manual.pdf';OUT.parent.mkdir(parents=True,exist_ok=True)
 DATA=json.loads((R/'tools/shortcut_guide_content.json').read_text(encoding='utf-8'))
-assert DATA['release']=='2.99'
+assert DATA['release']=='3.00'
 for name,file in [('Body','calibri.ttf'),('Bold','calibrib.ttf'),('Italic','calibrii.ttf'),('Light','calibril.ttf')]:
  pdfmetrics.registerFont(TTFont(name,'C:/Windows/Fonts/'+file))
 pdfmetrics.registerFontFamily('Body',normal='Body',bold='Bold',italic='Italic',boldItalic='Bold')
@@ -38,7 +38,7 @@ def S(*items):return ('steps',items)
 def C(title,text):return ('call',(title,text))
 def page(group,title,lead,*blocks):pages.append(dict(group=group,title=title,lead=lead,blocks=list(blocks)))
 
-page('START HERE','Contents & conventions','A practical reference for Supermodel 2.99 on Model:Cycles.',
+page('START HERE','Contents & conventions','A practical reference for Supermodel 3.00 on Model:Cycles.',
  P('Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.'),
  ('contents',None),
  H('How to read the controls'),
@@ -152,7 +152,7 @@ page('SOUND SHAPING','Filters & attack','Shape a track, or apply the same gestur
  ['MACHINES + DECAY','Attack on supported machines.']],[225,285]),
  H('Choose a filter for the job'),
  P('<b>LOW</b> reduces high frequencies as you lower cutoff. <b>HIGH</b> removes low frequencies. <b>BAND</b> emphasizes a band around cutoff. <b>LO/HI</b> provides the combined low/high response. Use resonance to emphasize the area around the cutoff.'),
- P('A cleared or freshly initialized sound starts at LOW, cutoff 127 and resonance 0. A saved sound keeps its stored filter type and settings. Sample Wizard uses its own internal filter.'),
+ P('A cleared or freshly initialized sound starts at LOW, cutoff 127 and resonance 0. Filter modes save with each pattern/project; save the project before switching off. Sample Wizard uses its own internal filter.'),
  H('Modulate filter or attack'),
  P('On an LFO page, hold <b>LFO + MACHINES</b> and turn <b>DECAY</b>, <b>SWEEP</b> or <b>CONTOUR</b> to select Attack, Filter or Resonance as the destination.'),
  C('If a track is unexpectedly quiet','Check mute and solo state, volume, filter type and cutoff, then the machine’s own controls. A high-pass setting with a high cutoff can remove much of a bass sound.'))
@@ -311,18 +311,18 @@ page('MIDI OUT / CONTROL','CC knobs & MIDI LFOs','Assign nine knobs and two LFOs
 
 page('STORAGE & CONNECTIONS','Saving, USB & diagnostics','Match the save operation to the settings you want to keep.',
  T(['Operation','What it does'],[
- ['Save Project','Keeps the project, including pattern FX choices, Sidechain routing, Scramble checklists and the pattern/track LFO setup.'],
+ ['Save Project','Keeps pattern FX, filter modes, Sidechain, Scramble, track LFOs and Optional ChordKeys settings.'],
  ['Hold FUNC + SETTINGS','Opens the permanent pattern-save action.'],
  ['Short FUNC + SETTINGS','Stores a temporary pattern snapshot.'],
  ['FUNC + PATTERN','Reloads the temporary snapshot. Available in latched repeat mode.'],
- ['BACK from Mod Setup','Saves global preferences; a pending save waits for playback to stop.']],[173,337]),
+ ['BACK from Mod Setup','Saves global preferences; a pending save waits for playback to stop.'],['Export a recording','Select transfer mode SMP, reopen Elektron Transfer, then download /Resampled/ as 48 kHz WAV. Gain is reduced only to avoid export clipping.']],[173,337]),
  H('USB audio'),
  P('In <b>Global > USB</b>, choose <b>2ch</b> for the stereo mix or <b>6ch</b> for six separate mono tracks. The six tracks are sent before pan and without stereo effect returns. Stereo audio from the computer to Cycles is available in either mode.'),
  P('Stop playback before changing USB mode. The audio device reconnects; select the resulting channel layout in your DAW if needed.'),
  H('Delay divisions'),
  P('<b>Global > Dly > Div</b> displays musical divisions for Delay. It includes dotted and triplet values; only matching positions use exact divisions of the tempo.'),
  H('DX diagnostics'),
- P('Set <b>Global > DX > On</b>. Hold <b>SETTINGS + BACK</b> to open or close the CPU monitor. <b>PAGE</b> changes load/track-cut pages; press <b>DATA</b> to clear counters. Quick double-BACK also exits; the first BACK keeps native undo. Knob turns, transport and trigs work normally while the monitor stays visible. The load page shows current, peak, mean and sustained CPU, overruns and forced cuts. The track page shows six forced-cut counters (99+ at the limit) and the last T5 cut load. DX Off disables access.'),
+ P('Set <b>Global > DX > On</b>. Hold <b>SETTINGS + BACK</b> to open or close the CPU monitor. <b>PAGE</b> changes CPU Load, Recent Cuts and Track Totals pages; press <b>DATA</b> to clear counters. Quick double-BACK also exits; the first BACK keeps native undo. Knob turns, transport and trigs work normally while the monitor stays visible. The load page shows current, peak, mean and sustained CPU, overruns and forced cuts. The track page shows six forced-cut counters (99+ at the limit) and recent cuts from all tracks. DX Off disables access.'),
  C('Before powering off','Stop playback, save the project when needed, and allow pending preference saves to finish. Temporary snapshots are for performance recall, not a substitute for a permanent save.'))
 
 page('MACHINE OPTIONAL','Optional controls','These controls apply when their corresponding Machine Optional choices are enabled.',
@@ -333,6 +333,9 @@ page('MACHINE OPTIONAL','Optional controls','These controls apply when their cor
  H('ChordKeys'),
  P('On CHORD, open <b>FUNC + RETRIG</b> and set <b>Keys On</b>. Outside grid recording, <b>TRIG 1–16</b> plays scale-based chord voicings. <b>TRACK + a track pad</b> changes track.'),
  P('In grid recording, hold a <b>TRIG</b> and press <b>T1–T6</b> to lock harmony. Repeat the same pad to restore the base harmony.'),
+ P('Keys On, harmony and related settings save per pattern/project. Save the project before switching off.'),
+ H('Dummy'),
+ P('Tick Dummy in Machine Optional for a silent placeholder with zero machine stats. It skips synthesis and voice rendering. Main and all Lite editions exclude Dummy.'),
  H('Vinyl'),
  T(['Gesture','Parameter'],[['REVERB SEND','Vinyl amount from the track'],['SIZE','Crackle'],['FUNC + SIZE','Warble Amount'],['Hold FUNC first, then TRACK + SIZE','Warble Speed']],[263,247]),
  C('Modifier order','For Warble Speed, hold FUNC before TRACK. This keeps the gesture distinct from entering latching mute mode.'))
@@ -346,7 +349,7 @@ page('REFERENCE / SPEAK','Word library','Choose the index with SHAPE, or paramet
 
 page('REFERENCE','Find it quickly','An alphabetical guide to the manual.',('index',None),
  H('A saving reminder'),P('Use Save Project for pattern settings. Global preferences save while stopped. Temporary save/reload is a performance snapshot.'),
- H('About this edition'),P('Supermodel 2.99 • Model:Cycles • English print edition • 1 November 2026.'),
+ H('About this edition'),P('Supermodel 3.00 • Model:Cycles • English print edition • 1 November 2026.'),
  P('Engine acknowledgments include Glycinate (Feral), Fors (inspiration for ELDER and Shadow), Emilie Gillet (MACRO/Braids and scale quantization), 100demons (PUNCH), and durchgemacht and Claude (POTS). POTS uses the MIT-licensed model27 DSP.'),
  P('Control names in this manual follow the machine’s panel and display. Machine-specific chapters apply when that machine is installed.'))
 
@@ -354,7 +357,7 @@ conventions=pages[0]['blocks'][3:]
 pages[0]['blocks']=pages[0]['blocks'][:2]
 pages.insert(1,dict(group='START HERE',title='Buttons & editions',lead='Read gestures consistently and find the chapters that apply to your build.',blocks=conventions+[
  H('Acknowledgments'),P("Glycinate, Fors.Fm, PPPCCC, DavidCaruso, Emilie Gillet, Durchgemacht, 18nelli18, and every member of the Modded-Cycles Discord server who rode with me through this. Y'all rule.")]))
-pages[-1]['blocks']=[pages[-1]['blocks'][0],P('Supermodel 2.99 • Model:Cycles • English print edition • 1 November 2026.')]
+pages[-1]['blocks']=[pages[-1]['blocks'][0],P('Supermodel 3.00 • Model:Cycles • English print edition • 1 November 2026.')]
 at=next(i for i,p in enumerate(pages) if p['title']=='MACRO, ACID & WAVE')
 pages[at]['title']='ACID & WAVE';pages[at]['lead']='Resonant bass synthesis and wavetable motion.'
 pages[at]['blocks']=pages[at]['blocks'][3:]
@@ -381,8 +384,8 @@ for p in pages:
  else:continue
  break
 def cpu_chapter(group,title,lead,*blocks):return dict(group=group,title=title,lead=lead,blocks=list(blocks))
-pages.insert(-1,cpu_chapter('DIAGNOSTICS','CPU monitor','Monitor complete audio-block load while using the instrument.',P(detail),T(['Readout','Meaning'],[['NOW / PEAK','Latest complete block / highest recorded load, in percent.'],['MEAN / SUST','Recorded playing-time average / governor sustained estimate.'],['OVER / CUT','Deadline overruns / forced governor fades.'],['T1-T6','Forced cuts by track;99+ is a capped count, not normal note-offs.'],['LAST T5 S/L','Sustained estimate and block load at the last forced Track5 cut.']],[130,380]),P('Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.'),C('Performance status','Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.')))
-# Chapitres2.99 : operations presentes, sans historique des corrections.
+pages.insert(-1,cpu_chapter('DIAGNOSTICS','CPU monitor','Monitor complete audio-block load while using the instrument.',P(detail),T(['Readout','Meaning'],[['NOW / PEAK','Latest complete block / highest recorded load, in percent.'],['MEAN / SUST','Recorded playing-time average / governor sustained estimate.'],['OVER / CUT','Deadline overruns / forced governor fades.'],['T1-T6','Forced cuts by track;99+ is a capped count, not normal note-offs.'],['Recent Cuts','Latest forced cuts across all tracks, with sustained and block load.']],[130,380]),P('Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.'),C('Performance status','Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.')))
+# Chapitres3.00 : operations presentes, sans historique des corrections.
 by_title={p['title']:p for p in pages}
 by_title['Global preferences']['blocks'][0][1][1].append(['JUMP','Off / On. With On, PATTERN then FUNC + TRIG jumps immediately and keeps playback position. Default: Off. Saves globally.'])
 for p in pages:
@@ -390,7 +393,7 @@ for p in pages:
   if kind=='p' and 'For pitch slides, use overlapping' in value:
    p['blocks'][i]=P('<b>PUNCH</b> selects the oscillator waveform: Off is saw, On is square. Overlapping note lengths link ordinary notes according to the track glide and legato settings. See ACID articulation for the physical controls.')
   if kind=='p' and 'The home screen shows the sample name' in value:
-   p['blocks'][i]=P('The home screen shows the sample name, waveform, track and duration. Volume segments show the track volume setting. During playback, pitch, start, end and other parameter locks take priority over CTRL-ALL; CTRL-ALL still edits the base sound for unlocked notes.')
+   p['blocks'][i]=P('The home screen shows the sample name, waveform, track and duration. Volume segments show the track volume setting. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.')
 
 def add_after(title,chapter):
  pages.insert(next(i for i,p in enumerate(pages) if p['title']==title)+1,chapter)
@@ -449,7 +452,7 @@ def cover(c):
  c.setFillColor(INK);c.setFont('Light',52);c.drawString(48,588,'SUPERMODEL')
  c.setFont('Body',23);c.drawString(51,548,'Make it yours.')
  c.setFillColor(MUTED);c.setFont('Body',13);c.drawString(51,500,'Sounds • sequencing • performance • control')
- c.setFont('Bold',12);c.setFillColor(GREEN);c.drawString(51,469,'RELEASE 2.99')
+ c.setFont('Bold',12);c.setFillColor(GREEN);c.drawString(51,469,'RELEASE 3.00')
  c.setStrokeColor(LINE);c.line(51,442,561,442)
  patterns=[{0,4,8,12},{4,12},{0,2,4,6,8,10,12,14},{3,7,11,15},{0,5,10,13},{1,6,9,14}]
  for track,pattern in enumerate(patterns):
@@ -459,14 +462,14 @@ def cover(c):
    c.roundRect(x,y,19,19,3,stroke=1,fill=1)
  c.setFillColor(MUTED);c.setFont('Body',11);c.drawString(51,100,'A practical guide to the current controls and workflows.')
  c.setFont('Body',9);c.drawString(51,78,'English • Full / Lite / Machine Optional')
- c.drawRightString(561,78,'30 OCTOBER 2026')
+ c.drawRightString(561,78,'1 NOVEMBER 2026')
 
 def chrome(c,doc):
  c.saveState();c.bookmarkPage('page'+str(doc.page))
  if doc.page==1:cover(c);c.restoreState();return
  index=doc.page-2
  group=pages[index]['group'] if index<len(pages) else 'SUPERMODEL'
- c.setFillColor(GREEN);c.setFont('Bold',8);c.drawString(51,759,'SUPERMODEL 2.99')
+ c.setFillColor(GREEN);c.setFont('Bold',8);c.drawString(51,759,'SUPERMODEL 3.00')
  c.setFillColor(MUTED);c.setFont('Body',8);c.drawRightString(561,759,group)
  c.setStrokeColor(LINE);c.line(51,749,561,749);c.line(51,38,561,38)
  c.setFont('Body',8);c.drawString(51,24,'MODEL:CYCLES  /  USER MANUAL');c.drawRightString(561,24,str(doc.page))
@@ -525,7 +528,7 @@ def build_flow():
  return flow[:-1]
 
 def markdown():
- lines=['# SUPERMODEL','## User manual · Release 2.99','','Model:Cycles · Full / Lite / Machine Optional','']
+ lines=['# SUPERMODEL','## User manual · Release 3.00','','Model:Cycles · Full / Lite / Machine Optional','']
  for p in pages:
   lines+=['# '+p['title'],'',p['lead'],'']
   for kind,value in p['blocks']:
@@ -537,16 +540,16 @@ def markdown():
  return '\n'.join(lines)
 
 if __name__=='__main__':
- doc=SimpleDocTemplate(str(OUT),pagesize=letter,leftMargin=51,rightMargin=51,topMargin=63,bottomMargin=53,title='Supermodel 2.99 — User Manual',author='Supermodel',subject='Current features and controls for Model:Cycles')
+ doc=SimpleDocTemplate(str(OUT),pagesize=letter,leftMargin=51,rightMargin=51,topMargin=63,bottomMargin=53,title='Supermodel 3.00 — User Manual',author='Supermodel',subject='Current features and controls for Model:Cycles')
  doc.build(build_flow(),onFirstPage=chrome,onLaterPages=chrome)
  r=PdfReader(OUT);expected=len(pages)+1
  print('Pages:',len(r.pages),'expected:',expected)
  for i,p in enumerate(r.pages):print(i+1,' '.join((p.extract_text() or '').split())[:105])
- (W/'Supermodel-2.99-Manual.md').write_text(markdown(),encoding='utf-8',newline='\n')
+ (W/'Supermodel-3.00-Manual.md').write_text(markdown(),encoding='utf-8',newline='\n')
  (W/'layout.json').write_text(json.dumps(dict(expected_pages=expected,actual_pages=len(r.pages),chapters=[dict(page=i+2,title=p['title']) for i,p in enumerate(pages)]),indent=2)+'\n')
  assert len(r.pages)==expected, 'A chapter overflowed its intended page'
  for ch in [dict(page=i+2,title=p['title']) for i,p in enumerate(pages)]:assert ch['title'] in r.pages[ch['page']-1].extract_text(),ch
  import shutil
  for folder in ('flasher','flasher-optional'):
-  shutil.copyfile(OUT,R/'docs'/folder/'user-manual.pdf');shutil.copyfile(W/'Supermodel-2.99-Manual.md',R/'docs'/folder/'user-manual.md')
+  shutil.copyfile(OUT,R/'docs'/folder/'user-manual.pdf');shutil.copyfile(W/'Supermodel-3.00-Manual.md',R/'docs'/folder/'user-manual.md')
  print('PDF:',OUT)

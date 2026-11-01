@@ -3,7 +3,8 @@
 typedef unsigned int u32;typedef int s32;
 #define N(a) ((u32(*)())(a))
 extern volatile u32 dx_enabled,gb_last_total,gb_peak,gb_over,gb_sum,gb_blocks;
-extern volatile u32 dt_cuts[6],dt_t5_s,dt_t5_l,dt_t5_valid,dx_new;
+extern volatile u32 dt_cuts[6],dx_new;
+extern void cpu_govern(void);
 extern volatile u32 gr_diag_sum,gr_diag_blocks,dx_peak,dx_over,gb_mask;
 extern volatile u32 wf_api[];
 extern volatile u32 cal_back_armed;
@@ -14,19 +15,30 @@ static u32 back_owned,data_owned,page_owned,dirty,stamp;
 static u32 bp,bc,ba,bs,bl;
 #define BACK_WINDOW 47308800u
 static u32 pixels[256],snap[15];
+struct cut {u32 track,sustained,load;};
+static struct cut cuts[6],cut_snap[6];static u32 cut_next,cut_count,cut_snap_count;
+/* Meme detection de nouveaux fondus que le traceur precedent. Ecriture
+ * d un petit record seulement lors d un nouveau cut, aucune chaine en IRQ. */
+static u32 cut_mask(void){const volatile unsigned char*p=(const volatile unsigned char*)0x46732058;u32 v=0;if(p[0])v|=1;if(p[1])v|=2;if(p[2])v|=4;if(p[3])v|=8;if(p[4])v|=16;if(p[5])v|=32;return v;}
+void cpu_audio_end(void){
+ if(!dx_enabled){cpu_govern();return;}u32 before=cut_mask();cpu_govern();u32 added=cut_mask()&~before;
+ if(!added)return;u32 fast=*(volatile u32*)0x46732f10>>3,slow=*(volatile u32*)0x46732f14>>8,s=fast<slow?fast:slow,l=*(volatile u32*)0x4673207c;
+ for(u32 t=0;t<6;t++)if(added&(1u<<t)){if(dt_cuts[t]<99)dt_cuts[t]++;cuts[cut_next].track=t+1;cuts[cut_next].sustained=s;cuts[cut_next].load=l;if(++cut_next==6)cut_next=0;if(cut_count<6)cut_count++;}
+}
 static void repaint(void){u32 app=*(volatile u32*)0x40fe4178;if(app)N(0x40076bee)(app+64);}
 static u32 pct(u32 t){return t>900218?999:(t*100+45056)/90112;}
 void cpu_snapshot(void){
  u32 sr;__asm__ volatile("move.w %%sr,%0\nmove.w #0x2700,%%sr":"=d"(sr)::"memory","cc");
  snap[0]=gb_last_total;snap[1]=gb_peak;snap[2]=gb_over;snap[3]=gb_sum;snap[4]=gb_blocks;snap[5]=dx_new;
  snap[6]=*(volatile u32*)0x46732f10>>3;u32 slow=*(volatile u32*)0x46732f14>>8;if(slow<snap[6])snap[6]=slow;
- snap[7]=dt_t5_s;snap[8]=dt_t5_l;for(u32 t=0;t<6;t++)snap[9+t]=dt_cuts[t];
+ for(u32 t=0;t<6;t++)snap[9+t]=dt_cuts[t];
+ cut_snap_count=cut_count;for(u32 i=0;i<cut_count;i++){u32 k=cut_next+5-i;if(k>=6)k-=6;cut_snap[i].track=cuts[k].track;cut_snap[i].sustained=cuts[k].sustained;cut_snap[i].load=cuts[k].load;}
  __asm__ volatile("move.w %0,%%sr"::"d"(sr):"memory","cc");dirty=1;
 }
 void cpu_reset(void){
  u32 sr;__asm__ volatile("move.w %%sr,%0\nmove.w #0x2700,%%sr":"=d"(sr)::"memory","cc");
  gb_peak=gb_over=gb_sum=gb_blocks=gb_mask=dx_peak=dx_over=dx_new=gr_diag_sum=gr_diag_blocks=0;
- dt_t5_s=dt_t5_l=dt_t5_valid=0;for(u32 t=0;t<6;t++)dt_cuts[t]=0;
+ cut_next=cut_count=cut_snap_count=0;for(u32 t=0;t<6;t++)dt_cuts[t]=0;
  __asm__ volatile("move.w %0,%%sr"::"d"(sr):"memory","cc");cpu_snapshot();repaint();
 }
 static void close(void){cpu_open=ba=bc=bp=0;dirty=1;repaint();}
@@ -51,7 +63,7 @@ u32 cpu_key(u32 view,const u32*e){
    if(!down&&bp){bp=0;ba=bc&&now-bs<=BACK_WINDOW;bl=now;bc=0;}
   }else if(fresh){ba=bc=0;}
   if(code==32){if(fresh){data_owned=1;cpu_reset();}return 1;}
-  if(code==15){if(fresh){page_owned=1;cpu_page^=1;dirty=1;repaint();}return 1;}
+  if(code==15){if(fresh){page_owned=1;cpu_page=(cpu_page+1)%3;dirty=1;repaint();}return 1;}
  }
  return cpu_old_key(view,e);
 }
@@ -84,19 +96,21 @@ static u32 capped(u32 n){return n>99999?99999:n;}
 static void draw(void){
  for(u32 i=0;i<256;i++)pixels[i]=0;
  for(u32 x=0;x<128;x++)for(u32 y=0;y<9;y++)dot(x,y,1);
- text(1,1,cpu_page?"VOICE CUTS    PAGE >":"CPU LOAD      PAGE >",0);
+ text(1,1,cpu_page==1?"LAST CUTS     PAGE >":cpu_page==2?"CUT TOTALS    PAGE >":"CPU LOAD      PAGE >",0);
  char line[32];
  if(!cpu_page){
   N(0x40000e6e)(line,"NOW %3u  PEAK %3u",pct(snap[0]),pct(snap[1]));text(1,12,line,1);
   u32 avg=snap[4]?((snap[3]/snap[4])*100+128)/256:0;
   N(0x40000e6e)(line,"MEAN %3u SUST %3u",avg>999?999:avg,(snap[6]*100+128)/256);text(1,22,line,1);
   N(0x40000e6e)(line,"OVER %4u CUT %5u",snap[2]>9999?9999:snap[2],capped(snap[5]));text(1,32,line,1);
+ }else if(cpu_page==1){
+  if(!cut_snap_count)text(1,20,"NO CUTS RECORDED",1);
+  for(u32 i=0;i<cut_snap_count&&i<5;i++){struct cut*c=&cut_snap[i];N(0x40000e6e)(line,"T%u  S%3u  L%3u",c->track,(c->sustained*100+128)/256,(c->load*100+128)/256);text(1,12+i*8,line,1);}
  }else for(u32 row=0;row<3;row++){
   u32 a=snap[9+row*2],b=snap[10+row*2];
   N(0x40000e6e)(line,"T%u %2u%s   T%u %2u%s",row*2+1,a,a>=99?"+":" ",row*2+2,b,b>=99?"+":" ");text(1,12+row*10,line,1);
  }
- if(snap[7]||snap[8]){N(0x40000e6e)(line,"LAST T5 S%u L%u",(snap[7]*100+128)/256,(snap[8]*100+128)/256);text(1,42,line,1);}
- else text(1,42,"NO T5 CUT RECORDED",1);
+ if(cpu_page!=1){if(cut_snap_count){struct cut*c=&cut_snap[0];N(0x40000e6e)(line,"LAST T%u S%u L%u",c->track,(c->sustained*100+128)/256,(c->load*100+128)/256);text(1,42,line,1);}else text(1,42,"NO CUTS RECORDED",1);}
  text(1,56,"DATA CLR BACK X2 EXIT",1);dirty=0;
 }
 u32 cpu_stack(u32 view,u32 canvas){
