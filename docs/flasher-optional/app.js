@@ -3121,7 +3121,8 @@ function loadOs(raw, name) {
     const info = window.MCFlasher.verify(raw);
     const sha = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
     const stock = !!(window.MC_TWEAKS && sha === window.MC_TWEAKS.device.stock_syx_sha256);
-    st.os = { raw, name, info, sha, stock };
+    // A dropped large file (or its Model:Samples version) may carry an overflowed sequence number: re-wrap it.
+    st.os = { raw: stock ? raw : window.MCBuilder.rewrap(raw), name, info, sha, stock };
     st.osError = null;
     log(`${name}: ${info.name}, ${info.count} packets, checksums OK${stock ? ", official OS 1.13" : ""}.`, "is-ok");
   } catch (e) {
@@ -3238,9 +3239,11 @@ function prepareFirmware() {
       const raw = source.slice();
       const hash = window.MCBuilder.hex(window.MCBuilder.sha256(raw));
       if (hash !== meta.syxSha256) throw new Error("Verified main firmware image checksum mismatch");
-      const verified = window.MCFlasher.verify(raw);
+      // Pinned images above ~16,140 packets carry an overflowed SysEx sequence number: same stream, re-wrapped (notes/222).
+      const fixedRaw = window.MCBuilder.rewrap(raw);
+      const verified = window.MCFlasher.verify(fixedRaw);
       if (!verified.count) throw new Error("Verified main firmware image has no valid SYX packets");
-      return { raw, name: meta.downloadName || `Supermodel_${edition === "lite" ? "Lite_" : ""}${release}.syx`, kind: "built", mods: [meta.productName || "Supermodel"],
+      return { raw: fixedRaw, name: meta.downloadName || `Supermodel_${edition === "lite" ? "Lite_" : ""}${release}.syx`, kind: "built", mods: [meta.productName || "Supermodel"],
         sha: meta.mainOsSha, ref: true, modsRef: true, sixch: true, edition };
     });
     if (!onSamples()) { buildCached(fixedKey, makeFixed); return; }

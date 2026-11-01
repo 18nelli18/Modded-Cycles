@@ -363,3 +363,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [220 - Verrou CTRL-ALL UI](220-verrou-control-all-ui.md) : Full2.75 prive depuis stock-screen2.65, double TRACK, sortie TRACK/BACK ; audio existant identique, hardware a verifier.
 
 - [221 - Bases2.75 et captures](221-bases275-et-captures.md) : quatre editions preparees et validees, Optional/MD controles ; captures poussees, firmware en attente de l exception Git.
+
+- [222 - Numero de sequence SysEx sur 21 bits](222-sequence-sysex-21-bits.md) : images de plus de ~16 140 paquets invalides (Web MIDI, RECEIVING...), encodage 21 bits, reemballage et refus avant envoi.

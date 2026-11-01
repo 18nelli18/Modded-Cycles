@@ -58,6 +58,14 @@ function packetChecksum(msg, V, C0) {
   return (C0 - acc) & 0x7f;
 }
 
+/* Checksum as the receivers compute it (bootstrap 0x80003622, OS 0x40081cda): bytes 7..125, ((k + dev) ^ byte),
+ * plus dev, 7 bits. Same as packetChecksum while byte 7 (top of the sequence number) is 0, i.e. up to seq 16383. */
+function deviceChecksum(msg, dev) {
+  let acc = dev;
+  for (let k = 0; k < 119; k++) acc += ((k + dev) & 0xff) ^ msg[7 + k];
+  return acc & 0x7f;
+}
+
 function u21(b, o) {
   return (b[o] << 14) | (b[o + 1] << 7) | b[o + 2];
 }
@@ -78,7 +86,7 @@ function verify(raw) {
   }
   const prod = head[4];
   if (!(prod in PRODUCTS)) throw new Error(`unsupported product id 0x${prod.toString(16)}`);
-  const [name, , V, C0] = PRODUCTS[prod];
+  const [name, dev] = PRODUCTS[prod];
   if (head[6] !== 0x7f || head[7] !== 0x01 || tail[6] !== 0x7f || tail[7] !== 0x02)
     throw new Error("start/end markers missing");
 
@@ -90,7 +98,7 @@ function verify(raw) {
     const m = data[n];
     if (m.length !== MSG_LEN)
       throw new Error(`packet ${n}: length ${m.length} (expected ${MSG_LEN})`);
-    if (m[CS_OFF] !== packetChecksum(m, V, C0))
+    if (m[CS_OFF] !== deviceChecksum(m, dev))
       throw new Error(`packet ${n}: bad checksum — the file is corrupted, do not flash it`);
   }
 
@@ -111,6 +119,10 @@ async function sendSysex(output, raw, opts = {}) {
   const pv = opts.pace;
   const pace = Number.isFinite(pv) && pv >= 0 ? pv : DEFAULT_PACE;   // explicit 0 is honoured
   const msgs = splitMessages(raw);
+  // A data byte >= 0x80 between F0 and F7 is not MIDI: Web MIDI throws mid-transfer ("Invalid MIDI message").
+  // Refuse before the first message (MCBuilder.rewrap repairs such files, notes/222).
+  const bad = msgs.findIndex((m) => m.subarray(1, -1).some((b) => b & 0x80));
+  if (bad >= 0) throw new Error(`packet ${bad}: invalid SysEx (byte >= 0x80), the file needs re-wrapping; nothing was sent`);
   const t0 = Date.now();
   let n = 0;
   for (; n < msgs.length; n++) {
@@ -324,7 +336,7 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-const API = { splitMessages, verify, packetChecksum, transferSeconds, sendSysex,
+const API = { splitMessages, verify, packetChecksum, deviceChecksum, transferSeconds, sendSysex,
               PRODUCTS, DEFAULT_PACE, DIN_BYTES_PER_SEC,
               encode7, decode7, crc32, xferFrame, xferParse, xferString, xferOpen, xferIdentify, upgradeFast,
               fastSeconds, XferError, XFER_IDS, XFER_PRODUCT, OS_BLOCK };
