@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel3.00 - 30 octobre2026
+Supermodel3.01 - 30 octobre2026
 
-Principal3.00. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
+Principal3.01. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
 
 ## Fonctions incluses
 
@@ -16,7 +16,7 @@ Principal3.00. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Song et navigation:** Les lignes Song combinent patterns, repetitions et mutes. Direct Pattern Jump et selection de trigs servent le jeu.
 
-**Articulation ACID et locks:** Glide/legato ACID par piste, enveloppes A/F/AF et relance par arpege ; p-locks Wizard prioritaires sur CTRL-ALL.
+**Articulation ACID et locks:** Glide/legato ACID par piste, enveloppes A/F/AF et relance par arpege ; les locks de sample Wizard conservent le sample ; les parametres libres suivent la piste. Seuls les locks explicites priment sur CTRL-ALL, meme en boucle longue.
 
 ## Pistes, pas et performance
 

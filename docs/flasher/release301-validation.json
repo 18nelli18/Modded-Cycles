@@ -1,0 +1,173 @@
+{
+  "release": "3.01",
+  "hardware_timing_claim": false,
+  "cold_boot_ui_stubs": false,
+  "audio_runtime_matches_user_tested_build": true,
+  "editions": [
+    {
+      "scope": "main",
+      "edition": "full",
+      "sha256": "46dd09a1d0cdf6d4923a9bc9016b6ebb839ceb22482565fe73412b762d7f2f47",
+      "runtime_sha256": "bfba706c70a01b4784855fa7815aa010bc48226f688f67f8b47ad8f45d1ed167",
+      "sram_sha256": "fa36626105cdbfbb437166a2c77d64c88fea26822cf9884611c63e95fcbe2398",
+      "title_pixel_changes": [
+        1074085244,
+        1074085246,
+        1074085248,
+        1074085250,
+        1074085252
+      ]
+    },
+    {
+      "scope": "main",
+      "edition": "lite",
+      "sha256": "ec1959ea52a8359f5971dc11adae9bc8dc9ede5df9f95deffa0591a0d7e29985",
+      "runtime_sha256": "0e9e30a8aac75f64270da359ed0912f26ce55fc1781c5598651df34910497948",
+      "sram_sha256": "7f32dde41f936333ffb8eef53c77cecb27813d83093b0f18bf0cf6c3dae7cf0d",
+      "title_pixel_changes": [
+        1074085306,
+        1074085308,
+        1074085310,
+        1074085312,
+        1074085314
+      ]
+    },
+    {
+      "scope": "optional",
+      "edition": "full",
+      "sha256": "ec77929bbed66c50685696f4b2dafaa994dde4c8afe96331aba5828e5c986bac",
+      "runtime_sha256": "88dbfcc60aa9034aff0057ac5482fc4e9611855a11004f785f5339e34abd1f69",
+      "sram_sha256": "2632377e7edfcd128f282bb743e0185c8f771fb8379d68935cad0aec109de7ea",
+      "title_pixel_changes": [
+        1074085244,
+        1074085246,
+        1074085248,
+        1074085250,
+        1074085252
+      ]
+    },
+    {
+      "scope": "optional",
+      "edition": "lite",
+      "sha256": "ac86d35ac4308a77677601b05154b2b8f8e1c4ee6ccf8e67a4b141634e7f8205",
+      "runtime_sha256": "0a3e363dc90e3f55bc922b56d377038e328b75cc5ce358dc287fb49a934dcc45",
+      "sram_sha256": "c30ae206488af2423eb7fe2fa7e32d27830877b2ca466eff319a3e8c18056751",
+      "title_pixel_changes": [
+        1074085306,
+        1074085308,
+        1074085310,
+        1074085312,
+        1074085314
+      ]
+    }
+  ],
+  "browser_delivery": {
+    "release": "3.01",
+    "rows": [
+      {
+        "type": "optional",
+        "mask": 0,
+        "sha": "ac86d35ac4308a77677601b05154b2b8f8e1c4ee6ccf8e67a4b141634e7f8205",
+        "flash": 981072
+      },
+      {
+        "type": "optional",
+        "mask": 524287,
+        "sha": "ec77929bbed66c50685696f4b2dafaa994dde4c8afe96331aba5828e5c986bac",
+        "flash": 1529152
+      },
+      {
+        "type": "optional",
+        "mask": 1,
+        "sha": "78e2aed0774fbdb87d746af55c5bfead9e3344b838bfefa3fe63fc2b473b528a",
+        "flash": 1660288
+      },
+      {
+        "type": "optional",
+        "mask": 32768,
+        "sha": "362eb7a74f08ef1a2f97467af39a162f19a151b808b8218cea12fbf1d6948074",
+        "flash": 1660288
+      },
+      {
+        "type": "optional",
+        "mask": 2048,
+        "sha": "723be98979b226a7070b53bfae814cbd5bac6f1b62f4ab1eb569c1bfe7810192",
+        "flash": 1660288
+      },
+      {
+        "type": "optional",
+        "mask": 349525,
+        "sha": "bd774400f27a70380b0e4839707944d43dac7ad65395fd81fa871d9660d6443b",
+        "flash": 1660288
+      },
+      {
+        "type": "optional",
+        "mask": 4194304,
+        "sha": "86c62d984966c6ab90cb7905f370070d5512c9f0231935237715f771fe6e0f2b",
+        "flash": 1660288
+      },
+      {
+        "type": "optional",
+        "mask": 4194305,
+        "sha": "a6324912e8c17be331826efb1e2a3684e6e81ee7f1c073dfbfc4b4a3b148cf91",
+        "flash": 1660288
+      },
+      {
+        "type": "optional",
+        "mask": 4718591,
+        "sha": "e3d324f693c0602fce92889c74e622b0d755a468f367cbbf1269fbd6d9760a33",
+        "flash": 1660288
+      },
+      {
+        "type": "md",
+        "mask": 524288,
+        "sha": "a6f7ad8dd0940dc6db0852dd5dc1f8248de02b5c795889f84327c532aac44141",
+        "flash": 1735376
+      },
+      {
+        "type": "md",
+        "mask": 1048576,
+        "sha": "cbc85e36b936444985bf639f469a7b08209dbd9424cf6ef9719f3395bbface25",
+        "flash": 1735376
+      },
+      {
+        "type": "md",
+        "mask": 2097152,
+        "sha": "b05efe675c54f82dff297901162c6562fa1456bb7791c5c75cd259442b618594",
+        "flash": 1735376
+      },
+      {
+        "type": "md",
+        "mask": 3670016,
+        "sha": "b6052cbc8fae12c419688d0cc1c7f5defe22fe705f27c1ab18393e2c5745f34c",
+        "flash": 1735376
+      },
+      {
+        "type": "md",
+        "mask": 4194303,
+        "sha": "354b8437c6327c314e756e6130f3614acabadd5c6cad7c75013eb914666b4ace",
+        "flash": 1735376
+      },
+      {
+        "type": "md",
+        "mask": 7864320,
+        "sha": "46dbb1ba01f98e32b0b3bb149ff7164ad2be9e21047b2ea8ef860db7c3d7185f",
+        "flash": 1735376
+      },
+      {
+        "type": "md",
+        "mask": 8388607,
+        "sha": "8c8fe1b7f3c95f900556a09abdb51b5341a3d22402a412c4bf584ab979fca9ff",
+        "flash": 1735376
+      }
+    ],
+    "hardware_tested": false
+  },
+  "md_dummy_native": {
+    "native_MD_Dummy_boot": true,
+    "dynamic_MD_helpers_retained": true,
+    "dummy_selection_bit22": true,
+    "five_masks": true,
+    "hardware_tested": false
+  }
+}

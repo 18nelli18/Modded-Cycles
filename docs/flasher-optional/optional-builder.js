@@ -4,6 +4,7 @@
 (function(){
 'use strict';
 const B=typeof module!=='undefined'&&module.exports?require('../flasher/builder.js'):window.MCBuilder;
+const C=typeof module!=='undefined'&&module.exports?require('./clean-layout.js'):window.MCCleanLayout;
 const BASE=0x40000400,START=0x401aa140-BASE,RUNTIME=0x46700000,TAIL=0x467ab360,ALL=0x7ffff;
 const hash=x=>B.hex(B.sha256(x)),eq=(a,b)=>a.length===b.length&&a.every((x,i)=>x===b[i]);
 const be=(a,p)=>new DataView(a.buffer,a.byteOffset,a.byteLength).getUint32(p,false);
@@ -22,7 +23,7 @@ class Writer{
 function safePack(packed,maskPos=-100){
  const {data,ops}=B.aplibDepack(packed),w=new Writer();let last=1;
  for(const [kind,start,off,n] of ops){let pos=start;if(kind===1){w.literal(data[pos],maskPos);continue}let left=n;
-  while(left){const count=Math.min(left,0x1ffc00+w.o.length-pos-64);if(count>=4){w.match(off,count,last);last=off;pos+=count;left-=count}else{const take=Math.min(left,512);for(let i=0;i<take;i++)w.literal(data[pos+i],maskPos);pos+=take;left-=take}}
+  while(left){const count=Math.min(left,0x1ffc00+w.o.length-pos-64);if(count>=4||(count===left&&count>=2)){w.match(off,count,last);last=off;pos+=count;left-=count}else{const take=Math.min(left,512);for(let i=0;i<take;i++)w.literal(data[pos+i],maskPos);pos+=take;left-=take}}
  }
  const out=w.end();if(!eq(B.aplibDepack(out,{bootLayout:true}).data,data))throw Error('Bootstrap packing changed MAIN');return {packed:out,locations:w.locations};
 }
@@ -32,6 +33,15 @@ function prepare(fullRaw,liteRaw,cyclesRaw,recipe){
  if(hash(fullRaw)!==recipe.source_sha256)throw Error('Optional Full base checksum mismatch');
  if(hash(liteRaw)!==recipe.lite_sha256)throw Error('Optional Lite base checksum mismatch');
  if(hash(cyclesRaw)!=='44fe586269631a0ca7da25a3383fc6733c314809505fc3cc52f1e0ed9800640c')throw Error('Official Cycles OS 1.13 required');
+ if(recipe.clean_layout){
+  const full=unpack(fullRaw),lite=unpack(liteRaw),stock=unpack(cyclesRaw),state=C.view(full.main);
+  for(const patch of recipe.patches)state.patch(patch);
+  const cache=new Map();
+  return {recipe,build(mask){validateMask(mask);if(mask===0)return {raw:liteRaw.slice(),mainOsSha:hash(lite.main),syxSha256:hash(liteRaw),flashBytes:lite.container.blob.length,mask,edition:'lite'};
+   if(mask===ALL)return {raw:fullRaw.slice(),mainOsSha:hash(full.main),syxSha256:hash(fullRaw),flashBytes:full.container.blob.length,mask,edition:'full'};
+   if(!cache.has(mask)){const selected=C.view(state.serialize()),value=new Uint8Array(4);put(value,0,mask);selected.write(recipe.mask,value);cache.set(mask,{...C.encode(full,stock,selected,safePack),mask,edition:'full'})}return cache.get(mask);
+  }};
+ }
  const full=unpack(fullRaw),lite=unpack(liteRaw),stock=unpack(cyclesRaw),end=be(full.main,0x40195ad0-BASE)-BASE;
  const prefix=full.main.slice(0,START),rtDecoded=B.aplibDepack(stored(full.main.subarray(START,end))),rt=rtDecoded.data.slice(),tail=full.main.slice(end);
  for(const patch of recipe.patches){const at=patch.at,a=at<RUNTIME?prefix:at<TAIL?rt:tail,base=at<RUNTIME?BASE:at<TAIL?RUNTIME:TAIL,p=at-base,old=B.fromHex(patch.old),next=B.fromHex(patch.new);if(!eq(a.subarray(p,p+old.length),old))throw Error('Optional patch guard mismatch: '+at.toString(16));a.set(next,p)}
@@ -59,5 +69,5 @@ function prepare(fullRaw,liteRaw,cyclesRaw,recipe){
   }};
  return result;
 }
-const API={prepare,unpack,safePack,validateMask,ALL};if(typeof module!=='undefined'&&module.exports)module.exports=API;else window.MCOptionalBuilder=API;
+const API={prepare,unpack,safePack,validateMask,ALL,clean:C};if(typeof module!=='undefined'&&module.exports)module.exports=API;else window.MCOptionalBuilder=API;
 })();

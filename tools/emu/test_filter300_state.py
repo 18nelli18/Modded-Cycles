@@ -11,8 +11,12 @@ src=inspect.getsource(fx.fixture).replace("m=json.loads((ROOT/'output/firmware'/
 def fixture(saved=None):
  r,_,held,log,files,key,turn,data,bind=fx.fixture('unused');files.update(saved or {})
  r.u.mem_map(0x80000000,0x20000)
- for off,at,n in ((0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)):r.u.mem_write(at,bytes(r.u.mem_read(0x46700000+off,n)))
- bind(0x40000542,lambda a:0);r.u.reg_write(C.UC_M68K_REG_A0,0x931b0000);r.call(m['complete_irq_accounting']['boot_target']);r.u.reg_write(C.UC_M68K_REG_SR,0x2000)
+ if m.get('clean_layout'):r.u.mem_write(0x80000000,bc.clean_sram(bc.load(next(a.build.glob('*.syx')))))
+ else:
+  for off,at,n in ((0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)):r.u.mem_write(at,bytes(r.u.mem_read(0x46700000+off,n)))
+ bind(0x40000542,lambda a:0);r.u.reg_write(C.UC_M68K_REG_A0,0x931b0000)
+ if not m.get('clean_layout'):r.call(m['complete_irq_accounting']['boot_target'])
+ r.u.reg_write(C.UC_M68K_REG_SR,0x2000)
  for h in d['late_hooks']:assert bytes(r.u.mem_read(h['at'],6))==b'\x4e\xf9'+struct.pack('>I',h['target'])
  root,owner,pattern=0x931c0000,0x42000000,0x42010000;r.w32(0x40fe4228,root);r.w32(root+16,owner);r.w32(owner+8,123);r.w32(0x40a7887c,pattern);r.w32(pattern+30706,0);bind(al['fp_quiet'],lambda a:1);r.call(s['fp_frame'])
  return r,files,bind,pattern,data

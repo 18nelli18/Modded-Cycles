@@ -13,8 +13,11 @@ src=inspect.getsource(fx.fixture).replace("m=json.loads((ROOT/'output/firmware'/
 r,_,h,log,files,key,turn,data,bind=fx.fixture('unused')
 if m.get('bounded_burst_policy') or m.get('governor_key_optimization'):
  r.u.mem_map(0x80000000,0x20000)
- for off,at,n in ((0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)):r.u.mem_write(at,bytes(r.u.mem_read(0x46700000+off,n)))
-bind(0x40000542,lambda a:0);r.u.reg_write(C.UC_M68K_REG_A0,0x931b0000);r.call(m['complete_irq_accounting']['boot_target'] if m.get('complete_irq_accounting') else s['cal_finish'])
+ if m.get('clean_layout'):r.u.mem_write(0x80000000,bc.clean_sram(bc.load(next(a.build.glob('*.syx')))))
+ else:
+  for off,at,n in ((0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)):r.u.mem_write(at,bytes(r.u.mem_read(0x46700000+off,n)))
+bind(0x40000542,lambda a:0);r.u.reg_write(C.UC_M68K_REG_A0,0x931b0000)
+if not m.get('clean_layout'):r.call(m['complete_irq_accounting']['boot_target'] if m.get('complete_irq_accounting') else s['cal_finish'])
 for hook in m['control_all_latch']['late_hooks']:assert bytes(r.u.mem_read(hook['at'],6))==b'\x4e\xf9'+struct.pack('>I',hook['target'])
 if m.get('cpu_monitor'):r.w32(m['fx_menu']['symbols']['dx_enabled'],0)
 held=set();keys=[];knobs=[];notices=[];scopes=[]

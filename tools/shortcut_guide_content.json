@@ -1,6 +1,6 @@
 {
-  "release": "3.00",
-  "stamp": "2026-11-01-guide300-sc1",
+  "release": "3.01",
+  "stamp": "2026-11-01-guide301",
   "cards": [
     {
       "en": [
@@ -55,11 +55,11 @@
     {
       "en": [
         "ACID articulation and sample locks",
-        "Per-track ACID glide/legato, A/F/AF envelopes and arp envelope retriggering; Wizard p-locks take priority over CTRL-ALL."
+        "Per-track ACID glide/legato, A/F/AF envelopes and arp envelope retriggering; Wizard sample locks keep the sample; unlocked parameters follow track edits. Only explicit parameter locks override CTRL-ALL, including long loops."
       ],
       "fr": [
         "Articulation ACID et locks",
-        "Glide/legato ACID par piste, enveloppes A/F/AF et relance par arpege ; p-locks Wizard prioritaires sur CTRL-ALL."
+        "Glide/legato ACID par piste, enveloppes A/F/AF et relance par arpege ; les locks de sample Wizard conservent le sample ; les parametres libres suivent la piste. Seuls les locks explicites priment sur CTRL-ALL, meme en boucle longue."
       ]
     }
   ],

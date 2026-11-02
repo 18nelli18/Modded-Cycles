@@ -13,12 +13,14 @@ text=text.replace("m=json.loads((R/'output/firmware/staging'/('all-features-poli
 text=text.replace("u.mem_map(0x80000000,0x20000)","")
 text=text.replace(";u=r.u\n", """;u=r.u
 u.mem_map(0x80000000,0x20000)
-for off,at,n in ((0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)):u.mem_write(at,bytes(u.mem_read(0x46700000+off,n)))
-bind(0x40000542,lambda args:0);u.reg_write(C.UC_M68K_REG_A0,0x931b0000);r.call(metadata['complete_irq_accounting']['boot_target'])
+if metadata.get('clean_layout'):u.mem_write(0x80000000,bc.clean_sram(bc.load(build_path)))
+else:
+ for off,at,n in ((0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)):u.mem_write(at,bytes(u.mem_read(0x46700000+off,n)))
+ bind(0x40000542,lambda args:0);u.reg_write(C.UC_M68K_REG_A0,0x931b0000);r.call(metadata['complete_irq_accounting']['boot_target'])
 """,1)
 text=text.replace('def seed_filters():\n seedall()',"def seed_filters():\n r.call(metadata['filter_pattern300']['symbols']['fp_sync']);seedall()")
 old=sys.argv
 try:
- sys.argv=['test','v211'];exec(compile(text,'native-filter-undo','exec'),{'__file__':str(R/'tools/emu/test_filter_defaults.py'),'metadata':metadata,'C':C})
+ sys.argv=['test','v211'];exec(compile(text,'native-filter-undo','exec'),{'__file__':str(R/'tools/emu/test_filter_defaults.py'),'metadata':metadata,'C':C,'bc':bc,'build_path':next(a.build.glob('*.syx'))})
 finally:sys.argv=old
 a.output.write_text(json.dumps(dict(sha256=metadata['sha256'],native_sound_clear_undo=True,new_sound_defaults=True,native_pattern_clear=True,hardware_tested=False),indent=2)+'\n')

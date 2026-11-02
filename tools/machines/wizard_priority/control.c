@@ -21,10 +21,10 @@ void wp_before(const u32*e){
   if(current<0x40000000||current>=0x48000000)current=own;
   if(!current||*(const u8*)(current+38)!=6)continue;
   u32 step=N(0x4006a984)(clock,t);steps[t]=step;if(step>=64)continue;
-  if(current!=own){protect[t][0]=~0u;protect[t][1]=1;}
   /* Bitmap du dernier evenement accepte, et non pas du pas courant.
-   * Une note longue garde ses locks lorsque le curseur traverse des pas vides. */
-  else {const volatile u32*mask=(const volatile u32*)(0x423087f8u+8*t);protect[t][0]=mask[0];protect[t][1]=mask[1]&1u;}
+   * Une note longue garde ses locks lorsque le curseur traverse des pas vides.
+   * Un autre sample ne transforme pas ses parametres non verrouilles en locks. */
+  const volatile u32*mask=(const volatile u32*)(0x423087f8u+8*t);protect[t][0]=mask[0];protect[t][1]=mask[1]&1u;
  }
  u32 sr=lock();for(u32 t=0;t<6;t++)for(u32 s=0;s<33;s++)if(protect[t][s>>5]&(1u<<(s&31))){prior[t][s]=LIVE(t,s);smooth[t][s]=SMOOTH(t,s);}armed=1;unlock(sr);
 }

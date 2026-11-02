@@ -16,11 +16,29 @@ function firmwareParts(raw,recipe){
  const sha=hash(raw);if(![recipe.MD_SYX_sha256,recipe.MD_BIN_sha256].includes(sha))throw Error('Use official Machinedrum UW OS 1.63 (.syx), or the verified 1.63 reference .bin.');
  return M.mdParts(raw,sha);
 }
+function buildClean(full,stock,parts,mask,recipe){
+ const C=O.clean,state=C.view(full.main);
+ for(const p of recipe.clean_patches)state.patch(p);
+ const body=B.fromHex(recipe.module_body),suffix=B.fromHex(recipe.module_suffix),sine=parts.sine;
+ for(const p of recipe.parts){
+  if(p.name==='sine')continue;const raw=parts[p.name];if(!raw||raw.length!==p.size)throw Error('Machinedrum table size mismatch: '+p.name);
+  if(p.offset<recipe.sine_offset)body.set(raw,p.offset);else suffix.set(raw,p.offset-recipe.sine_offset-131072);
+ }
+ if(hash(join(body,sine,suffix))!==recipe.filled_module_sha256)throw Error('Machinedrum extracted tables differ from the verified module');
+ put(body,recipe.symbols.md_mask-recipe.code,mask);
+ const deltas=new Uint8Array(65536),sv=new DataView(sine.buffer,sine.byteOffset,sine.byteLength),dv=new DataView(deltas.buffer);let prior=0;
+ for(let i=0;i<32768;i++){const value=sv.getInt32(i*4,false),delta=value-prior;if(delta<-32768||delta>32767)throw Error('Machinedrum sine delta overflow');dv.setInt16(2*i,delta,false);prior=value}
+ state.write(recipe.code,body);state.delta16(recipe.code+recipe.sine_offset,deltas,sine.length);state.write(recipe.code+recipe.sine_offset+sine.length,suffix);
+ const value=new Uint8Array(4);put(value,0,mask);state.write(0x468d0ff0,value);
+ return {...C.encode(full,stock,state,O.safePack),mask,edition:'full',release:recipe.release,startup_title:recipe.title,machinedrum:true};
+}
 function build(fullRaw,cyclesRaw,mdRaw,mask,recipe,selectionRecipe){
  validateMask(mask);if(!(mask&recipe.md_bits))throw Error('No Machinedrum engine selected');
  if(hash(fullRaw)!==recipe.source_sha256)throw Error('Machinedrum Optional base checksum mismatch');
  if(hash(cyclesRaw)!=='44fe586269631a0ca7da25a3383fc6733c314809505fc3cc52f1e0ed9800640c')throw Error('Official Cycles OS 1.13 required');
- const parts=firmwareParts(mdRaw,recipe),full=O.unpack(fullRaw),stock=O.unpack(cyclesRaw),end=be(full.main,0x40195ad0-BASE)-BASE;
+ const parts=firmwareParts(mdRaw,recipe),full=O.unpack(fullRaw),stock=O.unpack(cyclesRaw);
+ if(recipe.clean_layout)return buildClean(full,stock,parts,mask,recipe);
+ const end=be(full.main,0x40195ad0-BASE)-BASE;
  const prefix=full.main.slice(0,START),decoded=B.aplibDepack(stored(full.main.subarray(START,end))),rt=decoded.data.slice(),tail=full.main.slice(end);
  function area(at){return at<RUN?[prefix,BASE]:at<TAIL?[rt,RUN]:[tail,TAIL]}
  function read(at,n){const [a,b]=area(at),p=at-b;if(p<0||p+n>a.length)throw Error('Machinedrum read outside base');return a.slice(p,p+n)}

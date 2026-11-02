@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 3.00 - 1 November 2026
+Supermodel 3.01 - 1 November 2026
 
-Main 3.00. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
+Main 3.01. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
 
 ## Included features
 
@@ -16,7 +16,7 @@ Main 3.00. Hold the first button while pressing the next button or turning the n
 
 **Song and pattern navigation:** Song rows combine patterns, repeats and mutes. Direct Pattern Jump and persistent trig selection support live pattern work.
 
-**ACID articulation and sample locks:** Per-track ACID glide/legato, A/F/AF envelopes and arp envelope retriggering; Wizard p-locks take priority over CTRL-ALL.
+**ACID articulation and sample locks:** Per-track ACID glide/legato, A/F/AF envelopes and arp envelope retriggering; Wizard sample locks keep the sample; unlocked parameters follow track edits. Only explicit parameter locks override CTRL-ALL, including long loops.
 
 ## Track, step and performance controls
 

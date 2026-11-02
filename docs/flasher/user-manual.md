@@ -1,11 +1,11 @@
 # SUPERMODEL
-## User manual · Release 3.00
+## User manual · Release 3.01
 
 Model:Cycles · Full / Lite / Machine Optional
 
 # Contents & conventions
 
-A practical reference for Supermodel 3.00 on Model:Cycles.
+A practical reference for Supermodel 3.01 on Model:Cycles.
 
 Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.
 
@@ -590,6 +590,8 @@ Audition, lock and transform samples from the track’s browser.
 2. Highlight a sample. Press the track pad or a keyboard TRIG to audition it; scrolling alone stays silent.
 3. To lock it to a step, keep the browser open with the desired sample highlighted, then hold that step’s TRIG + MACHINES.
 
+Sample locks retain the sample while unlocked parameters follow track edits. Only explicit parameter locks override CTRL-ALL, including during long loops.
+
 ## Playback modes
 
 SETTINGS + MACHINES selects One-Shot, Loop, Slice, Granular, Stretch, Pluck or Wavetable. SETTINGS + PUNCH opens options for the current mode.
@@ -860,4 +862,4 @@ Updates four times per second. Screen formatting runs in the UI, outside the aud
 
 An alphabetical guide to the manual.
 
-Supermodel 3.00 • Model:Cycles • English print edition • 1 November 2026.
+Supermodel 3.01 • Model:Cycles • English print edition • 1 November 2026.

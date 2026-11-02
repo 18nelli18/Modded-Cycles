@@ -7,7 +7,9 @@ import boot_candidate as bc
 import test_keep_machine_params as K
 from unicorn import m68k_const as C
 bc.ROOT=a.output.parent/'native-menu-cache';im,mem=bc.boot(next(a.build.glob('*.syx')));K.boot=lambda p:(im,mem);u,obj,snd=K.fixture('unused');m=json.loads((a.build/'BUILD.json').read_text(encoding='utf-8'));s=m['activity_masks']['symbols']
-u.hooks[0x40000542]=('continue',0);u.call(m['complete_irq_accounting']['boot_target'] if m.get('complete_irq_accounting') else m['control_all_latch']['boot_target'] if m.get('control_all_latch') else s['am_boot_finish']);u.hooks[m['fx_menu']['symbols']['fx_notice']]=('notice',0);u.hooks[0x40076bee]=('redraw',0);u.hooks[0x4001e318]=('machine',0);u.hooks[0x4007240c]=('DATA',32)
+u.hooks[0x40000542]=('continue',0)
+if not m.get('clean_layout'):u.call(m['complete_irq_accounting']['boot_target'] if m.get('complete_irq_accounting') else m['control_all_latch']['boot_target'] if m.get('control_all_latch') else s['am_boot_finish'])
+u.hooks[m['fx_menu']['symbols']['fx_notice']]=('notice',0);u.hooks[0x40076bee]=('redraw',0);u.hooks[0x4001e318]=('machine',0);u.hooks[0x4007240c]=('DATA',32)
 for fn in (0x400f44c6,0x4001416c):del u.hooks[fn]
 u.hooks[0x400802e0]=('alloc',0x93210000);u.hooks[0x400802ec]=('free',0)
 view=0x93900000;event=0x93910000

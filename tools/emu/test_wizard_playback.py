@@ -29,9 +29,18 @@ def fixtures(stereo,cutoff,resonance,stems=None,native_chordkeys=False,runtime_t
   # sont deja effacees. Le vrai demarrage les copie AVANT ce clear. Rejouer
   # ici les deux copies depuis le MAIN candidat brut, puis ses banques Syntakt.
   initial=load(ROOT/'output/firmware'/(stem+'.syx'))
-  for lo,hi,dst in ((0x4019b590,0x401a2a50,0x80000000),(0x401a2a50,0x401aa140,0x80008000)):
-   e.uc.mem_write(dst,initial[lo-0x40000400:hi-0x40000400])
-  for off,at,size in [(0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)]:e.uc.mem_write(at,rt[off:off+size])
+  if initial[0x401aa140-0x40000400:0x401aa148-0x40000400]==b'SMCLEAN1':
+   from boot_candidate import clean_sram
+   final_sram=clean_sram(initial);e.uc.mem_write(0x80000000,final_sram)
+   # Le decodage EMAC doit suivre la copie finale, pas une banque retiree.
+   import hashlib,tempfile
+   sram_path=pathlib.Path(tempfile.gettempdir())/('clean-sram-'+hashlib.sha256(final_sram).hexdigest()+'.bin')
+   if not sram_path.exists():sram_path.write_bytes(final_sram)
+   e.emac.install(emac.disasm(str(sram_path),0x80000000,0x80001c5c,0x800074b4))
+  else:
+   for lo,hi,dst in ((0x4019b590,0x401a2a50,0x80000000),(0x401a2a50,0x401aa140,0x80008000)):
+    e.uc.mem_write(dst,initial[lo-0x40000400:hi-0x40000400])
+   for off,at,size in [(0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)]:e.uc.mem_write(at,rt[off:off+size])
   if m.get('polivoks_inspired'):
    raw=ROOT/('output/firmware/governor-recovery-'+stem.rsplit('-test-',1)[-1]+'/module.bin');e.emac.install(emac.disasm(str(raw),0x467c7000,0x467c7000,0x467c7000+raw.stat().st_size))
   if m.get('feral_replaces_tiny'):
