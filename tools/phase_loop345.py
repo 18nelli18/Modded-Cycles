@@ -5,7 +5,7 @@ Les produits, interpolations et avancees de phase restent dans le meme ordre.
 """
 from pathlib import Path
 import hashlib,os,struct,subprocess
-BASE=0x40000400;SITE=0x400a8bb6;END=0x400a8c00;CODE=0x467a6200
+BASE=0x40000400;SITE=0x400a8bb6;END=0x400a8c00;CODE=0x46798900
 
 def apply(meta,native,runtime,stock,out,sram=None):
  assert meta.get('native_finish') and not meta.get('phase_loop')

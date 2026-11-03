@@ -1,11 +1,11 @@
 # SUPERMODEL
-## User manual · Release 3.02
+## User manual · Release 3.03
 
 Model:Cycles · Full / Lite / Machine Optional
 
 # Contents & conventions
 
-A practical reference for Supermodel 3.02 on Model:Cycles.
+A practical reference for Supermodel 3.03 on Model:Cycles.
 
 Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.
 
@@ -41,7 +41,7 @@ Build a small pattern, shape it, and save the result.
 
 1. Choose an audio track with a track pad. To select its machine, press MACHINES, then turn DATA.
 2. Create or load a pattern using the normal recording controls. For note-by-note entry while stopped, press REC twice to enter Step Recorder.
-3. Play notes to enter steps. PLAY advances one step; STOP moves back. Press REC again to leave Step Recorder.
+3. Play notes to enter steps. PLAY advances one step; STOP moves back. FUNC + TRACK &gt; KBT shifts the trig keyboard; +/-12 semitones moves an octave. Press REC again to leave Step Recorder.
 4. Adjust the machine’s sound controls. For the track filter, hold MACHINES and turn SWEEP for cutoff or CONTOUR for resonance.
 5. Add an effect with the track’s REVERB SEND or DELAY SEND. To choose an effect, hold TRACK and turn SIZE or TIME; release TRACK to apply.
 6. Use Save Project to preserve the project and its pattern-specific settings. Stop playback and allow saving to finish before switching off.
@@ -188,8 +188,8 @@ Use native pattern-chain playback for the arrangement.
 Set row 1 to A01 x4. Press PAGE to insert a copy, then set row 2 to A02 x2. Set row 3 to A03 x2. These rows use eight expanded pattern plays.
 
 1. Choose STOP to end after the last row, or LOOP to repeat the arrangement.
-2. Press PLAY from the Song editor to begin at the first row. The display follows the playing row.
-3. Press STOP to pause using native transport. Press PLAY to continue. STOP twice cancels Song and clears reverb/delay tails.
+2. Press PLAY from the Song editor to begin at the highlighted row. The display follows the playing row.
+3. Press STOP to pause using native transport. Press PLAY while stopped to start from the highlighted row. STOP twice cancels Song and clears reverb/delay tails.
 4. Use Save Project to preserve the arrangement and the six tracks ACID glide/legato settings.
 
 ## Length and mutes
@@ -860,4 +860,4 @@ Updates four times per second. Screen formatting runs in the UI, outside the aud
 
 An alphabetical guide to the manual.
 
-Supermodel 3.02 • Model:Cycles • English print edition • 3 November 2026.
+Supermodel 3.03 • Model:Cycles • English print edition • 3 November 2026.

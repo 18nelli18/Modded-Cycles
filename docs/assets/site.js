@@ -87,8 +87,31 @@ function renderRelease() {
     });
     el.append(p, ul);
   });
+  $$("[data-rel=history]").forEach((el) => {
+    el.replaceChildren();
+    const anchors = new Map();
+    rels.forEach((entry, index) => {
+      const section = document.createElement("details");
+      section.open = index === 0;
+      const anchor = "release-" + entry.version.replace(/[^a-z0-9]/gi, "-");
+      const occurrence = (anchors.get(anchor) || 0) + 1;
+      anchors.set(anchor, occurrence);
+      section.id = anchor + (occurrence > 1 ? "-" + occurrence : "");
+      const summary = document.createElement("summary");
+      summary.textContent = entry.version + " · " + fmtDate(entry.date);
+      const ul = document.createElement("ul");
+      entry.changes.forEach((change) => {
+        const li = document.createElement("li");
+        li.textContent = change[lang()] || change.en;
+        ul.appendChild(li);
+      });
+      section.append(summary, ul);
+      el.appendChild(section);
+    });
+  });
 }
 renderRelease();
+new MutationObserver(renderRelease).observe(root, { attributes: true, attributeFilter: ["lang"] });
 
 // ---------------------------------------------------------------------------
 // Model:Cycles drawings. data-device="seq" plays a pattern; data-lit="func,track" lights controls;

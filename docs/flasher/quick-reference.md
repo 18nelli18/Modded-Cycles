@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 3.02 - 3 November 2026
+Supermodel 3.03 - 3 November 2026
 
-Main 3.02. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
+Main 3.03. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
 
 ## Included features
 
@@ -23,7 +23,7 @@ Main 3.02. Hold the first button while pressing the next button or turning the n
 | Feature | Controls | Behavior |
 |---|---|---|
 | CTRL-ALL latch | Double-tap TRACK; TRACK once or quick double-BACK exits | Two clean taps within 350 ms latch parameter-knob edits across included tracks. Single BACK retains native parameter undo. Track/trig selection stay momentary; DATA and FX selectors remain physical. Off after boot; not saved. |
-| Step Recorder | Playback stopped: press REC twice; PLAY advances; STOP goes back; press REC again to exit | Enter step recording and play notes to write successive steps. PLAY advances one step; STOP moves back one step; press REC again to leave Step Recorder. |
+| Step Recorder | Playback stopped: press REC twice; PLAY advances; STOP goes back; press REC again to exit | Enter step recording and play notes to write successive steps. PLAY advances one step; STOP moves back one step; press REC again to leave Step Recorder. Octaves: FUNC + TRACK > KBT; +/-12 semitones shifts one octave. |
 | Latching mute | TRACK + tap FUNC | First choose Mute: LTC in Mod Setup. Then latch mute mode with this gesture; tap FUNC again to leave. Mute: Stk keeps stock behavior (default). |
 | Solo in mute mode | In latching mute mode, hold FUNC + press T1–T6 | Solo that track. Press the soloed track again to restore the previous mute state; tracks already muted remain muted. |
 | Silent track selection | Choose Silent in Mod Setup ; tap T1–T6 | Select a track without triggering its sound. TRACK + pad selects and plays. Stock pad behavior (Stk) is the default; select Silent to enable silent selection. |
@@ -50,13 +50,13 @@ Main 3.02. Hold the first button while pressing the next button or turning the n
 
 | Feature | Controls | Behavior |
 |---|---|---|
-| Open Song | SETTINGS + TRACK > Song > DATA | Song is beside Global and Track at the Mod Setup root. Press PLAY from the Song editor to start at the first row. |
+| Open Song | SETTINGS + TRACK > Song > DATA | Song is beside Global and Track at the Mod Setup root. Press PLAY from the Song editor to start at the highlighted row. |
 | Choose a row | Turn DATA | The grid shows four rows at a time. Edit while stopped and Song is inactive; double STOP cancels an active song before editing. |
 | Pattern / repeats | PITCH / DECAY | Choose A01-F16 and 1-64 repeats for the selected row. The complete song must fit the native chain limit of 64 expanded pattern plays. |
 | Track mutes | TRIG 1-6 | Toggle the row mute for each track. Song mutes combine with your existing track mutes. |
 | Insert / delete row | PAGE / FUNC + PAGE | PAGE inserts a copy after the selected row. FUNC + PAGE deletes it; at least one row remains. |
-| End behavior | Click DATA | Choose STOP or LOOP. FUNC + DATA also works. STOP ends playback after the last row; LOOP repeats the arrangement. |
-| Transport, exit and save | PLAY / STOP / STOP twice / BACK / Save Project | PLAY runs the song; STOP pauses using native transport; double STOP cancels Song and clears FX tails. BACK leaves the editor. Save Project stores the song and per-track ACID glide/legato. An infinite pattern chain length can hold a row. |
+| End behavior | Click DATA | Choose STOP or LOOP. FUNC + DATA also works. STOP ends playback after the last row; LOOP repeats the arrangement. PLAY while stopped starts at the highlighted row. LOOP wraps through the whole arrangement. |
+| Transport, exit and save | PLAY / STOP / STOP twice / BACK / Save Project | PLAY starts at the highlighted row while stopped; STOP pauses using native transport; double STOP cancels Song and clears FX tails. BACK leaves the editor. Save Project stores the song and per-track ACID glide/legato. An infinite pattern chain length can hold a row. |
 
 ## Effects
 

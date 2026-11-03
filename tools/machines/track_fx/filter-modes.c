@@ -33,7 +33,11 @@ struct coefficients *PF_COEFF_NAME(u32 lane){
   p->b=pf_last->b;p->a1=pf_last->a1;p->a2=pf_last->a2;p->f=original;p->q=original_q;p->mode=mode;return p;
  }
 #endif
+#ifdef PF_ZERO_LUT
+ if(q)q=(q*8191)/15000;
+#else
  q=(q*8191)/15000;
+#endif
  u32 index=127;
  if(mode==3&&f){u32 lo=0,hi=127;while(lo<hi){u32 mid=(lo+hi)/2;if(fc_native_table[mid]<f)lo=mid+1;else hi=mid;}index=lo;}
  if(mode==3){if(index==64){

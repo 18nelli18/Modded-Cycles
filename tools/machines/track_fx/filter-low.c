@@ -46,7 +46,11 @@ struct coefficients *PF_COEFF_NAME(u32 lane){
   f=result;
  }
 #endif
+#ifdef PF_ZERO_LUT
+ if(q)q=(q*8191)/15000;
+#else
  q=(q*8191)/15000;
+#endif
  u32 c=4096-f,ff=f*f,cc=c*c;
  u32 damping=362-((q*346)>>13); /* environ Q=0,707 a 16 ; pas de mode HP. */
  u32 feedback=(damping*(f*c))>>8;

@@ -10,5 +10,6 @@ typedef struct {song_u32 count,loop; song_row rows[SONG_ROWS];} song;
 typedef struct {song_u32 pattern,kit;} song_entry;
 /* Retourne le nombre d'entrees, ou0 si invalide/trop long. Aucun resultat partiel. */
 song_u32 song_compile(const song*,song_entry*,song_u8*,song_u32,song_u32);
+song_u32 song_compile_from(const song*,song_entry*,song_u8*,song_u32,song_u32,song_u32);
 song_u32 song_valid(const song*);
 #endif

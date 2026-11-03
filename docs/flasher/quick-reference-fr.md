@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel3.02 - 30 octobre2026
+Supermodel3.03 - 3 novembre2026
 
-Principal3.02. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
+Principal3.03. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
 
 ## Fonctions incluses
 
@@ -23,7 +23,7 @@ Principal3.02. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Fonction | Commandes | Comportement |
 |---|---|---|
 | Verrou CTRL-ALL | Double tap TRACK ; TRACK ou double BACK rapide quitte | Deux taps simples en350ms verrouillent les editions CTRL-ALL. BACK simple conserve l annulation native. Selection pistes/trigs momentanee ; DATA et selecteurs FX physiques. Off au demarrage, non sauvegarde. |
-| Step Recorder | Lecture arrêtée : REC deux fois ; PLAY avance ; STOP recule ; REC quitte | Jouez des notes pour écrire les pas successifs. PLAY avance d’un pas, STOP recule d’un pas. |
+| Step Recorder | Lecture arrêtée : REC deux fois ; PLAY avance ; STOP recule ; REC quitte | Jouez des notes pour écrire les pas successifs. PLAY avance d’un pas, STOP recule d’un pas. Octaves : FUNC + TRACK > KBT ; +/-12 demi-tons deplace une octave. |
 | Mute verrouillé | TRACK + appui bref sur FUNC | Choisissez d’abord Mute: LTC dans Mod Setup. FUNC quitte le mode verrouillé ; Stk conserve le mode natif. |
 | Solo en mute | En mode mute verrouillé : FUNC + T1–T6 | Isole la piste. Rappuyez sur son pad, ou quittez le mode mute, pour restaurer les mutes précédents. |
 | Sélection silencieuse | Choisir Pad: SIL dans Mod Setup ; T1–T6 | Sélection sans déclenchement. TRACK + pad sélectionne et joue. Stk est le défaut. |
@@ -50,13 +50,13 @@ Principal3.02. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Ouvrir Song | SETTINGS + TRACK > Song > DATA | Song est au premier niveau, a cote de Global et Track. PLAY depuis l editeur lance la premiere ligne. |
+| Ouvrir Song | SETTINGS + TRACK > Song > DATA | Song est au premier niveau, a cote de Global et Track. PLAY depuis l editeur lance la ligne selectionnee. |
 | Choisir une ligne | Tourner DATA | Quatre lignes visibles. Editez a l arret, Song inactif ; double STOP annule le morceau actif avant edition. |
 | Pattern / repetitions | PITCH / DECAY | Choisit A01-F16 et1-64 repetitions pour la ligne. Le morceau entier doit tenir dans64 lectures de patterns developpees. |
 | Mutes de pistes | TRIG1-6 | Bascule le mute de chaque piste pour la ligne. Les mutes du morceau se combinent aux mutes existants. |
 | Inserer / supprimer | PAGE / FUNC + PAGE | PAGE insere une copie apres la ligne. FUNC + PAGE la supprime ; une ligne reste toujours. |
-| Fin du morceau | Appuyer sur DATA | Choisit STOP ou LOOP. FUNC + DATA fonctionne aussi. STOP arrete apres la derniere ligne ; LOOP repete l arrangement. |
-| Transport, sortie, sauvegarde | PLAY / STOP / double STOP / BACK / Save Project | PLAY joue ; STOP suspend via le transport natif ; double STOP annule Song et coupe les queues FX. BACK quitte. Save Project conserve Song et glide/legato ACID. Une longueur de chaine infinie peut retenir une ligne. |
+| Fin du morceau | Appuyer sur DATA | Choisit STOP ou LOOP. FUNC + DATA fonctionne aussi. STOP arrete apres la derniere ligne ; LOOP repete l arrangement. PLAY a l arret part de la ligne selectionnee ; LOOP parcourt tout l arrangement. |
+| Transport, sortie, sauvegarde | PLAY / STOP / double STOP / BACK / Save Project | PLAY a l arret demarre sur la ligne selectionnee ; STOP suspend via le transport natif ; double STOP annule Song et coupe les queues FX. BACK quitte. Save Project conserve Song et glide/legato ACID. Une longueur de chaine infinie peut retenir une ligne. |
 
 ## Effets
 

@@ -3,18 +3,39 @@
 typedef song_u32 u32;
 #define N(a) ((u32(*)())(a))
 extern song sg_song;
+extern volatile u32 sg_cursor,sg_page;
 extern void sg_sync(void);
 extern u32 sg_chain_original(const song_entry*,u32);
+#ifdef SG_LAUNCH_ONLY
+extern song_entry entries[64];extern song_u8 row_map[64];
+extern volatile u32 sg_active,sg_current,sg_end;
+extern u32 count,seen,last,project;
+#else
 static song_entry entries[64];static song_u8 row_map[64];
 volatile u32 sg_active,sg_current,sg_end;
 static u32 count,seen,last,project;
+#endif
 u32 sg_start(void){
  if(*(volatile u32*)0x40a78874||*(volatile u32*)0x40a7883c)return 0;
  sg_sync();u32 obj=*(volatile u32*)0x40fe4228,raw=obj?*(volatile u32*)(obj+16):0;if(!raw)return 0;
- count=song_compile(&sg_song,entries,row_map,raw+28,raw+28+96*0x77f6u);if(!count)return 0;
- project=raw;seen=sg_end=sg_current=sg_active=0;last=0;
+ u32 start=sg_page&&sg_cursor<sg_song.count?sg_cursor:0;
+ count=song_compile_from(&sg_song,entries,row_map,raw+28,raw+28+96*0x77f6u,start);if(!count)return 0;
+ project=raw;seen=sg_end=sg_active=0;sg_current=start;last=0;
  N(0x40055cd6)(entries,count);seen=sg_active=1;return 1;
 }
+#ifdef SG_LAUNCH_ONLY
+extern void sg_cancel(void),fx_notice(const char*);
+/* PLAY a l'arret repart du curseur, meme apres un seul STOP laissant
+ * sg_active arme. Aucun redemarrage si le transport tourne deja. */
+u32 sg_restart_transport367(const u32*e){
+ u32 press=(e[4]&9)==1;
+ u32 playing=*(volatile u32*)0x40a78874||*(volatile u32*)0x40a7883c;
+ if(e[3]==10&&press&&!playing&&!sg_start()){fx_notice("Song: 64 plays max");return 0;}
+ if(e[3]==11&&press&&!playing)sg_cancel();
+ return 1;
+}
+#endif
+#ifndef SG_LAUNCH_ONLY
 void sg_cancel(void){sg_active=sg_end=seen=0;}
 u32 sg_chain_set(const song_entry*chain,u32 n){sg_cancel();return sg_chain_original(chain,n);}
 void sg_boundary(u32 pattern){
@@ -29,3 +50,4 @@ void sg_boundary(u32 pattern){
  sg_current=row_map[index];last=index;seen=1;
 }
 u32 sg_mutes(void){if(sg_end)return 63;return sg_active&&sg_current<sg_song.count?sg_song.rows[sg_current].mutes:0;}
+#endif

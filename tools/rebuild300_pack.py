@@ -97,6 +97,19 @@ def main():
     parser.add_argument('--ui-fixes348',action='store_true')
     parser.add_argument('--wizard-names349',action='store_true')
     parser.add_argument('--release302-fixes',action='store_true')
+    parser.add_argument('--filter-lut350',action='store_true')
+    parser.add_argument('--estus-eco358',action='store_true')
+    parser.add_argument('--voice-profile359',action='store_true')
+    parser.add_argument('--eco-fx351',action='store_true')
+    parser.add_argument('--eco-pressure352',action='store_true')
+    parser.add_argument('--send-pair354',action='store_true')
+    parser.add_argument('--eco-telemetry355',action='store_true')
+    parser.add_argument('--eco-delay356',action='store_true')
+    parser.add_argument('--restore-hall-capture',type=Path)
+    parser.add_argument('--routing-core363',action='store_true')
+    parser.add_argument('--routing-post364',action='store_true')
+    parser.add_argument('--retrig-plain367',action='store_true')
+    parser.add_argument('--song-cursor367',action='store_true')
     parser.add_argument('--hall-ramp',action='store_true')
     parser.add_argument('--hall-fractional-ramp',action='store_true')
     parser.add_argument('--hall-ramp-opt',choices=('-O3','-O2','-Os'),default='-O3')
@@ -230,6 +243,10 @@ def main():
         meta['stage_profile']=stage_profile_apply(meta,native,runtime,out)
     if args.without_stage_profile:
         assert not args.stage_profile
+        if meta.get('voice_profile359'):
+            from voice_profile359 import remove as voice_profile_remove
+            voice_profile_remove(meta,native,runtime)
+            del meta['voice_profile359']
         if meta.get('stage_profile'):
             from stage_profile320 import remove as stage_profile_remove
             stage_profile_remove(meta,native,runtime)
@@ -270,6 +287,39 @@ def main():
     if args.release302_fixes:
         from release302_fixes import apply as release_apply
         release_apply(meta,native,runtime,sram,stock,out)
+    if args.filter_lut350:
+        from filter_lut350 import apply as lut_apply
+        meta['filter_lut350']=lut_apply(meta,native,runtime,out)
+    if args.estus_eco358:
+        from estus_exact358 import apply as estus_apply
+        meta['estus_eco358']=estus_apply(meta,native,runtime,out,eco=True)
+    if args.voice_profile359:
+        from voice_profile359 import apply as vp_apply
+        meta['voice_profile359']=vp_apply(meta,native,runtime,out)
+    if args.eco_fx351 or args.eco_pressure352 or args.eco_delay356:
+        from eco_fx351 import apply as eco_apply
+        meta['eco_fx351']=eco_apply(meta,native,runtime,out,pressure=args.eco_pressure352,delay=args.eco_delay356)
+    if args.send_pair354:
+        from send_pair354 import apply as pair_apply
+        meta['send_pair354']=pair_apply(meta,native,runtime,out)
+    if args.eco_telemetry355:
+        from remote_panel318 import apply as telemetry_apply
+        meta['remote_panel']=telemetry_apply(meta,native,runtime,out)
+    if args.restore_hall_capture:
+        from restore_hall362 import apply as restore_hall_apply
+        meta['restore_hall362']=restore_hall_apply(meta,runtime,args.restore_hall_capture)
+    if args.routing_core363:
+        from routing_core363 import apply as routing_core_apply
+        meta['routing_core363']=routing_core_apply(meta,native,runtime,out)
+    if args.routing_post364:
+        from routing_post364 import apply as routing_post_apply
+        meta['routing_post364']=routing_post_apply(meta,native,runtime,out)
+    if args.retrig_plain367:
+        from retrig_plain367 import apply as retrig_apply
+        meta['retrig_plain367']=retrig_apply(meta,native,runtime,out/'retrig367')
+    if args.song_cursor367:
+        from song_cursor367 import apply as controls_apply
+        meta['song_cursor367']=controls_apply(meta,native,runtime,out/'controls367')
     if args.eco_stock_reverb:
         from eco_stock_reverb306 import apply as stock_eco_apply
         meta['eco_stock_reverb']=stock_eco_apply(native)

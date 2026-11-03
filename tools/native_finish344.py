@@ -5,7 +5,7 @@ SRAM libres. Aucun etat ajoute, aucune modification des seuils du gouverneur.
 """
 from pathlib import Path
 import hashlib,os,struct,subprocess
-BASE=0x40000400;AMP=0x400a9478;HALF=0x400a7e2a;CODE=0x467a6000
+BASE=0x40000400;AMP=0x400a9478;HALF=0x400a7e2a;CODE=0x46798700
 
 def apply(meta,native,runtime,sram,stock,out):
  out=Path(out);out.mkdir(parents=True,exist_ok=True)

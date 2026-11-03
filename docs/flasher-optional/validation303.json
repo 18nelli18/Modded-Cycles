@@ -1,0 +1,70 @@
+{
+  "release": "3.03",
+  "hardware_tested": false,
+  "private_hardware_tests": {
+    "Main_Full": {
+      "peak": 105,
+      "idle": 1
+    },
+    "Optional_all": {
+      "peak": 107,
+      "idle": 1
+    }
+  },
+  "voice_cuts_resolved": false,
+  "checks": {
+    "four_cold_boots": true,
+    "Full_Lite_shared_flags": 50,
+    "exact_retrig_alias_cases": 288,
+    "Song_launch_cases": 24,
+    "slice_editor_cases": 64,
+    "native_octave_cases": 15,
+    "optional_masks": 9,
+    "machinedrum_masks": 6,
+    "selected_optional_cold_boots": 2,
+    "loader_and_checksum_tests": true,
+    "Model_Samples_conversion": true,
+    "release_history_languages": [
+      "en",
+      "fr"
+    ],
+    "history_entries_preserved": 138,
+    "manual_pages": 35,
+    "shortcut_pages": 9
+  },
+  "MD_test_source": "Previously verified user-ROM tables; full filled-module SHA256 rechecked. ROM reader unchanged.",
+  "editions": {
+    "main": {
+      "full": {
+        "sha256": "644ea0144247aaa93cc2d46f470c0e7ae46dd1d0a8bce67885aaf35aeda2d337",
+        "startup": "3.03",
+        "cold_boot": true,
+        "master_retrig_optimized": true,
+        "song_cursor_start": true
+      },
+      "lite": {
+        "sha256": "efa801f1e015a1c590389aa277189d10e1682e66b39249d4770ad57c4c0b9883",
+        "startup": "3.03",
+        "cold_boot": true,
+        "master_retrig_optimized": true,
+        "song_cursor_start": true
+      }
+    },
+    "optional": {
+      "full": {
+        "sha256": "04d166118887e7a36c721cf4bb8c2557b50f2e6602fc7712d1785cbfbd0d2cac",
+        "startup": "3.03",
+        "cold_boot": true,
+        "master_retrig_optimized": true,
+        "song_cursor_start": true
+      },
+      "lite": {
+        "sha256": "c9a583ab2a874e7897ebf3d7c9d0c30b7d725d080249282a1ea56dda07ed3e24",
+        "startup": "3.03",
+        "cold_boot": true,
+        "master_retrig_optimized": true,
+        "song_cursor_start": true
+      }
+    }
+  }
+}

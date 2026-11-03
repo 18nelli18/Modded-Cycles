@@ -25,4 +25,5 @@ jobs:
           node-version: '22'
       - run: node tools/test_fixed_main_delivery.js
       - run: node tools/test_fixed_main_loader.js
+      - run: node tools/test_release_history.js
       - run: node --test .github/scripts/bug-reports.test.cjs

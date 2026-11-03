@@ -6,7 +6,7 @@ Pas de restrict, de changement d'arrondi ou de changement du gouverneur.
 """
 from pathlib import Path
 import hashlib,os,struct,subprocess
-BASE=0x40000400;ENTRY=0x400a9cf6;END=0x400a9d4e;CODE=0x467a6000;LIMIT=0x467a6800
+BASE=0x40000400;ENTRY=0x400a9cf6;END=0x400a9d4e;CODE=0x46799a00;LIMIT=0x4679a200
 
 def apply(meta,native,runtime,stock,out):
  assert not meta.get('native_biquad')

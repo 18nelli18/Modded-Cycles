@@ -1,6 +1,6 @@
 {
-  "release": "3.02",
-  "stamp": "2026-11-03-guide302",
+  "release": "3.03",
+  "stamp": "2026-11-03-guide303",
   "cards": [
     {
       "en": [
@@ -86,12 +86,12 @@
           "en": [
             "Step Recorder",
             "Playback stopped: press REC twice; PLAY advances; STOP goes back; press REC again to exit",
-            "Enter step recording and play notes to write successive steps. PLAY advances one step; STOP moves back one step; press REC again to leave Step Recorder."
+            "Enter step recording and play notes to write successive steps. PLAY advances one step; STOP moves back one step; press REC again to leave Step Recorder. Octaves: FUNC + TRACK > KBT; +/-12 semitones shifts one octave."
           ],
           "fr": [
             "Step Recorder",
             "Lecture arrêtée : REC deux fois ; PLAY avance ; STOP recule ; REC quitte",
-            "Jouez des notes pour écrire les pas successifs. PLAY avance d’un pas, STOP recule d’un pas."
+            "Jouez des notes pour écrire les pas successifs. PLAY avance d’un pas, STOP recule d’un pas. Octaves : FUNC + TRACK > KBT ; +/-12 demi-tons deplace une octave."
           ]
         },
         {
@@ -358,12 +358,12 @@
           "en": [
             "Open Song",
             "SETTINGS + TRACK > Song > DATA",
-            "Song is beside Global and Track at the Mod Setup root. Press PLAY from the Song editor to start at the first row."
+            "Song is beside Global and Track at the Mod Setup root. Press PLAY from the Song editor to start at the highlighted row."
           ],
           "fr": [
             "Ouvrir Song",
             "SETTINGS + TRACK > Song > DATA",
-            "Song est au premier niveau, a cote de Global et Track. PLAY depuis l editeur lance la premiere ligne."
+            "Song est au premier niveau, a cote de Global et Track. PLAY depuis l editeur lance la ligne selectionnee."
           ]
         },
         {
@@ -418,24 +418,24 @@
           "en": [
             "End behavior",
             "Click DATA",
-            "Choose STOP or LOOP. FUNC + DATA also works. STOP ends playback after the last row; LOOP repeats the arrangement."
+            "Choose STOP or LOOP. FUNC + DATA also works. STOP ends playback after the last row; LOOP repeats the arrangement. PLAY while stopped starts at the highlighted row. LOOP wraps through the whole arrangement."
           ],
           "fr": [
             "Fin du morceau",
             "Appuyer sur DATA",
-            "Choisit STOP ou LOOP. FUNC + DATA fonctionne aussi. STOP arrete apres la derniere ligne ; LOOP repete l arrangement."
+            "Choisit STOP ou LOOP. FUNC + DATA fonctionne aussi. STOP arrete apres la derniere ligne ; LOOP repete l arrangement. PLAY a l arret part de la ligne selectionnee ; LOOP parcourt tout l arrangement."
           ]
         },
         {
           "en": [
             "Transport, exit and save",
             "PLAY / STOP / STOP twice / BACK / Save Project",
-            "PLAY runs the song; STOP pauses using native transport; double STOP cancels Song and clears FX tails. BACK leaves the editor. Save Project stores the song and per-track ACID glide/legato. An infinite pattern chain length can hold a row."
+            "PLAY starts at the highlighted row while stopped; STOP pauses using native transport; double STOP cancels Song and clears FX tails. BACK leaves the editor. Save Project stores the song and per-track ACID glide/legato. An infinite pattern chain length can hold a row."
           ],
           "fr": [
             "Transport, sortie, sauvegarde",
             "PLAY / STOP / double STOP / BACK / Save Project",
-            "PLAY joue ; STOP suspend via le transport natif ; double STOP annule Song et coupe les queues FX. BACK quitte. Save Project conserve Song et glide/legato ACID. Une longueur de chaine infinie peut retenir une ligne."
+            "PLAY a l arret demarre sur la ligne selectionnee ; STOP suspend via le transport natif ; double STOP annule Song et coupe les queues FX. BACK quitte. Save Project conserve Song et glide/legato ACID. Une longueur de chaine infinie peut retenir une ligne."
           ]
         }
       ]

@@ -27,7 +27,7 @@ void sg_row_value(u32 index,u32 canvas,u32 y){
  u32 f[2];N(0x40072260)(f,0x40140ab0);N(0x40071a04)(canvas,f,126,y,4,"%c%02d x%d %s",'A'+r->pattern/16,1+r->pattern%16,r->repeats,mute);N(0x40072080)(f);
 }
 static u32 delegate(const u32*e){u32 saved=gc_tree_cursor;gc_tree_cursor=0;u32 r=jp_key(e);if(gc_level==1)gc_tree_cursor=saved;return r;}
-u32 sg_prepare_transport(const u32*e){u32 press=(e[4]&9)==1;if(e[3]==10&&press&&!playing()&&!sg_active&&!sg_start()){fx_notice("Song: 64 plays max");return 0;}if(e[3]==11&&press&&!playing())sg_cancel();return 1;}
+u32 sg_prepare_transport(const u32*e){u32 press=(e[4]&9)==1;if(e[3]==10&&press&&!playing()&&!sg_start()){fx_notice("Song: 64 plays max");return 0;}if(e[3]==11&&press&&!playing())sg_cancel();return 1;}
 u32 sg_key(const u32*e){
  if(!e)return jp_key(e);u32 code=e[3],flags=e[4],press=(flags&9)==1;
  if(!menu){sg_page=0;function_down=loop_press=0;}
