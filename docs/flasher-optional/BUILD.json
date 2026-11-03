@@ -162,7 +162,7 @@
       "source_rebuild_complete": false
     }
   },
-  "recipe_sha256": "5e0055b57fda9fcfddea90daa155035e1af619f04cff96a7665e57b9b4f04c68",
+  "recipe_sha256": "0153fb855d3ef7afca0cca59a294bdc68a7473155233809c741b5db671ed075d",
   "selection_bits": 19,
   "selection_variants": 524288,
   "embedded_unselected_dsp": true,
@@ -206,5 +206,6 @@
   "sidechain_muted_live_hardware_confirmation": "User confirmed on Machine Optional Model:Cycles, 2026-11-01",
   "startup_release_version": "3.01",
   "lean_layout": true,
-  "source_rebuild_complete": false
+  "source_rebuild_complete": false,
+  "optional_boot_continuation_fixed": true
 }
