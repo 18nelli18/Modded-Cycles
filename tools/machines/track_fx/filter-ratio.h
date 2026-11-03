@@ -1,12 +1,21 @@
 /* Deux divisions fractionnaires au lieu de trois, restes conserves.
  * ff + cc + feedback = den : reconstruire exactement les arrondis Q30.
  * Aucun flottant, aucun produit64bits et aucune approximation du filtre. */
+#ifdef PF_SINGLE_DIV
+/* ColdFire REMU ne rend pas aussi le quotient. Forcer DIVU puis mul/sub
+ * evite un second passage dans le diviseur, sans approximation du reste. */
+static u32 quotient(u32 n,u32 d){
+ __asm__ volatile("divu.l %1,%0":"+d"(n):"d"(d):"cc");return n;
+}
+#else
+static u32 quotient(u32 n,u32 d){return n/d;}
+#endif
 static u32 ratio(u32 n,u32 d,u32 *remainder){
  u32 result=0;
  /* den <= 2^24 and each remainder < den. Eight-bit chunks fit exactly
   * in 32 bits; four divisions produce the same 30 fractional bits. */
- for(u32 i=0;i<3;i++){n<<=8;u32 part=n/d;n-=part*d;result=(result<<8)|part;}
- n<<=6;u32 part=n/d;n-=part*d;result=(result<<6)|part;
+ for(u32 i=0;i<3;i++){n<<=8;u32 part=quotient(n,d);n-=part*d;result=(result<<8)|part;}
+ n<<=6;u32 part=quotient(n,d);n-=part*d;result=(result<<6)|part;
  *remainder=n;return result;
 }
 static void ratios(u32 ff,u32 feedback,u32 den,u32 type,s32*b,s32*a1,s32*a2){

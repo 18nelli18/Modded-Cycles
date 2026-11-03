@@ -54,6 +54,53 @@ def main():
     parser.add_argument('--standalone-shared-entries',action='store_true')
     parser.add_argument('--punch-work-gate',action='store_true')
     parser.add_argument('--release',default='3.00')
+    parser.add_argument('--native-fx-unroll',action='store_true')
+    parser.add_argument('--fx-wake-recovery',action='store_true')
+    parser.add_argument('--diagnostic-midi',action='store_true')
+    parser.add_argument('--exact-zero-voices',action='store_true')
+    parser.add_argument('--eco-hall',action='store_true')
+    parser.add_argument('--eco-hall-sparse',action='store_true')
+    parser.add_argument('--hall-merged-gain',action='store_true')
+    parser.add_argument('--delay-static',action='store_true')
+    parser.add_argument('--filter-single-div',action='store_true')
+    parser.add_argument('--filter-full-cache',action='store_true')
+    parser.add_argument('--chord-second-fast',action='store_true')
+    parser.add_argument('--filter-unroll',action='store_true')
+    parser.add_argument('--fx-energy',action='store_true')
+    parser.add_argument('--silent-commit-guard',action='store_true')
+    parser.add_argument('--quality-economy',action='store_true')
+    parser.add_argument('--idle-audit',action='store_true')
+    parser.add_argument('--filter-half-rate',action='store_true')
+    parser.add_argument('--restore-filter-capture',type=Path)
+    parser.add_argument('--idle-scan-unroll',action='store_true')
+    parser.add_argument('--panic-stock',action='store_true')
+    parser.add_argument('--post-static',action='store_true')
+    parser.add_argument('--post-dry-bypass',action='store_true')
+    parser.add_argument('--output-monitor-fast',action='store_true')
+    parser.add_argument('--upgrade-remote-data',action='store_true')
+    parser.add_argument('--remote-panel',action='store_true')
+    parser.add_argument('--deep-idle-wake',action='store_true')
+    parser.add_argument('--deep-idle-stop',action='store_true')
+    parser.add_argument('--stage-profile',action='store_true')
+    parser.add_argument('--without-stage-profile',action='store_true')
+    parser.add_argument('--sram-audio',action='store_true')
+    parser.add_argument('--sram-audio-delay',action='store_true')
+    parser.add_argument('--sram-delay-filter',action='store_true')
+    parser.add_argument('--sram-full-delay',action='store_true')
+    parser.add_argument('--sram-chord-priority',action='store_true')
+    parser.add_argument('--chord-half-rate',action='store_true')
+    parser.add_argument('--voice-filter-unroll',action='store_true')
+    parser.add_argument('--native-finish',action='store_true')
+    parser.add_argument('--phase-loop',action='store_true')
+    parser.add_argument('--phase-sram',action='store_true')
+    parser.add_argument('--native-biquad',action='store_true')
+    parser.add_argument('--ui-fixes348',action='store_true')
+    parser.add_argument('--wizard-names349',action='store_true')
+    parser.add_argument('--release302-fixes',action='store_true')
+    parser.add_argument('--hall-ramp',action='store_true')
+    parser.add_argument('--hall-fractional-ramp',action='store_true')
+    parser.add_argument('--hall-ramp-opt',choices=('-O3','-O2','-Os'),default='-O3')
+    parser.add_argument('--eco-stock-reverb',action='store_true')
     parser.add_argument('--compression-candidates',type=int,default=1)
     parser.add_argument('--compression-history',action='store_true')
     parser.add_argument('--compression-window',type=int,default=1<<20)
@@ -67,7 +114,7 @@ def main():
     info,pkg,old,_=read(source);_,official,stock,ops=read(args.cycles)
     assert hashlib.sha256(args.cycles.read_bytes()).hexdigest()=='44fe586269631a0ca7da25a3383fc6733c314809505fc3cc52f1e0ed9800640c'
     native=bytearray((args.capture/'native.bin').read_bytes());runtime=bytearray((args.capture/'runtime.bin').read_bytes());sram=bytearray((args.capture/'sram.bin').read_bytes())
-    retirement=None
+    retirement=meta.get('clean_layout',{}).get('retirement')
     if args.retire_components:
         from rebuild300_policy import apply
         before=[bytes(x) for x in (native,runtime,sram)]
@@ -97,6 +144,135 @@ def main():
     if args.punch_work_gate:
         from rebuild300_punch_work import apply as punch_apply
         meta['punch_work_gate']=punch_apply(meta,runtime,out)
+    if args.native_fx_unroll:
+        from native_fx_unroll301 import apply as unroll_apply
+        meta['native_fx_unroll']=unroll_apply(meta,native,runtime,stock,out)
+    if args.fx_wake_recovery:
+        from fx_wake303 import apply as wake_apply
+        meta['fx_wake_recovery']=wake_apply(meta,native,runtime,stock,out)
+    if args.diagnostic_midi:
+        from diagnostic_midi303 import apply as diagnostic_apply
+        meta['diagnostic_midi']=diagnostic_apply(meta,native,runtime,stock,out)
+    if args.exact_zero_voices:
+        from exact_zero_voice304 import apply as zero_apply
+        meta['exact_zero_voices']=zero_apply(meta,runtime,sram,out)
+    if args.eco_hall:
+        from eco_hall305 import apply as eco_apply
+        meta['eco_hall']=eco_apply(meta,runtime,out,args.eco_hall_sparse)
+    if args.hall_merged_gain:
+        from eco_hall305 import apply as hall_merge_apply
+        meta['hall_merged_gain']=hall_merge_apply(meta,runtime,out,True,True)
+    if args.delay_static:
+        from delay_static307 import apply as delay_static_apply
+        meta['delay_static']=delay_static_apply(meta,native,runtime,out)
+    if args.filter_single_div:
+        from filter_div307 import apply as filter_div_apply
+        meta['filter_single_div']=filter_div_apply(meta,runtime,out)
+    if args.chord_second_fast:
+        from chord_second308 import apply as chord_second_apply
+        meta['chord_second']=chord_second_apply(meta,native,runtime,sram,out)
+    if args.filter_unroll:
+        from filter_unroll308 import apply as filter_unroll_apply
+        meta['filter_unroll']=filter_unroll_apply(meta,runtime,out)
+    if args.fx_energy:
+        from fx_energy309 import apply as energy_apply
+        meta['fx_energy']=energy_apply(meta,native,runtime,sram,out)
+    if args.silent_commit_guard:
+        from silent_commit310 import apply as silent_apply
+        meta['silent_commit_guard']=silent_apply(meta,native,runtime,sram,out)
+    if args.quality_economy:
+        from quality311 import apply as quality_apply
+        meta['quality_economy']=quality_apply(meta,native,runtime,sram,out)
+        for key,d in meta['quality_economy']['modules'].items():
+            meta[key].update(code_bytes=d['code_bytes'],sha256=d['sha256'],symbols=d['symbols'],quality_unchanged=False)
+    if args.idle_audit:
+        from diagnostic_midi303 import apply as idle_audit_apply
+        meta['diagnostic_midi']=idle_audit_apply(meta,native,runtime,sram,out,upgrade=True)
+    if args.filter_half_rate:
+        from filter_half312 import apply as half_apply
+        meta['filter_half_rate']=half_apply(meta,runtime,out)
+    if args.restore_filter_capture:
+        from filter_restore315 import apply as restore_apply
+        meta['filter_restore_48k']=restore_apply(meta,runtime,args.restore_filter_capture)
+    if args.idle_scan_unroll:
+        from fx_scan312 import apply as scan_apply
+        meta['fx_scan_unroll']=scan_apply(meta,runtime,out)
+        for key in ['code_bytes','symbols','sha256']:
+            meta['fx_energy'][key]=meta['fx_scan_unroll'][key]
+    if args.panic_stock:
+        from panic_stock313 import apply as panic_apply
+        meta['panic_stock']=panic_apply(meta,runtime,out)
+        for key,field in [('code_bytes','scan_bytes'),('sha256','scan_sha256'),('symbols','scan_symbols')]:
+            meta['fx_energy'][key]=meta['panic_stock'][field]
+    if args.post_static:
+        from post_static314 import apply as post_static_apply
+        meta['post_static']=post_static_apply(meta,native,runtime,out)
+    if args.post_dry_bypass:
+        from post_static314 import apply as post_dry_apply
+        meta['post_static']=post_dry_apply(meta,native,runtime,out,dry_bypass=True)
+    if args.output_monitor_fast:
+        from output_monitor316 import apply as output_apply
+        meta['output_monitor_fast']=output_apply(meta,native,runtime,out)
+    if args.upgrade_remote_data:
+        from upgrade_key317 import apply as upgrade_key_apply
+        meta['upgrade_remote_data']=upgrade_key_apply(meta,runtime,out)
+    if args.deep_idle_wake or args.deep_idle_stop:
+        from deep_idle329 import apply as deep_idle_apply
+        meta['deep_idle_wake']=deep_idle_apply(meta,native,runtime,out,automatic_stop=args.deep_idle_stop)
+    if args.remote_panel:
+        from remote_panel318 import apply as remote_panel_apply
+        meta['remote_panel']=remote_panel_apply(meta,native,runtime,out)
+    if args.filter_full_cache:
+        from filter_cache319 import apply as full_cache_apply
+        meta['filter_single_div']=full_cache_apply(meta,runtime,out)
+    if args.stage_profile:
+        from stage_profile320 import apply as stage_profile_apply
+        meta['stage_profile']=stage_profile_apply(meta,native,runtime,out)
+    if args.without_stage_profile:
+        assert not args.stage_profile
+        if meta.get('stage_profile'):
+            from stage_profile320 import remove as stage_profile_remove
+            stage_profile_remove(meta,native,runtime)
+            del meta['stage_profile']
+        meta['detailed_profile_removed']=dict(complete_IRQ_accounting_retained=True,normal_DX_retained=True,overrun_and_cut_counters_retained=True)
+    if args.hall_ramp:
+        from hall_ramp322 import apply as hall_ramp_apply
+        meta['hall_ramp']=hall_ramp_apply(meta,runtime,out,opt=args.hall_ramp_opt)
+        meta['hall_merged_gain'].update(meta['hall_ramp'])
+    if args.hall_fractional_ramp:
+        from hall_ramp322 import apply as hall_fractional_apply
+        meta['hall_fractional_ramp']=hall_fractional_apply(meta,runtime,out,opt='-O2',fractional=True)
+        meta['hall_merged_gain'].update(meta['hall_fractional_ramp'])
+    if args.sram_audio:
+        from sram_audio337 import apply as sram_audio_apply
+        meta['sram_audio']=sram_audio_apply(meta,native,runtime,sram,out,include_delay=args.sram_audio_delay,include_delay_filter=args.sram_delay_filter,full_delay=args.sram_full_delay,prefer_chord=args.sram_chord_priority)
+    if args.chord_half_rate:
+        from chord_half342 import apply as chord_half_apply
+        meta['chord_half_rate']=chord_half_apply(meta,native,runtime,out)
+    if args.voice_filter_unroll:
+        from voice_filter343 import apply as voice_filter_apply
+        meta['voice_filter_unroll']=voice_filter_apply(meta,native,sram,stock,out)
+    if args.native_finish:
+        from native_finish344 import apply as native_finish_apply
+        meta['native_finish']=native_finish_apply(meta,native,runtime,sram,stock,out)
+    if args.phase_loop or args.phase_sram:
+        from phase_loop345 import apply as phase_loop_apply
+        meta['phase_loop']=phase_loop_apply(meta,native,runtime,stock,out,sram=sram if args.phase_sram else None)
+    if args.native_biquad:
+        from native_biquad347 import apply as native_biquad_apply
+        meta['native_biquad']=native_biquad_apply(meta,native,runtime,stock,out)
+    if args.ui_fixes348:
+        from ui_fixes348 import apply as ui_fixes_apply
+        meta['ui_fixes348']=ui_fixes_apply(meta,native,runtime,out)
+    if args.wizard_names349:
+        from wizard_names349 import apply as names_apply
+        meta['wizard_names349']=names_apply(meta,native,runtime,out)
+    if args.release302_fixes:
+        from release302_fixes import apply as release_apply
+        release_apply(meta,native,runtime,sram,stock,out)
+    if args.eco_stock_reverb:
+        from eco_stock_reverb306 import apply as stock_eco_apply
+        meta['eco_stock_reverb']=stock_eco_apply(native)
     # Conserver les donnees SRAM initiales de cette edition, jamais leur copie
     # effacee par clearBSS. Le reste du prefixe devient l'etat des hooks finaux.
     image=bytearray(old[:START]);boundary=0x4019b590-BASE;image[:boundary]=native[:boundary]

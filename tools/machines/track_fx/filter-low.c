@@ -6,6 +6,12 @@
 typedef unsigned int u32;typedef int s32;
 struct coefficients {u32 f,q;s32 b,a1,a2;};
 static struct coefficients pf_cache[6];
+#ifdef PF_FULL_CACHE
+#ifdef PF_HALF_RATE
+#error PF_FULL_CACHE_requires_full_rate
+#endif
+static struct coefficients *pf_last;
+#endif
 /* Quotient Q30 par six divisions 32 bits ; reste < 2^24, donc <<5 sur 32 bits.
  * Calcul seulement quand cutoff ou resonance changent, jamais dans la boucle sample. */
 #include "filter-ratio.h"
@@ -23,12 +29,38 @@ struct coefficients *PF_COEFF_NAME(u32 lane){
  if(q>15000)q=15000;
  u32 original_q=q;
  if(p->f==f&&p->q==original_q)return p;
+#ifdef PF_FULL_CACHE
+ /* CTRL-ALL : reprendre aussi la normalisation et les produits du dernier calcul. */
+ if(pf_last&&pf_last->f==f&&pf_last->q==original_q){
+  p->b=pf_last->b;p->a1=pf_last->a1;p->a2=pf_last->a2;p->f=f;p->q=original_q;return p;
+ }
+#endif
+#ifdef PF_HALF_RATE
+ u32 original_f=f;
+ /* tan(2*atan(t)), t=f/(4096-f) ; Q12 sans produit64bits.
+  * Au-dessus de12k, borner au sommet de la bande24k. */
+ if(f>=2048)f=4095;
+ else{
+  u32 n=2*f*(4096-f),den=16777216u-2*f*f,result=0;
+  for(u32 i=0;i<2;i++){n<<=6;u32 part=quotient(n,den);n-=part*den;result=(result<<6)|part;}
+  f=result;
+ }
+#endif
  q=(q*8191)/15000;
  u32 c=4096-f,ff=f*f,cc=c*c;
  u32 damping=362-((q*346)>>13); /* environ Q=0,707 a 16 ; pas de mode HP. */
  u32 feedback=(damping*(f*c))>>8;
  u32 denominator=ff+cc+feedback;
  ratios(ff,feedback,denominator,0,&p->b,&p->a1,&p->a2);
- p->f=f;p->q=original_q;return p;
+#ifdef PF_HALF_RATE
+ p->f=original_f;
+#else
+ p->f=f;
+#endif
+ p->q=original_q;
+#ifdef PF_FULL_CACHE
+ pf_last=p;
+#endif
+ return p;
 }
 

@@ -1,6 +1,11 @@
 /* Note121 : noms/assignation UI uniquement ; aucun appel depuis le DSP LFO. */
 typedef unsigned int u32;
+#ifdef LD_EXTERNAL_API
+extern volatile u32 ld_api[9];
+#else
 volatile u32 ld_api[9];
+#endif
+#include "wizard_names.h"
 static u32 ld_map_native(u32 descriptor){return ((u32(*)(u32))0x4005a4e8)(descriptor);}
 static u32 context_for(u32 secondary){
  u32 kit=((u32(*)(void))0x400cf866)();
@@ -25,8 +30,8 @@ static u32 parameter_name(u32 context,u32 descriptor,u32 offset){
  u32 record=*(volatile u32 *)0x4005a4f4+56*index;
  if(wizard(context)){
   u32 key=*(volatile u32 *)(record+4);
-  if(key==13)return offset==52?(u32)"FLT":(u32)"Filter";
-  if(key==14)return offset==52?(u32)"RES":(u32)"Resonance";
+  u32 name=wizard_name(context,key,offset==52);
+  if(name)return name;
  }
  return *(volatile u32 *)(record+offset);
 }
@@ -66,16 +71,15 @@ static u32 text(u32 dest){
 }
 u32 ld_first(u32 context,u32 descriptor,u32 unused,u32 dest){
  if(wizard(context)){
-  if(dest==13)return (u32)"FLT";
-  if(dest==14)return (u32)"RES";
+  u32 label=wizard_name(context,dest,1);if(label)return label;
   if(dest==24||dest==25)return (u32)"ERR";
  }
  u32 name=text(dest);return name?name:((u32(*)(u32,u32))0x4000b208)(context,descriptor);
 }
 u32 ld_second(u32 dest){
- if(wizard(context_for(1))){
-  if(dest==13)return (u32)"FLT";
-  if(dest==14)return (u32)"RES";
+ u32 context=context_for(1);
+ if(wizard(context)){
+  u32 label=wizard_name(context,dest,1);if(label)return label;
   if(dest==24||dest==25)return (u32)"ERR";
  }
  u32 name=text(dest);return name?name:((u32(*)(u32))ld_api[0])(dest);

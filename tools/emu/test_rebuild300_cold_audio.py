@@ -35,6 +35,25 @@ e.uc.mem_write(0x80000000,(cache/'sram.bin').read_bytes())
 sram_code=args.output.parent/'final-sram.bin'
 sram_code.write_bytes((cache/'sram.bin').read_bytes())
 e.emac.install(emac.disasm(str(sram_code),0x80000000,0x80001c5c,0x800074b4))
+if meta.get('native_fx_unroll'):
+    d=meta['native_fx_unroll'];raw=args.output.parent/'native-fx-unroll.bin'
+    raw.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']))
+    e.emac.install(emac.disasm(str(raw),d['code'],d['code'],d['code']+d['code_bytes']))
+if meta.get('delay_static'):
+    d=meta['delay_static'];raw=args.output.parent/'delay-static-final.bin'
+    raw.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']))
+    e.emac.install(emac.disasm(str(raw),d['code'],d['code'],d['code']+d['code_bytes']))
+
+for key in ['chord_second','filter_unroll','filter_half_rate','post_static','output_monitor_fast','native_finish','phase_loop','native_biquad']:
+    if meta.get(key):
+        d=meta[key];raw=args.output.parent/(key+'-final.bin')
+        raw.write_bytes(e.uc.mem_read(d['code'],d['code_bytes']))
+        e.emac.install(emac.disasm(str(raw),d['code'],d['code'],d['code']+d['code_bytes']))
+
+if meta.get('output_monitor_fast'):
+    for patch in meta['output_monitor_fast']['patches']:
+        at=patch['at'];e.emac.fast[at]=lambda:None;e.emac.next[at]=int.from_bytes(bytes.fromhex(patch['new'])[2:],'big')
+
 events=[]
 if os.environ.get('SM_TRACE_RETIRED')=='1' and meta.get('clean_layout',{}).get('retirement'):
     from unicorn import UC_HOOK_MEM_READ
