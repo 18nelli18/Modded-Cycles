@@ -1,14 +1,14 @@
-/* 2026-11-01-main301 : images verifiees par edition, caches et sources independants. */
+/* 2026-11-03-main302 : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
   "full": {
     "id": "full",
     "productName": "Supermodel",
-    "release": "3.01",
-    "file": "Supermodel_Full_3.01_46dd09a1d0cd.syx",
-    "syxSha256": "46dd09a1d0cdf6d4923a9bc9016b6ebb839ceb22482565fe73412b762d7f2f47",
-    "mainOsSha": "4054978302bdf9d0e7e4a2c030d292a662211272fcd5ba0307e48797a6f89c9a",
+    "release": "3.02",
+    "file": "Supermodel_Full_3.02_399e641958a1.syx",
+    "syxSha256": "399e641958a155eb3e64cb0debdafac5e8c67b8d2f056ca30e158051bc44d1eb",
+    "mainOsSha": "807d759c488a95918de4989dc476bec3181e0fbf503f4258566e994d7e77f173",
     "requiresSyntakt": true,
     "source_build": 215,
     "new_clear_filter_defaults": true,
@@ -19,11 +19,11 @@
     "inactive_fx_zero_bypass": true,
     "startup_title": {
       "name": "Supermodel",
-      "version": "3.01",
-      "edition": "3.01",
+      "version": "3.02",
+      "edition": "3.02",
       "code": 1074084460,
       "code_bytes": 794,
-      "sha256": "12ff167916fdb9c660b5df8a7b60b9bd51ee8992a2e808f2b778f3a260fb74df",
+      "sha256": "0710b500f9ccf9e40e6ee3bfe3db385adabb6a265a4e9b47e31e1e9a71915208",
       "native_os_protocol_version_unchanged": true,
       "hardware_tested": false
     },
@@ -82,15 +82,20 @@
     "lean_layout": true,
     "wizard_explicit_lock_scope": true,
     "wizard_sample_parameter_inheritance": true,
-    "source_rebuild_complete": false
+    "source_rebuild_complete": false,
+    "granular_mode_labels": true,
+    "genie_stopped_intro": true,
+    "silent_commit_guard": true,
+    "deep_stop_idle": true,
+    "LOW_sample_rate": 48000
   },
   "lite": {
     "id": "lite",
     "productName": "Supermodel Lite",
-    "release": "3.01",
-    "file": "Supermodel_Lite_3.01_ec1959ea52a8.syx",
-    "syxSha256": "ec1959ea52a8359f5971dc11adae9bc8dc9ede5df9f95deffa0591a0d7e29985",
-    "mainOsSha": "641bae4ed0c309486d4ccc14da374df98ffd81d583faeb85fce807a27fa8f618",
+    "release": "3.02",
+    "file": "Supermodel_Lite_3.02_13223c449f92.syx",
+    "syxSha256": "13223c449f92ff9cc240e6d2b4b9343be39e1b67af45d3913b61da4726828248",
+    "mainOsSha": "89016efe80d7f08b248c1e0676d1c7f4b395ec70214099df8b96e53e4b2f3a50",
     "requiresSyntakt": false,
     "source_build": 216,
     "new_clear_filter_defaults": true,
@@ -101,11 +106,11 @@
     "inactive_fx_zero_bypass": true,
     "startup_title": {
       "name": "Supermodel Lite",
-      "version": "3.01",
-      "edition": "LITE 3.01",
+      "version": "3.02",
+      "edition": "LITE 3.02",
       "code": 1074084460,
       "code_bytes": 856,
-      "sha256": "4ab019d4c5e13f6cd54672c47c13c680e1f74f1933b86728f3a45fd95fc3277e",
+      "sha256": "794fdb4d22091186e2b04eb54fdccc732c8b20a43e4749521fbbad5d073a862d",
       "native_os_protocol_version_unchanged": true,
       "hardware_tested": false
     },
@@ -158,7 +163,12 @@
     "lean_layout": true,
     "wizard_explicit_lock_scope": true,
     "wizard_sample_parameter_inheritance": true,
-    "source_rebuild_complete": false
+    "source_rebuild_complete": false,
+    "granular_mode_labels": true,
+    "genie_stopped_intro": true,
+    "silent_commit_guard": true,
+    "deep_stop_idle": true,
+    "LOW_sample_rate": 48000
   }
 };
  for(const meta of Object.values(catalogue))Object.freeze(meta);
@@ -166,7 +176,7 @@
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Supermodel/c2edfd8d871c0bebc979481a039464334d977c7a/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Supermodel/78b62fb30327f1c4faf1b742e779bc1dd98b7eab/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});

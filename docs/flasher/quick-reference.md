@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 3.01 - 1 November 2026
+Supermodel 3.02 - 3 November 2026
 
-Main 3.01. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
+Main 3.02. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
 
 ## Included features
 
@@ -129,7 +129,7 @@ Main 3.01. Hold the first button while pressing the next button or turning the n
 |---|---|---|
 | Sample Preview | FUNC + MACHINES ; highlight a sample, then press its track pad or keyboard trig | Audition the highlighted sample. Scrolling through the list remains silent. |
 | Sample lock | Open the sample selection menu and highlight a sample; then hold a step TRIG + MACHINES | Lock the highlighted sample to that step on a Sample Wizard track. The sample browser must be open with the desired sample selected. |
-| Playback modes | SETTINGS + MACHINES | One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode. |
+| Playback modes | SETTINGS + MACHINES | One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode. Granular: COLOR Position, SHAPE Grain Size, SWEEP Density, CONTOUR Spray. Stretch uses Speed instead of Position. |
 | Slice editor | FUNC + step key; FUNC + click DATA | Play upper slices; remove a slice marker with the DATA click. Marker knobs can snap to zero crossings. |
 | Permanent quick save | Hold FUNC + SETTINGS | Open the stock permanent pattern-save action. This is an existing stock shortcut; do not confuse it with the short temporary save or a full Save Project. |
 | Temporary save / reload | Short FUNC + SETTINGS / FUNC + PATTERN | Stock temporary copy save / reload, including while retrig mode is latched. |
@@ -198,7 +198,6 @@ BACK closes Mod Setup and saves its global preferences. If playback is running, 
 | ChordKeys | CHORD: FUNC + RETRIG > Keys ON | Outside grid record, TRIG1-16 play scale-based chord voicings. TRACK + track pad changes track. Grid record: hold TRIG + T1-T6 to lock harmony; repeat the same pad to restore base harmony. Keys On, harmony and related settings save per pattern/project; save the project before switching off. |
 | Vinyl | SIZE / FUNC + SIZE / hold FUNC first, then TRACK + SIZE | Crackle / Warble Amount / Warble Speed. REVERB SEND sets Vinyl amount. Vinyl is absent from main Full/Lite. |
 | TRX-B2 / TRX-SD / TRX-CH | Select in Machine Optional; supply your Machinedrum UW OS 1.63 file | Three optional engines: bass drum, snare and closed hi-hat. They require the MD file when building. Retained Optional choices include LEGACY, ChordKeys and Vinyl. |
-| Dummy | Tick Dummy in the Machine Optional flasher | Silent placeholder: skips synthesis and voice rendering, with zero machine stats. Excluded from Main and all Lite builds. |
 
 ## SPEAK word library
 

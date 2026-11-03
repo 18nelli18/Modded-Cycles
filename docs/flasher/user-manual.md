@@ -1,11 +1,11 @@
 # SUPERMODEL
-## User manual · Release 3.01
+## User manual · Release 3.02
 
 Model:Cycles · Full / Lite / Machine Optional
 
 # Contents & conventions
 
-A practical reference for Supermodel 3.01 on Model:Cycles.
+A practical reference for Supermodel 3.02 on Model:Cycles.
 
 Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.
 
@@ -596,6 +596,8 @@ Sample locks retain the sample while unlocked parameters follow track edits. Onl
 
 SETTINGS + MACHINES selects One-Shot, Loop, Slice, Granular, Stretch, Pluck or Wavetable. SETTINGS + PUNCH opens options for the current mode.
 
+Granular: COLOR = Position; SHAPE = Grain Size; SWEEP = Density; CONTOUR = Spray. Stretch uses Speed in place of Position.
+
 ## Slice editing
 
 Use FUNC + a step key to play upper slices. FUNC + click DATA removes a slice marker. Marker knobs can snap to zero crossings.
@@ -755,10 +757,6 @@ In grid recording, hold a TRIG and press T1–T6 to lock harmony. Repeat the sam
 
 Keys On, harmony and related settings save per pattern/project. Save the project before switching off.
 
-## Dummy
-
-Tick Dummy in Machine Optional for a silent placeholder with zero machine stats. It skips synthesis and voice rendering. Main and all Lite editions exclude Dummy.
-
 ## Vinyl
 
 | Gesture | Parameter |
@@ -862,4 +860,4 @@ Updates four times per second. Screen formatting runs in the UI, outside the aud
 
 An alphabetical guide to the manual.
 
-Supermodel 3.01 • Model:Cycles • English print edition • 1 November 2026.
+Supermodel 3.02 • Model:Cycles • English print edition • 3 November 2026.

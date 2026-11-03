@@ -1,0 +1,273 @@
+{
+  "release": "3.02",
+  "date": "2026-11-03",
+  "all_four_native_cold_boots": true,
+  "main_full_runtime_and_SRAM_identical_to_confirmed_349": true,
+  "audio_smoke": {
+    "main-full-audio": {
+      "blocks": 16,
+      "machines": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "peaks": [
+        562352202,
+        535598450,
+        873406092,
+        958433949,
+        268051379,
+        303792411
+      ],
+      "actual_voice_IDs_checked": true
+    },
+    "main-lite-audio": {
+      "blocks": 16,
+      "machines": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "peaks": [
+        562352202,
+        535598450,
+        873406092,
+        958433949,
+        268051379,
+        303792411
+      ],
+      "actual_voice_IDs_checked": true
+    },
+    "optional-full-audio": {
+      "blocks": 16,
+      "machines": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "peaks": [
+        562352202,
+        535598450,
+        873406092,
+        958433949,
+        268051379,
+        303792411
+      ],
+      "actual_voice_IDs_checked": true
+    },
+    "optional-lite-audio": {
+      "blocks": 16,
+      "machines": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "peaks": [
+        562352202,
+        535598450,
+        873406092,
+        958433949,
+        268051379,
+        303792411
+      ],
+      "actual_voice_IDs_checked": true
+    }
+  },
+  "label_checks_per_Full_edition": 672,
+  "optional_dummy_machine_checks": 300,
+  "optional_browser_delivery": {
+    "release": "3.02",
+    "rows": [
+      {
+        "type": "optional",
+        "mask": 0,
+        "sha": "dcb365dec8d4ec87b12c24e17cbecee2a85642b6ab35e9b1f6bf7c62da34a26b",
+        "flash": 1006992
+      },
+      {
+        "type": "optional",
+        "mask": 524287,
+        "sha": "c3a6a6e44ccd94714282ee57c5b4d740ad2d39a3df3007b18a008c2da357c3ee",
+        "flash": 1604720
+      },
+      {
+        "type": "optional",
+        "mask": 1,
+        "sha": "813192791c1567fa5458532137d0bcbb00bbda1f21260d1b11f7ce69d51592be",
+        "flash": 1669072
+      },
+      {
+        "type": "optional",
+        "mask": 32768,
+        "sha": "0267db0641ad97a6c662450ea2e02d03a49d76a91da038caca766689f629097f",
+        "flash": 1669072
+      },
+      {
+        "type": "optional",
+        "mask": 2048,
+        "sha": "da9ce2640f7e28fb2dd06b9d3f74e601c026653c5dc8886898b1c78cf570c81a",
+        "flash": 1669072
+      },
+      {
+        "type": "optional",
+        "mask": 349525,
+        "sha": "ec2e49e86a274904c3e23684ae13ba91c9f5bc682ad197b54069b118a76d58d6",
+        "flash": 1669072
+      },
+      {
+        "type": "optional",
+        "mask": 2,
+        "sha": "a32c5a06c7b8cba6ccbea99de687a9214fb60f9d8a9dd09c6a470c4c46ddb8f0",
+        "flash": 1669072
+      },
+      {
+        "type": "optional",
+        "mask": 1024,
+        "sha": "1c30d260846edeb6060b4d50a8c742a32e621c7e8696b55567af8a91a78036a2",
+        "flash": 1669072
+      },
+      {
+        "type": "optional",
+        "mask": 524286,
+        "sha": "5253c2a72ca9f3f5c81366686656a79b92a5a5dd31e281bef34cdbc033338edc",
+        "flash": 1669072
+      },
+      {
+        "type": "md",
+        "mask": 524288,
+        "sha": "4cdffffac97df8d49e58feeaa314f3c6f92ca3b69dab687bba383b8333a521a6",
+        "flash": 1744176
+      },
+      {
+        "type": "md",
+        "mask": 1048576,
+        "sha": "375a09b669156dd6ab3b6687afee7b96e92e1cecb0cc0b5c11541911171b820e",
+        "flash": 1744176
+      },
+      {
+        "type": "md",
+        "mask": 2097152,
+        "sha": "032bb932b097fb7dfe856581011ecac65c0db432b7c9b022b1647c5175c02fc2",
+        "flash": 1744176
+      },
+      {
+        "type": "md",
+        "mask": 3670016,
+        "sha": "4fb064ea242cefee5f044ae5fedf6d220b895ff3b74465686197b3f928fce7c7",
+        "flash": 1744176
+      },
+      {
+        "type": "md",
+        "mask": 4194303,
+        "sha": "8c03094c6133242e07b7b5edbfd4f5e039fee105f7a4af099b4b906455a2f15d",
+        "flash": 1744176
+      },
+      {
+        "type": "md",
+        "mask": 4194302,
+        "sha": "20d8be7826ad92efc1ede98529d8b03e171592b896fd11b8ba7f8d24384a6701",
+        "flash": 1744176
+      }
+    ],
+    "hardware_tested": false
+  },
+  "model_conversion": {
+    "release": "3.02",
+    "hardware_tested": false,
+    "rows": [
+      {
+        "name": "main-full",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "6d79202d57ac9454b97ff4b7266e7f4af9b200ba4e5f33ea14ed4c8fb078fb85",
+        "flash": 1537088
+      },
+      {
+        "name": "main-full",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "bc47c00305097abdf11830013f9b1f7e90198a12eaff4034edf10aa6691ad909",
+        "flash": 1537088
+      },
+      {
+        "name": "main-lite",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "f5b2d06e8e24e64919f4251eb14c290c99fa47844fd18c49df00c9f45363b728",
+        "flash": 991824
+      },
+      {
+        "name": "main-lite",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "6c03f6afdf6339875600c6449c4e50fa31cdaeb387eec17fd06dbbc675862da9",
+        "flash": 991824
+      },
+      {
+        "name": "optional-full",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "a7505c3df83082e68794fbb2bb69d0f1ee8c75d6c592e0cb53421b2a12e0a276",
+        "flash": 1604720
+      },
+      {
+        "name": "optional-full",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "75081a5867bc1b8d8f33beebc8669f695041cb009cbe2ebbe8f8d6c923e587d1",
+        "flash": 1604720
+      },
+      {
+        "name": "optional-lite",
+        "mode": "cycles",
+        "changedMainBytes": 32,
+        "sha": "f2a9bbcdeea5f2e63d41b63b570ac8860921c8faad2cd1d78741dddfc2aa38f1",
+        "flash": 1006992
+      },
+      {
+        "name": "optional-lite",
+        "mode": "samples",
+        "changedMainBytes": 32,
+        "sha": "b88f322aed14501ce5bee099b7db464a04738405d93fdb31a39dcaa528af31c8",
+        "flash": 1006992
+      }
+    ]
+  },
+  "SIL_native_commit": {
+    "native_commit_and_graphics": true,
+    "stale_context_checks": true,
+    "reentrant_guard": {
+      "before": {
+        "shown": 4,
+        "pending": 0,
+        "committing": 0
+      },
+      "after": {
+        "shown": 4,
+        "pending": 1,
+        "committing": 1
+      }
+    },
+    "native_redraw_order_reproduced": false,
+    "audio_hooks_changed": false,
+    "hardware_tested": false
+  },
+  "manual_pages": 35,
+  "shortcut_PDF_pages": 9,
+  "voice_stealing_resolved": false,
+  "heavy_FX_clicks_resolved": false,
+  "sequence_clear_filter_bug_resolved": false,
+  "hardware_result": "User confirmed private3.49 granular labels; release Full runtime/SRAM identical. Other editions verified by cold boot, emulation and browser builders."
+}

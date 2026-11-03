@@ -1,6 +1,6 @@
 {
-  "release": "3.01",
-  "stamp": "2026-11-01-guide301",
+  "release": "3.02",
+  "stamp": "2026-11-03-guide302",
   "cards": [
     {
       "en": [
@@ -1046,12 +1046,12 @@
           "en": [
             "Playback modes",
             "SETTINGS + MACHINES",
-            "One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode."
+            "One-Shot, Loop, Slice, Granular, Stretch, Pluck and Wavetable. SETTINGS + PUNCH opens options for the current mode. Granular: COLOR Position, SHAPE Grain Size, SWEEP Density, CONTOUR Spray. Stretch uses Speed instead of Position."
           ],
           "fr": [
             "Modes de lecture",
             "SETTINGS + MACHINES",
-            "One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable. SETTINGS + PUNCH ouvre les options du mode actif."
+            "One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable. SETTINGS + PUNCH ouvre les options du mode actif. Granular : COLOR Position, SHAPE Grain Size, SWEEP Density, CONTOUR Spray. Stretch utilise Speed au lieu de Position."
           ]
         },
         {
@@ -1612,18 +1612,6 @@
             "TRX-B2 / TRX-SD / TRX-CH",
             "Choisir dans Machine Optional ; fournir votre OS Machinedrum UW1.63",
             "Trois moteurs : grosse caisse, caisse claire et charley ferme. Le fichier MD est requis au build. Optional conserve LEGACY, ChordKeys et Vinyl."
-          ]
-        },
-        {
-          "en": [
-            "Dummy",
-            "Tick Dummy in the Machine Optional flasher",
-            "Silent placeholder: skips synthesis and voice rendering, with zero machine stats. Excluded from Main and all Lite builds."
-          ],
-          "fr": [
-            "Dummy",
-            "Cocher Dummy dans le flasheur Machine Optional",
-            "Emplacement silencieux : aucun rendu de synthese, statistiques machine a zero. Absent de Main et de toutes les editions Lite."
           ]
         }
       ]

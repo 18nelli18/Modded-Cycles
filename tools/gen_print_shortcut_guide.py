@@ -122,7 +122,7 @@ flow.extend([Spacer(1,9),para(soup.select_one('main > p.note'))])
 out=ROOT/args.output;out.parent.mkdir(exist_ok=True,parents=True)
 def chrome(c,doc):
  c.setFillColor(accent);c.setFont('Helvetica-Bold',7);c.drawString(30,773,'SUPERMODEL EDITION | MODEL:CYCLES');c.setFont('Helvetica',7);c.drawRightString(582,773,f'Page {doc.page} / {pages}')
- c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 1 November 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
+ c.setStrokeColor(line);c.line(30,25,582,25);c.setFont('Helvetica',6.5);c.drawString(30,15,'Features and shortcuts | 3 November 2026');c.drawRightString(582,15,'Stk = Stock | Startup: USB 2ch, numbers Off')
 doc=SimpleDocTemplate(str(out),pagesize=letter,rightMargin=30,leftMargin=30,topMargin=36,bottomMargin=34,title='Supermodel Edition - Features and Shortcuts',author='A.V.')
 # ReportLab modifie les tables pendant le decoupage : chaque passe repart
 # des objets frais pour stabiliser la pagination et son total imprime.

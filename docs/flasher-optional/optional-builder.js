@@ -28,7 +28,7 @@ function safePack(packed,maskPos=-100){
  const out=w.end();if(!eq(B.aplibDepack(out,{bootLayout:true}).data,data))throw Error('Bootstrap packing changed MAIN');return {packed:out,locations:w.locations};
 }
 function unpack(raw){const transport=B.unwrap(raw),container=B.parseContainer(transport.stream);return {transport,container,main:B.aplibDepack(section(container,3),{bootLayout:true}).data}}
-function validateMask(mask){if(!Number.isInteger(mask)||mask<0||(mask&~0x47ffff)!==0)throw Error('Invalid machine selection')}
+function validateMask(mask){if(!Number.isInteger(mask)||mask<0||(mask&~0x7ffff)!==0)throw Error('Invalid machine selection')}
 function prepare(fullRaw,liteRaw,cyclesRaw,recipe){
  if(hash(fullRaw)!==recipe.source_sha256)throw Error('Optional Full base checksum mismatch');
  if(hash(liteRaw)!==recipe.lite_sha256)throw Error('Optional Lite base checksum mismatch');

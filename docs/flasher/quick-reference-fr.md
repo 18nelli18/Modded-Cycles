@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel3.01 - 30 octobre2026
+Supermodel3.02 - 30 octobre2026
 
-Principal3.01. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
+Principal3.02. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
 
 ## Fonctions incluses
 
@@ -129,7 +129,7 @@ Principal3.01. Maintenez le premier bouton pendant le second geste. TRIG : touch
 |---|---|---|
 | Préécoute sample | FUNC + MACHINES ; surligner un sample ; pad ou TRIG clavier | Écoute le sample surligné. Le défilement reste silencieux. |
 | Sample lock | Navigateur ouvert : surligner le sample, puis TRIG + MACHINES | Verrouille le sample choisi sur le pas de la piste Wizard. Le navigateur doit être ouvert avec le sample surligné. |
-| Modes de lecture | SETTINGS + MACHINES | One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable. SETTINGS + PUNCH ouvre les options du mode actif. |
+| Modes de lecture | SETTINGS + MACHINES | One-Shot, Loop, Slice, Granular, Stretch, Pluck et Wavetable. SETTINGS + PUNCH ouvre les options du mode actif. Granular : COLOR Position, SHAPE Grain Size, SWEEP Density, CONTOUR Spray. Stretch utilise Speed au lieu de Position. |
 | Éditeur Slice | FUNC + TRIG ; FUNC + clic DATA | FUNC joue les slices 17–32 ; FUNC + clic DATA efface un marqueur. FUNC + potards 1/2 cale les marqueurs au passage zéro. |
 | Sauvegarde rapide permanente | Maintenir FUNC + SETTINGS | Ouvrir la sauvegarde permanente native du pattern. Raccourci stock ; distinct de la sauvegarde temporaire breve et de Save Project. |
 | Copie temporaire / rappel | Bref FUNC+SETTINGS / FUNC+PATTERN | Copie temporaire native / rappel,y compris pendant le verrou retrig. |
@@ -198,7 +198,6 @@ BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cett
 | ChordKeys | CHORD : FUNC + RETRIG > Keys ON | Hors grid record, TRIG1-16 jouent les accords de la gamme. TRACK + pad change de piste. Grid : TRIG tenu + T1-T6 verrouille l harmonie ; meme pad a nouveau restaure l harmonie de base. Keys On, harmonie et reglages associes sont sauvegardes par pattern/projet ; sauvegarder avant extinction. |
 | Vinyl | SIZE / FUNC + SIZE / FUNC avant TRACK + SIZE | Crackle / intensite Warble / vitesse Warble. REVERB SEND dose Vinyl. Absent du principal Full/Lite. |
 | TRX-B2 / TRX-SD / TRX-CH | Choisir dans Machine Optional ; fournir votre OS Machinedrum UW1.63 | Trois moteurs : grosse caisse, caisse claire et charley ferme. Le fichier MD est requis au build. Optional conserve LEGACY, ChordKeys et Vinyl. |
-| Dummy | Cocher Dummy dans le flasheur Machine Optional | Emplacement silencieux : aucun rendu de synthese, statistiques machine a zero. Absent de Main et de toutes les editions Lite. |
 
 ## Lexique SPEAK
 

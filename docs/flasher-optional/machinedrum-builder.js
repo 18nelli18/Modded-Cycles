@@ -11,7 +11,7 @@ const put=(a,p,n)=>new DataView(a.buffer,a.byteOffset,a.byteLength).setUint32(p,
 const join=(...arrays)=>{const a=new Uint8Array(arrays.reduce((n,x)=>n+x.length,0));let p=0;for(const x of arrays){a.set(x,p);p+=x.length}return a};
 const eq=(a,b)=>a.length===b.length&&a.every((x,i)=>x===b[i]);
 function stored(raw){const a=new Uint8Array(raw.length+8);put(a,0,raw.length);put(a,4,raw.reduce((n,x)=>(n+x)>>>0,0));a.set(raw,8);return a}
-function validateMask(mask){if(!Number.isInteger(mask)||mask<0||mask>0x7fffff)throw Error('Invalid machine selection')}
+function validateMask(mask){if(!Number.isInteger(mask)||mask<0||mask>0x3fffff)throw Error('Invalid machine selection')}
 function firmwareParts(raw,recipe){
  const sha=hash(raw);if(![recipe.MD_SYX_sha256,recipe.MD_BIN_sha256].includes(sha))throw Error('Use official Machinedrum UW OS 1.63 (.syx), or the verified 1.63 reference .bin.');
  return M.mdParts(raw,sha);
@@ -89,5 +89,5 @@ function build(fullRaw,cyclesRaw,mdRaw,mask,recipe,selectionRecipe){
  const raw=B.wrap(B.buildStream(blob,101),full.transport.product,full.transport.start_seq);
  return {raw,mask,edition:'full',release:recipe.release,mainOsSha:hash(main),syxSha256:hash(raw),flashBytes:blob.length,startup_title:recipe.title,machinedrum:true};
 }
-const API={build,firmwareParts,validateMask,ALL:0x7fffff,MD_BITS:0x380000};if(typeof module!=='undefined'&&module.exports)module.exports=API;else window.MCOptionalMachinedrum=API;
+const API={build,firmwareParts,validateMask,ALL:0x3fffff,MD_BITS:0x380000};if(typeof module!=='undefined'&&module.exports)module.exports=API;else window.MCOptionalMachinedrum=API;
 })();
