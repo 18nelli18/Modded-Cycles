@@ -20,10 +20,11 @@ python3 tools/build.py -i firmware/model-cycles_OS1.13.syx --syntakt firmware/Sy
 
 The build applies each tweak's writes to section 3 (the MAIN OS) of your file, checking every `old` byte, appends the
 payloads (Model-TG's code, the Syntakt engines extracted from your Syntakt file, MACRO and ACID), repacks the section
-(aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the patched MAIN OS. For version 2.0 it must be:
+(aPLib) and re-signs the container (HMAC). It prints the SHA-256 of the patched MAIN OS. For version 2.0 with
+Chord Keys it must be:
 
 ```
-82a79f453151cbaceffdd047a646c96721f3ae3849a28f7821928bfbd4a1cca9
+dd8c1a6e9ce82e1721c780dcae9d837a55dcbb60a7dc55b77458998c8f6a0a6d
 ```
 
 The same value is the `REF_MAINOS` entry of `docs/flasher/app.js`: the web flasher refuses a build whose MAIN OS
@@ -99,3 +100,22 @@ The exact runs each proof supports are in its docstring (`python3 tools/emu/test
 - **Samples OS on a Model:Cycles, Cycles OS on a Model:Samples** (notes/41): `tools/crossflash.py`.
 
 Both need the official `model-samples_OS1.13.syx` as well.
+
+## Chord Keys
+
+In the OS (`61-chord-keys.json`). HARMONY keeps saved id 33 and uses lock slot 27, outside LFO 2's slots 28–32.
+The standalone track-filter tweak is declared incompatible. Step record writes notes through the live-record
+writer so a HARMONY gesture lands on the step. See notes/42 §28 and §29.
+
+```sh
+python3 tools/gen_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --check
+python3 tools/gen_step_rec.py --cycles firmware/model-cycles_OS1.13.syx --check
+python3 tools/emu/chord_os2_checks.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+python3 tools/emu/test_chord_keys.py --cycles firmware/model-cycles_OS1.13.syx --focus compatibility
+python3 tools/emu/test_step_rec.py --cycles firmware/model-cycles_OS1.13.syx --syntakt firmware/Syntakt_OS1.42.syx
+```
+
+The combined proof passes every tweak id of `os.json` except `chord-keys` through `--with`, plus
+`--syntakt firmware/Syntakt_OS1.42.syx`. `--focus midi-output` checks the MIDI chords. The generators need
+m68k-elf GCC 16.2.0 and binutils 2.47. The MAIN OS hash above is the one recorded for these exact writes
+(notes/42); recompute it with `tools/build.py --os` when the official files are present.

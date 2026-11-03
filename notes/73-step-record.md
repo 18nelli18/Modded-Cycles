@@ -171,3 +171,12 @@ synthèse.
 Maxime a flashé l'OS de la branche `claude/step-record` (PR #101, MAIN OS `82a79f45…cca9`) sur son Model:Cycles,
 suivi le plan de test du §6, et répondu : « ça marche nickel. tu peux fusionner ». Le détail point par point n'a pas
 été rapporté ; la fonction passe en `tested` (`os.json`).
+
+## Avec Chord Keys (03/11/2026)
+
+`[FAIT en émulation]` `sr_note_on` passe par `0x40012158`, le writer du live rec, avec le pas de step record
+et les mêmes arguments que la référence de la preuve. Les setters recopiés ne passaient pas dans le crochet de
+snapshot HARMONY : l'accord écrit perdait sa transformation. La nouvelle voie capture celle-ci, sans adresse
+ni symbole de Chord Keys. Sans Keys, les données restent celles du writer natif. `test_step_rec.py` et
+`chord_os2_checks.py` sont les preuves (note 42 §28). Pas de nouveau retour matériel : le statut `tested` de
+l'`os.json` reste celui du 20/10/2026, et ce chemin est à refaire sur la machine.

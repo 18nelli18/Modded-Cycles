@@ -3,6 +3,14 @@
  *   { version: "1.1", date: "2026-10-15", changes: [{ en: "…", fr: "…" }] }
  */
 window.MC_RELEASES = [
+  { version: "2.1", date: "2026-11-03", changes: [
+    { en: "Chord Keys, by Nico Heuser: on a CHORD track, open FUNC + RETRIG and turn Keys on. TRIG 1–16 play the scale degrees as chords, COLOR picks DIATONIC, JAZZ or TENSION, and SHAPE arranges the voices. T1–T6 change the held chord (9, 11, 13, 7sus4, parallel, V7) without selecting another track. MIDI set to CHORD sends those notes; ROOT keeps the usual single note",
+      fr: "Chord Keys, par Nico Heuser : sur une piste CHORD, ouvrez FUNC + RETRIG et mettez Keys sur ON. TRIG 1–16 jouent les degrés de la gamme en accords, COLOR choisit DIATONIC, JAZZ ou TENSION, et SHAPE dispose les voix. T1–T6 transforment l'accord tenu (9, 11, 13, 7sus4, parallèle, V7) sans changer de piste. MIDI sur CHORD envoie ces notes ; ROOT garde la note unique habituelle" },
+    { en: "CHORD only, four voices at most. TRIG chords do not arpeggiate. Keys OFF restores normal playing. Saved HARMONY locks from earlier Chord Keys versions still load, next to LFO 2. The per-track filter is not in this OS and does not install with Chord Keys. Experimental: checked in the emulator on the OS's own code, not yet tested on a Model:Cycles as part of this OS",
+      fr: "CHORD uniquement, quatre voix au plus. Les accords TRIG ne sont pas arpégés. Keys OFF retrouve le jeu normal. Les locks HARMONY des versions précédentes de Chord Keys restent lisibles, à côté de LFO 2. Le filtre par piste n'est pas dans cet OS et ne s'installe pas avec Chord Keys. Expérimental : vérifié en émulation sur le code même de l'OS, pas encore testé sur un Model:Cycles dans cet OS" },
+    { en: "Step record stores a HARMONY change on the step when a pad is held as the note is entered. The step record test of 20 October 2026 was on the previous writer; that path still needs a check on the machine",
+      fr: "Le step record enregistre un changement HARMONY sur le pas quand un pad est tenu au moment de la note. L'essai du step record du 20 octobre 2026 portait sur la voie d'écriture précédente ; ce chemin reste à vérifier sur la machine" },
+  ] },
   { version: "2.0", date: "2026-10-18", changes: [
     { en: "One firmware now, the Modded Cycles OS: nothing to tick any more, everyone runs the same OS. Projects, tips and bug reports now mean the same thing for everyone. The flasher's first tab lists what the OS contains, and Details on a row opens its full description and its page in the guide",
       fr: "Un seul firmware maintenant, le Modded Cycles OS : plus rien à cocher, tout le monde a le même OS. Les projets, les astuces et les rapports de bugs veulent maintenant dire la même chose pour tous. Le premier onglet du flasher liste ce que contient l'OS, et Détails sur une ligne ouvre sa description complète et sa page dans le guide" },

@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&family=Tiny5&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=2026-10-20-02">
-<link rel="stylesheet" href="../assets/guide.css?v=2026-10-20-02">
+<link rel="stylesheet" href="../assets/site.css?v=2026-11-03-01">
+<link rel="stylesheet" href="../assets/guide.css?v=2026-11-03-01">
 <script>try{var l=localStorage.getItem("mc-lang"),t=localStorage.getItem("mc-theme")}catch(e){}document.documentElement.lang=l||(/^fr\b/i.test(navigator.language||"")?"fr":"en");if(t)document.documentElement.setAttribute("data-theme",t)</script>
 </head>
 <body data-page="guide">
@@ -48,6 +48,7 @@
         <li><a href="#syntakt"><span data-l="en">Syntakt engines</span><span data-l="fr">Moteurs du Syntakt</span></a></li>
         <li><a href="#model-tg">Model-TG</a></li>
         <li><a href="#arp"><span data-l="en">Arpeggiator</span><span data-l="fr">Arpégiateur</span></a></li>
+        <li><a href="#chord-keys">Chord Keys</a></li>
         <li><a href="#step-rec"><span data-l="en">Step record</span><span data-l="fr">Step record</span></a></li>
         <li><a href="#tempo"><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></a></li>
         <li><a href="#boot-anim"><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></a></li>
@@ -443,8 +444,65 @@
         </dl>
       </section>
 
+      <section id="chord-keys">
+        <h2><span class="n">10</span><span data-l="en">Chord Keys 2.1</span><span data-l="fr">Chord Keys 2.1</span></h2>
+        <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/byNicoHeuser/Modded-Cycles" target="_blank" rel="noopener">Nico Heuser</a></p>
+        <p class="lede"><span data-l="en">Play the selected CHORD track across sixteen TRIG buttons. COLOR chooses your extension palette, SHAPE arranges and balances the notes, and T1–T6 can change a held chord temporarily.</span><span data-l="fr">Jouez la piste CHORD sélectionnée sur les seize boutons TRIG. COLOR choisit la palette d’extensions, SHAPE dispose et équilibre les notes, et T1–T6 peuvent transformer temporairement un accord tenu.</span></p>
+        <p><span data-l="en">Optimized processing keeps the sound and controls unchanged, with audio matching sample for sample in emulation; this revision remains experimental and hardware performance has not been measured.</span><span data-l="fr">Les calculs optimisés conservent le son et les commandes, avec un audio identique échantillon par échantillon en émulation ; cette révision reste expérimentale et les performances sur la machine n’ont pas été mesurées.</span></p>
+        <ol>
+          <li><span data-l="en">Select a track with <b>TRACK + T1–T6</b>, choose <b>CHORD</b>, then open <b>FUNC + RETRIG</b>. Scroll past the original rows to <b>Keys</b>, <b>Root</b>, <b>Scale</b> <b>I–VII</b> and <b>MIDI</b>.</span><span data-l="fr">Sélectionnez une piste avec <b>TRACK + T1–T6</b>, choisissez <b>CHORD</b>, puis ouvrez <b>FUNC + RETRIG</b>. Après les lignes d’origine se trouvent <b>Keys</b>, <b>Root</b>, <b>Scale</b> <b>I–VII</b> et <b>MIDI</b>.</span></li>
+          <li><span data-l="en">Set <b>Keys ON</b>, choose <b>Root</b> (C1–C3) and <b>Scale</b>: MAJ, DOR, PHR, LYD, MIX, MINOR or LOC. Choose TRI, 7, 9, 11 or 13 independently for each degree. These choices follow the degree across octaves.</span><span data-l="fr">Mettez <b>Keys sur ON</b>, choisissez <b>Root</b> (C1–C3) et <b>Scale</b> : MAJ, DOR, PHR, LYD, MIX, MINOR ou LOC. Choisissez TRI, 7, 9, 11 ou 13 séparément pour chaque degré. Ces choix suivent le degré à toutes les octaves.</span></li>
+          <li><span data-l="en">The improved COLOR/SHAPE controls and <b>HARMONY</b> pads apply automatically whenever <b>Keys is ON on CHORD</b>, including existing patterns. There are no Controls or Pads choices in the menu. Saved values and parameter locks are preserved, with the improved interpretation. Newly initialized patterns start with Keys OFF.</span><span data-l="fr">Les commandes COLOR/SHAPE améliorées et les pads <b>HARMONY</b> s’appliquent automatiquement dès que <b>Keys est ON sur CHORD</b>, y compris aux anciens patterns. Le menu ne propose plus de choix Controls ou Pads. Les valeurs et locks enregistrés sont conservés, avec l’interprétation améliorée. Les nouveaux patterns initialisés commencent Keys OFF.</span></li>
+          <li><span data-l="en">Close the menu, leave grid recording and play <b>TRIG 1–16</b>. A new TRIG replaces the previous chord; releasing an older TRIG does not cut the latest one. Start with <b>SHAPE BASE</b> and turn <b>COLOR</b> to choose DIATONIC, JAZZ or TENSION.</span><span data-l="fr">Fermez le menu, quittez l’enregistrement en grille et jouez <b>TRIG 1–16</b>. Un nouveau TRIG remplace l’accord précédent ; relâcher un ancien TRIG ne coupe pas le dernier. Commencez sur <b>SHAPE BASE</b> et tournez <b>COLOR</b> pour choisir DIATONIC, JAZZ ou TENSION.</span></li>
+          <li><span data-l="en">Hold a TRIG, then press <b>T1–T6</b>: each new available pad press plays the whole changed chord with a fresh attack, at the original TRIG velocity. The selected track stays the same. Holding the pad does not repeat the chord. The last pad pressed wins. Release it to keep the changed chord sounding, without another attack. With no TRIG held, press and hold T to prepare the next TRIG without changing the previous chord’s tail. Release T before playing a TRIG to cancel the preparation. Keep T held to apply the change to every new TRIG, whether T was pressed before or during a chord. After releasing T, later TRIGs return to their saved extension. <b>TRACK + T1–T6</b> still selects tracks.</span><span data-l="fr">Tenez un TRIG, puis appuyez sur <b>T1–T6</b> : chaque nouvel appui disponible rejoue l’accord modifié entier avec une nouvelle attaque, à la vélocité du TRIG initial. La piste sélectionnée reste la même. Maintenir le pad ne répète pas l’accord. Le dernier pad pressé prévaut. Relâchez-le pour conserver l’accord modifié, sans nouvelle attaque. Sans TRIG tenu, appuyez et maintenez T pour préparer le prochain TRIG sans modifier la queue de l’accord précédent. Relâchez T avant de jouer un TRIG pour annuler la préparation. Gardez T tenu pour appliquer le changement à chaque nouveau TRIG, que T ait été pressé avant ou pendant un accord. Après le relâchement de T, les TRIG suivants retrouvent leur extension enregistrée. <b>TRACK + T1–T6</b> sélectionne toujours les pistes.</span></li>
+          <li><span data-l="en">While holding a TRIG, read the played chord’s name on the screen, for example <b>Cmaj7</b> or <b>Em9</b>. The name follows the current palette and last pad change, and stays on the changed chord when you release the pad.</span><span data-l="fr">Pendant le maintien d’un TRIG, lisez le nom de l’accord joué à l’écran, par exemple <b>Cmaj7</b> ou <b>Em9</b>. Le nom suit la palette courante et le dernier changement de pad, et conserve l’accord modifié quand vous relâchez le pad.</span></li>
+        </ol>
+        <div class="tbl fluid"><table>
+          <thead><tr><th><span data-l="en">TRIG buttons</span><span data-l="fr">Boutons TRIG</span></th><th><span data-l="en">Degrees</span><span data-l="fr">Degrés</span></th><th>Octave</th></tr></thead>
+          <tbody><tr><th>1–7</th><td>I · II · III · IV · V · VI · VII</td><td>Root</td></tr><tr><th>8–14</th><td>I · II · III · IV · V · VI · VII</td><td>Root + 1</td></tr><tr><th>15–16</th><td>I · II</td><td>Root + 2</td></tr></tbody>
+        </table></div>
+        <div class="tbl fluid"><table>
+          <thead><tr><th>COLOR</th><th><span data-l="en">Palette</span><span data-l="fr">Palette</span></th><th><span data-l="en">Extensions</span><span data-l="fr">Extensions</span></th></tr></thead>
+          <tbody>
+            <tr><th>0–42</th><td>DIATONIC</td><td><span data-l="en">Extensions follow Scale. In C major, III with 9 gives Em7(♭9).</span><span data-l="fr">Les extensions suivent Scale. En do majeur, III avec 9 donne Mim7(♭9).</span></td></tr>
+            <tr><th>43–85</th><td>JAZZ</td><td><span data-l="en">Natural 9 and 13; ♯11 for major and dominant chords, 11 for minor and half-diminished chords. III with 9 in C major becomes Em9.</span><span data-l="fr">9 et 13 naturelles ; ♯11 sur majeurs et dominantes, 11 sur mineurs et semi-diminués. III avec 9 en do majeur devient Mim9.</span></td></tr>
+            <tr><th>86–127</th><td>TENSION</td><td><span data-l="en">JAZZ choices, with ♭9 and ♭13 on dominant chords. On G7: G7(♭9), G7(♯11), G7(♭13).</span><span data-l="fr">Choix JAZZ, avec ♭9 et ♭13 sur les dominantes. Sur Sol7 : Sol7(♭9), Sol7(♯11), Sol7(♭13).</span></td></tr>
+          </tbody>
+        </table></div>
+        <p><span data-l="en">The palettes choose tensions for the requested 9/11/13 level; TRI and 7 stay unchanged. JAZZ and TENSION can use notes outside Scale. These names describe the chosen intervals, not a requirement for a musical style.</span><span data-l="fr">Les palettes choisissent la tension du niveau 9/11/13 demandé ; TRI et 7 restent inchangés. JAZZ et TENSION peuvent utiliser des notes extérieures à Scale. Ces noms décrivent les intervalles choisis, pas une règle imposée à un style musical.</span></p>
+        <div class="tbl fluid"><table>
+          <thead><tr><th><span data-l="en">Pad</span><span data-l="fr">Pad</span></th><th><span data-l="en">While held in HARMONY</span><span data-l="fr">Pendant le maintien en HARMONY</span></th></tr></thead>
+          <tbody>
+            <tr><th>T1 / T2 / T3</th><td><span data-l="en">9 / 11 / 13, using the selected palette. The saved I–VII value is unchanged.</span><span data-l="fr">9 / 11 / 13, selon la palette sélectionnée. La valeur I–VII enregistrée reste intacte.</span></td></tr>
+            <tr><th>T4 · SUS7</th><td><span data-l="en">Fixed 7sus4: root, fourth, fifth, minor seventh. Independent of the saved extension and palette.</span><span data-l="fr">7sus4 fixe : fondamentale, quarte, quinte, septième mineure. Indépendant de l’extension enregistrée et de la palette.</span></td></tr>
+            <tr><th>T5 · PARALLEL</th><td><span data-l="en">Major or dominant becomes minor; minor becomes major. Keeps the root and extension level, then recalculates the tensions. With DIATONIC it uses the parallel major or natural-minor family, so notes can leave Scale.</span><span data-l="fr">Majeur ou dominante devient mineur ; mineur devient majeur. Garde la fondamentale et le niveau d’extension, puis recalcule les tensions. Avec DIATONIC, il utilise la famille majeure ou mineure naturelle parallèle : des notes peuvent donc sortir de Scale.</span></td></tr>
+            <tr><th>T6 · V7</th><td><span data-l="en">The dominant seventh of the played degree: C → G7. Release T6 to keep G7 sounding; press the original TRIG again to return to C. Independent of the extension and palette.</span><span data-l="fr">La septième dominante du degré joué : Do → Sol7. Relâchez T6 pour conserver Sol7 ; rejouez le TRIG initial pour revenir à Do. Indépendant de l’extension et de la palette.</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="tbl fluid"><table>
+          <thead><tr><th>SHAPE</th><th><span data-l="en">Voicing and balance</span><span data-l="fr">Disposition et balance</span></th></tr></thead>
+          <tbody>
+            <tr><th>BASE · 0–3</th><td><span data-l="en">Root position, with the extension above the octave and an even starting balance.</span><span data-l="fr">Position fondamentale, extension au-dessus de l’octave et balance de départ équilibrée.</span></td></tr>
+            <tr><th>CLS0–3 · 4–19</th><td><span data-l="en">Close voicings and successive inversions, with a balance for each position. Each four-value range selects the next inversion.</span><span data-l="fr">Dispositions resserrées et renversements successifs, avec une balance propre à chaque position. Chaque plage de quatre valeurs choisit le renversement suivant.</span></td></tr>
+            <tr><th>OPN0–3 · 20–37</th><td><span data-l="en">Open voicings with wider spacing and their own balance. Ranges: 20–23, 24–27, 28–31, 32–37. All requested voices remain in the mix within the engine’s pitch range.</span><span data-l="fr">Dispositions ouvertes avec davantage d’espace et leur propre balance. Plages : 20–23, 24–27, 28–31, 32–37. Toutes les voix demandées restent dans le mélange tant qu’elles sont dans la plage de hauteur du moteur.</span></td></tr>
+          </tbody>
+        </table></div>
+        <dl class="facts">
+          <div><dt><span data-l="en">Chord display</span><span data-l="fr">Accord affiché</span></dt><dd><span data-l="en">The banner names the harmony of the held TRIG on the selected CHORD track. A slash names the bass of an inversion; the second line lists omitted chord tones. HIGH LIMIT replaces that second line when the engine’s high-note protection limits the root or removes requested voices, so you may hear fewer notes than the named chord. Lower Root or choose SHAPE BASE to bring them back. PITCH/FINE still tune the whole chord but do not rename it. The banner is not a sequencer or MIDI chord monitor.</span><span data-l="fr">Le bandeau nomme l’harmonie du TRIG tenu sur la piste CHORD sélectionnée. Une barre oblique indique la basse d’un renversement ; la seconde ligne précise les notes omises. HIGH LIMIT remplace cette seconde ligne si la protection du moteur dans l’aigu limite la fondamentale ou retire des voix demandées : vous pouvez entendre moins de notes que l’accord nommé. Baissez Root ou choisissez SHAPE BASE pour les retrouver. PITCH/FINE accordent toujours l’ensemble, sans changer le nom affiché. Le bandeau ne suit pas les accords du séquenceur ou de l’entrée MIDI.</span></dd></div>
+          <div><dt><span data-l="en">MIDI chords</span><span data-l="fr">Accords MIDI</span></dt><dd><span data-l="en">In <b>FUNC + RETRIG</b>, set <b>MIDI to CHORD</b> on the CHORD track with <b>Keys ON</b>. Enable the track’s usual MIDI output and choose its output channel and destination as usual. Played TRIGs and sequenced notes send the chord’s three or four notes, including COLOR palettes, SHAPE voicings and HARMONY changes. <b>ROOT</b> keeps the original single-note output and is the default for existing and new patterns. Save the project to keep the choice. Notes keep the attack’s velocity; PITCH/FINE and SHAPE’s audio balance do not change MIDI notes or velocities. Knob and lock changes affect the next attack; they do not retune a held MIDI chord. Very high roots follow the CHORD engine’s upper limit; notes beyond MIDI 127 are omitted. Out-of-scale notes and other machines keep their original output. Incoming MIDI echo remains single-note; this mode covers the TRIG/pad keyboard and sequencer. MIDI may keep upper chord tones that the audio engine’s HIGH LIMIT protection removes.</span><span data-l="fr">Dans <b>FUNC + RETRIG</b>, réglez <b>MIDI sur CHORD</b> sur la piste CHORD avec <b>Keys ON</b>. Activez sa sortie MIDI habituelle et choisissez son canal et sa destination comme d’habitude. Les TRIG joués et les notes séquencées envoient les trois ou quatre notes de l’accord, avec les palettes COLOR, dispositions SHAPE et changements HARMONY. <b>ROOT</b> conserve la sortie d’une seule note et reste la valeur par défaut des anciens et nouveaux patterns. Sauvegardez le projet pour garder ce choix. Les notes gardent la vélocité de l’attaque ; PITCH/FINE et la balance audio de SHAPE ne changent ni notes ni vélocités MIDI. Les changements de potards et de locks s’appliquent à l’attaque suivante, sans réaccorder l’accord MIDI tenu. Les fondamentales très aiguës suivent le plafond du moteur CHORD ; les notes au-delà de MIDI 127 sont omises. Les notes hors gamme et les autres machines gardent leur sortie d’origine. La retransmission du MIDI entrant reste monophonique ; ce mode concerne le clavier TRIG/pads et le séquenceur. Le MIDI peut garder les voix aiguës retirées du son par la protection HIGH LIMIT.</span></dd></div>
+          <div><dt><span data-l="en">Four voices</span><span data-l="fr">Quatre voix</span></dt><dd><span data-l="en">TRI uses root/third/fifth; 7 adds the seventh. 9/11/13 uses root/third/seventh/tension. Extended half-diminished chords instead keep root/diminished fifth/seventh/tension and omit the third. PARALLEL and V7 are unavailable on diminished targets: the degree’s saved extension is played and named instead.</span><span data-l="fr">TRI utilise fondamentale/tierce/quinte ; 7 ajoute la septième. 9/11/13 utilise fondamentale/tierce/septième/tension. Les semi-diminués étendus gardent plutôt fondamentale/quinte diminuée/septième/tension et omettent la tierce. PARALLEL et V7 sont indisponibles sur les cibles diminuées : l’extension enregistrée du degré est alors jouée et affichée.</span></dd></div>
+          <div><dt><span data-l="en">Recording and saving</span><span data-l="fr">Enregistrement et sauvegarde</span></dt><dd><span data-l="en">In LIVE RECORDING, play TRIG chords and press T1–T6: the fresh attacks are recorded as notes with HARMONY parameter locks. Playback keeps the original TRIG chord and the later pad chord separate. A pad attack placed on the next step does not change the preceding chord. Recording over a step follows the normal note-recording rules, including replacement of its existing locks. Releasing a pad adds no attack or parameter lock. Preparing T without a held TRIG writes no lock. Every TRIG played with T held records that change; without a held pad, it records its degree’s I–VII setting. In GRID RECORDING, hold one or more steps and press a T pad to lock that change; press the same pad again to return those matching steps to I–VII. Changes use the sequencer’s step resolution, so the last change within a step wins. Save the project to keep the locks. HARMONY uses the pattern’s shared parameter-lock capacity. COLOR and SHAPE locks stay independent; I–VII is unchanged.</span><span data-l="fr">En LIVE RECORDING, jouez les accords TRIG puis appuyez sur T1–T6 : les nouvelles attaques s’enregistrent comme notes avec des P-locks HARMONY. La relecture distingue l’accord TRIG initial et celui du pad suivant. Une attaque de pad placée sur le pas suivant ne modifie pas l’accord précédent. Réenregistrer sur un pas suit les règles habituelles de prise de notes, dont le remplacement de ses locks existants. Relâcher un pad ne crée ni attaque ni P-lock. Préparer T sans TRIG tenu n’écrit aucun lock. Chaque TRIG joué avec T tenu enregistre ce changement ; sans pad tenu, il enregistre le réglage I–VII de son degré. En GRID RECORDING, maintenez un ou plusieurs pas puis appuyez sur un pad T pour verrouiller ce changement ; appuyez de nouveau sur le même pad pour remettre les pas correspondants sur I–VII. Les changements suivent la résolution en pas du séquenceur : le dernier changement dans un pas prévaut. Sauvegardez le projet pour conserver les locks. HARMONY utilise la capacité de P-locks partagée du pattern. Les locks COLOR et SHAPE restent indépendants ; I–VII reste intact.</span></dd></div>
+          <div><dt><span data-l="en">Controls</span><span data-l="fr">Commandes</span></dt><dd><span data-l="en">TRACK + T1–T6 track selection, mute and shortcuts retain the stock route. In grid recording, pads keep their normal function when no step is held. Keys OFF restores the normal chromatic TRIG keyboard, ordinary large-pad playing and retrig/arp. TRIG chords do not arpeggiate. Turning Keys OFF clears temporary pad changes.</span><span data-l="fr">La sélection par TRACK + T1–T6, mute et les raccourcis conservent le chemin d’origine. En grille, les pads gardent leur fonction habituelle lorsqu’aucun pas n’est tenu. Keys OFF retrouve le clavier chromatique TRIG ordinaire, le jeu habituel des grands pads et retrig/arp. Les accords TRIG ne sont pas arpégés. Désactiver Keys annule les changements temporaires des pads.</span></dd></div>
+          <div><dt><span data-l="en">Range and compatibility</span><span data-l="fr">Plage et compatibilité</span></dt><dd><span data-l="en">CHORD only; one chord per track. PITCH/FINE transpose the whole chord. High notes can reach the engine’s limit or lose upper voices; lower Root, for example to C2, for open voicings. Out-of-scale input notes retain the stock CHORD sound. Chord Keys combines with the full OS 2.0, including Model-TG, LFO+, the Syntakt engines, MACRO and ACID. The standalone track-filter mod remains incompatible. Samples OS is a separate installation.</span><span data-l="fr">CHORD uniquement ; un accord par piste. PITCH/FINE transpose l’accord entier. Les notes aiguës peuvent atteindre la limite du moteur ou perdre des voix supérieures ; baissez Root, par exemple à C2, pour les dispositions ouvertes. Les notes reçues hors gamme gardent le son CHORD d’origine. Chord Keys se combine avec tout l’OS 2.0, dont Model-TG, LFO+, les moteurs Syntakt, MACRO et ACID. Le filtre par piste autonome reste incompatible. L’OS Samples s’installe séparément.</span></dd></div>
+          <div><dt><span data-l="en">With Model-TG</span><span data-l="fr">Avec Model-TG</span></dt><dd><span data-l="en">On CHORD with Keys ON, use <b>Root</b> and <b>Scale</b> in <b>FUNC + RETRIG</b> to choose the keyboard notes. Model-TG’s Scale Lock remains available on other tracks and with Keys OFF. Attack, Filter, Resonance and the Sampler keep their own settings and parameter locks. Saved HARMONY locks from earlier Chord Keys versions still load.</span><span data-l="fr">Sur CHORD avec Keys ON, choisissez les notes du clavier avec <b>Root</b> et <b>Scale</b> dans <b>FUNC + RETRIG</b>. Scale Lock de Model-TG reste disponible sur les autres pistes et avec Keys OFF. Attack, Filtre, Résonance et le Sampler gardent leurs propres réglages et P-locks. Les locks HARMONY des versions précédentes de Chord Keys restent lisibles.</span></dd></div>
+          <div><dt><span data-l="en">Hardware report</span><span data-l="fr">Retour matériel</span></dt><dd><span data-l="en"><b>Nico reports testing Chord Keys 1.2 on his Model:Cycles, including with the other Cycles mods, on 7 October 2026.</b> That report covers version 1.2. The held-modifier and MIDI chord additions are experimental and await hardware testing. It is not an exhaustive test of every possible flasher selection. Chord Keys 2.1 in this OS is experimental: held pads, MIDI chords and this combination have not been tested on a Model:Cycles.</span><span data-l="fr"><b>Nico confirme avoir testé Chord Keys 1.2 sur son Model:Cycles, y compris avec les autres mods Cycles, le 7 octobre 2026.</b> Ce retour concerne la version 1.2. Les ajouts de maintien des modificateurs et d’accords MIDI sont expérimentaux et attendent un essai matériel. Il ne s’agit pas d’un essai exhaustif de chaque sélection possible dans le flasher. Chord Keys 2.1 dans cet OS est expérimental : les pads tenus, les accords MIDI et cette combinaison n’ont pas été testés sur un Model:Cycles.</span></dd></div>
+        </dl>
+        <p><span data-l="en">Chord Keys 2.1 is compatible with Modded Cycles OS 2.0, including LFO+, sample preview, Mod Settings and step record. This combined firmware is experimental and awaits hardware testing.</span><span data-l="fr">Chord Keys 2.1 est compatible avec Modded Cycles OS 2.0, dont LFO+, l’écoute des samples, Mod Settings et step record. Ce firmware combiné est expérimental et attend un essai matériel.</span></p>
+      </section>
+
+
       <section id="step-rec">
-        <h2><span class="n">10</span><span data-l="en">Step record</span><span data-l="fr">Step record</span></h2>
+        <h2><span class="n">11</span><span data-l="en">Step record</span><span data-l="fr">Step record</span></h2>
         <p class="lede"><span data-l="en">Enter the notes of a pattern one step at a time, at your own pace, with the sequencer stopped. You play a note, it lands on the blinking step, and the next step blinks.</span><span data-l="fr">Entrez les notes d'un pattern pas à pas, à votre rythme, séquenceur à l'arrêt. Vous jouez une note, elle se pose sur le pas qui clignote, et le pas suivant se met à clignoter.</span></p>
         <figure class="fig">
           <div data-device data-scenes="rec @Step-rec:/>ON | rec,s1 @logo | rec,s1,t1 @logo | rec,s2 @logo | rec,s2,play @logo | rec,s3 @logo | rec,s3,stop @logo | rec,s2 @logo" data-ms="1100"></div>
@@ -463,12 +521,13 @@
           <div><dt><span data-l="en">MIDI</span><span data-l="fr">MIDI</span></dt><dd><span data-l="en">notes from a MIDI keyboard are recorded too, on the track they play.</span><span data-l="fr">les notes d'un clavier MIDI sont enregistrées aussi, sur la piste qu'elles jouent.</span></dd></div>
           <div><dt><span data-l="en">Grid recording</span><span data-l="fr">Grid recording</span></dt><dd><span data-l="en">a single press on REC still turns grid recording on and off, and REC + PLAY still starts live recording. The first of the two presses turns grid recording on for an instant.</span><span data-l="fr">un seul appui sur REC allume et éteint toujours le grid recording, et REC + PLAY lance toujours le live rec. Le premier des deux appuis allume le grid recording un instant.</span></dd></div>
           <div><dt><span data-l="en">It stops when</span><span data-l="fr">Il s'arrête si</span></dt><dd><span data-l="en">the sequencer starts (a MIDI Start, for example) or grid recording is turned on: the sound comes back as it was. If you change pattern, step record stops and the sound of the pattern you left keeps the knob changes.</span><span data-l="fr">le séquenceur démarre (un Start MIDI, par exemple) ou le grid recording est allumé : le son revient comme avant. Si vous changez de pattern, le step record s'arrête et le son du pattern quitté garde les changements de potards.</span></dd></div>
+          <div><dt><span data-l="en">With Chord Keys</span><span data-l="fr">Avec Chord Keys</span></dt><dd><span data-l="en">a HARMONY pad held while the note is entered is stored on that step. The test of 20 October 2026 was on the previous writer; this path still needs a check on the machine. Without Chord Keys, what is written stays what live recording writes.</span><span data-l="fr">un pad HARMONY tenu pendant la saisie de la note est enregistré sur ce pas. L’essai du 20 octobre 2026 portait sur la voie d’écriture précédente ; ce chemin reste à vérifier sur la machine. Sans Chord Keys, ce qui est écrit reste ce que le live rec écrit.</span></dd></div>
           <div><dt><span data-l="en">Tested</span><span data-l="fr">Testé</span></dt><dd><span data-l="en">on a Model:Cycles (20 October 2026), with everything else in the OS. In the emulator too, on the OS's own code: the keys, notes from the TRIG keys and pads, several notes on one step, PLAY and STOP, the p-locks, the sound restored, the lights. What is written is byte for byte what live recording writes for the same notes.</span><span data-l="fr">sur un Model:Cycles (20 octobre 2026), avec tout le reste de l'OS. En émulation aussi, sur le code même de l'OS : les touches, les notes des touches TRIG et des pads, plusieurs notes sur un pas, PLAY et STOP, les p-locks, le son rétabli, les voyants. Ce qui est écrit est octet pour octet ce que le live rec écrit pour les mêmes notes.</span></dd></div>
         </dl>
       </section>
 
       <section id="tempo">
-        <h2><span class="n">11</span><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></h2>
+        <h2><span class="n">12</span><span data-l="en">Tempo up to 546 BPM</span><span data-l="fr">Tempo jusqu'à 546 BPM</span></h2>
         <p class="lede"><span data-l="en">The tempo goes up to 546.0 BPM instead of 300.0, for drum and bass at double time, gabber, speedcore or very fast retrigs.</span><span data-l="fr">Le tempo monte jusqu'à 546,0 BPM au lieu de 300,0 : drum and bass en double temps, gabber, speedcore ou retrigs très rapides.</span></p>
         <ol>
           <li><span data-l="en">Press <b>TEMPO</b> and turn the knob as usual: above 300.0 it carries on, up to 546.0.</span><span data-l="fr">Appuyez sur <b>TEMPO</b> et tournez le potard comme d'habitude : au-delà de 300,0, il continue, jusqu'à 546,0.</span></li>
@@ -484,7 +543,7 @@
       </section>
 
       <section id="boot-anim">
-        <h2><span class="n">12</span><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></h2>
+        <h2><span class="n">13</span><span data-l="en">Startup animation</span><span data-l="fr">Animation de démarrage</span></h2>
         <p class="lede"><span data-l="en">When you switch the Model:Cycles on, the screen shows the modded-cycles logo instead of the original tile animation.</span><span data-l="fr">Quand vous allumez le Model:Cycles, l'écran montre le logo modded-cycles à la place de l'animation de carreaux d'origine.</span></p>
         <figure class="fig"><img src="../assets/boot-anim.gif" width="512" height="256" style="max-width:100%;height:auto;image-rendering:pixelated;border-radius:6px" alt="" loading="lazy"></figure>
         <ol>
@@ -499,7 +558,7 @@
       </section>
 
       <section id="macro">
-        <h2><span class="n">13</span><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></h2>
+        <h2><span class="n">14</span><span data-l="en">MACRO machine</span><span data-l="fr">Machine MACRO</span></h2>
         <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/pichenettes/eurorack" target="_blank" rel="noopener">eurorack</a> <span data-l="en">by Émilie Gillet</span><span data-l="fr">d'Émilie Gillet</span> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span></p>
         <p class="lede"><span data-l="en">One extra machine, MACRO, holds the 47 synthesis models of Braids, Émilie Gillet's open-source macro-oscillator: her own code, compiled for the Model:Cycles. In the emulator, it computes exactly the same samples as that code on a computer.</span><span data-l="fr">Une machine ajoutée, MACRO, réunit les 47 modèles de synthèse de Braids, le macro-oscillateur libre d'Émilie Gillet : son propre code, compilé pour le Model:Cycles. En émulation, il calcule exactement les mêmes échantillons que ce code sur un ordinateur.</span></p>
         <ol>
@@ -536,7 +595,7 @@
       </section>
 
       <section id="multiline">
-        <h2><span class="n">14</span><span data-l="en">Multi-line browser</span><span data-l="fr">Navigateur sur plusieurs lignes</span></h2>
+        <h2><span class="n">15</span><span data-l="en">Multi-line browser</span><span data-l="fr">Navigateur sur plusieurs lignes</span></h2>
         <p class="by"><span data-l="en">From an idea and a script by a community member</span><span data-l="fr">D'après une idée et un script d'un membre de la communauté</span></p>
         <p class="lede"><span data-l="en">The browser shows three names at once in a small font, instead of one in big letters: you see what comes before and after while you look for a sound.</span><span data-l="fr">Le navigateur affiche trois noms à la fois en petite police, au lieu d'un seul en gros caractères : vous voyez ce qui précède et ce qui suit pendant que vous cherchez un son.</span></p>
         <div class="scroll fig">
@@ -566,7 +625,7 @@
       </section>
 
       <section id="level-pan">
-        <h2><span class="n">15</span><span data-l="en">Volume and pan as numbers</span><span data-l="fr">Volume et pan en chiffres</span></h2>
+        <h2><span class="n">16</span><span data-l="en">Volume and pan as numbers</span><span data-l="fr">Volume et pan en chiffres</span></h2>
         <p class="lede"><span data-l="en">On the main screen, the volume and the pan of the selected track show as numbers while you turn LEVEL/DATA.</span><span data-l="fr">Sur l'écran principal, le volume et le pan de la piste sélectionnée s'affichent en chiffres pendant que vous tournez LEVEL/DATA.</span></p>
         <ol>
           <li><span data-l="en">On the main screen, turn <b>LEVEL/DATA</b>: the track's volume (0 to 127) shows in small digits in place of the loudspeaker, left of the volume bar.</span><span data-l="fr">Sur l'écran principal, tournez <b>LEVEL/DATA</b> : le volume de la piste (0 à 127) s'affiche en petits chiffres à la place du haut-parleur, à gauche de la barre de volume.</span></li>
@@ -582,7 +641,7 @@
       </section>
 
       <section id="trigless">
-        <h2><span class="n">16</span><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></h2>
+        <h2><span class="n">17</span><span data-l="en">Dimmed trigless trigs</span><span data-l="fr">Trigless trigs atténués</span></h2>
         <p class="lede"><span data-l="en">A trig key that holds a trigless trig lights dimmed, so you can tell it from a note trig at a glance.</span><span data-l="fr">Une touche de pas qui porte un trigless trig s'allume atténuée : on la distingue d'un trig de note d'un coup d'œil.</span></p>
         <ol>
           <li><span data-l="en">Place a trigless trig as usual: hold <b>FUNC</b> and press a trig key on an empty step.</span><span data-l="fr">Posez un trigless trig comme d'habitude : tenez <b>FUNC</b> et appuyez sur une touche de pas, sur un pas vide.</span></li>
@@ -597,7 +656,7 @@
       </section>
 
       <section id="midi-live-both">
-        <h2><span class="n">17</span><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></h2>
+        <h2><span class="n">18</span><span data-l="en">Live MIDI OUT + THRU toggle</span><span data-l="fr">Basculer MIDI OUT + THRU en direct</span></h2>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">AveyCole</a></p>
         <p class="lede"><span data-l="en">THR keeps forwarding incoming MIDI, and a shortcut on the machine decides whether the Cycles' own MIDI goes out too. The original OUT/THR menu doesn't change.</span><span data-l="fr">THR relaie toujours le MIDI reçu, et un raccourci sur la machine décide si le MIDI du Cycles sort aussi. Le menu OUT/THR d'origine ne change pas.</span></p>
         <ol>
@@ -617,7 +676,7 @@
       </section>
 
       <section id="acid">
-        <h2><span class="n">18</span><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></h2>
+        <h2><span class="n">19</span><span data-l="en">ACID machine</span><span data-l="fr">Machine ACID</span></h2>
         <p class="by"><span data-l="en">Based on</span><span data-l="fr">D'après</span> <a href="https://github.com/RobinSchmidt/Open303" target="_blank" rel="noopener">Open303</a> <span data-l="en">by Robin Schmidt</span><span data-l="fr">de Robin Schmidt</span> · <span data-l="en">MIT license</span><span data-l="fr">licence MIT</span></p>
         <p class="lede"><span data-l="en">One extra machine, ACID, is an acid bass in the style of the TB-303: a saw or square wave through a resonant filter with its own envelope and slide, and a drive to dirty it up. Its sound follows Robin Schmidt's open-source Open303 model, rewritten for the Model:Cycles' processor. Slides come from your trigs, so a 303 line is programmed with the sequencer you already know.</span><span data-l="fr">Une machine ajoutée, ACID, est une basse acide à la manière de la TB-303 : une onde en dents de scie ou carrée dans un filtre résonant avec sa propre enveloppe et le slide, plus une saturation pour la salir. Son son suit le modèle libre Open303 de Robin Schmidt, réécrit pour le processeur du Model:Cycles. Le slide vient de vos trigs : une ligne de 303 se programme avec le séquenceur que vous connaissez déjà.</span></p>
         <ol>
@@ -651,7 +710,7 @@
       </section>
 
       <section id="lfo-plus">
-        <h2><span class="n">19</span><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></h2>
+        <h2><span class="n">20</span><span data-l="en">LFO 2, 3, 4</span><span data-l="fr">LFO 2, 3, 4</span></h2>
         <p class="by"><span data-l="en">Idea and first version by DavidCaruso (Model-TG-VA-DR-v1), rewritten for this project</span><span data-l="fr">Idée et première version de DavidCaruso (Model-TG-VA-DR-v1), réécrit pour ce projet</span></p>
         <p class="lede"><span data-l="en">Each track gets three more LFOs next to the original one, so up to four LFOs modulate a track at once. With or without Model-TG.</span><span data-l="fr">Chaque piste reçoit trois LFO de plus à côté de celui d'origine : jusqu'à quatre LFO modulent une piste en même temps. Avec ou sans Model-TG.</span></p>
         <ol>
@@ -673,7 +732,7 @@
 
       <section id="mod-settings">
         <span id="usb6"></span>
-        <h2><span class="n">20</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
+        <h2><span class="n">21</span><span data-l="en">Mod Settings: USB audio, stereo or 6 tracks</span><span data-l="fr">Mod Settings : audio USB, stéréo ou 6 pistes</span></h2>
         <p class="by"><span data-l="en">6-channel audio based on</span><span data-l="fr">Audio 6 canaux d'après</span> <a href="https://github.com/scottmetoyer/ms-multi-output" target="_blank" rel="noopener">ms-multi-output</a> <span data-l="en">by</span><span data-l="fr">de</span> scottmetoyer</p>
         <p class="lede"><span data-l="en">The SETTINGS menu gets a last line, <b>Mods</b>: it opens <b>Mod Settings</b>, the page for the mods' own settings. Its first setting, <b>USB Audio</b>, sends the computer either the stereo mix (2CH, as stock) or each track on its own channel (6CH), to record six stems. No reflash needed to change it.</span><span data-l="fr">Le menu SETTINGS gagne une dernière ligne, <b>Mods</b> : elle ouvre <b>Mod Settings</b>, la page des réglages des mods. Son premier réglage, <b>USB Audio</b>, envoie à l'ordinateur soit le mix stéréo (2CH, comme d'origine), soit chaque piste sur son propre canal (6CH), pour enregistrer six pistes séparées. Pas besoin de reflasher pour en changer.</span></p>
         <ol>
@@ -733,7 +792,7 @@
       </section>
 
       <section id="mods-on-samples">
-        <h2><span class="n">21</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
+        <h2><span class="n">22</span><span data-l="en">The OS on a Model:Samples</span><span data-l="fr">L'OS sur un Model:Samples</span></h2>
         <p class="lede"><span data-l="en">A Model:Samples runs the same Modded Cycles OS as a Model:Cycles. Whatever the machine, the flasher installs that OS; on a Model:Samples, the <a href="#model-tg">Sampler</a> plays your samples.</span><span data-l="fr">Un Model:Samples fait tourner le même Modded Cycles OS qu'un Model:Cycles. Quelle que soit la machine, le flasher installe cet OS ; sur un Model:Samples, le <a href="#model-tg">Sampler</a> joue vos samples.</span></p>
         <ol>
           <li><span data-l="en">Back up your samples and projects with Elektron Transfer, then close Transfer.</span><span data-l="fr">Sauvegardez vos samples et vos projets avec Elektron Transfer, puis fermez Transfer.</span></li>
@@ -757,7 +816,7 @@
       </section>
 
       <section id="samples">
-        <h2><span class="n">22</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
+        <h2><span class="n">23</span><span data-l="en">Samples OS</span><span data-l="fr">OS Samples</span></h2>
         <p class="lede"><span data-l="en">The Model:Cycles starts as a Model:Samples: you load and play your own samples, managed with Elektron Transfer.</span><span data-l="fr">Le Model:Cycles démarre en Model:Samples : vous chargez et jouez vos propres samples, gérés avec Elektron Transfer.</span></p>
         <p><span data-l="en">The flasher puts the official Model:Samples OS inside your Model:Cycles firmware file:</span><span data-l="fr">Le flasher place l'OS officiel du Model:Samples dans le fichier firmware de votre Model:Cycles :</span></p>
         <dl class="layers fig">
@@ -791,7 +850,7 @@
       </section>
 
       <section id="outside">
-        <h2><span class="n">23</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
+        <h2><span class="n">24</span><span data-l="en">Not in this OS</span><span data-l="fr">Pas dans cet OS</span></h2>
         <p class="lede"><span data-l="en">These features are not part of Modded Cycles OS 2.0. Their pages stay here for reference; developers can still build them from the command line.</span><span data-l="fr">Ces fonctions ne font pas partie du Modded Cycles OS 2.0. Leurs pages restent ici pour mémoire ; les développeurs peuvent toujours les construire en ligne de commande.</span></p>
         <ul>
           <li><span data-l="en"><a href="#track-filter">Per-track filter</a>: it shares its place in the sound with LFO 2, 3, 4 and does not work with Model-TG; it comes back once Model-TG's side is replaced.</span><span data-l="fr"><a href="#track-filter">Filtre par piste</a> : il partage sa place dans le son avec LFO 2, 3, 4 et ne marche pas avec Model-TG ; il reviendra quand la partie Model-TG sera remplacée.</span></li>
@@ -801,7 +860,7 @@
       </section>
 
       <section id="track-filter">
-        <h2><span class="n">24</span><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></h2>
+        <h2><span class="n">25</span><span data-l="en">Per-track filter</span><span data-l="fr">Filtre par piste</span></h2>
         <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> It keeps its settings in the same place of the sound as <a href="#lfo-plus">LFO 2, 3, 4</a>, and does not work with Model-TG: it comes back once Model-TG's side is replaced. Developers can still build it from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> Il range ses réglages au même endroit du son que <a href="#lfo-plus">LFO 2, 3, 4</a>, et ne marche pas avec Model-TG : il reviendra quand la partie Model-TG sera remplacée. Les développeurs peuvent toujours le construire en ligne de commande.</span></p>
         <p class="lede"><span data-l="en">A filter on every track, like on a DJ mixer: turn one way for a low-pass, the other way for a high-pass; in the centre the sound is left untouched. The Model:Samples' range, with resonance and an envelope.</span><span data-l="fr">Un filtre sur chaque piste, comme sur une table de mixage DJ : d'un côté un passe-bas, de l'autre un passe-haut ; au centre, le son n'est pas touché. La plage du Model:Samples, avec résonance et enveloppe.</span></p>
         <figure class="fig">
@@ -824,7 +883,7 @@
       </section>
 
       <section id="midi-both">
-        <h2><span class="n">25</span><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></h2>
+        <h2><span class="n">26</span><span data-l="en">MIDI OUT while in THRU</span><span data-l="fr">MIDI OUT pendant THRU</span></h2>
         <p class="note"><span data-l="en"><b>Not part of Modded Cycles OS 2.0.</b> The <a href="#midi-live-both">Live MIDI OUT + THRU toggle</a>, which is in the OS, does the same when switched on, and can be switched off. Developers can still build this one from the command line.</span><span data-l="fr"><b>Ne fait pas partie du Modded Cycles OS 2.0.</b> <a href="#midi-live-both">Basculer MIDI OUT + THRU en direct</a>, qui est dans l'OS, fait la même chose une fois activé, et se désactive. Les développeurs peuvent toujours construire celui-ci en ligne de commande.</span></p>
         <p class="by"><span data-l="en">By</span><span data-l="fr">Par</span> <a href="https://github.com/AveyCole/Modded-Cycles" target="_blank" rel="noopener">AveyCole</a></p>
         <p class="lede"><span data-l="en">With THR selected, the Model:Cycles forwards what arrives on its MIDI IN and also sends its own MIDI. Handy in the middle of a MIDI chain: what comes in goes on, and the Cycles still plays the devices after it.</span><span data-l="fr">Avec THR choisi, le Model:Cycles relaie ce qui arrive sur son MIDI IN et envoie aussi son propre MIDI. Pratique au milieu d'une chaîne MIDI : ce qui entre continue son chemin, et le Cycles joue toujours les appareils qui le suivent.</span></p>
@@ -842,13 +901,13 @@
       </section>
 
       <section id="stock">
-        <h2><span class="n">26</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
+        <h2><span class="n">27</span><span data-l="en">Back to stock</span><span data-l="fr">Revenir à l'origine</span></h2>
         <p><span data-l="en">The <b>Official firmware</b> tab of the flasher sends your OS file unchanged, over USB, like a normal update. It is also a good rehearsal before a first install: it checks the cable and the setup without changing anything.</span><span data-l="fr">L'onglet <b>Firmware officiel</b> du flasher renvoie votre fichier d'OS sans le modifier, par USB, comme une mise à jour normale. C'est aussi une bonne répétition avant une première installation : elle vérifie le câble et l'installation sans rien changer.</span></p>
         <p><span data-l="en">First set the tracks that use an added machine (7 to 14: the Sampler, the Syntakt engines, MACRO, ACID) back to an original one (Kick to Chord).</span><span data-l="fr">Remettez d'abord sur une machine d'origine (de Kick à Chord) les pistes qui utilisent une machine ajoutée (7 à 14 : le Sampler, les moteurs du Syntakt, MACRO, ACID).</span></p>
       </section>
 
       <section id="recovery">
-        <h2><span class="n">27</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
+        <h2><span class="n">28</span><span data-l="en">Recovery</span><span data-l="fr">Secours</span></h2>
         <p class="lede"><span data-l="en">If the Model:Cycles no longer starts, its startup menu can always reinstall the OS: it lives in an area that updates never write.</span><span data-l="fr">Si le Model:Cycles ne démarre plus, son menu de démarrage peut toujours réinstaller l'OS : il vit dans une zone que les mises à jour n'écrivent jamais.</span></p>
         <figure class="fig">
           <div data-device data-scenes="func @logo | func,mainvol | s4 @READY TO/>RECEIVE" data-ms="1300"></div>
@@ -862,7 +921,7 @@
       </section>
 
       <section id="trouble">
-        <h2><span class="n">28</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
+        <h2><span class="n">29</span><span data-l="en">Troubleshooting</span><span data-l="fr">Dépannage</span></h2>
         <div class="faq">
           <details>
             <summary><span data-l="en">Nothing happens on the Model:Cycles screen</span><span data-l="fr">Rien ne se passe sur l'écran du Model:Cycles</span></summary>
@@ -928,8 +987,8 @@
   </div>
 </footer>
 
-<script src="../assets/release.js?v=2026-10-20-02"></script>
-<script src="../assets/cycles.js?v=2026-10-20-02"></script>
-<script src="../assets/site.js?v=2026-10-20-02"></script>
+<script src="../assets/release.js?v=2026-11-03-01"></script>
+<script src="../assets/cycles.js?v=2026-11-03-01"></script>
+<script src="../assets/site.js?v=2026-11-03-01"></script>
 </body>
 </html>
