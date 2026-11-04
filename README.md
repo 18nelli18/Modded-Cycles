@@ -46,6 +46,7 @@ sends it to the machine over USB. Going back to the official firmware is one cli
 | **ACID machine** | Machine 14: an acid bass in the style of the TB-303, with cutoff, resonance, env mod, drive, saw or square, and slides from your trigs. | [RobinSchmidt/Open303](https://github.com/RobinSchmidt/Open303), MIT | ✅ Tested |
 | **LFO 2, 3, 4** | Three more LFOs per track: on the LFO page, press `LFO` again. LFO 2 is saved with the sound and can be p-locked. | After DavidCaruso | ✅ Tested |
 | **Arpeggiator** | Hold several notes with `RETRIG` and they arpeggiate; `FUNC` + `RETRIG` sets direction and range, saved with the pattern. | This project | ✅ Tested |
+| **Chord Keys** | On a CHORD track, `FUNC` + `RETRIG` turns on Keys: TRIG 1–16 play diatonic chords, T1–T6 change HARMONY, and MIDI can send the chord. | Nico Heuser | 🧪 Experimental |
 | **Step record** | Sequencer stopped, press `REC` twice: each note you play (TRIG keys, pads, MIDI) lands on the blinking step. `PLAY` skips, `STOP` goes back; knobs turned first become p-locks. | This project | ✅ Tested |
 | **Easier trig removal** | A quick press on a step that holds a trig removes it, instead of opening it as a hold. | This project | ✅ Tested |
 | **Trig preview** | Sequencer stopped or paused: hold a step and press `PAGE` to hear it. | drumkilla, via Model-TG | ✅ Tested |
@@ -64,8 +65,8 @@ The added machines come after Chord, always in this order: 07 Sampler, 08 SDVtg,
 12 SYSwm, 13 MACRO, 14 ACID.
 
 **Status of the OS itself: Experimental.** Every feature was checked in an emulator that runs the OS's own code,
-and most were tested on a real Model:Cycles on their own, but this exact firmware (version 2.0) has not run on a
-machine yet. The status column above is the status of each feature.
+and most were tested on a real Model:Cycles on their own, but this exact firmware (version 2.0, with Chord Keys)
+has not run on a machine yet. The status column above is the status of each feature.
 
 Every feature, every key combination and every limit is written up in [FEATURES.md](FEATURES.md). The guide on the
 website explains each one step by step, with the buttons to press.
@@ -73,12 +74,10 @@ website explains each one step by step, with the buttons to press.
 ### Not in the OS, and why
 
 - **Per-track filter**: stores its settings where LFO 2, 3, 4 store theirs, and does not work with Model-TG. It
-  comes back once the Sampler side is rewritten.
+  comes back once the Sampler side is rewritten. It also does not install with Chord Keys.
 - **Optimised OS** (the same sound with far less processor work): not compatible with the Sampler, MACRO, ACID and
   the Syntakt engines yet. Porting it to the OS is the next job.
 - **MIDI OUT while in THRU**: the live toggle above does the same and more.
-- **Chord Keys** was removed from the project on 18/10/2026 because of conflicts with the rest. Thanks to Nico
-  Heuser for it; its code stays in the git history.
 
 Developers can still build any of these from the command line (see [BUILD.md](BUILD.md)).
 

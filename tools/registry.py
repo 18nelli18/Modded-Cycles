@@ -50,6 +50,8 @@ ENGINE = re.compile(r"^(syntakt-(?:tg-)?)(?:sd|cp|toy|bits|swarm|meter|profile)(
 
 # Déclaré à la main, d'après les notes : ce que les écritures ne montrent pas (octets des structures sauvegardées).
 DECLARED = (
+    ("chord-keys", "en-tête de pattern : signature +32..35 et configuration +40..63 ; lane de lock RAM27, "
+                   "ID disque33. Les mots du SON26/27 restent à Model-TG ; LFO2 utilise RAM28..32", "notes/42 §28"),
     ("arp", "octet +512 de chaque piste dans le pattern : sens de l'arpège et octaves (inutilisé par l'OS, sauvegardé "
             "avec le pattern)", "notes/32 §4"),
     ("lfo-plus", "octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; mémoire "

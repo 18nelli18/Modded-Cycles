@@ -6,10 +6,10 @@ Adresses : VA de l'OS 1.13 (la section 3 commence en `0x40000400`). Un mod qui v
 
 ## En bref
 
-- 283 tweaks, 31 778 écritures.
-- Masques de sprites libérables : 164 (35 960 o), dont 54 pris (18 384 o) et **110 libres (17 576 o)**.
-- Crochets sur l'OS : 102 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
-- Pointeurs réécrits : 58 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
+- 284 tweaks, 31 926 écritures.
+- Masques de sprites libérables : 164 (35 960 o), dont 99 pris (27 832 o) et **65 libres (8 128 o)**.
+- Crochets sur l'OS : 125 adresses détournées, dont 56 à l'identique par des mods de familles différentes.
+- Pointeurs réécrits : 62 adresses. Écritures dans des octets 0xFF hors masques : 14 zones.
 - Charges utiles ajoutées après l'OS : 262 tweaks ; place restante au §3.
 
 ## 1. Masques de sprites libérés
@@ -26,7 +26,7 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40172608` | `0x400b0544` | pris (268/376 o) | mod-settings (268 o) |
 | `0x40179730` | `0x400af64a` | pris (176/376 o) | mod-settings (176 o) |
 | `0x40182b38` | `0x400adfda` | pris (370/376 o) | step-rec (370 o) |
-| `0x40182e28` | `0x400adfba` | pris (372/376 o) | step-rec (372 o) |
+| `0x40182e28` | `0x400adfba` | pris (300/376 o) | step-rec (300 o) |
 | `0x40183118` | `0x400adf9e` | pris (292/376 o) | sample-preview (292 o), sample-preview-st (292 o) |
 | `0x40185018` | `0x400adba8` | pris (300/376 o) | sample-preview (300 o), sample-preview-st (300 o) |
 | `0x40185968` | `0x400ada00` | pris (332/376 o) | sample-preview (332 o), sample-preview-st (332 o) |
@@ -42,78 +42,78 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x401904b4` | `0x400ac784` | pris (370/376 o) | multiline-browser (370 o) |
 | `0x40192734` | `0x400ac2b2` | pris (318/376 o) | trigless-dim (318 o) |
 
-### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 7 pris, 35 libres (6 720 o)
+### 48×22 : 42 masques de 192 o (copie gardée `0x4014b364`) : 41 pris, 1 libres (192 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x40152d38` | `0x400b9726` | libre | |
-| `0x401592bc` | `0x400b7404` | libre | |
-| `0x4015943c` | `0x400b73e4` | libre | |
-| `0x4015f38c` | `0x400b504a` | libre | |
-| `0x40165fec` | `0x400b28b4` | libre | |
-| `0x40168a84` | `0x400b1bc0` | libre | |
+| `0x40152d38` | `0x400b9726` | pris (plein) | chord-keys (192 o) |
+| `0x401592bc` | `0x400b7404` | pris (plein) | chord-keys (192 o) |
+| `0x4015943c` | `0x400b73e4` | pris (plein) | chord-keys (192 o) |
+| `0x4015f38c` | `0x400b504a` | pris (plein) | chord-keys (192 o) |
+| `0x40165fec` | `0x400b28b4` | pris (plein) | chord-keys (192 o) |
+| `0x40168a84` | `0x400b1bc0` | pris (plein) | chord-keys (192 o) |
 | `0x40168da4` | `0x400b1b32` | libre | |
-| `0x4016bcd8` | `0x400b12fe` | libre | |
-| `0x4016dab8` | `0x400b0f78` | libre | |
-| `0x4016fae8` | `0x400b0b20` | libre | |
-| `0x40170c48` | `0x400b08da` | libre | |
-| `0x40171a48` | `0x400b06ec` | libre | |
-| `0x40172a68` | `0x400b0508` | libre | |
-| `0x40172be8` | `0x400b04ec` | libre | |
-| `0x401736c8` | `0x400b036c` | libre | |
-| `0x40177f28` | `0x400af962` | libre | |
-| `0x40178708` | `0x400af812` | libre | |
-| `0x40178fc0` | `0x400af6e2` | libre | |
-| `0x401792b0` | `0x400af6a6` | libre | |
-| `0x40179430` | `0x400af686` | libre | |
-| `0x401795b0` | `0x400af66a` | libre | |
-| `0x40179b18` | `0x400af60e` | libre | |
-| `0x4017c97c` | `0x400aee4e` | libre | |
-| `0x401829b8` | `0x400adff6` | libre | |
-| `0x40183408` | `0x400adf7e` | libre | |
-| `0x40184808` | `0x400adc40` | libre | |
-| `0x40184af8` | `0x400adc04` | libre | |
-| `0x40184c78` | `0x400adbe4` | libre | |
+| `0x4016bcd8` | `0x400b12fe` | pris (plein) | chord-keys (192 o) |
+| `0x4016dab8` | `0x400b0f78` | pris (190/192 o) | chord-keys (190 o) |
+| `0x4016fae8` | `0x400b0b20` | pris (plein) | chord-keys (192 o) |
+| `0x40170c48` | `0x400b08da` | pris (plein) | chord-keys (192 o) |
+| `0x40171a48` | `0x400b06ec` | pris (plein) | chord-keys (192 o) |
+| `0x40172a68` | `0x400b0508` | pris (plein) | chord-keys (192 o) |
+| `0x40172be8` | `0x400b04ec` | pris (plein) | chord-keys (192 o) |
+| `0x401736c8` | `0x400b036c` | pris (190/192 o) | chord-keys (190 o) |
+| `0x40177f28` | `0x400af962` | pris (180/192 o) | chord-keys (180 o) |
+| `0x40178708` | `0x400af812` | pris (plein) | chord-keys (192 o) |
+| `0x40178fc0` | `0x400af6e2` | pris (190/192 o) | chord-keys (190 o) |
+| `0x401792b0` | `0x400af6a6` | pris (plein) | chord-keys (192 o) |
+| `0x40179430` | `0x400af686` | pris (plein) | chord-keys (192 o) |
+| `0x401795b0` | `0x400af66a` | pris (191/192 o) | chord-keys (191 o) |
+| `0x40179b18` | `0x400af60e` | pris (plein) | chord-keys (192 o) |
+| `0x4017c97c` | `0x400aee4e` | pris (189/192 o) | chord-keys (189 o) |
+| `0x401829b8` | `0x400adff6` | pris (190/192 o) | chord-keys (190 o) |
+| `0x40183408` | `0x400adf7e` | pris (plein) | chord-keys (192 o) |
+| `0x40184808` | `0x400adc40` | pris (plein) | chord-keys (192 o) |
+| `0x40184af8` | `0x400adc04` | pris (plein) | chord-keys (192 o) |
+| `0x40184c78` | `0x400adbe4` | pris (plein) | chord-keys (192 o) |
 | `0x40187528` | `0x400ad742` | pris (190/192 o) | mod-settings (190 o) |
 | `0x401876a8` | `0x400ad726` | pris (161/192 o) | mod-settings (161 o) |
 | `0x40188f98` | `0x400ad3a0` | pris (104/192 o) | mod-settings (104 o) |
 | `0x4018a608` | `0x400ad1c6` | pris (166/192 o) | step-rec (166 o) |
-| `0x4018b9c8` | `0x400ad048` | libre | |
-| `0x4018bb48` | `0x400ad028` | libre | |
-| `0x4018cbc8` | `0x400acdce` | libre | |
-| `0x4018d038` | `0x400acd92` | libre | |
+| `0x4018b9c8` | `0x400ad048` | pris (plein) | chord-keys (192 o) |
+| `0x4018bb48` | `0x400ad028` | pris (189/192 o) | chord-keys (189 o) |
+| `0x4018cbc8` | `0x400acdce` | pris (plein) | chord-keys (192 o) |
+| `0x4018d038` | `0x400acd92` | pris (plein) | chord-keys (192 o) |
 | `0x4018d798` | `0x400acd3a` | pris (152/192 o) | step-rec (152 o) |
 | `0x4018f80c` | `0x400ac894` | pris (128/192 o) | step-rec (128 o) |
 | `0x40190184` | `0x400ac7e0` | pris (100/192 o) | step-rec (100 o) |
-| `0x40190334` | `0x400ac7a4` | libre | |
-| `0x4019089c` | `0x400ac748` | libre | |
-| `0x40192a24` | `0x400ac292` | libre | |
+| `0x40190334` | `0x400ac7a4` | pris (plein) | chord-keys (192 o) |
+| `0x4019089c` | `0x400ac748` | pris (plein) | chord-keys (192 o) |
+| `0x40192a24` | `0x400ac292` | pris (186/192 o) | chord-keys (186 o) |
 
-### 35×35 : 19 masques de 280 o (copie gardée `0x4014a660`) : 15 pris, 4 libres (1 120 o)
+### 35×35 : 19 masques de 280 o (copie gardée `0x4014a660`) : 18 pris, 1 libres (280 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4014ab5c` | `0x400bb120` | pris (152/280 o) | track-filter (152 o) |
-| `0x4014b85c` | `0x400bae4e` | pris (148/280 o) | track-filter (148 o) |
-| `0x4014d74c` | `0x400bac28` | pris (164/280 o) | track-filter (164 o) |
-| `0x401542f8` | `0x400b91d8` | pris (162/280 o) | track-filter (162 o) |
-| `0x401548b4` | `0x400b903a` | pris (206/280 o) | track-filter (206 o) |
-| `0x4015b8f8` | `0x400b668c` | pris (260/280 o) | track-filter (260 o) |
-| `0x4015f50c` | `0x400b5028` | pris (260/280 o) | track-filter (260 o) |
-| `0x401601fc` | `0x400b4b4a` | pris (260/280 o) | track-filter (260 o) |
-| `0x40160864` | `0x400b48ac` | pris (260/280 o) | track-filter (260 o) |
-| `0x40160b6c` | `0x400b4870` | pris (216/280 o) | track-filter (216 o) |
-| `0x40160e6c` | `0x400b482e` | pris (256/280 o) | track-filter (256 o) |
-| `0x401625bc` | `0x400b3e2a` | pris (136/280 o) | track-filter (136 o) |
-| `0x40163fb8` | `0x400b34c8` | pris (147/280 o) | track-filter (147 o) |
-| `0x4016616c` | `0x400b2898` | pris (164/280 o) | track-filter (164 o) |
-| `0x40166760` | `0x400b272e` | pris (208/280 o) | track-filter (208 o) |
+| `0x4014ab5c` | `0x400bb120` | pris (plein) | chord-keys (280 o), track-filter (152 o) |
+| `0x4014b85c` | `0x400bae4e` | pris (plein) | chord-keys (280 o), track-filter (148 o) |
+| `0x4014d74c` | `0x400bac28` | pris (plein) | chord-keys (280 o), track-filter (164 o) |
+| `0x401542f8` | `0x400b91d8` | pris (plein) | chord-keys (280 o), track-filter (162 o) |
+| `0x401548b4` | `0x400b903a` | pris (plein) | chord-keys (280 o), track-filter (206 o) |
+| `0x4015b8f8` | `0x400b668c` | pris (plein) | chord-keys (280 o), track-filter (260 o) |
+| `0x4015f50c` | `0x400b5028` | pris (275/280 o) | chord-keys (275 o), track-filter (260 o) |
+| `0x401601fc` | `0x400b4b4a` | pris (plein) | chord-keys (280 o), track-filter (260 o) |
+| `0x40160864` | `0x400b48ac` | pris (plein) | chord-keys (280 o), track-filter (260 o) |
+| `0x40160b6c` | `0x400b4870` | pris (plein) | chord-keys (280 o), track-filter (216 o) |
+| `0x40160e6c` | `0x400b482e` | pris (plein) | chord-keys (280 o), track-filter (256 o) |
+| `0x401625bc` | `0x400b3e2a` | pris (plein) | chord-keys (280 o), track-filter (136 o) |
+| `0x40163fb8` | `0x400b34c8` | pris (plein) | chord-keys (280 o), track-filter (147 o) |
+| `0x4016616c` | `0x400b2898` | pris (plein) | chord-keys (280 o), track-filter (164 o) |
+| `0x40166760` | `0x400b272e` | pris (plein) | chord-keys (280 o), track-filter (208 o) |
 | `0x40167c50` | `0x400b211e` | libre | |
-| `0x401696a0` | `0x400b1540` | libre | |
-| `0x401699a8` | `0x400b1500` | libre | |
-| `0x4016aa28` | `0x400b1480` | libre | |
+| `0x401696a0` | `0x400b1540` | pris (plein) | chord-keys (280 o) |
+| `0x401699a8` | `0x400b1500` | pris (plein) | chord-keys (280 o) |
+| `0x4016aa28` | `0x400b1480` | pris (plein) | chord-keys (280 o) |
 
-### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 8 pris, 6 libres (1 632 o)
+### 34×34 : 14 masques de 272 o (copie gardée `0x4016bfc8`) : 13 pris, 1 libres (272 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
@@ -125,11 +125,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40184df8` | `0x400adbc8` | pris (248/272 o) | lfo-plus (248 o) |
 | `0x40185308` | `0x400adb8c` | pris (248/272 o) | lfo-plus (248 o) |
 | `0x40185f48` | `0x400ad9c4` | libre | |
-| `0x40186238` | `0x400ad988` | libre | |
-| `0x40189618` | `0x400ad364` | libre | |
-| `0x4018af88` | `0x400ad18a` | libre | |
-| `0x4018b1a8` | `0x400ad16e` | libre | |
-| `0x4018ff64` | `0x400ac7fc` | libre | |
+| `0x40186238` | `0x400ad988` | pris (plein) | chord-keys (272 o) |
+| `0x40189618` | `0x400ad364` | pris (plein) | chord-keys (272 o) |
+| `0x4018af88` | `0x400ad18a` | pris (plein) | chord-keys (272 o) |
+| `0x4018b1a8` | `0x400ad16e` | pris (plein) | chord-keys (272 o) |
+| `0x4018ff64` | `0x400ac7fc` | pris (plein) | chord-keys (272 o) |
 | `0x40192ba4` | `0x400ac276` | pris (132/272 o) | midi-live-both (132 o) |
 
 ### 27×27 : 24 masques de 108 o (copie gardée `0x4014a550`) : 0 pris, 24 libres (2 592 o)
@@ -203,11 +203,11 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40179c98` | `0x400af5f2` | libre | |
 | `0x40186168` | `0x400ad9a4` | libre | |
 
-### 46×31 : 7 masques de 184 o (copie gardée `0x4016be58`) : 0 pris, 7 libres (1 288 o)
+### 46×31 : 7 masques de 184 o (copie gardée `0x4016be58`) : 1 pris, 6 libres (1 104 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x40170ad8` | `0x400b08f6` | libre | |
+| `0x40170ad8` | `0x400b08f6` | pris (103/184 o) | chord-keys (103 o) |
 | `0x40171bc8` | `0x400b06d0` | libre | |
 | `0x401728f8` | `0x400b0528` | libre | |
 | `0x40179140` | `0x400af6c2` | libre | |
@@ -215,17 +215,17 @@ Les masques d'un groupe sont identiques octet pour octet et chacun n'est désign
 | `0x40185648` | `0x400ada58` | libre | |
 | `0x401857f8` | `0x400ada1c` | libre | |
 
-### 41×41 : 1 masques de 328 o (copie gardée `0x40187298`) : 0 pris, 1 libres (328 o)
+### 41×41 : 1 masques de 328 o (copie gardée `0x40187298`) : 1 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4018d918` | `0x400acd1a` | libre | |
+| `0x4018d918` | `0x400acd1a` | pris (plein) | chord-keys (328 o) |
 
-### 52×22 : 1 masques de 208 o (copie gardée `0x4014bfe4`) : 0 pris, 1 libres (208 o)
+### 52×22 : 1 masques de 208 o (copie gardée `0x4014bfe4`) : 1 pris, 0 libres (0 o)
 
 | masque | constante | état | mods (octets écrits) |
 |---|---|---|---|
-| `0x4016ea78` | `0x400b0d50` | libre | |
+| `0x4016ea78` | `0x400b0d50` | pris (plein) | chord-keys (208 o) |
 
 ### Masques 0xFF redirigés vers `0x40154ae4` (notes/14 §5)
 
@@ -553,17 +553,26 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x40006a76` | `4eb940076ca2` | jsr | masque `0x40182b38` +0x94 `sr_leds` | step-rec | notes/73 |
 | `0x40007120` | `4eb94006ba76` | jsr | masque `0x40182b38` +0x4a `sr_off` | step-rec | notes/73 |
 | `0x4000721c` | `4eb94006ba76` | jsr | masque `0x40182b38` +0x2e `sr_on` | step-rec | notes/73 |
+| `0x400075f0` | `4eb940076be4` | jsr | masque `0x40160e6c` +0xf6 `ck_chord_display_dirty` | chord-keys | notes/42 |
 | `0x400081e4` | `4eb940082464` | jsr | masque `0x40182b38` +0xae `sr_tick` | step-rec | notes/73 |
 | `0x400081f2` | `4eb940090f48` | jsr | masque `0x4018f4b4` +0x0 | level-pan-values | notes/44 |
 | `0x4000bae0` | `204031842a14` | jsr | masque `0x40182b38` +0x66 `sr_set` | step-rec | notes/73 |
 | `0x4000c140` | `4e56ffe0202e000c` | jmp | masque `0x401780a8` +0x0 `lfo_dest` | lfo-plus | notes/56 |
+| `0x40012274` | `4eb9400cfd0e` | jmp | masque `0x4018bb48` +0x8e `ck_plock_note_hook` | chord-keys | notes/42 |
 | `0x4001413e` | `205242a72f0a` | jmp | charge utile (image) +0x10eb6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400169f0` | `4feffff448d7040c` | jmp | charge utile (image) +0x4fb6 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x40019cba` | `2f044eb940016e90` | jmp | masque `0x4018d038` +0x54 `ck_midi_key_off_hook` | chord-keys | notes/42 |
+| `0x40019ee2` | `4e922f004eb94000f208` | jmp | masque `0x401542f8` +0x102 `ck_midi_key_on_hook` | chord-keys | notes/42 |
+| `0x4001a0d2` | `4fefffd448d77cfc` | jmp | masque `0x40189618` +0x0 `ck_ui_key` | chord-keys | notes/42 |
 | `0x4001a1c4` | `4eb940016086` | jsr | masque `0x4018a788` +0x16 | arp | notes/32 |
 | `0x4001aa4e` | `4fefffe048d70cfc` | jmp | masque `0x4018f4b4` +0xc | level-pan-values | notes/44 |
 | `0x4001b22a` | `4e56ffc048d73cfc` | jmp | masque `0x4018f4b4` +0x78 | level-pan-values | notes/44 |
 | `0x4001c3dc` | `4eb940025798` | jsr | masque `0x40173848` +0xa8 `lfo_ctor` | lfo-plus | notes/56 |
+| `0x4001cb3e` | `4eb94002d138` | jsr | masque `0x40160b6c` +0x0 `ck_ui_menu_ctor` | chord-keys | notes/42 |
+| `0x4001d094` | `45f9400cf866` | jmp | masque `0x401548b4` +0x102 `ck_midi_pad_on_hook` | chord-keys | notes/42 |
+| `0x4001d120` | `45f9400cf866` | jmp | masque `0x40190334` +0x50 `ck_midi_pad_off_hook` | chord-keys | notes/42 |
 | `0x4001d25e` | `4eb940016086` | jsr | masque `0x4018a788` +0x1a | arp | notes/32 |
+| `0x4001e4ca` | `4eb94000b22a` | jsr | masque `0x401736c8` +0x76 `ck_shape_name` | chord-keys | notes/42 |
 | `0x4001e8da` | `202f0020226a0068` | jsr | charge utile (mémoire), 28 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x40021f56` | `2f034e944879404a8cb8…` | jsr | charge utile (image) +0x4f16 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4002249c` | `4eb940072490` | jsr | masque `0x4015c044` +0x28 `th_press` | trig-hold | notes/33 |
@@ -593,7 +602,10 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x400587f6` | `4eb940091f20` | jsr | masque `0x4018a788` +0x1b2 | arp | notes/32 |
 | `0x40058ca0` | `a93c00000020` | jsr | masque `0x4015c044` +0x1f8 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
 | `0x40058e28` | `72ff242a0008202a000c` | jsr | masque `0x4018a788` +0x0 | arp | notes/32 |
+| `0x40058ec6` | `222a0028028100000081` | jmp | masque `0x4018cbc8` +0x0 `ck_plock_sequence_hook` | chord-keys | notes/42 |
+| `0x40058fac` | `4a2a00146738` | jmp | OS `0x40058fea` | chord-keys | notes/42 |
 | `0x4005910e` | `4aaa0030670c2002` | jsr | masque `0x40183118` +0x0 `pv_copy` | sample-preview, sample-preview-st | notes/46 |
+| `0x4005919e` | `42b940a78e18` | jmp | masque `0x4018b9c8` +0x92 `ck_midi_sequence_hook` | chord-keys | notes/42 |
 | `0x40059382` | `4eb94005979e` | jsr | charge utile (mémoire), 24 cibles selon la combinaison | syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36 |
 | `0x40059392` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
 | `0x400593ce` | `4eb940002912` | jsr | masque `0x4015c044` +0x292 | 6ch-usbup, acid, macro, macro-acid, mod-settings, model-tg, model-tg-st, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31) | notes/31, notes/36, notes/72 |
@@ -611,6 +623,7 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4005a6b6` | `4ef9401ae936` | jmp | charge utile (mémoire), 13 cibles selon la combinaison | acid-tg, macro-acid-tg, macro-tg, syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
 | `0x4005a6b6` | `eb8a41f940a7` | jmp | charge utile (image) +0x47f6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4005a8f0` | `7405b4816532` | jmp | charge utile (mémoire), 3 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
+| `0x4005aa1a` | `2f027406222f0008` | jmp | masque `0x4015f38c` +0x96 `ck_plock_decode_hook` | chord-keys | notes/42 |
 | `0x4005aa22` | `202f000cb481` | jmp | masque `0x40185308` +0x82 `lfo_plk_load` | lfo-plus | notes/56 |
 | `0x4005aa34` | `7417b480640c` | jmp | masque `0x40166760` +0x8a `tf_conv` | track-filter | notes/47 |
 | `0x4005aecc` | `4feffff448d7` | jmp | charge utile (image) +0x9b66 | model-tg, model-tg-st | notes/31, notes/36 |
@@ -622,15 +635,23 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x4005b054` | `4feffff448d7` | jmp | charge utile (image) +0x9ae8 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4005b054` | `4feffff448d7` | jmp | masque `0x4016616c` +0x1c `tf_save1` | track-filter | notes/47 |
 | `0x4005b0dc` | `356b005e005c` | jsr | masque `0x40185308` +0x0 `lfo_pack` | lfo-plus | notes/56 |
+| `0x4005b4a8` | `7001156b001c001c` | jmp | masque `0x4018cbc8` +0x84 `ck_storage_load_hook` | chord-keys | notes/42 |
+| `0x4005b9be` | `47f21a0095cad7c9` | jmp | masque `0x4019089c` +0x0 `ck_plock_save_hook` | chord-keys | notes/42 |
 | `0x4005b9c6` | `16b5480317420001` | jsr | masque `0x40185308` +0x60 `lfo_plk_save` | lfo-plus | notes/56 |
+| `0x4005bad2` | `28713c0070ff` | jmp | masque `0x4018d038` +0xa4 `ck_plock_partial_hook` | chord-keys | notes/42 |
+| `0x40061564` | `1140001b48780010` | jmp | masque `0x4018d038` +0x7c `ck_storage_init_hook` | chord-keys | notes/42 |
 | `0x400618e2` | `e18b35430026` | jsr | masque `0x40184df8` +0x6c `lfo_init` | lfo-plus | notes/56 |
 | `0x4007240c` | `206f00042028` | jmp | charge utile (image) +0x4828 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4007746c` | `4fefffc048d70c04` | jmp | masque `0x4016bcd8` +0x86 `ck_ui_pad_dispatch_hook` | chord-keys | notes/42 |
+| `0x4008146c` | `262e000c2a2e0010` | jmp | masque `0x401699a8` +0xce `ck_tg_note_off_hook` | chord-keys | notes/42 |
 | `0x40081474` | `b08365000178` | jmp | charge utile (image) +0x10ffc | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x4008171e` | `4ef9401b3210` | jmp | masque `0x40185968` +0x0 `pv_note` | sample-preview, sample-preview-st | notes/46 |
+| `0x40081734` | `2e2e001c2c2e0020` | jmp | masque `0x40177f28` +0x68 `ck_tg_note_on_hook` | chord-keys | notes/42 |
 | `0x4008173c` | `b083650001ce` | jmp | charge utile (image) +0x10fb2 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40081908` | `4ebaf2ec588f` | jsr | masque `0x40189930` +0x102 | arp | notes/32 |
 | `0x40084b8e` | `487800222d48` | jmp | charge utile (image) +0x9d98 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x40084c14` | `721b4fef0028` | jmp | charge utile (image) +0x9e1e | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x4008e622` | `4fefffd848d71c7c` | jmp | masque `0x40190334` +0x9c `ck_chord_display_hook` | chord-keys | notes/42 |
 | `0x40094c9a` | `71aa00084fef0020` | jmp | charge utile (image) +0xd606 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400a2638` | `eb8c48780001` | jmp | charge utile (mémoire), 16 cibles selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, sdvintage-7th, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31), syntakt-vintage | notes/18, notes/31, notes/36, notes/43, notes/54 |
 | `0x400a26a2` | `7850428545f9` | jmp | charge utile (mémoire), 24 cibles selon la combinaison | acid-tg, macro-acid, macro-acid-tg, macro-tg, syntakt-* (27/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) | notes/31, notes/36, notes/43, notes/54 |
@@ -650,6 +671,8 @@ Instructions de l'OS remplacées par un détour (`jsr`, `jmp`, `bsr.l`, `bra.l`)
 | `0x400a956c` | `2f0a226f00084280` | jmp | charge utile (image) +0xddd6 | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400a98c4` | `22115c8124730800` | jmp | charge utile (image) +0xdcda | model-tg, model-tg-st | notes/31, notes/36 |
 | `0x400a9daa` | `4feffff448d70c04` | jmp | charge utile (image) +0xdcf8 | model-tg, model-tg-st | notes/31, notes/36 |
+| `0x400aae88` | `4fefffe448d71c3c` | jmp | masque `0x4018d918` +0x0 `chord_audio_update` | chord-keys | notes/42 |
+| `0x400ab0e4` | `d1fc4012142c` | jmp | masque `0x40184af8` +0x0 `chord_audio_ratios` | chord-keys | notes/42 |
 | `0x400d97f8` | `2f4a0008245f` | jmp | masque `0x40173848` +0xcc `lfo_dtor` | lfo-plus | notes/56 |
 
 ## 5. Pointeurs réécrits
@@ -711,7 +734,11 @@ Constantes 32 bits de l'OS (tables de fonctions, données) qui pointent maintena
 | `0x400a7dc4` | `40118640` | charge utile (mémoire), 8 valeurs selon la combinaison | acid, acid-tg, macro, macro-acid, macro-acid-tg, macro-tg, syntakt-* (32/32), syntakt-*-acid (31/31), syntakt-*-macro (31/31), syntakt-*-macro-acid (31/31), syntakt-tg-* (33/33), syntakt-tg-*-acid (31/31), syntakt-tg-*-macro (31/31), syntakt-tg-*-macro-acid (31/31) |
 | `0x400a7e16` | `40118610` | charge utile (mémoire), 2 valeurs selon la combinaison | acid, macro, macro-acid, sdvintage-7th, syntakt-vintage |
 | `0x400fd150` | `4000ae20` | masque `0x401784e8` +0x58 | lfo-plus |
+| `0x400fd170` | `4000a70e` | masque `0x40178708` +0x0 | chord-keys |
+| `0x400fd174` | `4000a66a` | masque `0x4018b1a8` +0x0 | chord-keys |
 | `0x400fd190` | `4000ba7a` | masque `0x401784e8` +0x6c | lfo-plus |
+| `0x4010025c` | `4001d180` | masque `0x401736c8` +0x0 | chord-keys |
+| `0x401002b0` | `4001d3d4` | masque `0x40192a24` +0xac | chord-keys |
 | `0x401005a8` | `4001e814` | masque `0x401625bc` +0x0 | track-filter |
 | `0x401016e4` | `40024e86` | masque `0x40184df8` +0x88 | lfo-plus |
 | `0x401016ec` | `400426fa` | masque `0x401780a8` +0xa2 | lfo-plus |
@@ -726,6 +753,7 @@ Ce que les écritures ne montrent pas : les octets des structures sauvegardées 
 
 | mod | ce qu'il s'attribue | source |
 |---|---|---|
+| chord-keys | en-tête de pattern : signature +32..35 et configuration +40..63 ; lane de lock RAM27, ID disque33. Les mots du SON26/27 restent à Model-TG ; LFO2 utilise RAM28..32 | notes/42 §28 |
 | arp | octet +512 de chaque piste dans le pattern : sens de l'arpège et octaves (inutilisé par l'OS, sauvegardé avec le pattern) | notes/32 §4 |
 | lfo-plus | octets +88..+91 de l'enregistrement d'un son : LFO 2 empaqueté (format de DavidCaruso) ; mémoire 0x4233f000..0x4233f49b, au-dessus du BSS de l'OS, remise à zéro au premier usage | notes/56 §3 |
 | step-rec | mémoire 0x4233e800..0x4233e8ff, dans le trou libre au-dessus du BSS de l'OS (0x423380b0..0x4233efff, notes/56 §3.5.2) : les variables du step record, posées à son entrée (seul sr_active, dans un masque, vaut 0 au démarrage) | notes/73 §3 |
@@ -778,4 +806,5 @@ Nombre d'écritures de chaque sorte (une plage pour une famille de moteurs).
 | midi-both | 3 | 3 | 0 | 0 | 0 | 0 | 0 |  | notes/53 |
 | midi-live-both | 6 | 0 | 4 | 0 | 1 | 1 | 0 |  | notes/53 |
 | lfo-plus | 30 | 0 | 12 | 4 | 7 | 7 | 0 |  | notes/56 |
+| chord-keys | 148 | 1 | 23 | 4 | 60 | 60 | 0 |  | notes/42 |
 

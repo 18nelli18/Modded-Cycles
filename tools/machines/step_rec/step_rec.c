@@ -33,10 +33,7 @@ typedef int s32;
 #define ACTIVE(p)      FN(0x40012412, s32, void *)(FN(0x4000eb90, void *, void *)(p))
 #define TRK_LEN(trk)   FN(0x40016402, s32, void *)(trk)
 #define HAS_TRIG(trk, s) (u8)FN(0x40015c20, u32, void *, s32)(trk, s)
-#define PLACE(trk, s)  FN(0x40017b48, void, void *, s32, s32)(trk, s, 1)
-#define SET_NOTE(trk, s, v)  FN(0x40016642, void, void *, s32, s32)(trk, s, v)
-#define SET_VEL(trk, s, v)   FN(0x400166c2, void, void *, s32, s32)(trk, s, v)
-#define SET_MICRO(trk, s, v) FN(0x400167bc, void, void *, s32, s32)(trk, s, v)
+#define WRITE_NOTE(pr, t, n, v, s) FN(0x40012158, void, void *, u32, s32, s32, u32, u32, u32, u32, u32)(pr, t, n, v, 0, s, 0, 0xffffffffu, 0xffffffffu)
 #define SET_LOCK(trk, s, k, v) FN(0x4001646a, u32, void *, s32, s32, s32)(trk, s, k, v)
 #define GRID_ON(ui)    (u8)FN(0x4006b978, u32, void *)(ui)
 #define GRID_SET(ui, v) FN(0x4006b9f6, void, void *, s32)(ui, v)
@@ -223,12 +220,9 @@ void sr_note_on(u8 *msg)
 	if (t >= 6)
 		return;
 	trk = TRACK(PATTERN(PROJECT()), t);
-	if (!HAS_TRIG(trk, cur))
-		PLACE(trk, cur);
-	SET_NOTE(trk, cur, note);
-	if (vel >= 0)
-		SET_VEL(trk, cur, vel);
-	SET_MICRO(trk, cur, 64);
+	/* Use live record's own writer so its note snapshot hooks (Chord Keys
+	 * HARMONY, notes/42) run on this exact step as well. */
+	WRITE_NOTE(PROJECT(), t, note, vel, cur);
 	write_locks(trk, t);
 	wrote = 1;
 	for (i = 0; i < nheld; i++)

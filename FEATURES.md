@@ -11,7 +11,8 @@ documentation at its tag `v1.1.0`.
 mute, trig preview and scrolling names), sample preview, the five Syntakt engines (SD VINTAGE, CP VINTAGE, SY TOY,
 SY BITS, SY SWARM), MACRO, ACID, arpeggiator, easier trig removal, tempo up to 546 BPM, startup animation, multi-line
 browser, volume/pan as numbers, dimmed trigless trigs, live MIDI OUT + THRU toggle, LFO 2/3/4, Mod Settings
-(USB audio in stereo or six tracks, added on 19/10/2026) and step record (added on 20/10/2026).
+(USB audio in stereo or six tracks, added on 19/10/2026), step record (added on 20/10/2026) and Chord Keys
+(Nico Heuser, back in the OS on 03/11/2026, experimental).
 
 How to read the status lines:
 
@@ -46,6 +47,7 @@ project's guide calls the back key **BACK**. This file uses **MACHINES** and **B
    - [3.3 Trig preview](#33-trig-preview)
    - [3.4 Tempo up to 546 BPM](#34-tempo-up-to-546-bpm)
    - [3.5 Step record](#35-step-record)
+   - [3.6 Chord Keys](#36-chord-keys)
 4. [Live](#4-live)
    - [4.1 Latching mute](#41-latching-mute)
    - [4.2 Live MIDI OUT + THRU toggle](#42-live-midi-out--thru-toggle)
@@ -131,6 +133,11 @@ retrig page, menus) are listed with that page as context.
 | trig key on a step that has a trig, released within 0.5 s | Removes the trig (stock: within 0.2 s) | Easier trig removal | Grid mode. Held longer: the trig stays and its settings show |
 | **TRK** held + **FUNC** tapped | Latches mute mode; FUNC stays lit | Latching mute | Anywhere mute mode is reachable |
 | **TRK** held + **T1–T6** | Selects a track, as stock | (stock) | Model-TG chose SETTINGS as its modifier so that TRK chords keep working |
+| **FUNC** + **RETRIG**, Keys ON | Root, Scale and the extension of each degree; MIDI ROOT or CHORD | Chord Keys | CHORD track |
+| **TRIG 1–16** | Play degrees I–VII, the same an octave higher, then I–II | Chord Keys | CHORD track, Keys ON. Keys OFF: the stock chromatic keys |
+| **T1–T6** | HARMONY: 9, 11, 13, 7sus4, parallel, V7, without selecting another track | Chord Keys | CHORD track, Keys ON. **TRK** + a pad still selects a track |
+| **COLOR** | DIATONIC, JAZZ or TENSION | Chord Keys | CHORD track, Keys ON |
+| **SHAPE** | Voicing and balance (BASE, close, open) | Chord Keys | CHORD track, Keys ON |
 
 Known collisions and raw spots, collected from the sources:
 
@@ -138,8 +145,9 @@ Known collisions and raw spots, collected from the sources:
   reason the per-track filter is outside OS 2.0 (flasher clash text: "both use MACHINES + SWEEP / CONTOUR for a track
   filter").
 - **SETTINGS held** lost the stock pattern save prompt (Model-TG guide; this project's guide repeats it).
-- **FUNC + PAGE** (Scale menu) carries Model-TG's Scale Lock. Chord Keys also changed the notes of the trig keys; the
-  flasher listed that as their clash ("both change the notes of the TRIG keys").
+- **FUNC + PAGE** (Scale menu) carries Model-TG's Scale Lock. On a CHORD track with Keys ON, Chord Keys uses
+  **FUNC + RETRIG** (Root and Scale) for those notes. Scale Lock stays available on the other tracks and with Keys
+  OFF (notes/42).
 - **FUNC + PITCH** means two different things depending on the machine (lo-fi on MACRO, semitones elsewhere).
 - **FUNC + LEVEL/DATA**: turned on the main screen it is the pan (with a number); pressed on the OUT/THRU row it is
   the MIDI toggle. Different gestures and screens, so no clash, but the same pair of keys.
@@ -569,7 +577,51 @@ lands on the current step, which then moves on.
 
 **Status.** Tested on a Model:Cycles on 20/10/2026: Maxime reported "ça marche nickel" (it works perfectly) after the
 test plan of PR #101 (notes/73 §7). Also checked in the emulator on the OS's own code, with everything else in OS 2.0
-(what it writes is byte for byte what the OS's live recording writes for the same notes and knob turns).
+(what it writes is byte for byte what the OS's live recording writes for the same notes and knob turns). The writer
+now goes through that same live-recording path, so a Chord Keys HARMONY pad held while the note is entered is stored
+on the step. The 20/10/2026 report does not cover that path; it still needs a check on the machine. The feature stays
+`tested` in `os.json` until Maxime says otherwise.
+
+### 3.6 Chord Keys
+
+**What it does.** On a CHORD track with Keys on, TRIG 1–16 play chords from the scale: I–VII, the same an octave
+higher, then I and II two octaves up. The screen names the chord that is held.
+
+**How to use it** (guide):
+
+1. Select the track, choose **CHORD**, open **FUNC + RETRIG**. After the stock rows: **Keys**, **Root**, **Scale**,
+   one extension per degree (I–VII) and **MIDI**.
+2. **Keys ON**, pick **Root** (C1–C3) and **Scale** (MAJ, DOR, PHR, LYD, MIX, MINOR, LOC). Each degree is TRI, 7, 9,
+   11 or 13. New patterns start with Keys OFF.
+3. **COLOR** picks the palette: DIATONIC, JAZZ or TENSION. **SHAPE** picks the voicing: BASE, close (CLS0–3) or open
+   (OPN0–3). There is no separate Controls or Pads row.
+4. Hold a TRIG and press **T1–T6**: 9, 11, 13, 7sus4, parallel major/minor, or the dominant V7 of that degree. The
+   track does not change. The pad does not repeat while held. Releasing it keeps the changed chord. With no TRIG
+   held, holding a pad prepares the next TRIG and leaves the previous chord's tail alone.
+5. **MIDI** set to **CHORD** sends the three or four notes, live and from the sequencer. **ROOT** sends the usual
+   single note and is the default.
+
+**Limits and interactions.**
+
+- CHORD only, one chord per track, four voices at most. 9/11/13 drop the fifth and the tensions in between.
+  Extended half-diminished chords keep root, diminished fifth, seventh and tension, and drop the third. PARALLEL
+  and V7 are unavailable on a diminished target: the saved extension plays instead.
+- TRIG chords do not arpeggiate. Keys OFF restores the chromatic TRIG keys, the pads and retrig/arp.
+- High notes can hit the engine's limit (the screen says HIGH LIMIT) or drop upper voices. MIDI may still send
+  notes the audio engine removes, and it drops notes past 127.
+- HARMONY records as p-locks in live recording and in grid recording. COLOR and SHAPE locks stay separate. Old
+  HARMONY locks still load: the saved id is unchanged, and the lock sits beside LFO 2 rather than on top of it.
+  Attack, Filter, Resonance and the Sampler keep their own locks.
+- Model-TG Scale Lock stays on the other tracks and when Keys is OFF. On CHORD with Keys ON, Root and Scale in
+  **FUNC + RETRIG** choose the notes.
+- The standalone per-track filter does not install with Chord Keys. It stays outside the OS.
+
+**Origin and license.** Nico Heuser (notes/42), MIT. No third-party code in the tweak.
+
+**Status.** Experimental in this OS. Nico reported a test of Chord Keys 1.2 on his Model:Cycles on 07/10/2026,
+including with the other Cycles mods of that day; that report does not cover held pads, MIDI chords or this OS.
+Maxime's earlier test (10/10/2026, "ça marche parfait") was of the version removed on 18/10/2026, not of this one.
+Checked in the emulator on the OS's own code, alone and with the rest of the OS (notes/42 §28).
 
 ---
 
@@ -1131,15 +1183,9 @@ on 10/10/2026.
 
 ### 7.5 Chord Keys
 
-**What it does.** Played the selected CHORD track from **TRIG 1–16** (I–VII, the same an octave higher, then I–II),
-with Keys/Root/Scale and per-degree extensions in **FUNC + RETRIG**, and SHAPE as Chord Voicing.
-
-**Why it's out.** Removed from the project on 18/10/2026 because of conflicts. The conflict recorded in the flasher is
-with Model-TG: "both change the notes of the TRIG keys (Model-TG has its own Scale Lock)". It also added rows to the
-FUNC + RETRIG menu, next to the arpeggiator's. notes/42 is kept as an archive; the tweak, generator, sources and proofs
-were deleted from the repository on 18/10/2026 (notes/71) and stay in the git history before that date.
-
-**Origin.** Nico Heuser (PR #46). **Status:** tested by Nico on 06/10/2026 and by Maxime on 10/10/2026.
+**Back in the OS.** Removed on 18/10/2026 because it conflicted with the rest (notes/71). Chord Keys 2.1 is in the
+OS again, experimental: see [3.6](#36-chord-keys). The conflict that remains is with the per-track filter, which
+stays outside the OS. The old clash with Model-TG Scale Lock is limited to a CHORD track with Keys ON.
 
 ### 7.6 Samples OS, and the Cycles OS on a Model:Samples
 
@@ -1191,7 +1237,8 @@ Separate flashing paths, not mods of the Cycles OS:
     `USER_GUIDE.md`, `INTERNALS.md`, guide.)
 14. **Untested combinations around resampling**: a Syntakt engine track as SRC, and USB resampling together with
     6CH. (Checked: notes/31 §2, §8.)
-15. **Chord Keys**: removed from the guide, README, flasher and tools on 18/10/2026 (notes/71); the old release notes
-    still mention it as history, on purpose.
+15. **Chord Keys 2.1 on this OS**: held pads, MIDI chords and the combination with OS 2.0 have no new hardware
+    report. Nico's 07/10/2026 report covers 1.2; Maxime's 10/10/2026 report covers the version removed on 18/10/2026.
+    The old release note that says Chord Keys was removed stays in the history, on purpose. (Checked: notes/42 §28.)
 16. **Optimised OS status**: notes/70 lives on `claude/os-optimise`; its flasher status and the exact list of what it
     conflicts with in Model-TG were not checked in this branch.

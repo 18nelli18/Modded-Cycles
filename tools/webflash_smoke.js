@@ -156,13 +156,13 @@ async function main() {
     check(typeof w.MCBuilder === "object" && typeof w.MCFlasher === "object", "MCBuilder + MCFlasher present");
     const os = w.MC_TWEAKS.os;
     const ids = w.MC_TWEAKS.tweaks.map((x) => x.id);
-    check(ids.join() === os.tweaks.join() && os.key === ids.join("+") && ids.length === 14
-      && ids.includes("model-tg-st") && ids.includes("sample-preview-st") && ids.includes("lfo-plus") && ids.includes("mod-settings") && ids.includes("step-rec")
+    check(ids.join() === os.tweaks.join() && os.key === ids.join("+") && ids.length === 15
+      && ids.includes("model-tg-st") && ids.includes("sample-preview-st") && ids.includes("lfo-plus") && ids.includes("mod-settings") && ids.includes("step-rec") && ids.includes("chord-keys")
       && ids.includes("syntakt-tg-sd-cp-toy-bits-swarm-macro-acid")
-      && !ids.some((x) => /chord|6ch|track-filter|os-optimise|exact|snare|multiout/.test(x)) && !ids.includes("midi-both"),
+      && !ids.some((x) => /6ch|track-filter|os-optimise|exact|snare|multiout/.test(x)) && !ids.includes("midi-both"),
       `tweaks.js carries exactly the ${ids.length} tweaks of ${os.name} ${os.version} (no picker, nothing else): ${ids.join()}`);
-    check(w.MC_TWEAKS.features.length === 19 && os.machines.length === 8 && os.machines[0].name === "Sampler" && os.machines[7].name === "ACID",
-      "19 features, 8 added machines from the Sampler to ACID");
+    check(w.MC_TWEAKS.features.length === 20 && os.machines.length === 8 && os.machines[0].name === "Sampler" && os.machines[7].name === "ACID",
+      "20 features, 8 added machines from the Sampler to ACID");
     check(/build \d{4}-/.test(text(doc, "build-stamp")), "version stamp shown");
     const srcs = [...doc.querySelectorAll("script[src]")].map((x) => x.getAttribute("src"));
     check(["builder.js", "tweaks.js", "flasher.js", "app.js"].every((f) => srcs.some((x) => x.startsWith(f + "?")))
@@ -178,8 +178,8 @@ async function main() {
       "OS header: name, version, status tag, nothing to pick, the 8 added machines, the two files it needs");
     // the features, by section, no checkbox, no selection bar, no search
     const feats = [...doc.querySelectorAll("#features .mod")].map((d) => d.id.slice(4));
-    check(feats.join() === "model-tg,syntakt,macro,acid,lfo-plus,trig-preview,trig-hold,arp,step-rec,tempo-max,latching-mute,sample-preview,browser-scroll,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,mod-settings",
-      "19 feature rows, by section (Sounds & machines, Sequencer, Live, Screen, USB & MIDI): " + feats.join());
+    check(feats.join() === "model-tg,syntakt,macro,acid,lfo-plus,trig-preview,trig-hold,arp,chord-keys,step-rec,tempo-max,latching-mute,sample-preview,browser-scroll,boot-anim,multiline-browser,level-pan-values,trigless-dim,midi-live-both,mod-settings",
+      "20 feature rows, by section (Sounds & machines, Sequencer, Live, Screen, USB & MIDI): " + feats.join());
     check(doc.querySelectorAll("#features input").length === 0 && !doc.getElementById("mod-sel") && !doc.getElementById("mod-find")
       && !doc.getElementById("mod-q"), "nothing to tick: no checkbox, no selection bar, no search field");
     check(w.MC_TWEAKS.features.every((f) => doc.querySelector(`#cat-${f.cat} #mod-${f.id} #feat-${f.id}`)), "every feature has a row in its section (cat)");
@@ -196,7 +196,7 @@ async function main() {
       "rows tagged as tested or not (Model-TG experimental until its 1.1.0 build is tested here): " + tags.join());
     const credits = [...doc.querySelectorAll("#features .credit a")].map((a) => a.href);
     const creditOf = (id) => [...doc.querySelectorAll(`#mod-${id} .credit a`)].map((a) => a.href);
-    check(credits.length === 17
+    check(credits.length === 18
       && creditOf("model-tg")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("model-tg")[1])
       && creditOf("sample-preview")[0] === "https://github.com/TinyGregAudio/Model-TG" && /\/LICENSE-Model-TG\.txt$/.test(creditOf("sample-preview")[1])
       && ["latching-mute", "trig-preview", "browser-scroll"].every((id) => creditOf(id)[0] === "https://github.com/drumkilla/elektron-model-tweaks"
@@ -205,6 +205,7 @@ async function main() {
       && creditOf("acid")[0] === "https://github.com/RobinSchmidt/Open303" && /\/LICENSE-Open303\.txt$/.test(creditOf("acid")[1])
       && creditOf("midi-live-both").join() === "https://github.com/AveyCole/Modded-Cycles"
       && creditOf("mod-settings")[0] === "https://github.com/scottmetoyer/ms-multi-output" && /\/LICENSE-ms-multi-output\.txt$/.test(creditOf("mod-settings")[1])
+      && creditOf("chord-keys").join() === "https://github.com/byNicoHeuser/Modded-Cycles"
       && creditOf("lfo-plus").length === 0 && /based on a mod by DavidCaruso/.test(textOf(doc, "#mod-lfo-plus .credit"))
       && creditOf("syntakt").length === 0 && !doc.querySelector("#mod-syntakt .credit"),
       "each row credits its author, with a link to the MIT license of the code it carries; the Syntakt engines credit nobody (your own Syntakt file): " + JSON.stringify(credits));

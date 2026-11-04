@@ -27,14 +27,15 @@ const ELEKTRON_ST_DL = "https://www.elektron.se/support-downloads/syntakt";
 // same whole write or a mod applied on top of another through "requires").
 const REF_MAINOS = {
   // Modded Cycles OS 2.0: the tweaks of os.json, built by tools/build.py --os
-  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "82a79f453151cbaceffdd047a646c96721f3ae3849a28f7821928bfbd4a1cca9",
+  "model-tg-st+sample-preview-st+trig-hold+arp+step-rec+chord-keys+tempo-max+boot-anim+multiline-browser+level-pan-values+trigless-dim+midi-live-both+mod-settings+lfo-plus+syntakt-tg-sd-cp-toy-bits-swarm-macro-acid": "dd8c1a6e9ce82e1721c780dcae9d837a55dcbb60a7dc55b77458998c8f6a0a6d",
 };
 const REF_MODS = {
   "model-tg-st": {"w": "c4686bd09a145fd10a6424b7229e414a084fbbcc212b722e4ab7d3ecd7cb7931", "p": "e269630fe5251b58c2a5eb4298e3ab09b4e6fff9f38c254afecf121c8ad446c2"},
   "sample-preview-st": {"w": "f9aaf10e71f3a06e22b608405eeca967c254a7400b4e8ba0557cddf7eb6166e3"},
   "trig-hold": {"w": "c9a9aafba763ea25ac3c35e33c55f34a18c0eda94cc726fa344ce6bdd06271f8"},
   "arp": {"w": "5bf9b805de8757164548fd4d77a3c2e8419d914e8164ac363ab10c9fe105ca80"},
-  "step-rec": {"w": "204827a53af0ed0336cc5c430507386b94c5f449a108968fcd126a16d2617ff1"},
+  "step-rec": {"w": "a420c6e310a685ef2737b3fba24042687bd8aa77df3a57a6b34840ce7fd5a09a"},
+  "chord-keys": {"w": "c0548f72062956039755e13d09b9ccd44507b2a2be3eb1c735b3c03391714add"},
   "tempo-max": {"w": "12115f0b665c9423922febfaa7b63d8bf5529de525ba0a51c22450e005d22f64"},
   "boot-anim": {"w": "a3681504456299c2f8c316e09181765455fdc51a9276a6a43ff11d78e2ba5382"},
   "multiline-browser": {"w": "08156ec48e8232e3337de2bf9050f2e1c3459a243fd377d7a66054ed171e1298"},
@@ -592,6 +593,10 @@ const FEAT = {
     "trig-preview": { label: "Trig preview",
       short: "Sequencer stopped or paused: hold a step and press PAGE to hear it, with its note, length and p-locks.",
       desc: "With the sequencer stopped or paused (after a MIDI Stop too), hold a step and press PAGE: the step plays with its own note, length and p-locks. By drumkilla, part of Model-TG, with this project's fix for the paused sequencer." },
+    "chord-keys": { label: "Chord Keys 2.1",
+      short: "Enable Keys in FUNC + RETRIG on CHORD: play TRIG chords, HARMONY pads and MIDI chords.",
+      desc: "On a CHORD track, enable Keys in FUNC + RETRIG and choose Root and Scale. TRIG 1–16 play chords with their names on screen. COLOR picks DIATONIC, JAZZ or TENSION; SHAPE arranges the voices. T1–T6 change HARMONY: press a pad with a TRIG held to play the changed chord, or hold the pad across successive TRIGs. Record HARMONY as parameter locks. MIDI CHORD sends the chord notes to external instruments; ROOT keeps single-note output.",
+      note: "Version 2.1 works with Modded Cycles OS 2.0, including Model-TG and LFO 2 locks; existing HARMONY locks still load. CHORD only, up to four voices. TRIG chords do not arpeggiate. Keys OFF restores normal playing. Experimental; hardware testing pending." },
     "trig-hold": { label: "Easier trig removal",
       short: "A quick press on a step that holds a trig removes it, instead of opening it as a hold.",
       desc: "On the original OS a press longer than 200 ms on a step counts as a hold, so the trig often stays. Here a step that already holds a trig waits 500 ms before it counts as a hold, and the choice is also made when you release the key: a normal press removes the trig, a long press still opens it to edit its p-locks. Empty steps keep the original timing." },
@@ -664,6 +669,10 @@ const FEAT = {
     "trig-preview": { label: "Écoute d'un pas",
       short: "Séquenceur à l'arrêt ou en pause : maintenez un pas et appuyez sur PAGE pour l'entendre, avec sa note, sa longueur et ses p-locks.",
       desc: "Séquenceur à l'arrêt ou en pause (après un Stop MIDI aussi), maintenez un pas et appuyez sur PAGE : le pas joue avec sa note, sa longueur et ses p-locks. Par drumkilla, inclus dans Model-TG, avec le correctif de ce projet pour le séquenceur en pause." },
+    "chord-keys": { label: "Chord Keys 2.1",
+      short: "Activez Keys dans FUNC + RETRIG sur CHORD : accords TRIG, pads HARMONY et accords MIDI.",
+      desc: "Sur une piste CHORD, activez Keys dans FUNC + RETRIG et choisissez Root et Scale. TRIG 1–16 jouent des accords dont le nom apparaît à l’écran. COLOR choisit DIATONIC, JAZZ ou TENSION ; SHAPE dispose les voix. T1–T6 changent HARMONY : appuyez sur un pad avec un TRIG tenu pour jouer l’accord modifié, ou maintenez le pad entre plusieurs TRIG. Enregistrez HARMONY en P-locks. MIDI CHORD envoie les notes de l’accord aux instruments externes ; ROOT conserve la sortie monophonique.",
+      note: "La version 2.1 fonctionne avec Modded Cycles OS 2.0, dont Model-TG et les locks LFO 2 ; les locks HARMONY existants restent lisibles. CHORD uniquement, quatre voix maximum. Les accords TRIG ne sont pas arpégés. Keys OFF rétablit le jeu normal. Expérimental ; essai matériel en attente." },
     "trig-hold": { label: "Effacer un trig plus facilement",
       short: "Un appui bref sur un pas qui porte un trig l'efface, au lieu de l'ouvrir comme un maintien.",
       desc: "Sur l'OS d'origine, un appui de plus de 200 ms sur un pas compte comme un maintien et le trig reste souvent. Ici un pas qui porte déjà un trig attend 500 ms avant de compter comme un maintien, et le choix se fait aussi au relâchement : un appui normal efface le trig, un appui long l'ouvre toujours pour régler ses p-locks. Les pas vides gardent le délai d'origine." },
