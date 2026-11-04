@@ -1,11 +1,11 @@
 # SUPERMODEL
-## User manual · Release 3.04
+## User manual · Release 3.05
 
 Model:Cycles · Full / Lite / Machine Optional
 
 # Contents & conventions
 
-A practical reference for Supermodel 3.04 on Model:Cycles.
+A practical reference for Supermodel 3.05 on Model:Cycles.
 
 Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.
 
@@ -112,6 +112,25 @@ Hold TRACK and press TRIG 1–6 to toggle the audio tracks that follow Control A
 Hold TRACK and double-tap RETRIG, then release both. Hold a TRIG to repeat; release it to stop. BACK exits the mode. PLAY/STOP and temporary save/reload remain available.
 
 **Stop the music and tails** — One STOP preserves effect tails. Press STOP twice to invoke All Sound Off and clear reverb and delay tails.
+
+# Track Swap
+
+Exchange two tracks in the current pattern while playback is stopped.
+
+1. Stop playback, then tap SETTINGS + TRACK to open Mod Setup.
+2. Choose Track > Swap. From starts at the selected track.
+3. Click DATA on From or To, turn DATA to choose a track, then click again to finish editing.
+4. Select Swap and press DATA. The two track numbers must be different.
+
+## What moves
+
+Sounds, sequences, parameter locks, volume, filter modes, LFO settings and per-track effect assignments move with the track contents. ACID track settings move in editions that include ACID. Optional also moves its ChordKeys settings and MIDI flags; Page Length stays intact.
+
+## Keep the connections
+
+Sidechain sources and destinations follow the swapped contents. Song mute references move for rows that use this pattern. Other patterns keep their track contents.
+
+**Reverse or save** — Swap the same pair again to reverse the operation. Use Save Project to retain the edits. BACK leaves editing or returns to the Track menu.
 
 # Notes, scales & page length
 
@@ -865,4 +884,4 @@ Global &gt; GOV: Lod (default) selects the quietest eligible voice. Trk selects 
 
 An alphabetical guide to the manual.
 
-Supermodel 3.04 • Model:Cycles • English print edition • 4 November 2026.
+Supermodel 3.05 • Model:Cycles • English print edition • 4 November 2026.

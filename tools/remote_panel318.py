@@ -3,6 +3,7 @@ from pathlib import Path
 import hashlib,os,struct,subprocess
 ROOT=Path(__file__).resolve().parents[1];CODE=0x4679bc00;BSS=0x4679ec00;END=BSS+512
 def apply(meta,native,runtime,out,machine_test=False):
+ assert not meta.get('track_swap377'),'Reconstruction du helper apres Swap : preserver son code reserve avant de continuer'
  base=0x46700000;nb=0x40000400;out=Path(out);out.mkdir(parents=True,exist_ok=True);assert not meta.get('output_monitor_fast')
  if meta.get('remote_panel'):
   if meta.get('stage_profile'):
@@ -30,6 +31,8 @@ def apply(meta,native,runtime,out,machine_test=False):
    flags.append('-DRP_GOV');gs=meta['gov_policy372']['symbols'];aliases.update(rp_gov_mode=gs['gp_mode'],rp_gov_set=gs['gp_set'])
   if meta.get('pattern_latch374'):
    flags.append('-DRP_PATTERN');aliases['rp_pattern_snapshot']=meta['pattern_latch374']['symbols']['pl_snapshot']
+  if 'ws_pan_snapshot' in meta.get('wizard_pan371',{}).get('symbols',{}):
+   flags.append('-DRP_WIZARD_DEBUG');aliases['rp_wizard_snapshot']=meta['wizard_pan371']['symbols']['ws_pan_snapshot']
  (out/'remote-panel.ld').write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text*) *(.rodata*) }} .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) }} rp_end = .; }}\n'+''.join(f'{k} = {v:#x};\n' for k,v in aliases.items()))
  cross='H:/CREATURE-source/retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-';os.environ['PATH']=str(Path(cross).parent)+os.pathsep+os.environ.get('PATH','')
  def run(t,*v):return subprocess.check_output([cross+t+'.exe',*map(str,v)],text=True)

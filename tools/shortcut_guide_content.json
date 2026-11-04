@@ -1,6 +1,6 @@
 {
-  "release": "3.04",
-  "stamp": "2026-11-04-guide304",
+  "release": "3.05",
+  "stamp": "2026-11-04-guide305",
   "cards": [
     {
       "en": [
@@ -25,11 +25,11 @@
     {
       "en": [
         "Filters and effects",
-        "Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod and two Choruses; DUCK, DUB, POTS, Ping Pong, Phaser and two Crushers."
+        "Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Ring Mod and two Choruses; DUCK, DUB, POTS, Ping Pong, Phaser and two Crushers."
       ],
       "fr": [
         "Filtres et effets",
-        "Filtre rÃ©sonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers."
+        "Filtre rÃ©sonant et attaque par piste. GATED, HALL, ROOM, PS1, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers."
       ]
     },
     {
@@ -92,6 +92,18 @@
             "Verrou selection pattern",
             "Double-tap PATTERN ; PATTERN ou BACK quitte",
             "Garde le selecteur natif ouvert sans expiration. Choix repetes par les trigs. Tap simple et maintien restent natifs. Verrou non sauvegarde."
+          ]
+        },
+        {
+          "en": [
+            "Track Swap",
+            "Mod Setup > Track > Swap; playback stopped",
+            "Set From and To with DATA, choose Swap, then press DATA. Moves the two tracks in the current pattern, including sounds, sequences, p-locks, volume, filter/LFO settings and per-track FX. Sidechain routing and matching Song mute references follow the contents. Swap the same pair again to reverse; Save Project to retain edits."
+          ],
+          "fr": [
+            "Track Swap",
+            "Mod Setup > Track > Swap ; lecture arretee",
+            "Choisissez From et To avec DATA, puis Swap et appuyez sur DATA. Echange sons, sequences, p-locks, volume, filtres/LFO et FX par piste du pattern courant. Sidechain et mutes Song correspondants suivent le contenu. Refaire le meme echange annule l operation ; Save Project conserve les modifications."
           ]
         },
         {
@@ -1560,6 +1572,18 @@
             "GOV",
             "Global > GOV > Lod / Trk ; defaut Lod",
             "Lod garde la voix admissible la plus faible. Trk coupe la piste admissible de plus petit numero quand une coupure est necessaire. Sauvegarde globale a l arret ; admissibilite, seuils et fondus conserves."
+          ]
+        },
+        {
+          "en": [
+            "Track > Swap",
+            "From / To / Swap",
+            "Exchange two tracks in the current pattern while stopped."
+          ],
+          "fr": [
+            "Track > Swap",
+            "From / To / Swap",
+            "Echange deux pistes du pattern courant a l arret."
           ]
         }
       ]

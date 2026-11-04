@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel3.04 - 4 novembre2026
+Supermodel3.05 - 4 novembre2026
 
-Principal3.04. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
+Principal3.05. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
 
 ## Fonctions incluses
 
@@ -10,7 +10,7 @@ Principal3.04. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Performance et sÃ©quenceur:** ArpÃ¨ge, octave 0 sur notes tenues et locks dâ€™harmonie, Sequence Genie, SCRAMBLE, slides, prÃ©Ã©coute de pas, Step Recorder, mute et solo verrouillÃ©s ou quantifiÃ©s. Sidechain dÃ©clenchÃ© par les notes et listes Scramble par pattern.
 
-**Filtres et effets:** Filtre rÃ©sonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers.
+**Filtres et effets:** Filtre rÃ©sonant et attaque par piste. GATED, HALL, ROOM, PS1, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stÃ©rÃ©o ou six pistes ; sauvegarde permanente, Mod Setup sauvegardÃ© et diagnostic DX facultatif.
 
@@ -24,6 +24,7 @@ Principal3.04. Maintenez le premier bouton pendant le second geste. TRIG : touch
 |---|---|---|
 | Verrou CTRL-ALL | Double tap TRACK ; TRACK ou double BACK rapide quitte | Deux taps simples en350ms verrouillent les editions CTRL-ALL. BACK simple conserve l annulation native. Selection pistes/trigs momentanee ; DATA et selecteurs FX physiques. Off au demarrage, non sauvegarde. |
 | Verrou selection pattern | Double-tap PATTERN ; PATTERN ou BACK quitte | Garde le selecteur natif ouvert sans expiration. Choix repetes par les trigs. Tap simple et maintien restent natifs. Verrou non sauvegarde. |
+| Track Swap | Mod Setup > Track > Swap ; lecture arretee | Choisissez From et To avec DATA, puis Swap et appuyez sur DATA. Echange sons, sequences, p-locks, volume, filtres/LFO et FX par piste du pattern courant. Sidechain et mutes Song correspondants suivent le contenu. Refaire le meme echange annule l operation ; Save Project conserve les modifications. |
 | Step Recorder | Lecture arrÃªtÃ©e : REC deux fois ; PLAY avance ; STOP recule ; REC quitte | Jouez des notes pour Ã©crire les pas successifs. PLAY avance dâ€™un pas, STOP recule dâ€™un pas. Octaves : FUNC + TRACK > KBT ; +/-12 demi-tons deplace une octave. |
 | Mute verrouillÃ© | TRACK + appui bref sur FUNC | Choisissez dâ€™abord Mute: LTC dans Mod Setup. FUNC quitte le mode verrouillÃ© ; Stk conserve le mode natif. |
 | Solo en mute | En mode mute verrouillÃ© : FUNC + T1â€“T6 | Isole la piste. Rappuyez sur son pad, ou quittez le mode mute, pour restaurer les mutes prÃ©cÃ©dents. |
@@ -183,6 +184,7 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 | Enveloppe ACID (Full / Machine Optional) | Global > ACID > A / F / AF | Un choix global sauvegarde pour toutes les pistes ACID. A = ampli ; F = filtre (defaut) ; AF = les deux. Gate OFF laisse decroitre l ampli en A/AF ; ON maintient jusqu au note-off. Sauvegarde a l arret et au repos. Lite ne contient pas ACID. |
 | JUMP | Global > JUMP > Off / On | Preference Direct Pattern Jump ; sauvegarde globale a l arret. |
 | GOV | Global > GOV > Lod / Trk ; defaut Lod | Lod garde la voix admissible la plus faible. Trk coupe la piste admissible de plus petit numero quand une coupure est necessaire. Sauvegarde globale a l arret ; admissibilite, seuils et fondus conserves. |
+| Track > Swap | From / To / Swap | Echange deux pistes du pattern courant a l arret. |
 
 BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cette sauvegarde attend l’arrêt. Arrêtez et attendez la fin avant extinction. Routage/réglages Sidechain, listes Scramble et types/réglages FX ajoutés propres à chaque pattern : Save Project les conserve au chargement. Fermer un sous-menu ne sauvegarde pas le projet.
 

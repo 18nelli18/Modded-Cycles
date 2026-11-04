@@ -114,6 +114,7 @@ def main():
     parser.add_argument('--slice-bank368',action='store_true')
     parser.add_argument('--silent-select369',action='store_true')
     parser.add_argument('--wizard-pan371',action='store_true')
+    parser.add_argument('--track-swap377',action='store_true')
     parser.add_argument('--gov-policy372',action='store_true')
     parser.add_argument('--pattern-latch374',action='store_true')
     parser.add_argument('--latch-notice374',action='store_true')
@@ -337,6 +338,9 @@ def main():
     if args.gov_policy372:
         from gov_policy372 import apply as gov_apply
         meta['gov_policy372']=gov_apply(meta,native,runtime,sram,out/'gov-policy372')
+    if args.track_swap377:
+        from track_swap377 import apply as swap_apply
+        meta['track_swap377']=swap_apply(meta,native,runtime,out/'track-swap377')
     if args.wizard_pan371:
         from wizard_pan371 import apply as pan_apply
         meta['wizard_pan371']=pan_apply(meta,native,runtime,out/'wizard-pan371')

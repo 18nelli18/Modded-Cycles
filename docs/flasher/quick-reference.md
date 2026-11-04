@@ -1,8 +1,8 @@
 # Feature and shortcut guide
 
-Supermodel 3.04 - 3 November 2026
+Supermodel 3.05 - 4 November 2026
 
-Main 3.04. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
+Main 3.05. Hold the first button while pressing the next button or turning the named knob. TRIG means a step key; pad means a track key; DATA means LEVEL/DATA. Full and Lite share the general controls; added-machine sections require that machine. Machine Optional extras are marked separately.
 
 ## Included features
 
@@ -10,7 +10,7 @@ Main 3.04. Hold the first button while pressing the next button or turning the n
 
 **Performance and sequencing:** Arpeggiator, held-note octave 0 and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching and quantized mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists.
 
-**Filters and effects:** Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod and two Choruses; DUCK, DUB, POTS, Ping Pong, Phaser and two Crushers.
+**Filters and effects:** Per-track resonant filter and attack. GATED, HALL, ROOM, PS1, Ring Mod and two Choruses; DUCK, DUB, POTS, Ping Pong, Phaser and two Crushers.
 
 **Routing and workflow:** MIDI Out with nine CC knobs, locks and two MIDI LFOs; MIDI OUT/THRU toggle; USB stereo or six tracks; permanent quick save, saved Mod Setup and optional DX diagnostics.
 
@@ -24,6 +24,7 @@ Main 3.04. Hold the first button while pressing the next button or turning the n
 |---|---|---|
 | CTRL-ALL latch | Double-tap TRACK; TRACK once or quick double-BACK exits | Two clean taps within 350 ms latch parameter-knob edits across included tracks. Single BACK retains native parameter undo. Track/trig selection stay momentary; DATA and FX selectors remain physical. Off after boot; not saved. |
 | Pattern selection latch | Double-tap PATTERN; PATTERN again or BACK exits | Keep the native pattern selector open without its normal timeout. Pattern trigs can be selected repeatedly. Single-tap and held PATTERN retain normal behavior. Latch is not saved. |
+| Track Swap | Mod Setup > Track > Swap; playback stopped | Set From and To with DATA, choose Swap, then press DATA. Moves the two tracks in the current pattern, including sounds, sequences, p-locks, volume, filter/LFO settings and per-track FX. Sidechain routing and matching Song mute references follow the contents. Swap the same pair again to reverse; Save Project to retain edits. |
 | Step Recorder | Playback stopped: press REC twice; PLAY advances; STOP goes back; press REC again to exit | Enter step recording and play notes to write successive steps. PLAY advances one step; STOP moves back one step; press REC again to leave Step Recorder. Octaves: FUNC + TRACK > KBT; +/-12 semitones shifts one octave. |
 | Latching mute | TRACK + tap FUNC | First choose Mute: LTC in Mod Setup. Then latch mute mode with this gesture; tap FUNC again to leave. Mute: Stk keeps stock behavior (default). |
 | Solo in mute mode | In latching mute mode, hold FUNC + press T1â€“T6 | Solo that track. Press the soloed track again to restore the previous mute state; tracks already muted remain muted. |
@@ -183,6 +184,7 @@ Tap SETTINGS + TRACK and release to open Mod Setup. Hold the combo to run SCRAMB
 | ACID envelope (Full / Machine Optional) | Global > ACID > A / F / AF | One globally saved choice for all ACID tracks. A = amp only; F = filter only (default); AF = both. Gate OFF allows amp decay while held in A/AF; Gate ON sustains until note-off. Save completes while stopped and idle. Lite has no ACID machine. |
 | JUMP | Global > JUMP > Off / On | Direct Pattern Jump preference; saved globally while stopped. |
 | GOV | Global > GOV > Lod / Trk; default Lod | Lod retains the quietest eligible voice policy. Trk cuts the lowest-numbered eligible track first when the overload governor needs a cut. Saves globally while stopped; eligibility, thresholds and fades are unchanged. |
+| Track > Swap | From / To / Swap | Exchange two tracks in the current pattern while stopped. |
 
 BACK closes Mod Setup and saves its global preferences. If playback is running, the save waits until it stops. Stop playback and allow saving to finish before powering off. Sidechain routing/settings, Scramble checklists and FX types/added settings are per pattern: Save Project preserves these after reloading. Closing a submenu alone does not save the project.
 
