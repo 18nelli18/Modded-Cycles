@@ -79,6 +79,7 @@ def main():
     parser.add_argument('--output-monitor-fast',action='store_true')
     parser.add_argument('--upgrade-remote-data',action='store_true')
     parser.add_argument('--remote-panel',action='store_true')
+    parser.add_argument('--remote-machine370',action='store_true')
     parser.add_argument('--deep-idle-wake',action='store_true')
     parser.add_argument('--deep-idle-stop',action='store_true')
     parser.add_argument('--stage-profile',action='store_true')
@@ -110,6 +111,13 @@ def main():
     parser.add_argument('--routing-post364',action='store_true')
     parser.add_argument('--retrig-plain367',action='store_true')
     parser.add_argument('--song-cursor367',action='store_true')
+    parser.add_argument('--slice-bank368',action='store_true')
+    parser.add_argument('--silent-select369',action='store_true')
+    parser.add_argument('--wizard-pan371',action='store_true')
+    parser.add_argument('--gov-policy372',action='store_true')
+    parser.add_argument('--pattern-latch374',action='store_true')
+    parser.add_argument('--latch-notice374',action='store_true')
+    parser.add_argument('--cpu-text370',action='store_true')
     parser.add_argument('--hall-ramp',action='store_true')
     parser.add_argument('--hall-fractional-ramp',action='store_true')
     parser.add_argument('--hall-ramp-opt',choices=('-O3','-O2','-Os'),default='-O3')
@@ -320,6 +328,30 @@ def main():
     if args.song_cursor367:
         from song_cursor367 import apply as controls_apply
         meta['song_cursor367']=controls_apply(meta,native,runtime,out/'controls367')
+    if args.slice_bank368:
+        from slice_bank368 import apply as slice_apply
+        meta['slice_bank368']=slice_apply(meta,native,runtime,out/'slice368')
+    if args.silent_select369:
+        from silent_select369 import apply as select_apply
+        meta['silent_select369']=select_apply(meta,native,runtime,out/'silent369')
+    if args.gov_policy372:
+        from gov_policy372 import apply as gov_apply
+        meta['gov_policy372']=gov_apply(meta,native,runtime,sram,out/'gov-policy372')
+    if args.wizard_pan371:
+        from wizard_pan371 import apply as pan_apply
+        meta['wizard_pan371']=pan_apply(meta,native,runtime,out/'wizard-pan371')
+    if args.cpu_text370:
+        from cpu_text370 import apply as text_apply
+        meta['cpu_text370']=text_apply(meta,native,runtime,out/'cpu-text370')
+    if args.pattern_latch374:
+        from pattern_latch374 import apply as pattern_apply
+        meta['pattern_latch374']=pattern_apply(meta,native,runtime,out/'pattern-latch374')
+    if args.latch_notice374:
+        from control_all_notice374 import apply as notice_apply
+        meta['control_all_notice374']=notice_apply(meta,runtime)
+    if args.remote_machine370:
+        from remote_panel318 import apply as remote_apply
+        meta['remote_panel']=remote_apply(meta,native,runtime,out/'remote-machine370',machine_test=True)
     if args.eco_stock_reverb:
         from eco_stock_reverb306 import apply as stock_eco_apply
         meta['eco_stock_reverb']=stock_eco_apply(native)
@@ -377,7 +409,7 @@ def main():
         try:plains.append(aplib.depack(official['blob'][section['off']:section['off']+section['size']])[0])
         except Exception:pass
     key=container.find_key(plains,official['blob'][:-32],official['blob'][-32:]);assert key
-    rebuilt=container.rebuild(official,{3:stored},key);assert len(rebuilt)<=0x1c0000
+    rebuilt=container.rebuild(official,{3:stored},key);assert len(rebuilt)<=0x1c0000,(len(rebuilt),0x1c0000)
     raw=wrap(container.build_stream(rebuilt,BYTES_PER_MSG),info['product'],info['start_seq'])
     (out/'Supermodel_3.00_Clean_Layout_Prototype.syx').write_bytes(raw)
     meta.update(sha256=hashlib.sha256(raw).hexdigest(),main_os_sha256=hashlib.sha256(image).hexdigest(),hardware_tested=False)

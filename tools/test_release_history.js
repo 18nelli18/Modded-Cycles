@@ -16,16 +16,16 @@ const elements={'[data-rel=history]':[history],'[data-rel=changes]':[changes],'[
 ctx.$$=selector=>elements[selector]||[];ctx.lang=()=>ctx.root.lang;
 const start=source.indexOf('function fmtDate('),end=source.indexOf('\nrenderRelease();',start);
 vm.runInContext(source.slice(start,end),ctx);
-const releases=ctx.window.MC_RELEASES;assert.equal(releases[0].version,'3.03');assert(releases.some(r=>r.version==='3.02'));
+const releases=ctx.window.MC_RELEASES;assert.equal(releases[0].version,'3.04');assert(releases.some(r=>r.version==='3.02'));
 for(const language of ['en','fr']){
  ctx.root.lang=language;ctx.renderRelease();
- assert.equal(version.textContent,'3.03');assert.equal(history.children.length,releases.length);
- assert.equal(history.children[0].open,true);assert(history.children[0].children[0].textContent.startsWith('3.03'));
+ assert.equal(version.textContent,'3.04');assert.equal(history.children.length,releases.length);
+ assert.equal(history.children[0].open,true);assert(history.children[0].children[0].textContent.startsWith('3.04'));
  assert.equal(history.children[0].children[1].children[0].textContent,releases[0].changes[0][language]);
  assert(history.children.some(section=>section.children[0].textContent.startsWith('3.02')));
  assert.equal(new Set(history.children.map(section=>section.id)).size,releases.length);
 }
 for(const file of ['docs/index.html','docs/flasher/index.html','docs/flasher-optional/index.html']){
- const html=fs.readFileSync(path.join(root,file),'utf8');assert(html.includes('What changed in this version…'));assert(html.includes('version-history.html'));assert(html.includes('guide303'));
+ const html=fs.readFileSync(path.join(root,file),'utf8');assert(html.includes('What changed in this version…'));assert(html.includes('version-history.html'));assert(html.includes('guide304'));
 }
 console.log('PASS release history: preserved '+releases.length+' entries, current changes, EN/FR render, unique anchors and page links');

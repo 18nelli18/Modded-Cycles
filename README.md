@@ -205,4 +205,4 @@ Release 2.61 adds durchgemacht/model27 POTS delay (MIT) to Full, Lite and Machin
 
 Bug reports: use the [report form](https://github.com/AveyCole/Supermodel/issues/new?template=bug-report.yml) and follow submissions in the [shared inbox](https://github.com/AveyCole/Supermodel/issues). New reports are assigned to AveyCole for GitHub notifications; email delivery follows the account notification settings.
 
-Current 3.03 documentation: [feature and shortcut guide](docs/flasher/shortcut-guide.html), [shortcut PDF](docs/flasher/shortcut-guide.pdf), and [printable user manual](docs/flasher/user-manual.pdf). Song mode, Direct Pattern Jump, trig selection, per-track ACID glide/legato, arp envelope retriggering and Wizard lock priority are covered.
+Current 3.04 documentation: [feature and shortcut guide](docs/flasher/shortcut-guide.html), [shortcut PDF](docs/flasher/shortcut-guide.pdf), and [printable user manual](docs/flasher/user-manual.pdf). Song mode, Direct Pattern Jump, trig selection, per-track ACID glide/legato, arp envelope retriggering and Wizard lock priority are covered.

@@ -21,7 +21,7 @@ a.output.parent.mkdir(parents=True, exist_ok=True)
 m = json.loads((a.build/'BUILD.json').read_text())
 n = bytearray((a.capture/'native.bin').read_bytes())
 runtime = bytearray((a.capture/'runtime.bin').read_bytes())
-module = apply(m, n, runtime, a.output.parent/'module')
+module = m.get('song_cursor367') or apply(m, n, runtime, a.output.parent/'module')
 r = Rig(bytes(n), {'writes': []}, {'writes': [], 'symbols': {}})
 u = r.u
 u.mem_map(0x46700000, 0x300000)

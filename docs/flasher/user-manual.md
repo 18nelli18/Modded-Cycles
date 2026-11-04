@@ -1,11 +1,11 @@
 # SUPERMODEL
-## User manual · Release 3.03
+## User manual · Release 3.04
 
 Model:Cycles · Full / Lite / Machine Optional
 
 # Contents & conventions
 
-A practical reference for Supermodel 3.03 on Model:Cycles.
+A practical reference for Supermodel 3.04 on Model:Cycles.
 
 Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.
 
@@ -75,6 +75,7 @@ Tap SETTINGS + TRACK, choose Global, then select a row.
 | FX | MST shares effect selection. TRK follows the selected track for light effects; heavy effects stay shared. |
 | ACID | A: amp envelope. F: filter envelope. AF: both. Applies to every ACID track when ACID is installed. Default: F. |
 | JUMP | Off / On. With On, PATTERN then FUNC + TRIG jumps immediately and keeps playback position. Default: Off. Saves globally. |
+| GOV | Lod (default) / Trk. Voice-cut ordering; saves globally. See CPU monitor. |
 
 ## Save global preferences
 
@@ -142,6 +143,8 @@ Lock mode, scale and key save globally while playback is stopped.
 # Pattern jumps & trig selection
 
 Choose patterns and edit groups of existing steps.
+
+Double-tap PATTERN to keep the native pattern selector open without timeout. Select patterns repeatedly; PATTERN again or BACK exits. A single tap or held press stays native.
 
 ## Direct Pattern Jump
 
@@ -608,7 +611,7 @@ On a Sample Wizard track, press SETTINGS + REC to open Resample. Choose recordin
 
 ## Read the display
 
-The home screen shows the sample name, waveform, track and duration. Volume segments show the track volume setting. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.
+The home screen shows the sample name, waveform, track and duration. Click DATA to switch the segment display between volume and left/right pan. Playing pan follows the sounding note and its p-lock. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.
 
 **Before locking a sample** — Open the sample browser first and highlight the exact sample you want. The lock gesture uses the highlighted browser entry.
 
@@ -854,10 +857,12 @@ Set Global > DX > On. Hold SETTINGS + BACK to open or close the CPU monitor. PAG
 
 Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.
 
+Global &gt; GOV: Lod (default) selects the quietest eligible voice. Trk selects the lowest-numbered eligible track when a cut is needed. This choice saves globally; eligibility, thresholds and fades stay the same.
+
 **Performance status** — Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.
 
 # Find it quickly
 
 An alphabetical guide to the manual.
 
-Supermodel 3.03 • Model:Cycles • English print edition • 3 November 2026.
+Supermodel 3.04 • Model:Cycles • English print edition • 4 November 2026.

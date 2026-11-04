@@ -18,7 +18,15 @@ if m.get('bounded_burst_policy') or m.get('governor_key_optimization'):
   for off,at,n in ((0,0x80001c5c,0x5858),(0x5858,0x8000cac0,0x2020)):r.u.mem_write(at,bytes(r.u.mem_read(0x46700000+off,n)))
 bind(0x40000542,lambda a:0);r.u.reg_write(C.UC_M68K_REG_A0,0x931b0000)
 if not m.get('clean_layout'):r.call(m['complete_irq_accounting']['boot_target'] if m.get('complete_irq_accounting') else s['cal_finish'])
-for hook in m['control_all_latch']['late_hooks']:assert bytes(r.u.mem_read(hook['at'],6))==b'\x4e\xf9'+struct.pack('>I',hook['target'])
+for hook in m['control_all_latch']['late_hooks']:
+ actual=bytes(r.u.mem_read(hook['at'],6));expected=b'\x4e\xf9'+struct.pack('>I',hook['target'])
+ if actual!=expected:
+  # Les wrappers DX/RPC deleguent au meme latch ; verifier le lien reel.
+  allowed=[]
+  for owner,alias,symbol in [('cpu_monitor','cpu_old_key','cpu_key'),('cpu_monitor','cpu_old_encoder','cpu_encoder'),('remote_panel','rp_old_held','rp_held')]:
+   module=m.get(owner,{})
+   if module.get('aliases',{}).get(alias)==hook['target']:allowed.append(module['symbols'][symbol])
+  assert actual[:2]==b'\x4e\xf9' and int.from_bytes(actual[2:],'big') in allowed,(hook,actual.hex(),allowed)
 if m.get('cpu_monitor'):r.w32(m['fx_menu']['symbols']['dx_enabled'],0)
 held=set();keys=[];knobs=[];notices=[];scopes=[]
 bind(s['cal_old_held'],lambda args:int(args[0] in held));bind(s['fx_notice'],lambda args:notices.append(r.string(args[0])) or 0)
@@ -56,5 +64,7 @@ held.add(5);back();back();active();assert scopes[-2:]==[0,0];held.remove(5)
 turn();back();back();assert not r.r32(s['cal_latched'])
 latch();n=len(keys);tap();assert not r.r32(s['cal_latched']) and len(keys)==n
 latch();turn();tick=0xffe00000;back();back();assert not r.r32(s['cal_latched'])
+if m.get('control_all_notice374'):
+ assert set(notices)=={'CTRL-ALL ON','CTRL-ALL OFF'},notices
 a.output.write_text(json.dumps(dict(native_back_forwarded=True,back_scope_balanced=True,double_back_consumes_second_pair=True,menu_modifier_repeat_hold_timeout_knob_chord_wrap=True,hardware_tested=False),indent=2)+'\n')
 print('PASS native BACK delegation, scoped CTRL-ALL, double-BACK exit, TRACK exit and gesture edge cases')

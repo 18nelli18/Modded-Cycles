@@ -1,6 +1,6 @@
 {
-  "release": "3.03",
-  "stamp": "2026-11-03-guide303",
+  "release": "3.04",
+  "stamp": "2026-11-04-guide304",
   "cards": [
     {
       "en": [
@@ -9,7 +9,7 @@
       ],
       "fr": [
         "Machines et son",
-        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, RETROSYN, PUNCH et MIDI Out. Elder est inspiré de Junior de Fors. PUNCH est un moteur de percussions FM de100demons (MIT)."
+        "Six moteurs stock plus Sample Wizard, SD Vintage, Clap Vintage, SY Toy, SY Bits, Swarm LITE, MACRO, ACID, WAVE, Feral de Glycinate, Elder, TINY, Shadow, SPEAK, RETROSYN, PUNCH et MIDI Out. Elder est inspirÃ© de Junior de Fors. PUNCH est un moteur de percussions FM de100demons (MIT)."
       ]
     },
     {
@@ -18,8 +18,8 @@
         "Arpeggiator, held-note octave 0 and harmony locks, Sequence Genie, SCRAMBLE, slides, trig preview, Step Recorder, latching and quantized mute and solo. Trigger-based Sidechain and per-pattern Scramble checklists."
       ],
       "fr": [
-        "Performance et séquenceur",
-        "Arpège, octave 0 sur notes tenues et locks d’harmonie, Sequence Genie, SCRAMBLE, slides, préécoute de pas, Step Recorder, mute et solo verrouillés ou quantifiés. Sidechain déclenché par les notes et listes Scramble par pattern."
+        "Performance et sÃ©quenceur",
+        "ArpÃ¨ge, octave 0 sur notes tenues et locks dâ€™harmonie, Sequence Genie, SCRAMBLE, slides, prÃ©Ã©coute de pas, Step Recorder, mute et solo verrouillÃ©s ou quantifiÃ©s. Sidechain dÃ©clenchÃ© par les notes et listes Scramble par pattern."
       ]
     },
     {
@@ -29,7 +29,7 @@
       ],
       "fr": [
         "Filtres et effets",
-        "Filtre résonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers."
+        "Filtre rÃ©sonant et attaque par piste. GATED, HALL, ROOM, PS1, Vinyl, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers."
       ]
     },
     {
@@ -39,7 +39,7 @@
       ],
       "fr": [
         "Routage et travail",
-        "MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stéréo ou six pistes ; sauvegarde permanente, Mod Setup sauvegardé et diagnostic DX facultatif."
+        "MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stÃ©rÃ©o ou six pistes ; sauvegarde permanente, Mod Setup sauvegardÃ© et diagnostic DX facultatif."
       ]
     },
     {
@@ -84,14 +84,26 @@
         },
         {
           "en": [
+            "Pattern selection latch",
+            "Double-tap PATTERN; PATTERN again or BACK exits",
+            "Keep the native pattern selector open without its normal timeout. Pattern trigs can be selected repeatedly. Single-tap and held PATTERN retain normal behavior. Latch is not saved."
+          ],
+          "fr": [
+            "Verrou selection pattern",
+            "Double-tap PATTERN ; PATTERN ou BACK quitte",
+            "Garde le selecteur natif ouvert sans expiration. Choix repetes par les trigs. Tap simple et maintien restent natifs. Verrou non sauvegarde."
+          ]
+        },
+        {
+          "en": [
             "Step Recorder",
             "Playback stopped: press REC twice; PLAY advances; STOP goes back; press REC again to exit",
             "Enter step recording and play notes to write successive steps. PLAY advances one step; STOP moves back one step; press REC again to leave Step Recorder. Octaves: FUNC + TRACK > KBT; +/-12 semitones shifts one octave."
           ],
           "fr": [
             "Step Recorder",
-            "Lecture arrêtée : REC deux fois ; PLAY avance ; STOP recule ; REC quitte",
-            "Jouez des notes pour écrire les pas successifs. PLAY avance d’un pas, STOP recule d’un pas. Octaves : FUNC + TRACK > KBT ; +/-12 demi-tons deplace une octave."
+            "Lecture arrÃªtÃ©e : REC deux fois ; PLAY avance ; STOP recule ; REC quitte",
+            "Jouez des notes pour Ã©crire les pas successifs. PLAY avance dâ€™un pas, STOP recule dâ€™un pas. Octaves : FUNC + TRACK > KBT ; +/-12 demi-tons deplace une octave."
           ]
         },
         {
@@ -101,33 +113,33 @@
             "First choose Mute: LTC in Mod Setup. Then latch mute mode with this gesture; tap FUNC again to leave. Mute: Stk keeps stock behavior (default)."
           ],
           "fr": [
-            "Mute verrouillé",
+            "Mute verrouillÃ©",
             "TRACK + appui bref sur FUNC",
-            "Choisissez d’abord Mute: LTC dans Mod Setup. FUNC quitte le mode verrouillé ; Stk conserve le mode natif."
+            "Choisissez dâ€™abord Mute: LTC dans Mod Setup. FUNC quitte le mode verrouillÃ© ; Stk conserve le mode natif."
           ]
         },
         {
           "en": [
             "Solo in mute mode",
-            "In latching mute mode, hold FUNC + press T1–T6",
+            "In latching mute mode, hold FUNC + press T1â€“T6",
             "Solo that track. Press the soloed track again to restore the previous mute state; tracks already muted remain muted."
           ],
           "fr": [
             "Solo en mute",
-            "En mode mute verrouillé : FUNC + T1–T6",
-            "Isole la piste. Rappuyez sur son pad, ou quittez le mode mute, pour restaurer les mutes précédents."
+            "En mode mute verrouillÃ© : FUNC + T1â€“T6",
+            "Isole la piste. Rappuyez sur son pad, ou quittez le mode mute, pour restaurer les mutes prÃ©cÃ©dents."
           ]
         },
         {
           "en": [
             "Silent track selection",
-            "Choose Silent in Mod Setup ; tap T1–T6",
+            "Choose Silent in Mod Setup ; tap T1â€“T6",
             "Select a track without triggering its sound. TRACK + pad selects and plays. Stock pad behavior (Stk) is the default; select Silent to enable silent selection."
           ],
           "fr": [
-            "Sélection silencieuse",
-            "Choisir Pad: SIL dans Mod Setup ; T1–T6",
-            "Sélection sans déclenchement. TRACK + pad sélectionne et joue. Stk est le défaut."
+            "SÃ©lection silencieuse",
+            "Choisir Pad: SIL dans Mod Setup ; T1â€“T6",
+            "SÃ©lection sans dÃ©clenchement. TRACK + pad sÃ©lectionne et joue. Stk est le dÃ©faut."
           ]
         },
         {
@@ -137,9 +149,9 @@
             "Audition the selected step with its note and locks while stopped or paused."
           ],
           "fr": [
-            "Préécoute de pas",
+            "PrÃ©Ã©coute de pas",
             "Maintenir TRIG + PAGE",
-            "Écoutez le pas et ses locks à l’arrêt ou en pause."
+            "Ã‰coutez le pas et ses locks Ã  lâ€™arrÃªt ou en pause."
           ]
         },
         {
@@ -151,7 +163,7 @@
           "fr": [
             "Slide",
             "SETTINGS + TRIG",
-            "Active ou désactive le glissement de paramètres sur le pas."
+            "Active ou dÃ©sactive le glissement de paramÃ¨tres sur le pas."
           ]
         },
         {
@@ -163,7 +175,7 @@
           "fr": [
             "Sequence Genie",
             "SETTINGS + PAGE",
-            "Générateur de la piste sélectionnée. DATA choisit ; Generate ou Queue, avec frontière Loop/Page."
+            "GÃ©nÃ©rateur de la piste sÃ©lectionnÃ©e. DATA choisit ; Generate ou Queue, avec frontiÃ¨re Loop/Page."
           ]
         },
         {
@@ -175,7 +187,7 @@
           "fr": [
             "SCRAMBLE",
             "Maintenir SETTINGS + TRACK",
-            "Tire une seule fois par maintien les paramètres cochés : Pitch, Decay, Color, Shape, Sweep, Contour. Choix dans Mod Setup > Track > SCRM. Pitch/Decay désactivés par défaut ; Color/Shape/Sweep/Contour activés. Les pas marqués suivent la même liste, sans changer le son de base. Listes sauvegardées par pattern avec Save Project. Un appui bref sans pas tenu ouvre Mod Setup."
+            "Tire une seule fois par maintien les paramÃ¨tres cochÃ©s : Pitch, Decay, Color, Shape, Sweep, Contour. Choix dans Mod Setup > Track > SCRM. Pitch/Decay dÃ©sactivÃ©s par dÃ©faut ; Color/Shape/Sweep/Contour activÃ©s. Les pas marquÃ©s suivent la mÃªme liste, sans changer le son de base. Listes sauvegardÃ©es par pattern avec Save Project. Un appui bref sans pas tenu ouvre Mod Setup."
           ]
         },
         {
@@ -193,25 +205,25 @@
         {
           "en": [
             "Control All setup",
-            "TRACK + TRIG 1–6",
+            "TRACK + TRIG 1â€“6",
             "Use step keys 1-6, not track pads. Toggle which audio tracks follow Control All; the selected track always follows."
           ],
           "fr": [
             "Configuration Control All",
-            "TRACK + TRIG 1–6",
+            "TRACK + TRIG 1â€“6",
             "Touches de pas1-6, pas les pads de piste. Choisissez les pistes suivant Control All ; la piste selectionnee suit toujours."
           ]
         },
         {
           "en": [
             "Audio beat repeat",
-            "Hold TRACK + RETRIG , then hold a TRIG 1–16",
+            "Hold TRACK + RETRIG , then hold a TRIG 1â€“16",
             "The held step selects a repeat division for included audio tracks. Release a modifier or division pad to stop."
           ],
           "fr": [
             "Beat repeat audio",
-            "Maintenir TRACK + RETRIG, puis un TRIG 1–16",
-            "Le pas choisit la division des pistes incluses. Relâchez un modificateur ou le pas pour arrêter."
+            "Maintenir TRACK + RETRIG, puis un TRIG 1â€“16",
+            "Le pas choisit la division des pistes incluses. RelÃ¢chez un modificateur ou le pas pour arrÃªter."
           ]
         },
         {
@@ -223,7 +235,7 @@
           "fr": [
             "Verrou beat repeat",
             "Maintenir TRACK + double RETRIG",
-            "Relâchez les deux ; maintenez un TRIG pour répéter, relâchez-le pour arrêter. BACK quitte. PLAY/STOP et sauvegarde/rechargement temporaires FUNC + SETTINGS/PATTERN disponibles."
+            "RelÃ¢chez les deux ; maintenez un TRIG pour rÃ©pÃ©ter, relÃ¢chez-le pour arrÃªter. BACK quitte. PLAY/STOP et sauvegarde/rechargement temporaires FUNC + SETTINGS/PATTERN disponibles."
           ]
         },
         {
@@ -235,7 +247,7 @@
           "fr": [
             "Filtre collectif",
             "TRACK + MACHINES + SWEEP / CONTOUR",
-            "Coupure / résonance des pistes incluses. Sans TRACK : piste sélectionnée. Passe-bas deux pôles inspiré du Polivoks."
+            "Coupure / rÃ©sonance des pistes incluses. Sans TRACK : piste sÃ©lectionnÃ©e. Passe-bas deux pÃ´les inspirÃ© du Polivoks."
           ]
         },
         {
@@ -245,9 +257,9 @@
             "Adjust the added attack control on supported machines."
           ],
           "fr": [
-            "Attaque synthé",
+            "Attaque synthÃ©",
             "MACHINES + DECAY",
-            "Règle l’attaque ajoutée sur les machines compatibles."
+            "RÃ¨gle lâ€™attaque ajoutÃ©e sur les machines compatibles."
           ]
         },
         {
@@ -257,9 +269,9 @@
             "Open the settings for the active Arpeggiator feature. Arpeggiator octave 0 cycles only through held notes."
           ],
           "fr": [
-            "Arpège / réglages ChordKeys",
+            "ArpÃ¨ge / rÃ©glages ChordKeys",
             "FUNC + RETRIG",
-            "Ouvre les réglages actifs. Octave 0 de l’arpège parcourt uniquement les notes tenues."
+            "Ouvre les rÃ©glages actifs. Octave 0 de lâ€™arpÃ¨ge parcourt uniquement les notes tenues."
           ]
         },
         {
@@ -479,19 +491,19 @@
           "fr": [
             "Reverb standard",
             "REVERB SEND / SIZE / FUNC + SIZE",
-            "Send par piste / Size, INF au maximum / Tone de -64 à 0 à +63."
+            "Send par piste / Size, INF au maximum / Tone de -64 Ã  0 Ã  +63."
           ]
         },
         {
           "en": [
             "GATED reverb",
             "REVERB SEND / SIZE; FUNC + SIZE; SETTINGS + SIZE",
-            "Gated Send / Gate Time; Pre-delay; Tone. Gate Time: about 40 ms–6.7 s after input falls quiet. Pre-delay: 0–568 ms. Try Gate Time 16–32 and Pre-delay 25–40 ms on a snare."
+            "Gated Send / Gate Time; Pre-delay; Tone. Gate Time: about 40 msâ€“6.7 s after input falls quiet. Pre-delay: 0â€“568 ms. Try Gate Time 16â€“32 and Pre-delay 25â€“40 ms on a snare."
           ],
           "fr": [
             "Reverb GATED",
             "REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE",
-            "Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time : environ 40 ms–6,7 s après le signal. Pre-delay : 0–568 ms. Essayez Gate Time 16–32 et Pre-delay 25–40 ms sur une caisse claire."
+            "Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time : environ 40 msâ€“6,7 s aprÃ¨s le signal. Pre-delay : 0â€“568 ms. Essayez Gate Time 16â€“32 et Pre-delay 25â€“40 ms sur une caisse claire."
           ]
         },
         {
@@ -503,7 +515,7 @@
           "fr": [
             "Reverb HALL",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "Hall Send par piste / Decay / Tone. Queue stéréo large, réflexions plus longues que ROOM ; SIZE au maximum donne une longue queue amortie."
+            "Hall Send par piste / Decay / Tone. Queue stÃ©rÃ©o large, rÃ©flexions plus longues que ROOM ; SIZE au maximum donne une longue queue amortie."
           ]
         },
         {
@@ -515,7 +527,7 @@
           "fr": [
             "Ring Mod",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD sous Chorus 1/2. Frequency et Depth partagés par les pistes du pattern ; locks via le Send natif."
+            "Ring Send par piste / Frequency / Depth. Modulation en anneau sinusoidale metallique dans le slot reverb. RING MOD sous Chorus 1/2. Frequency et Depth partagÃ©s par les pistes du pattern ; locks via le Send natif."
           ]
         },
         {
@@ -551,7 +563,7 @@
           "fr": [
             "Reverb ROOM",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "Room Send par piste / Decay / Tone. Petite ambiance stéréo. ROOM au-dessus de PS1 ; relâchez TRACK pour appliquer."
+            "Room Send par piste / Decay / Tone. Petite ambiance stÃ©rÃ©o. ROOM au-dessus de PS1 ; relÃ¢chez TRACK pour appliquer."
           ]
         },
         {
@@ -563,7 +575,7 @@
           "fr": [
             "Reverb PS1",
             "REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE",
-            "PS1 Send par piste / Decay / Tone. Queue stéréo inspirée de PlayStation, sombre et granuleuse."
+            "PS1 Send par piste / Decay / Tone. Queue stÃ©rÃ©o inspirÃ©e de PlayStation, sombre et granuleuse."
           ]
         },
         {
@@ -647,7 +659,7 @@
           "fr": [
             "Reglages et sauvegarde FX",
             "Sauvegarder le projet",
-            "Chaque pattern garde ses types FX, commandes ajoutées et envois supplémentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutées par défaut. Les FX d’un pattern en attente s’appliquent au début de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutées ; locks disponibles sur les envois natifs."
+            "Chaque pattern garde ses types FX, commandes ajoutÃ©es et envois supplÃ©mentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutÃ©es par dÃ©faut. Les FX dâ€™un pattern en attente sâ€™appliquent au dÃ©but de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutÃ©es ; locks disponibles sur les envois natifs."
           ]
         },
         {
@@ -715,19 +727,19 @@
           "fr": [
             "Commandes Elder",
             "Choisir Elder dans MACHINES",
-            "COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservés. Synthé original inspiré de Junior de Fors. Valeurs de depart : Wave 0, Warp 0, Noise 0, Motion 0, Decay 50."
+            "COLOR = Wave ; SHAPE = Warp ; SWEEP = Noise ; CONTOUR = Motion. PITCH, DECAY, PUNCH, Gate et Fine conservÃ©s. SynthÃ© original inspirÃ© de Junior de Fors. Valeurs de depart : Wave 0, Warp 0, Noise 0, Motion 0, Decay 50."
           ]
         },
         {
           "en": [
             "TINY controls",
             "Select TINY in MACHINES",
-            "COLOR: Tone; SHAPE: Model 0–51; SWEEP: Mod; CONTOUR: Excite. Starting values: Tone 64, Model 0, Mod 64, Excite 32, Decay 60."
+            "COLOR: Tone; SHAPE: Model 0â€“51; SWEEP: Mod; CONTOUR: Excite. Starting values: Tone 64, Model 0, Mod 64, Excite 32, Decay 60."
           ],
           "fr": [
             "Commandes TINY",
             "Choisir TINY dans MACHINES",
-            "COLOR : Tone ; SHAPE : Model 0–51 ; SWEEP : Mod ; CONTOUR : Excite. Valeurs de depart : Tone 64, Model 0, Mod 64, Excite 32, Decay 60."
+            "COLOR : Tone ; SHAPE : Model 0â€“51 ; SWEEP : Mod ; CONTOUR : Excite. Valeurs de depart : Tone 64, Model 0, Mod 64, Excite 32, Decay 60."
           ]
         },
         {
@@ -739,7 +751,7 @@
           "fr": [
             "Commandes Shadow",
             "Choisir Shadow apres TINY dans MACHINES",
-            "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : distorsion et attaque répétée. Pitch, Fine, Decay et Gate disponibles. Synthé pulsar/bruit inspiré de Opal Dust de Fors."
+            "COLOR : Grain ; SHAPE : Density ; SWEEP : Spread ; CONTOUR : Chaos. PUNCH : distorsion et attaque rÃ©pÃ©tÃ©e. Pitch, Fine, Decay et Gate disponibles. SynthÃ© pulsar/bruit inspirÃ© de Opal Dust de Fors."
           ]
         },
         {
@@ -763,7 +775,7 @@
           "fr": [
             "Dossiers WAVE",
             "BACK dans le navigateur WAVE",
-            "BACK remonte d’un dossier ; à /Wavetables, il ferme le sélecteur."
+            "BACK remonte dâ€™un dossier ; Ã  /Wavetables, il ferme le sÃ©lecteur."
           ]
         },
         {
@@ -799,7 +811,7 @@
           "fr": [
             "Detune fin SY BITS",
             "FUNC + COLOR",
-            "Pas de 0.01 demi-ton de -24.00 à +24.00. COLOR change les demi-tons entiers ; FUNC + COLOR règle la fraction. Sauvegarde avec les sons et locks disponibles."
+            "Pas de 0.01 demi-ton de -24.00 Ã  +24.00. COLOR change les demi-tons entiers ; FUNC + COLOR rÃ¨gle la fraction. Sauvegarde avec les sons et locks disponibles."
           ]
         },
         {
@@ -811,7 +823,7 @@
           "fr": [
             "RETROSYN",
             "MACHINES, juste avant MIDI Out",
-            "COLOR, SHAPE (six modèles), SWEEP et CONTOUR. PITCH, DECAY, Gate et Punch disponibles."
+            "COLOR, SHAPE (six modÃ¨les), SWEEP et CONTOUR. PITCH, DECAY, Gate et Punch disponibles."
           ]
         },
         {
@@ -823,7 +835,7 @@
           "fr": [
             "Commandes PUNCH",
             "Choisir PUNCH avant MIDI Out",
-            "SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR règle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP règle entre les ratios. CONTOUR et DECAY façonnent le son. Moteur de100demons, MIT. Valeurs de depart : Color 64, KIK, ratio 4:1, Contour 40, Decay 50."
+            "SHAPE choisit KIK, TOM, BNG, CNG, TAI, TIM, MAR, DJB, BLK, GNG, BUB ou ZAP. COLOR rÃ¨gle le timbre ; SWEEP choisit le ratio ; FUNC + SWEEP rÃ¨gle entre les ratios. CONTOUR et DECAY faÃ§onnent le son. Moteur de100demons, MIT. Valeurs de depart : Color 64, KIK, ratio 4:1, Contour 40, Decay 50."
           ]
         },
         {
@@ -879,7 +891,7 @@
           "fr": [
             "Choisir SPEAK",
             "MACHINES : apres Shadow, apres Shadow",
-            "Moteur vocal de 128 mots. Commencez vers Vol+Dist 60, Punch coupé."
+            "Moteur vocal de 128 mots. Commencez vers Vol+Dist 60, Punch coupÃ©."
           ]
         },
         {
@@ -891,7 +903,7 @@
           "fr": [
             "Voice / Word / Speed / Articulation",
             "COLOR / SHAPE / SWEEP / CONTOUR",
-            "Caractère vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche le mot et son index. Mot pris au prochain trig ; autres commandes en direct."
+            "CaractÃ¨re vocal/formants / Word 0-127 / Speed (64 normal, plus bas plus lent) / Articulation. SHAPE affiche le mot et son index. Mot pris au prochain trig ; autres commandes en direct."
           ]
         },
         {
@@ -903,7 +915,7 @@
           "fr": [
             "Hauteur et enveloppe",
             "PITCH / notes ; DECAY, Fine, Punch, Gate, Attack",
-            "Hauteur indépendante de la vitesse. Commencez à Decay 127 pour entendre les mots complets. Filtres et envois FX disponibles."
+            "Hauteur indÃ©pendante de la vitesse. Commencez Ã  Decay 127 pour entendre les mots complets. Filtres et envois FX disponibles."
           ]
         },
         {
@@ -1002,12 +1014,12 @@
           "en": [
             "MACRO fine tune",
             "SETTINGS + turn PITCH",
-            "Adjust fine pitch. Plain PITCH retains its regular control; FUNC + PITCH is MACRO Lo-Fi. Lo-Fi lowers sample rate to the left, bit depth to the right, with OFF at center. Model names and numbers 0–46 are shown."
+            "Adjust fine pitch. Plain PITCH retains its regular control; FUNC + PITCH is MACRO Lo-Fi. Lo-Fi lowers sample rate to the left, bit depth to the right, with OFF at center. Model names and numbers 0â€“46 are shown."
           ],
           "fr": [
             "Accord fin MACRO",
             "SETTINGS + PITCH",
-            "PITCH seul reste natif. FUNC + PITCH est Lo-Fi : fréquence réduite à gauche, bits réduits à droite, centre OFF. Noms et numéros 0–46 des modèles visibles."
+            "PITCH seul reste natif. FUNC + PITCH est Lo-Fi : frÃ©quence rÃ©duite Ã  gauche, bits rÃ©duits Ã  droite, centre OFF. Noms et numÃ©ros 0â€“46 des modÃ¨les visibles."
           ]
         }
       ]
@@ -1025,9 +1037,9 @@
             "Audition the highlighted sample. Scrolling through the list remains silent."
           ],
           "fr": [
-            "Préécoute sample",
+            "PrÃ©Ã©coute sample",
             "FUNC + MACHINES ; surligner un sample ; pad ou TRIG clavier",
-            "Écoute le sample surligné. Le défilement reste silencieux."
+            "Ã‰coute le sample surlignÃ©. Le dÃ©filement reste silencieux."
           ]
         },
         {
@@ -1039,7 +1051,7 @@
           "fr": [
             "Sample lock",
             "Navigateur ouvert : surligner le sample, puis TRIG + MACHINES",
-            "Verrouille le sample choisi sur le pas de la piste Wizard. Le navigateur doit être ouvert avec le sample surligné."
+            "Verrouille le sample choisi sur le pas de la piste Wizard. Le navigateur doit Ãªtre ouvert avec le sample surlignÃ©."
           ]
         },
         {
@@ -1056,14 +1068,26 @@
         },
         {
           "en": [
-            "Slice editor",
-            "FUNC + step key; FUNC + click DATA",
-            "Play upper slices; remove a slice marker with the DATA click. Marker knobs can snap to zero crossings."
+            "Volume / pan display",
+            "Sample Wizard home screen: click DATA",
+            "Toggle the segment display between track volume and left/right pan. Pan follows the sounding note during playback, including its p-lock. This changes the display only."
           ],
           "fr": [
-            "Éditeur Slice",
+            "Affichage volume / pan",
+            "Accueil Sample Wizard : clic DATA",
+            "Alterne les barres de volume et panoramique gauche/droite. En lecture le pan suit la note et son p-lock. Affichage seulement."
+          ]
+        },
+        {
+          "en": [
+            "Slice editor",
+            "FUNC + step key; FUNC + click DATA",
+            "FUNC + a normal trig key or Slice Editor key plays upper slices 17-32 in Slice mode. FUNC + DATA removes a slice marker in the editor. Marker knobs can snap to zero crossings."
+          ],
+          "fr": [
+            "Ã‰diteur Slice",
             "FUNC + TRIG ; FUNC + clic DATA",
-            "FUNC joue les slices 17–32 ; FUNC + clic DATA efface un marqueur. FUNC + potards 1/2 cale les marqueurs au passage zéro."
+            "FUNC avec une touche TRIG normale ou de l editeur joue les slices17-32 en mode Slice. FUNC + DATA supprime un marqueur dans l editeur. Les potards peuvent suivre les passages a zero."
           ]
         },
         {
@@ -1141,9 +1165,9 @@
             "Silent MIDI track. Track Setup: Channel, Output, KbT (keyboard transpose), Pad Note. Turn DATA to select; click DATA before editing; BACK exits. Channel: 1-16 / Global. Output: Global / Off / USB / DIN / Both."
           ],
           "fr": [
-            "Choix et réglages MIDI Out",
+            "Choix et rÃ©glages MIDI Out",
             "MACHINES : MIDI Out ; FUNC + TRACK",
-            "Piste MIDI silencieuse. Track Setup : Channel, Output, KbT et Pad Note. DATA choisit ; clic avant édition ; BACK quitte."
+            "Piste MIDI silencieuse. Track Setup : Channel, Output, KbT et Pad Note. DATA choisit ; clic avant Ã©dition ; BACK quitte."
           ]
         },
         {
@@ -1154,8 +1178,8 @@
           ],
           "fr": [
             "Assignation CC et locks - MIDI Out seulement",
-            "SETTINGS + potard gris ; pas tenu + potard assigné",
-            "Neuf potards CC. Tourner seul envoie la valeur. Chaque lock garde numéro et valeur ; enregistrement live des locks. Chance/Swing restent natifs."
+            "SETTINGS + potard gris ; pas tenu + potard assignÃ©",
+            "Neuf potards CC. Tourner seul envoie la valeur. Chaque lock garde numÃ©ro et valeur ; enregistrement live des locks. Chance/Swing restent natifs."
           ]
         },
         {
@@ -1167,7 +1191,7 @@
           "fr": [
             "Deux LFO MIDI",
             "LFO : LFO 1, LFO 2, piste ; BACK quitte",
-            "DATA choisit, clic pour éditer : Wav, Mul, Dst, Dep, Speed, Fade, Phase, Mode. LFO Speed règle le LFO ouvert ; LFO + CC choisit destination puis profondeur."
+            "DATA choisit, clic pour Ã©diter : Wav, Mul, Dst, Dep, Speed, Fade, Phase, Mode. LFO Speed rÃ¨gle le LFO ouvert ; LFO + CC choisit destination puis profondeur."
           ]
         },
         {
@@ -1179,18 +1203,18 @@
           "fr": [
             "Notes et sauvegarde",
             "Notes/grille habituelles ; FUNC + PAGE ; FUNC + SETTINGS",
-            "Entrée MIDI par canal de piste ou auto ; live/step record gardent notes, vélocité et longueur. FUNC + PAGE : longueur. Sauvegarde projet : réglages et locks MIDI."
+            "EntrÃ©e MIDI par canal de piste ou auto ; live/step record gardent notes, vÃ©locitÃ© et longueur. FUNC + PAGE : longueur. Sauvegarde projet : rÃ©glages et locks MIDI."
           ]
         },
         {
           "en": [
             "MIDI OUT + THRU",
-            "CONFIG → MIDI → PORTS → OUT/THRU: THR; then FUNC + click DATA",
-            "Toggle the Cycles’ own outgoing MIDI while retaining incoming MIDI Thru."
+            "CONFIG â†’ MIDI â†’ PORTS â†’ OUT/THRU: THR; then FUNC + click DATA",
+            "Toggle the Cyclesâ€™ own outgoing MIDI while retaining incoming MIDI Thru."
           ],
           "fr": [
             "MIDI OUT + THRU",
-            "CONFIG → MIDI → PORTS → OUT/THRU : THR ; puis FUNC + clic DATA",
+            "CONFIG â†’ MIDI â†’ PORTS â†’ OUT/THRU : THR ; puis FUNC + clic DATA",
             "Bascule la sortie MIDI propre du Cycles en conservant le MIDI Thru entrant."
           ]
         },
@@ -1266,12 +1290,12 @@
           "en": [
             "Global / Track / Song",
             "DATA enters; BACK returns",
-            "Global: Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID (when installed), JUMP. Track: SCRM, S.Chn, Human. Song opens the arrangement grid."
+            "Global: Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID (when installed), JUMP. Track: SCRM, S.Chn, Human. Song opens the arrangement grid. GOV chooses voice-cut ordering."
           ],
           "fr": [
             "Global / Track / Song",
             "DATA entre ; BACK revient",
-            "Global : Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID si installe, JUMP. Track : SCRM, S.Chn, Human. Song ouvre la grille d arrangement."
+            "Global : Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID si installe, JUMP. Track : SCRM, S.Chn, Human. Song ouvre la grille d arrangement. GOV choisit l ordre des coupures de voix."
           ]
         },
         {
@@ -1281,9 +1305,9 @@
             "Available from the main screen or machine selection. DATA navigates Mod Setup; sound knobs show the edited parameter for two seconds, then return to the same menu position. BACK closes the popup first, then Mod Setup; machine selection stays open underneath."
           ],
           "fr": [
-            "Accès et réglage du son",
+            "AccÃ¨s et rÃ©glage du son",
             "Appui bref sur SETTINGS + TRACK",
-            "Disponible depuis l’écran principal ou la sélection des machines. DATA parcourt Mod Setup ; les commandes du son affichent le paramètre deux secondes puis reviennent à la même position. BACK ferme d’abord la fenêtre puis Mod Setup ; la sélection des machines reste ouverte en dessous."
+            "Disponible depuis lâ€™Ã©cran principal ou la sÃ©lection des machines. DATA parcourt Mod Setup ; les commandes du son affichent le paramÃ¨tre deux secondes puis reviennent Ã  la mÃªme position. BACK ferme dâ€™abord la fenÃªtre puis Mod Setup ; la sÃ©lection des machines reste ouverte en dessous."
           ]
         },
         {
@@ -1306,8 +1330,8 @@
           ],
           "fr": [
             "Pad",
-            "Stk / SIL ; défaut Stk",
-            "Stk sélectionne et joue. SIL sélectionne silencieusement ; TRACK + pad sélectionne et joue. ChordKeys exige TRACK + pad pour quitter la piste."
+            "Stk / SIL ; dÃ©faut Stk",
+            "Stk sÃ©lectionne et joue. SIL sÃ©lectionne silencieusement ; TRACK + pad sÃ©lectionne et joue. ChordKeys exige TRACK + pad pour quitter la piste."
           ]
         },
         {
@@ -1318,8 +1342,8 @@
           ],
           "fr": [
             "USB",
-            "2ch / 6ch ; défaut 2ch",
-            "2ch : mix stéréo avec effets. 6ch : six pistes mono avant panoramique, sans retours delay/crusher/reverb/chorus. Retour ordinateur stéréo dans les deux modes. Arrêtez avant de changer ; le périphérique USB se reconnecte."
+            "2ch / 6ch ; dÃ©faut 2ch",
+            "2ch : mix stÃ©rÃ©o avec effets. 6ch : six pistes mono avant panoramique, sans retours delay/crusher/reverb/chorus. Retour ordinateur stÃ©rÃ©o dans les deux modes. ArrÃªtez avant de changer ; le pÃ©riphÃ©rique USB se reconnecte."
           ]
         },
         {
@@ -1330,8 +1354,8 @@
           ],
           "fr": [
             "Num",
-            "Off / On ; défaut Off",
-            "On affiche volume et panoramique en chiffres ; Off garde l’affichage natif."
+            "Off / On ; dÃ©faut Off",
+            "On affiche volume et panoramique en chiffres ; Off garde lâ€™affichage natif."
           ]
         },
         {
@@ -1342,8 +1366,8 @@
           ],
           "fr": [
             "Mute",
-            "Stk / LTC ; défaut Stk",
-            "LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillé : solo ; rappuyer ou quitter restaure les mutes."
+            "Stk / LTC ; dÃ©faut Stk",
+            "LTC : TRACK + appui FUNC verrouille ; FUNC quitte. FUNC + pad en mute verrouillÃ© : solo ; rappuyer ou quitter restaure les mutes."
           ]
         },
         {
@@ -1353,9 +1377,9 @@
             "Turn it On or Off and select the time division your mutes and solos are quantized to. Off by default."
           ],
           "fr": [
-            "Mute/solo quantifiés",
+            "Mute/solo quantifiÃ©s",
             "SETTINGS + TRACK bref ; QntM",
-            "Activez ou désactivez-le et choisissez la division temporelle sur laquelle vos mutes et solos sont quantifiés. Désactivé par défaut."
+            "Activez ou dÃ©sactivez-le et choisissez la division temporelle sur laquelle vos mutes et solos sont quantifiÃ©s. DÃ©sactivÃ© par dÃ©faut."
           ]
         },
         {
@@ -1366,8 +1390,8 @@
           ],
           "fr": [
             "Delay",
-            "Stk / Div ; défaut Stk",
-            "Stk : Time natif. Div : divisions musicales, pointées et triolets. Positions correspondantes corrigées au tempo ; toutes les positions ne sont pas quantifiées. Utilisé en mode Delay."
+            "Stk / Div ; dÃ©faut Stk",
+            "Stk : Time natif. Div : divisions musicales, pointÃ©es et triolets. Positions correspondantes corrigÃ©es au tempo ; toutes les positions ne sont pas quantifiÃ©es. UtilisÃ© en mode Delay."
           ]
         },
         {
@@ -1378,7 +1402,7 @@
           ],
           "fr": [
             "DX",
-            "Off / On ; défaut Off",
+            "Off / On ; dÃ©faut Off",
             "Global DX On active SETTINGS + BACK. PAGE parcourt charge CPU, coupures recentes de toutes les pistes et totaux. DATA efface ; double BACK quitte. Transport, potards et trigs restent actifs ; BACK simple conserve l annulation. DX Off interdit l acces."
           ]
         },
@@ -1391,7 +1415,7 @@
           "fr": [
             "SCRM",
             "DATA ouvre ; tourner et appuyer ; BACK revient",
-            "Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay désactivés par défaut, Color/Shape/Sweep/Contour activés. Six listes propres à chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues."
+            "Six cases par piste : Pitch, Decay, Color, Shape, Sweep, Contour. Pitch/Decay dÃ©sactivÃ©s par dÃ©faut, Color/Shape/Sweep/Contour activÃ©s. Six listes propres Ã  chaque pattern ; Save Project les conserve au chargement. Wizard autorise Pitch/Decay, commandes sample/modes exclues."
           ]
         },
         {
@@ -1410,12 +1434,12 @@
           "en": [
             "Dpt / Atk / Hld / Rel",
             "Scroll below checkboxes; click DATA, turn, click to finish",
-            "Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0–100%, 16 levels. Atk: 0–160 ms. Hold: 0–120 ms. Rel: 10 ms–3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source."
+            "Dpt = Depth, Atk = Attack, Hld = Hold, Rel = Release. Depth: 0â€“100%, 16 levels. Atk: 0â€“160 ms. Hold: 0â€“120 ms. Rel: 10 msâ€“3 s. BACK finishes editing, then returns to Mod Setup. Start with a four-on-the-floor source, Depth 60%, Attack 0 ms, Hold 0 ms, Release 150 ms. Untick all targets to disable that source."
           ],
           "fr": [
             "Dpt / Atk / Hld / Rel",
             "Sous les cases : clic DATA, tourner, puis clic pour finir",
-            "Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relâchement. Depth : 0–100 %, 16 niveaux. Atk : 0–160 ms. Hold : 0–120 ms. Rel : 10 ms–3 s. BACK termine l’édition puis revient à Mod Setup. Départ conseillé : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. Décocher toutes les cibles désactive la source."
+            "Dpt = profondeur, Atk = attaque, Hld = maintien, Rel = relÃ¢chement. Depth : 0â€“100 %, 16 niveaux. Atk : 0â€“160 ms. Hold : 0â€“120 ms. Rel : 10 msâ€“3 s. BACK termine lâ€™Ã©dition puis revient Ã  Mod Setup. DÃ©part conseillÃ© : source sur chaque temps, Depth 60 %, Attack 0 ms, Hold 0 ms, Release 150 ms. DÃ©cocher toutes les cibles dÃ©sactive la source."
           ]
         },
         {
@@ -1438,8 +1462,8 @@
           ],
           "fr": [
             "Sauvegarde par pattern",
-            "Save Project après modification",
-            "Routage et commandes Sidechain, six listes Scramble, types et réglages FX ajoutés propres à chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain désactivé et listes Scramble par défaut. Changement en attente appliqué au début du prochain pattern."
+            "Save Project aprÃ¨s modification",
+            "Routage et commandes Sidechain, six listes Scramble, types et rÃ©glages FX ajoutÃ©s propres Ã  chaque pattern. Sauvegardez le projet pour les conserver au chargement. Pattern vierge : Sidechain dÃ©sactivÃ© et listes Scramble par dÃ©faut. Changement en attente appliquÃ© au dÃ©but du prochain pattern."
           ]
         },
         {
@@ -1524,6 +1548,18 @@
             "JUMP",
             "Global > JUMP > Off / On",
             "Preference Direct Pattern Jump ; sauvegarde globale a l arret."
+          ]
+        },
+        {
+          "en": [
+            "GOV",
+            "Global > GOV > Lod / Trk; default Lod",
+            "Lod retains the quietest eligible voice policy. Trk cuts the lowest-numbered eligible track first when the overload governor needs a cut. Saves globally while stopped; eligibility, thresholds and fades are unchanged."
+          ],
+          "fr": [
+            "GOV",
+            "Global > GOV > Lod / Trk ; defaut Lod",
+            "Lod garde la voix admissible la plus faible. Trk coupe la piste admissible de plus petit numero quand une coupure est necessaire. Sauvegarde globale a l arret ; admissibilite, seuils et fondus conserves."
           ]
         }
       ]

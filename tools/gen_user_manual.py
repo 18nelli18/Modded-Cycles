@@ -1,4 +1,4 @@
-"""Manuel imprime3.03 : contenu present, couverture vectorielle et controle PDF."""
+"""Manuel imprime3.04 : contenu present, couverture vectorielle et controle PDF."""
 from pathlib import Path
 import json,re,copy
 from html import escape
@@ -11,10 +11,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from pypdf import PdfReader
 
-R=Path(__file__).resolve().parents[1];W=R/'output/manual303';W.mkdir(parents=True,exist_ok=True)
-OUT=R/'output/pdf/Supermodel-3.03-Manual.pdf';OUT.parent.mkdir(parents=True,exist_ok=True)
+R=Path(__file__).resolve().parents[1];W=R/'output/manual304';W.mkdir(parents=True,exist_ok=True)
+OUT=R/'output/pdf/Supermodel-3.04-Manual.pdf';OUT.parent.mkdir(parents=True,exist_ok=True)
 DATA=json.loads((R/'tools/shortcut_guide_content.json').read_text(encoding='utf-8'))
-assert DATA['release']=='3.03'
+assert DATA['release']=='3.04'
 for name,file in [('Body','calibri.ttf'),('Bold','calibrib.ttf'),('Italic','calibrii.ttf'),('Light','calibril.ttf')]:
  pdfmetrics.registerFont(TTFont(name,'C:/Windows/Fonts/'+file))
 pdfmetrics.registerFontFamily('Body',normal='Body',bold='Bold',italic='Italic',boldItalic='Bold')
@@ -38,7 +38,7 @@ def S(*items):return ('steps',items)
 def C(title,text):return ('call',(title,text))
 def page(group,title,lead,*blocks):pages.append(dict(group=group,title=title,lead=lead,blocks=list(blocks)))
 
-page('START HERE','Contents & conventions','A practical reference for Supermodel 3.03 on Model:Cycles.',
+page('START HERE','Contents & conventions','A practical reference for Supermodel 3.04 on Model:Cycles.',
  P('Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.'),
  ('contents',None),
  H('How to read the controls'),
@@ -349,7 +349,7 @@ page('REFERENCE / SPEAK','Word library','Choose the index with SHAPE, or paramet
 
 page('REFERENCE','Find it quickly','An alphabetical guide to the manual.',('index',None),
  H('A saving reminder'),P('Use Save Project for pattern settings. Global preferences save while stopped. Temporary save/reload is a performance snapshot.'),
- H('About this edition'),P('Supermodel 3.03 • Model:Cycles • English print edition • 3 November 2026.'),
+ H('About this edition'),P('Supermodel 3.04 • Model:Cycles • English print edition • 4 November 2026.'),
  P('Engine acknowledgments include Glycinate (Feral), Fors (inspiration for ELDER and Shadow), Emilie Gillet (MACRO/Braids and scale quantization), 100demons (PUNCH), and durchgemacht and Claude (POTS). POTS uses the MIT-licensed model27 DSP.'),
  P('Control names in this manual follow the machine’s panel and display. Machine-specific chapters apply when that machine is installed.'))
 
@@ -357,7 +357,7 @@ conventions=pages[0]['blocks'][3:]
 pages[0]['blocks']=pages[0]['blocks'][:2]
 pages.insert(1,dict(group='START HERE',title='Buttons & editions',lead='Read gestures consistently and find the chapters that apply to your build.',blocks=conventions+[
  H('Acknowledgments'),P("Glycinate, Fors.Fm, PPPCCC, DavidCaruso, Emilie Gillet, Durchgemacht, 18nelli18, and every member of the Modded-Cycles Discord server who rode with me through this. Y'all rule.")]))
-pages[-1]['blocks']=[pages[-1]['blocks'][0],P('Supermodel 3.03 • Model:Cycles • English print edition • 3 November 2026.')]
+pages[-1]['blocks']=[pages[-1]['blocks'][0],P('Supermodel 3.04 • Model:Cycles • English print edition • 4 November 2026.')]
 at=next(i for i,p in enumerate(pages) if p['title']=='MACRO, ACID & WAVE')
 pages[at]['title']='ACID & WAVE';pages[at]['lead']='Resonant bass synthesis and wavetable motion.'
 pages[at]['blocks']=pages[at]['blocks'][3:]
@@ -384,21 +384,23 @@ for p in pages:
  else:continue
  break
 def cpu_chapter(group,title,lead,*blocks):return dict(group=group,title=title,lead=lead,blocks=list(blocks))
-pages.insert(-1,cpu_chapter('DIAGNOSTICS','CPU monitor','Monitor complete audio-block load while using the instrument.',P(detail),T(['Readout','Meaning'],[['NOW / PEAK','Latest complete block / highest recorded load, in percent.'],['MEAN / SUST','Recorded playing-time average / governor sustained estimate.'],['OVER / CUT','Deadline overruns / forced governor fades.'],['T1-T6','Forced cuts by track;99+ is a capped count, not normal note-offs.'],['Recent Cuts','Latest forced cuts across all tracks, with sustained and block load.']],[130,380]),P('Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.'),C('Performance status','Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.')))
-# Chapitres3.03 : operations presentes, sans historique des corrections.
+pages.insert(-1,cpu_chapter('DIAGNOSTICS','CPU monitor','Monitor complete audio-block load while using the instrument.',P(detail),T(['Readout','Meaning'],[['NOW / PEAK','Latest complete block / highest recorded load, in percent.'],['MEAN / SUST','Recorded playing-time average / governor sustained estimate.'],['OVER / CUT','Deadline overruns / forced governor fades.'],['T1-T6','Forced cuts by track;99+ is a capped count, not normal note-offs.'],['Recent Cuts','Latest forced cuts across all tracks, with sustained and block load.']],[130,380]),P('Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.'),P('<b>Global &gt; GOV</b>: <b>Lod</b> (default) selects the quietest eligible voice. <b>Trk</b> selects the lowest-numbered eligible track when a cut is needed. This choice saves globally; eligibility, thresholds and fades stay the same.'),C('Performance status','Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.')))
+# Chapitres3.04 : operations presentes, sans historique des corrections.
 by_title={p['title']:p for p in pages}
 by_title['Global preferences']['blocks'][0][1][1].append(['JUMP','Off / On. With On, PATTERN then FUNC + TRIG jumps immediately and keeps playback position. Default: Off. Saves globally.'])
+by_title['Global preferences']['blocks'][0][1][1].append(['GOV','Lod (default) / Trk. Voice-cut ordering; saves globally. See CPU monitor.'])
 for p in pages:
  for i,(kind,value) in enumerate(p['blocks']):
   if kind=='p' and 'For pitch slides, use overlapping' in value:
    p['blocks'][i]=P('<b>PUNCH</b> selects the oscillator waveform: Off is saw, On is square. Overlapping note lengths link ordinary notes according to the track glide and legato settings. See ACID articulation for the physical controls.')
   if kind=='p' and 'The home screen shows the sample name' in value:
-   p['blocks'][i]=P('The home screen shows the sample name, waveform, track and duration. Volume segments show the track volume setting. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.')
+   p['blocks'][i]=P('The home screen shows the sample name, waveform, track and duration. Click <b>DATA</b> to switch the segment display between volume and left/right pan. Playing pan follows the sounding note and its p-lock. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.')
 
 def add_after(title,chapter):
  pages.insert(next(i for i,p in enumerate(pages) if p['title']==title)+1,chapter)
 def chapter(group,title,lead,*blocks):return dict(group=group,title=title,lead=lead,blocks=list(blocks))
 add_after('Notes, scales & page length',chapter('SEQUENCING / LIVE EDITING','Pattern jumps & trig selection','Choose patterns and edit groups of existing steps.',
+ P('Double-tap <b>PATTERN</b> to keep the native pattern selector open without timeout. Select patterns repeatedly; <b>PATTERN</b> again or <b>BACK</b> exits. A single tap or held press stays native.'),
  H('Direct Pattern Jump'),
  S('Open Mod Setup with <b>SETTINGS + TRACK</b>. Choose <b>Global &gt; JUMP &gt; On</b>.','Press <b>PATTERN</b>, then <b>FUNC + the pattern TRIG</b> to jump immediately while keeping playback position.'),
  P('With JUMP Off, pattern changes use normal timing. The preference saves globally while stopped; Off is the default.'),
@@ -452,7 +454,7 @@ def cover(c):
  c.setFillColor(INK);c.setFont('Light',52);c.drawString(48,588,'SUPERMODEL')
  c.setFont('Body',23);c.drawString(51,548,'Make it yours.')
  c.setFillColor(MUTED);c.setFont('Body',13);c.drawString(51,500,'Sounds • sequencing • performance • control')
- c.setFont('Bold',12);c.setFillColor(GREEN);c.drawString(51,469,'RELEASE 3.03')
+ c.setFont('Bold',12);c.setFillColor(GREEN);c.drawString(51,469,'RELEASE 3.04')
  c.setStrokeColor(LINE);c.line(51,442,561,442)
  patterns=[{0,4,8,12},{4,12},{0,2,4,6,8,10,12,14},{3,7,11,15},{0,5,10,13},{1,6,9,14}]
  for track,pattern in enumerate(patterns):
@@ -462,14 +464,14 @@ def cover(c):
    c.roundRect(x,y,19,19,3,stroke=1,fill=1)
  c.setFillColor(MUTED);c.setFont('Body',11);c.drawString(51,100,'A practical guide to the current controls and workflows.')
  c.setFont('Body',9);c.drawString(51,78,'English • Full / Lite / Machine Optional')
- c.drawRightString(561,78,'3 NOVEMBER 2026')
+ c.drawRightString(561,78,'4 NOVEMBER 2026')
 
 def chrome(c,doc):
  c.saveState();c.bookmarkPage('page'+str(doc.page))
  if doc.page==1:cover(c);c.restoreState();return
  index=doc.page-2
  group=pages[index]['group'] if index<len(pages) else 'SUPERMODEL'
- c.setFillColor(GREEN);c.setFont('Bold',8);c.drawString(51,759,'SUPERMODEL 3.03')
+ c.setFillColor(GREEN);c.setFont('Bold',8);c.drawString(51,759,'SUPERMODEL 3.04')
  c.setFillColor(MUTED);c.setFont('Body',8);c.drawRightString(561,759,group)
  c.setStrokeColor(LINE);c.line(51,749,561,749);c.line(51,38,561,38)
  c.setFont('Body',8);c.drawString(51,24,'MODEL:CYCLES  /  USER MANUAL');c.drawRightString(561,24,str(doc.page))
@@ -528,7 +530,7 @@ def build_flow():
  return flow[:-1]
 
 def markdown():
- lines=['# SUPERMODEL','## User manual · Release 3.03','','Model:Cycles · Full / Lite / Machine Optional','']
+ lines=['# SUPERMODEL','## User manual · Release 3.04','','Model:Cycles · Full / Lite / Machine Optional','']
  for p in pages:
   lines+=['# '+p['title'],'',p['lead'],'']
   for kind,value in p['blocks']:
@@ -540,16 +542,16 @@ def markdown():
  return '\n'.join(lines)
 
 if __name__=='__main__':
- doc=SimpleDocTemplate(str(OUT),pagesize=letter,leftMargin=51,rightMargin=51,topMargin=63,bottomMargin=53,title='Supermodel 3.03 — User Manual',author='Supermodel',subject='Current features and controls for Model:Cycles')
+ doc=SimpleDocTemplate(str(OUT),pagesize=letter,leftMargin=51,rightMargin=51,topMargin=63,bottomMargin=53,title='Supermodel 3.04 — User Manual',author='Supermodel',subject='Current features and controls for Model:Cycles')
  doc.build(build_flow(),onFirstPage=chrome,onLaterPages=chrome)
  r=PdfReader(OUT);expected=len(pages)+1
  print('Pages:',len(r.pages),'expected:',expected)
  for i,p in enumerate(r.pages):print(i+1,' '.join((p.extract_text() or '').split())[:105])
- (W/'Supermodel-3.03-Manual.md').write_text(markdown(),encoding='utf-8',newline='\n')
+ (W/'Supermodel-3.04-Manual.md').write_text(markdown(),encoding='utf-8',newline='\n')
  (W/'layout.json').write_text(json.dumps(dict(expected_pages=expected,actual_pages=len(r.pages),chapters=[dict(page=i+2,title=p['title']) for i,p in enumerate(pages)]),indent=2)+'\n')
  assert len(r.pages)==expected, 'A chapter overflowed its intended page'
  for ch in [dict(page=i+2,title=p['title']) for i,p in enumerate(pages)]:assert ch['title'] in r.pages[ch['page']-1].extract_text(),ch
  import shutil
  for folder in ('flasher','flasher-optional'):
-  shutil.copyfile(OUT,R/'docs'/folder/'user-manual.pdf');shutil.copyfile(W/'Supermodel-3.03-Manual.md',R/'docs'/folder/'user-manual.md')
+  shutil.copyfile(OUT,R/'docs'/folder/'user-manual.pdf');shutil.copyfile(W/'Supermodel-3.04-Manual.md',R/'docs'/folder/'user-manual.md')
  print('PDF:',OUT)

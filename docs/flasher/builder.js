@@ -403,7 +403,58 @@ function aplibPack(data) {
 }
 
 // origLen < data.length : section agrandie, la fin est compressée par aplibTail.
-function aplibRepack(data, ops, dirty, origLen = data.length) {
+// Recherche bornee pour les overlays lean : prefixe officiel conserve, decoder identique.
+function aplibTailHistory(w,data,start,last){
+ const n=data.length,chains=new Map(),depth=64,window=1<<24;
+ const key=i=>(data[i]<<16)|(data[i+1]<<8)|data[i+2];
+ const remember=i=>{const k=key(i),h=chains.get(k)||[];h.push(i);if(h.length>depth)h.shift();chains.set(k,h)};
+ for(let i=0;i<Math.min(start,n-2);i++)remember(i);
+ let i=start;
+ while(i<n){
+  let best=0,offset=0,bestScore=0;
+  if(i+3<=n){
+   const k=key(i),positions=(chains.get(k)||[]).slice().reverse(),reuse=i-last;
+   if(reuse>=0&&key(reuse)===k&&!positions.includes(reuse))positions.unshift(reuse);
+   for(const pos of positions){
+    const off=i-pos;if(off<1||off>window)continue;
+    let length=3,limit=Math.min(n-i,0xffff);
+    while(length<limit&&data[pos+length]===data[i+length])length++;
+    const base=length-1-(off>3328?1:0);if(base<1)continue;
+    const offsetBits=off===last?2:8+2*(31-Math.clz32((off+767)>>>8));
+    const bits=1+offsetBits+2+(base<=3?0:2*(31-Math.clz32(base-2))),score=9*length-bits;
+    if(score>bestScore){best=length;offset=off;bestScore=score}
+    if(length===limit)break;
+   }
+  }
+  const count=best>=3?best:1;
+  if(best>=3){w.match(offset,best,last);last=offset}else w.literal(data[i]);
+  for(let j=i;j<Math.min(i+count,n-2);j++)remember(j);
+  i+=count;
+ }
+ return last;
+}
+// Meme compactage des plages retirees que removal_assets300.compact_zero_runs.
+function aplibCompactZeros(packed){
+ const {data,ops}=aplibDepack(packed),w=new _Writer();let last=1,index=0;
+ const zero=(p,n)=>{for(let k=p;k<p+n;k++)if(data[k])return false;return true};
+ while(index<ops.length){
+  const [kind,start,off,size]=ops[index];let pos=start;
+  if(zero(pos,size)){
+   let end=pos+size;index++;
+   while(index<ops.length){const q=ops[index];if(q[1]!==end||!zero(q[1],q[3]))break;end+=q[3];index++}
+   if(!pos||data[pos-1]){w.literal(0);pos++}
+   const left=end-pos;if(left>=2){w.match(1,left,last);last=1}else if(left)w.literal(0);
+   continue;
+  }
+  if(kind===LITERAL)w.literal(data[pos]);else{w.match(off,size,last);last=off}index++;
+ }
+ w.end();const b=w.o,n=b.length-SECT_HDR;let sum=0;
+ for(let i=SECT_HDR;i<b.length;i++)sum=(sum+b[i])>>>0;
+ for(let i=0;i<4;i++){b[i]=(n>>>(24-i*8))&255;b[4+i]=(sum>>>(24-i*8))&255}
+ return Uint8Array.from(b);
+}
+function aplibRepackDense(data,ops,dirty,origLen=data.length){return aplibCompactZeros(aplibRepack(data,ops,dirty,origLen,true))}
+function aplibRepack(data, ops, dirty, origLen = data.length, denseTail = false) {
   const w = new _Writer();
   let lastOff = 1;
   let lo = -1, hi = -1;
@@ -417,7 +468,7 @@ function aplibRepack(data, ops, dirty, origLen = data.length) {
     if (touched) { for (let k = pos; k < end; k++) w.literal(data[k]); }
     else { w.match(off, n, lastOff); lastOff = off; }
   }
-  if (origLen < data.length) aplibTail(w, data, origLen, lastOff);
+  if (origLen < data.length) (denseTail ? aplibTailHistory : aplibTail)(w, data, origLen, lastOff);
   w.end();
   const body = w.o;
   const streamLen = body.length - SECT_HDR;
@@ -993,7 +1044,7 @@ function samplesBack(cycRaw, smpRaw) {
 }
 
 // ---- Export node / navigateur ---------------------------------------------
-const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, rewrap, invalidMessages, devChecksum, aplibDepack, aplibRepack, aplibPack, parseContainer, findKey,
+const API = { sha256, hmacSha256, writesBytes, unwrap, wrap, rewrap, invalidMessages, devChecksum, aplibDepack, aplibRepack, aplibRepackDense, aplibPack, parseContainer, findKey,
               rebuildContainer, buildStream, contentChecksum, applyWrites, checkConflicts, checkCaves,
               build, crossflash, cyclesForSamples, modsForSamples, samplesBack, syntaktSection, syntaktVersion, buildPayload,
               hex, fromHex, PRODUCTS, BASE };

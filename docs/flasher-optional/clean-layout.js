@@ -37,10 +37,10 @@ function view(main){
 }
 function encode(full,stock,state,safePack){
  const main=state.serialize(),stockSection=stock.container.sections.find(s=>s.id===3),ops=B.aplibDepack(stock.container.blob.subarray(stockSection.off,stockSection.off+stockSection.size)).ops;
- const dirty=Uint8Array.from(main,(v,i)=>i>=START?1:+(v!==stock.main[i])),packed=safePack(B.aplibRepack(main,ops,dirty,START)).packed;
+ const dirty=Uint8Array.from(main,(v,i)=>i>=START?1:+(v!==stock.main[i])),packed=safePack(B.aplibRepackDense(main,ops,dirty,START)).packed;
  if(!eq(B.aplibDepack(packed,{bootLayout:true}).data,main))throw Error('Lean MAIN packing mismatch');
  const c=full.container,plains=c.sections.map(s=>{try{return B.aplibDepack(c.blob.subarray(s.off,s.off+s.size)).data}catch{return new Uint8Array()}}),key=B.findKey(plains,c.blob.subarray(0,c.blob.length-32),c.blob.subarray(c.blob.length-32));if(!key)throw Error('Firmware signature key not found');
- const blob=B.rebuildContainer(c,{3:packed},key);if(blob.length>0x1c0000)throw Error('Optional selection exceeds flash capacity');
+ const blob=B.rebuildContainer(c,{3:packed},key);if(blob.length>0x1c0000)throw Error('Optional selection exceeds flash capacity: '+blob.length);
  const raw=B.wrap(B.buildStream(blob,101),full.transport.product,full.transport.start_seq);
  return {raw,main,packed,mainOsSha:B.hex(B.sha256(main)),syxSha256:B.hex(B.sha256(raw)),flashBytes:blob.length};
 }
