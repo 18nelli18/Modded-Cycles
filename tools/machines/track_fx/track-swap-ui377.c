@@ -6,9 +6,10 @@ typedef unsigned int u32;typedef int s32;typedef unsigned char u8;
 #define N(a) ((u32(*)())(a))
 typedef struct {u8 *base;u32 stride,bytes,rows;} ts_block;
 typedef struct {u8 *base;u32 stride,rows;} ts_masks;
-typedef struct {ts_block *blocks;u32 count;ts_masks *masks;u32 mask_count;} ts_plan;
+typedef struct {ts_block *blocks;u32 count;ts_masks *masks;u32 mask_count;const volatile u32*owner;u32 expected_owner,expected_active,expected_generation;} ts_plan;
 extern u32 ts_exchange(const ts_plan*,u32,u32),ts_bits(u32,u32,u32);
 extern u32 ts_old_key(const u32*),ts_old_encoder(const u32*),sx_track(void);
+extern u32 ts_tree_edit(void);
 extern volatile u32 menu,row,gc_level,gc_tree_cursor,gc_page,sx_submenu,du_page,mq_page;
 extern void ts_track_menu(u32,u32),ts_page_menu(u32,u32),ts_notice(const char*);
 extern void ts_capture_lfo(void),ts_capture_extra(void),ts_fxp_capture(u8*),ts_fxd_apply(const u8*);
@@ -37,6 +38,8 @@ u32 ts_native_swap(u32 a,u32 b){
  if(a>=6||b>=6||a==b||*(volatile u32*)0x40a7883c||*(volatile u32*)0x40a78874)return 0;
  u32 root=N(0x400cf866)(),pat=root?N(0x4000f208)(root):0,kit=root?N(0x4000eb9c)(root):0;
  if(!pat||!kit)return 0;
+ u32 owner=object_data(root,40),generation=*(volatile u32*)0x468f6e80;
+ if(!owner||owner<0x40000400u||owner>0x42400000u-0x37615cu)return 0;
  u32 seq[6],snd[6],seqbase=0,sndbase=0,pool=object_data(pat+640,40),kitbase=object_data(kit,52);
  for(u32 t=0;t<6;t++){
   seq[t]=N(0x4000cfcc)(pat,t);snd[t]=N(0x40009c1a)(kit,t);
@@ -48,8 +51,12 @@ u32 ts_native_swap(u32 a,u32 b){
  if(!kitbase||sndbase!=kitbase+28||pool!=seqbase+4332||!active)return 0;
  u32 pattern=*(u32*)(seqbase+30706);
  if(pattern>=96||pattern!=*(u32*)(active+30706)||ts_song.count>64)return 0;
+ /* Les IDs seuls ne prouvent pas que les objets appartiennent au projet.
+  * RawProject :96patterns de30710o puis96kits de7094o. */
+ if(seqbase!=owner+28+pattern*30710u||kitbase!=owner+0x2cfc5cu+pattern*7094u)return 0;
+ if(active!=0x406fa040u+pattern*30710u||*(const u32*)(owner+8)!=*(volatile u32*)0x406fa02c)return 0;
  ts_block blocks[24];u32 n=0;
- add(blocks,&n,seqbase,722,722);add(blocks,&n,pool,4385,4385);add(blocks,&n,sndbase,100,100);add(blocks,&n,kitbase+16,1,1);
+ add(blocks,&n,seqbase,722,722);add(blocks,&n,pool,4385,4385);add(blocks,&n,sndbase,100,100);add(blocks,&n,kitbase+16,2,2);
  u32 ctx=ts_lfo_context;
  if(ctx){add(blocks,&n,ctx,32,32);add(blocks,&n,ctx+192,16,16);}
  add(blocks,&n,(u32)ts_lp_one,4,4);add(blocks,&n,(u32)ts_lp_two,4,4);
@@ -68,7 +75,7 @@ u32 ts_native_swap(u32 a,u32 b){
  u32 midi[2]={ts_ck_midi_get(a),ts_ck_midi_get(b)};
 #endif
  u8 fx[78];u32 filters[6];for(u32 t=0;t<6;t++)filters[t]=ts_filter_get(t);ts_fxd_capture(fx);
- ts_plan plan={blocks,n,0,0};if(!ts_exchange(&plan,a,b))return 0;
+ ts_plan plan={blocks,n,0,0,(const volatile u32*)(root+16),owner,active,generation};if(!ts_exchange(&plan,a,b))return 0;
  /* Les rangs des masques sont des pistes, ceux de SCRAMBLE des operateurs. */
  for(u32 start=6;start<=12;start+=6)swap_bytes(fx+start,1,1,a,b);
  swap_bytes(fx+21,1,1,a,b);swap_bytes(fx+36,1,1,a,b);swap_bytes(fx+42,5,5,a,b);swap_bytes(fx+72,1,1,a,b);
@@ -112,7 +119,8 @@ u32 ts_key(const u32*e){
 u32 ts_encoder(const u32*e){
  if(e&&e[0]==0x400fbebc&&e[3]==1){s32 d=(s32)N(0x4006f73a)(e,1,1);
   if(ts_page&&menu){if(d){if(ts_edit&&ts_row<2){volatile u32 *v=ts_row?&ts_target:&ts_source;s32 next=(s32)*v+d;*v=next<0?0:next>5?5:(u32)next;}else ts_row=d>0?(ts_row+1)%3:(ts_row+2)%3;redraw();}return 1;}
-  if(track_menu()&&d){if(gc_tree_cursor==3){gc_tree_cursor=d>0?0:2;row=6+gc_tree_cursor;redraw();return 1;}if((gc_tree_cursor==0&&d<0)||(gc_tree_cursor==2&&d>0)){gc_tree_cursor=3;row=9;redraw();return 1;}}
+  /* Ne jamais deleguer une liste de4lignes au compteur historique de3. */
+  if(track_menu()&&d&&!ts_tree_edit()){gc_tree_cursor=(gc_tree_cursor+(d>0?1:3))%4;row=6+gc_tree_cursor;redraw();return 1;}
  }
  return ts_old_encoder(e);
 }

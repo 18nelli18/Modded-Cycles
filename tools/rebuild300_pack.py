@@ -115,6 +115,10 @@ def main():
     parser.add_argument('--silent-select369',action='store_true')
     parser.add_argument('--wizard-pan371',action='store_true')
     parser.add_argument('--track-swap377',action='store_true')
+    parser.add_argument('--fx-mst-save379',action='store_true')
+    parser.add_argument('--gov-inv-master380',action='store_true')
+    parser.add_argument('--track-swap381',action='store_true')
+    parser.add_argument('--hide-master-fx382',action='store_true')
     parser.add_argument('--gov-policy372',action='store_true')
     parser.add_argument('--pattern-latch374',action='store_true')
     parser.add_argument('--latch-notice374',action='store_true')
@@ -338,9 +342,21 @@ def main():
     if args.gov_policy372:
         from gov_policy372 import apply as gov_apply
         meta['gov_policy372']=gov_apply(meta,native,runtime,sram,out/'gov-policy372')
+    if args.fx_mst_save379:
+        from fx_mst_save379 import apply as mst_save_apply
+        meta['fx_mst_save379']=mst_save_apply(meta,native,runtime,sram,out/'fx-mst-save379')
+    if args.gov_inv_master380:
+        from gov_inv_master380 import apply as inv_master_apply
+        meta['gov_inv_master380']=inv_master_apply(meta,native,runtime,sram,out/'gov-inv-master380',hide_fx=args.hide_master_fx382)
     if args.track_swap377:
         from track_swap377 import apply as swap_apply
         meta['track_swap377']=swap_apply(meta,native,runtime,out/'track-swap377')
+    if args.track_swap381:
+        from track_swap381 import apply as swap_fix_apply
+        meta['track_swap381']=swap_fix_apply(meta,native,runtime,out/'track-swap381')
+    if args.hide_master_fx382:
+        from hide_master_fx382 import apply as hide_fx_apply
+        meta['hide_master_fx382']=hide_fx_apply(meta,native,runtime,out/'hide-master-fx382')
     if args.wizard_pan371:
         from wizard_pan371 import apply as pan_apply
         meta['wizard_pan371']=pan_apply(meta,native,runtime,out/'wizard-pan371')

@@ -47,6 +47,7 @@ def apply(meta,native,runtime,out):
  for label,fn in [('source','ts_source_value'),('target','ts_target_value'),('swap','ts_empty_value')]:rows+=f'.long 0,0,0,.L{label},0,1,.Lts_label,0,0,0,0,0,0,1,{fn},0,0,0,0,0,0\n'
  (out/'page.S').write_text(view('ts_page_menu','Swap',3,'ts_menu_row','ts_menu_edit',rows))
  aliases['gc_tree_row']=sy('groove_strum','gc_tree_row');tramp='.text\n';hooks=[];cs=Cs(CS_ARCH_M68K,CS_MODE_BIG_ENDIAN|CS_MODE_M68K_040)
+ aliases['ts_tree_edit']=sy('groove_strum','gc_tree_edit')
  for at,target,oldname in [(sy('gov_policy372','gp_key'),'ts_key','ts_old_key'),(sy('gov_policy372','gp_encoder'),'ts_encoder','ts_old_encoder'),(draw,'ts_draw',None)]:
   old=bytes(runtime[at-BASE:at-BASE+24]);n=0
   for ins in cs.disasm(old,at):

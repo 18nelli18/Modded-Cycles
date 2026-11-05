@@ -369,3 +369,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 ## Correctif prive3.01
 
 - [223 — Sidechain live sur source mutee](223-sidechain-live-mute.md) : **pads/trigs live autorises avec Mute On**, sequence mutee toujours filtree, queue complete et reset ;288cas par variante ; confirme sur Model:Cycles Optional Full, publie en3.00.
+
+- [224 — GOV INV, master FX et Swap](224-inv-master-swap.md) :3.82 prive, INV6vers1, master FX par pattern sans ligne FX dans Mod ; niveaux16bits et contexte Swap corriges ; quatre editions validees en emulation.

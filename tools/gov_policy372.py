@@ -1,4 +1,4 @@
-"""GOV Lod/Trk : rang seulement, seuils/eligibilite/fondu preserves."""
+"""GOV Lod/Trk/INV : rang seulement, seuils/eligibilite/fondu preserves."""
 from pathlib import Path
 import os,sys,struct,json,hashlib,subprocess
 ROOT=Path(__file__).resolve().parents[1];BASE=0x46700000;NB=0x40000400
@@ -67,8 +67,12 @@ def apply(meta,native,runtime,sram,out):
  patch(runtime,BASE,start,bytes(runtime[start-BASE:finish-BASE]),bytes(finish-start))
 
  g=meta['governor_key_optimization'];entry=g['original_entry'];target=g['target'];stub=target+g['code_bytes'];assert stub+18<=target+g['free_bytes'];assert not any(sram[stub-0x80000000:stub-0x80000000+18]);assert sram[entry-0x80000000:entry-0x80000000+6]==b'\x4e\xf9'+struct.pack('>I',target)
- # TST mode ; BEQ Lod ; MOVE D0,D2 ; RTS ; JMP noyau courant.
- body=b'\x4a\xb9'+struct.pack('>I',symbols['gp_mode'])+b'\x67\x04\x24\x00\x4e\x75\x4e\xf9'+struct.pack('>I',target);assert len(body)==18
- patch(sram,0x80000000,stub,bytes(18),body);patch(sram,0x80000000,entry,b'\x4e\xf9'+struct.pack('>I',target),b'\x4e\xf9'+struct.pack('>I',stub))
+ # L'entree reelle vient de nm : le linker peut aligner le stub de deux octets.
+ (out/'rank.ld').write_text(f'SECTIONS {{ .text {stub:#x} : {{ *(.text*) }} }}\ngi_mode = {symbols["gp_mode"]:#x};\ngi_lod = {target:#x};\n')
+ run('gcc','-mcpu=54418','-c',ROOT/'tools/machines/track_fx/gov-inv380.S','-o',out/'rank.o')
+ run('ld','-T',out/'rank.ld','-o',out/'rank.elf',out/'rank.o');run('objcopy','-O','binary',out/'rank.elf',out/'rank.bin')
+ body=(out/'rank.bin').read_bytes();rank_symbols={v[2]:int(v[0],16) for line in run('nm',out/'rank.elf').splitlines() if len(v:=line.split())==3}
+ assert stub+len(body)<=target+g['free_bytes'];assert not any(sram[stub-0x80000000:stub-0x80000000+len(body)])
+ patch(sram,0x80000000,stub,bytes(len(body)),body);patch(sram,0x80000000,entry,b'\x4e\xf9'+struct.pack('>I',target),b'\x4e\xf9'+struct.pack('>I',rank_symbols['gi_rank']))
  patch(runtime,BASE,CODE,bytes(len(blob)),blob)
- return dict(code=CODE,code_bytes=len(blob),bss=BSS,bss_bytes=symbols['gp_end']-BSS,symbols=symbols,aliases=aliases,patches=patches,global_row=count,global_rows=count+1,storage='/Governor.cfg',default='Lod',thresholds_unchanged=True,eligibility_unchanged=True,fades_unchanged=True,rare_governor_path_only=True,SRAM_added=18,hardware_tested=False)
+ return dict(code=CODE,code_bytes=len(blob),bss=BSS,bss_bytes=symbols['gp_end']-BSS,symbols=symbols,aliases=aliases,patches=patches,global_row=count,global_rows=count+1,storage='/Governor.cfg',default='Lod',modes=['Lod','Trk','INV'],thresholds_unchanged=True,eligibility_unchanged=True,fades_unchanged=True,rare_governor_path_only=True,SRAM_added=len(body),hardware_tested=False)

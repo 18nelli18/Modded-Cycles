@@ -79,7 +79,9 @@ __attribute__((optimize("O2"))) void mf_sync_audio(void){
  u32 id=pattern();if(id<96&&id!=current){capture();current=id;apply(id);}
 }
 void mf_touch(void){touch=*(volatile u32*)0xfc07000c;capture();dirty=1;}
-void mf_legacy_capture(void){if(!ready||pending||current!=pattern())return;if(!mf_mode&&mf_live[40]){mf_live[36]=rev_ok(ch_mode)?ch_mode:0;mf_live[37]=del_ok(cr_mode)?cr_mode:0;if(!rev_light(ch_mode))mf_live[38]=ch_mode;if(!del_light(cr_mode))mf_live[39]=cr_mode;import_params();capture();}}
+/* Le premier geste MST doit initialiser la ligne comme un geste TRK/POTS.
+ * Sinon le drapeau40 reste nul : ni capture, ni restauration, ni fichier. */
+void mf_legacy_capture(void){if(!ready||pending||current!=pattern())return;if(!mf_mode){seed();mf_live[36]=rev_ok(ch_mode)?ch_mode:0;mf_live[37]=del_ok(cr_mode)?cr_mode:0;if(!rev_light(ch_mode))mf_live[38]=ch_mode;if(!del_light(cr_mode))mf_live[39]=cr_mode;import_params();capture();}}
 void mf_mode_set(u32 value){value=!!value;if(value==mf_mode)return;u32 sr=lock();mf_legacy_capture();if(value)seed();mf_mode=value;runtime();capture();unlock(sr);mode_dirty=1;mf_touch();}
 u32 mf_choice(u32 slot,u32 track){retired_effects();if(track>5)return 0;if(!slot){u32 r=mf_live[track];return r==1?1:r==2?2:r==3?3:r==4?9:mf_live[38];}u32 d=mf_live[6+track];return d==1?1:d==2?2:d==3?11:mf_live[39];}
 void mf_choose(u32 slot,u32 track,u32 value){

@@ -5,12 +5,13 @@
 typedef unsigned int u32;typedef unsigned char u8;
 typedef struct {u8 *base;u32 stride,bytes,rows;} ts_block;
 typedef struct {u8 *base;u32 stride,rows;} ts_masks;
-typedef struct {ts_block *blocks;u32 count;ts_masks *masks;u32 mask_count;} ts_plan;
+typedef struct {ts_block *blocks;u32 count;ts_masks *masks;u32 mask_count;const volatile u32*owner;u32 expected_owner,expected_active,expected_generation;} ts_plan;
 u32 ts_bits(u32 mask,u32 a,u32 b){
  u32 different=((mask>>a)^(mask>>b))&1u;
  return mask^((different<<a)|(different<<b));
 }
 static u32 stopped(void){return !*(volatile u32*)0x40a7883c&&!*(volatile u32*)0x40a78874;}
+static u32 context(const ts_plan*p){return !p->owner||(*p->owner==p->expected_owner&&*(volatile u32*)0x40a7887c==p->expected_active&&*(volatile u32*)0x468f6e80==p->expected_generation&&*(const volatile u32*)(p->expected_owner+8)==*(volatile u32*)0x406fa02c);}
 static u32 writable(u32 base,u32 bytes){
  /* Donnees natives SDRAM, SRAM ou heap des extensions, jamais les registres. */
  return bytes&&base>=0x40190000u&&base<0x80020000u&&bytes<=0x80020000u-base;
@@ -33,7 +34,7 @@ u32 ts_exchange(const ts_plan *p,u32 a,u32 b){
  }
  u32 sr;__asm__ volatile("move.w %%sr,%0\n\tmove.w #0x2700,%%sr":"=d"(sr)::"memory","cc");
  /* Le transport peut avoir change pendant le preflight. */
- if(!stopped()){__asm__ volatile("move.w %0,%%sr"::"d"(sr):"memory","cc");return 0;}
+ if(!stopped()||!context(p)){__asm__ volatile("move.w %0,%%sr"::"d"(sr):"memory","cc");return 0;}
  for(u32 i=0;i<p->count;i++){
   const ts_block*x=p->blocks+i;u8 *left=x->base+a*x->stride,*right=x->base+b*x->stride;
   for(u32 k=0;k<x->bytes;k++){u8 value=left[k];left[k]=right[k];right[k]=value;}
