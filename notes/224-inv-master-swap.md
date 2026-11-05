@@ -115,3 +115,14 @@ a utiliser avec `--gov-inv-master380 --track-swap381`.
 La livraison des images reste hors depot ; le push ne versionne aucun octet
 de firmware Elektron. La publication des flasheurs publics n'est pas modifiee
 par ce push source.
+
+## 7. Publication3.06 (05/11/2026)
+
+A la demande explicite de l utilisateur, la version publique est3.06. Les quatre
+images reprennent exactement runtime et SRAM3.82 ; seul le titre natif change.
+Flasheurs Main/Optional, recettes de selection, notes EN/FR, historique et
+manuels sont actualises. Les anciens historiques et assets sont conserves.
+Les socles et trois selections personnalisees passent le vrai bootstrap ;
+les deux editions Main passent le navigateur reel, les15choix de test
+Optional/MD passent integrite et capacite. Manuel36pages et raccourcis9pages
+rendus et controles. Aucun envoi MIDI appareil.

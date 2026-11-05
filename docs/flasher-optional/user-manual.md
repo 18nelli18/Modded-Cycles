@@ -1,11 +1,11 @@
 # SUPERMODEL
-## User manual · Release 3.05
+## User manual · Release 3.06
 
 Model:Cycles · Full / Lite / Machine Optional
 
 # Contents & conventions
 
-A practical reference for Supermodel 3.05 on Model:Cycles.
+A practical reference for Supermodel 3.06 on Model:Cycles.
 
 Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.
 
@@ -20,7 +20,6 @@ Read gestures consistently and find the chapters that apply to your build.
 | Tap / hold | Tap means press and release promptly. Hold means keep the button pressed. |
 | TRIG / track pad | TRIG means one of the 16 step keys. Track pad means T1–T6. |
 | DATA | The LEVEL/DATA encoder. “Click DATA” means press it. |
-| Global > FX | Navigate to Global, then the FX row. |
 | Parameter lock | A value stored on a step. Hold that step and adjust the relevant control. |
 
 ## Editions
@@ -72,10 +71,9 @@ Tap SETTINGS + TRACK, choose Global, then select a row.
 | QntM | Enable quantized mute/solo and choose its time division. Default: Off. |
 | Grv | Groove On/Off and Type, plus CHORD Strum. Swing sets groove strength. |
 | LFOs | Choose 1, 2, 3 or 4 audio LFOs per track. Default: 2. |
-| FX | MST shares effect selection. TRK follows the selected track for light effects; heavy effects stay shared. |
 | ACID | A: amp envelope. F: filter envelope. AF: both. Applies to every ACID track when ACID is installed. Default: F. |
 | JUMP | Off / On. With On, PATTERN then FUNC + TRIG jumps immediately and keeps playback position. Default: Off. Saves globally. |
-| GOV | Lod (default) / Trk. Voice-cut ordering; saves globally. See CPU monitor. |
+| GOV | Lod (default) / Trk / INV. Voice-cut ordering; saves globally. See CPU monitor. |
 
 ## Save global preferences
 
@@ -124,11 +122,11 @@ Exchange two tracks in the current pattern while playback is stopped.
 
 ## What moves
 
-Sounds, sequences, parameter locks, volume, filter modes, LFO settings and per-track effect assignments move with the track contents. ACID track settings move in editions that include ACID. Optional also moves its ChordKeys settings and MIDI flags; Page Length stays intact.
+Sounds, sequences, parameter locks, volume, filter modes, LFO settings and per-track send amounts move with the track contents. ACID track settings move in editions that include ACID. Optional also moves its ChordKeys settings and MIDI flags; Page Length stays intact.
 
 ## Keep the connections
 
-Sidechain sources and destinations follow the swapped contents. Song mute references move for rows that use this pattern. Other patterns keep their track contents.
+Sidechain sources and destinations follow the swapped contents. Song mute references move for rows that use this pattern. Other patterns keep their track contents. Swap preserves complete track levels and refuses a mismatched or changing project/pattern context.
 
 **Reverse or save** — Swap the same pair again to reverse the operation. Use Save Project to retain the edits. BACK leaves editing or returns to the Track menu.
 
@@ -360,9 +358,9 @@ Each pattern has a reverb slot and a delay slot. Track sends set how much signal
 | CHORUS 2 | CRUSH 1 |
 | RING MOD | CRUSH 2 |
 
-## MST and TRK
+## Master effects
 
-Open Global > FX. MST uses shared effect selection. TRK lets the same selection gestures follow the selected track for light effects. Heavy reverbs and delays remain shared, including POTS. Use each track’s SEND to set its amount.
+Effects are shared across all six tracks. Each pattern keeps its selected effects and settings; use Save Project before powering off. Use each track SEND to set its amount. There is no FX mode selector in Mod Setup.
 
 ## Save the pattern’s effects
 
@@ -418,7 +416,7 @@ Use DELAY SEND for the track amount; Time and its modifier control the selected 
 
 DELAY is the standard delay. PING PONG alternates echoes left and right; listen through both outputs or headphones. DUB produces strongly filtered stereo echoes that narrow progressively in the feedback loop.
 
-POTS produces telephone-style mono echoes on both output channels. Use Time, Feedback and the track’s Delay Send normally. It is one shared delay in MST and TRK. Save Project keeps the selection; double STOP clears its tail.
+POTS produces telephone-style mono echoes on both output channels. Use Time, Feedback and the track’s Delay Send normally. It is one shared master delay. Save Project keeps the selection; double STOP clears its tail.
 
 ## DUCK
 
@@ -876,7 +874,7 @@ Set Global > DX > On. Hold SETTINGS + BACK to open or close the CPU monitor. PAG
 
 Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.
 
-Global &gt; GOV: Lod (default) selects the quietest eligible voice. Trk selects the lowest-numbered eligible track when a cut is needed. This choice saves globally; eligibility, thresholds and fades stay the same.
+Global &gt; GOV: Lod (default) selects the quietest eligible voice. Trk selects the lowest-numbered eligible track when a cut is needed. INV selects eligible tracks from 6 down to 1. This choice saves globally; eligibility, thresholds and fades stay the same.
 
 **Performance status** — Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.
 
@@ -884,4 +882,4 @@ Global &gt; GOV: Lod (default) selects the quietest eligible voice. Trk selects 
 
 An alphabetical guide to the manual.
 
-Supermodel 3.05 • Model:Cycles • English print edition • 4 November 2026.
+Supermodel 3.06 • Model:Cycles • English print edition • 5 November 2026.

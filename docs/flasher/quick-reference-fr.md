@@ -1,8 +1,8 @@
 # Guide des fonctions et raccourcis
 
-Supermodel3.05 - 4 novembre2026
+Supermodel3.06 - 4 novembre2026
 
-Principal3.05. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
+Principal3.06. Maintenez le premier bouton pendant le second geste. TRIG : touche de pas ; pad : touche de piste ; DATA : LEVEL/DATA. Full et Lite partagent les commandes generales ; les sections machines exigent leur presence. Les extras Machine Optional sont identifies separement.
 
 ## Fonctions incluses
 
@@ -24,7 +24,7 @@ Principal3.05. Maintenez le premier bouton pendant le second geste. TRIG : touch
 |---|---|---|
 | Verrou CTRL-ALL | Double tap TRACK ; TRACK ou double BACK rapide quitte | Deux taps simples en350ms verrouillent les editions CTRL-ALL. BACK simple conserve l annulation native. Selection pistes/trigs momentanee ; DATA et selecteurs FX physiques. Off au demarrage, non sauvegarde. |
 | Verrou selection pattern | Double-tap PATTERN ; PATTERN ou BACK quitte | Garde le selecteur natif ouvert sans expiration. Choix repetes par les trigs. Tap simple et maintien restent natifs. Verrou non sauvegarde. |
-| Track Swap | Mod Setup > Track > Swap ; lecture arretee | Choisissez From et To avec DATA, puis Swap et appuyez sur DATA. Echange sons, sequences, p-locks, volume, filtres/LFO et FX par piste du pattern courant. Sidechain et mutes Song correspondants suivent le contenu. Refaire le meme echange annule l operation ; Save Project conserve les modifications. |
+| Track Swap | Mod Setup > Track > Swap ; lecture arretee | Choisissez From et To avec DATA, puis Swap et appuyez sur DATA. Echange sons, sequences, p-locks, volume, filtres/LFO et envois FX par piste du pattern courant. Sidechain et mutes Song correspondants suivent le contenu. Refaire le meme echange annule l operation ; Save Project conserve les modifications. |
 | Step Recorder | Lecture arrÃªtÃ©e : REC deux fois ; PLAY avance ; STOP recule ; REC quitte | Jouez des notes pour Ã©crire les pas successifs. PLAY avance dâ€™un pas, STOP recule dâ€™un pas. Octaves : FUNC + TRACK > KBT ; +/-12 demi-tons deplace une octave. |
 | Mute verrouillÃ© | TRACK + appui bref sur FUNC | Choisissez dâ€™abord Mute: LTC dans Mod Setup. FUNC quitte le mode verrouillÃ© ; Stk conserve le mode natif. |
 | Solo en mute | En mode mute verrouillÃ© : FUNC + T1â€“T6 | Isole la piste. Rappuyez sur son pad, ou quittez le mode mute, pour restaurer les mutes prÃ©cÃ©dents. |
@@ -77,11 +77,11 @@ Principal3.05. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
 | Delay standard | DELAY SEND / TIME / FUNC + TIME | Delay Send par piste / Time natif / Feedback natif. |
 | Delay DUB | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Delay Send par piste / Time natif / Feedback. Echos stereo fortement filtres, de plus en plus etroits dans la boucle. Une source centree joue sur les deux canaux des le premier echo, meme sans feedback. |
-| Delay POTS | DELAY SEND / TIME / FUNC + TIME | Echos mono de telephone de durchgemacht/model27 (MIT). Envoi natif / Time / Feedback. Delay lourd partage en MST et TRK ; Save Project conserve le choix. Un STOP conserve la queue ; double STOP la coupe. |
+| Delay POTS | DELAY SEND / TIME / FUNC + TIME | Echos mono de telephone de durchgemacht/model27 (MIT). Envoi natif / Time / Feedback. Delay master partage ; Save Project conserve le choix. Un STOP conserve la queue ; double STOP la coupe. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties. |
 | Crusher Rate / Bits | CRUSH 1 ou 2 : TIME / FUNC + TIME | Rate 0-127, environ 750 Hz-48 kHz / Bits 2-16. Valeurs basses plus rugueuses. CRUSH 1 garde le direct propre ; CRUSH 2 melange direct propre/crushed. DELAY SEND affiche Crush Send ; pas d echo dans ces modes. |
 | Reglages et sauvegarde FX | Sauvegarder le projet | Chaque pattern garde ses types FX, commandes ajoutÃ©es et envois supplÃ©mentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutÃ©es par dÃ©faut. Les FX dâ€™un pattern en attente sâ€™appliquent au dÃ©but de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutÃ©es ; locks disponibles sur les envois natifs. |
-| Routage FX par piste | Appui bref SETTINGS + TRACK > Global > FX > MST / TRK | MST partage les choix. TRK applique les gestes FX a la piste selectionnee ; reverbs/delays lourds natifs restent partages. Relacher TRACK valide ; BACK annule. Deux evenements encodeur par choix. Save Project conserve les choix du pattern. |
+| FX master | TRACK + REVERB SIZE / DELAY TIME ; relacher TRACK pour valider | Effets partages entre les six pistes. Chaque pattern garde ses choix et reglages FX. Sauvegardez le projet avant extinction. BACK annule un choix non valide. |
 | Couper les queues FX | Appuyer deux fois sur STOP | Premier STOP : queues conservees. Double STOP : All Sound Off coupe les queues, PS1 compris. Geste stock corrige, pas nouveau raccourci. |
 
 ## Machines et commandes sonores
@@ -161,7 +161,7 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 
 | Fonction | Commandes | Comportement |
 |---|---|---|
-| Global / Track / Song | DATA entre ; BACK revient | Global : Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID si installe, JUMP. Track : SCRM, S.Chn, Human. Song ouvre la grille d arrangement. GOV choisit l ordre des coupures de voix. |
+| Global / Track / Song | DATA entre ; BACK revient | Global : Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, ACID si installe, JUMP. Track : SCRM, S.Chn, Human. Song ouvre la grille d arrangement. GOV choisit l ordre des coupures de voix. |
 | AccÃ¨s et rÃ©glage du son | Appui bref sur SETTINGS + TRACK | Disponible depuis lâ€™Ã©cran principal ou la sÃ©lection des machines. DATA parcourt Mod Setup ; les commandes du son affichent le paramÃ¨tre deux secondes puis reviennent Ã  la mÃªme position. BACK ferme dâ€™abord la fenÃªtre puis Mod Setup ; la sÃ©lection des machines reste ouverte en dessous. |
 | Mac | Sil / Stk | Parcours : Sil demande un clic DATA ; Stk applique pendant le parcours. Sauvegarde globale a l arret de la lecture/enregistrement. |
 | Pad | Stk / SIL ; dÃ©faut Stk | Stk sÃ©lectionne et joue. SIL sÃ©lectionne silencieusement ; TRACK + pad sÃ©lectionne et joue. ChordKeys exige TRACK + pad pour quitter la piste. |
@@ -180,10 +180,9 @@ Appuyez brièvement sur SETTINGS + TRACK puis relâchez pour ouvrir Mod Setup. M
 | CHORD Strum | Global > Grv > Str | -80..80 ms entre voix CHORD ; le signe inverse le sens,0 joue ensemble. Independant de Groove On/Off. Quatre voix a80ms etalees sur240ms. |
 | Humanize Apply / Undo | Track > Human > Trk / Tim / Vel / Apply / Undo | Reglez temps/velocite0..100 par piste ou All. A l arret, Apply modifie le pattern et Undo retablit les valeurs. Aucun aleatoire en lecture. |
 | Nombre de LFO audio | Global > LFOs | 1/2/3/4 par piste audio ; 2 par defaut. Sauvegarde globale a l arret. LFO inactifs arretes, reglages conserves. |
-| Mode FX | Global > FX > MST / TRK | MST utilise les choix partages ; TRK suit la piste selectionnee pour les FX legers. Reverbs/delays lourds natifs restent partages. Memes gestes TRACK + SIZE/TIME. |
 | Enveloppe ACID (Full / Machine Optional) | Global > ACID > A / F / AF | Un choix global sauvegarde pour toutes les pistes ACID. A = ampli ; F = filtre (defaut) ; AF = les deux. Gate OFF laisse decroitre l ampli en A/AF ; ON maintient jusqu au note-off. Sauvegarde a l arret et au repos. Lite ne contient pas ACID. |
 | JUMP | Global > JUMP > Off / On | Preference Direct Pattern Jump ; sauvegarde globale a l arret. |
-| GOV | Global > GOV > Lod / Trk ; defaut Lod | Lod garde la voix admissible la plus faible. Trk coupe la piste admissible de plus petit numero quand une coupure est necessaire. Sauvegarde globale a l arret ; admissibilite, seuils et fondus conserves. |
+| GOV | Global > GOV > Lod / Trk / INV ; defaut Lod | Lod choisit la voix admissible la plus faible. Trk coupe de la piste 1 vers 6 ; INV de 6 vers 1. Sauvegarde globale a l arret. Admissibilite, protections, seuils et fondus conserves. |
 | Track > Swap | From / To / Swap | Echange deux pistes du pattern courant a l arret. |
 
 BACK ferme Mod Setup et sauvegarde ses préférences globales ; en lecture, cette sauvegarde attend l’arrêt. Arrêtez et attendez la fin avant extinction. Routage/réglages Sidechain, listes Scramble et types/réglages FX ajoutés propres à chaque pattern : Save Project les conserve au chargement. Fermer un sous-menu ne sauvegarde pas le projet.

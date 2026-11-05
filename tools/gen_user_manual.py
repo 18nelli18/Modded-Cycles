@@ -1,4 +1,4 @@
-"""Manuel imprime3.05 : contenu present, couverture vectorielle et controle PDF."""
+"""Manuel imprime3.06 : contenu present, couverture vectorielle et controle PDF."""
 from pathlib import Path
 import json,re,copy
 from html import escape
@@ -11,10 +11,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from pypdf import PdfReader
 
-R=Path(__file__).resolve().parents[1];W=R/'output/manual305';W.mkdir(parents=True,exist_ok=True)
-OUT=R/'output/pdf/Supermodel-3.05-Manual.pdf';OUT.parent.mkdir(parents=True,exist_ok=True)
+R=Path(__file__).resolve().parents[1];W=R/'output/manual306';W.mkdir(parents=True,exist_ok=True)
+OUT=R/'output/pdf/Supermodel-3.06-Manual.pdf';OUT.parent.mkdir(parents=True,exist_ok=True)
 DATA=json.loads((R/'tools/shortcut_guide_content.json').read_text(encoding='utf-8'))
-assert DATA['release']=='3.05'
+assert DATA['release']=='3.06'
 for name,file in [('Body','calibri.ttf'),('Bold','calibrib.ttf'),('Italic','calibrii.ttf'),('Light','calibril.ttf')]:
  pdfmetrics.registerFont(TTFont(name,'C:/Windows/Fonts/'+file))
 pdfmetrics.registerFontFamily('Body',normal='Body',bold='Bold',italic='Italic',boldItalic='Bold')
@@ -38,7 +38,7 @@ def S(*items):return ('steps',items)
 def C(title,text):return ('call',(title,text))
 def page(group,title,lead,*blocks):pages.append(dict(group=group,title=title,lead=lead,blocks=list(blocks)))
 
-page('START HERE','Contents & conventions','A practical reference for Supermodel 3.05 on Model:Cycles.',
+page('START HERE','Contents & conventions','A practical reference for Supermodel 3.06 on Model:Cycles.',
  P('Use the chapter list below for a complete walkthrough, or turn to the shortcut reference when you need a particular gesture. The machine chapters describe the Full library. Machine Optional controls are grouped in their own chapter.'),
  ('contents',None),
  H('How to read the controls'),
@@ -48,7 +48,6 @@ page('START HERE','Contents & conventions','A practical reference for Supermodel
  ['Tap / hold','Tap means press and release promptly. Hold means keep the button pressed.'],
  ['TRIG / track pad','TRIG means one of the 16 step keys. Track pad means T1–T6.'],
  ['DATA','The LEVEL/DATA encoder. “Click DATA” means press it.'],
- ['Global > FX','Navigate to Global, then the FX row.'],
  ['Parameter lock','A value stored on a step. Hold that step and adjust the relevant control.']],[137,373]),
  H('Editions'),
  P('<b>Full</b> includes the full machine library and the shared performance, effects, filter, modulation and MIDI functions. <b>Lite</b> uses the six Model:Cycles audio machines with the shared functions. <b>Machine Optional</b> lets you choose the machines you want; the relevant chapters apply when those machines are enabled.'),
@@ -80,7 +79,6 @@ page('SETTINGS','Global preferences','Tap SETTINGS + TRACK, choose Global, then 
  ['QntM','Enable quantized mute/solo and choose its time division. Default: Off.'],
  ['Grv','Groove On/Off and Type, plus CHORD Strum. Swing sets groove strength.'],
  ['LFOs','Choose 1, 2, 3 or 4 audio LFOs per track. Default: 2.'],
- ['FX','MST shares effect selection. TRK follows the selected track for light effects; heavy effects stay shared.'],
  ['ACID','A: amp envelope. F: filter envelope. AF: both. Applies to every ACID track when ACID is installed. Default: F.']],[65,445]),
  H('Save global preferences'),
  P('BACK closes Mod Setup and saves global preferences. If playback is running, the save waits until it stops. Stop playback and allow the save to finish before powering off.'),
@@ -106,9 +104,9 @@ page('WORKFLOW','Track Swap','Exchange two tracks in the current pattern while p
  'Click DATA on <b>From</b> or <b>To</b>, turn DATA to choose a track, then click again to finish editing.',
  'Select <b>Swap</b> and press DATA. The two track numbers must be different.'),
  H('What moves'),
- P('Sounds, sequences, parameter locks, volume, filter modes, LFO settings and per-track effect assignments move with the track contents. ACID track settings move in editions that include ACID. Optional also moves its ChordKeys settings and MIDI flags; Page Length stays intact.'),
+ P('Sounds, sequences, parameter locks, volume, filter modes, LFO settings and per-track send amounts move with the track contents. ACID track settings move in editions that include ACID. Optional also moves its ChordKeys settings and MIDI flags; Page Length stays intact.'),
  H('Keep the connections'),
- P('Sidechain sources and destinations follow the swapped contents. Song mute references move for rows that use this pattern. Other patterns keep their track contents.'),
+ P('Sidechain sources and destinations follow the swapped contents. Song mute references move for rows that use this pattern. Other patterns keep their track contents. Swap preserves complete track levels and refuses a mismatched or changing project/pattern context.'),
  C('Reverse or save','Swap the same pair again to reverse the operation. Use <b>Save Project</b> to retain the edits. BACK leaves editing or returns to the Track menu.'))
 
 page('SEQUENCING','Notes, scales & page length','Use step entry, parameter movement and musical pitch rules.',
@@ -189,8 +187,8 @@ page('EFFECTS','Choose & route effects','Each pattern has a reverb slot and a de
  H('Choose an effect'),
  S('Hold <b>TRACK</b> and turn <b>REVERB SIZE</b> for the reverb slot, or <b>DELAY TIME</b> for the delay slot.','Turn left to move up the list; turn right to move down. Browse while keeping TRACK held.','Release <b>TRACK</b> to apply the highlighted choice. Press <b>BACK</b> to cancel.'),
  T(['Reverb slot','Delay slot'],[[a,b] for a,b in zip(['GATED','HALL','ROOM','PS1','REVERB','CHORUS 1','CHORUS 2','RING MOD'],['PHASER','DUCK','DUB','POTS','PING PONG','DELAY','CRUSH 1','CRUSH 2'])],[255,255]),
- H('MST and TRK'),
- P('Open <b>Global > FX</b>. <b>MST</b> uses shared effect selection. <b>TRK</b> lets the same selection gestures follow the selected track for light effects. Heavy reverbs and delays remain shared, including POTS. Use each track’s SEND to set its amount.'),
+ H('Master effects'),
+ P('Effects are shared across all six tracks. Each pattern keeps its selected effects and settings; use <b>Save Project</b> before powering off. Use each track SEND to set its amount. There is no FX mode selector in Mod Setup.'),
  H('Save the pattern’s effects'),
  P('Use <b>Save Project</b> to keep selected types, effect controls and extra sends. Blank patterns use standard Reverb and Delay. A queued pattern applies its effect choices when it begins playing.'),
  P('Track send controls support parameter locks. Effect-specific controls do not all have parameter-lock or LFO destinations; use the track sends when you need per-step effect amounts.'),
@@ -218,7 +216,7 @@ page('EFFECTS / DELAY SLOT','Delay, phaser & crusher','Use DELAY SEND for the tr
  ['DELAY','Time','Feedback'],['PING PONG','Time','Feedback'],['DUB','Time','Feedback'],['POTS','Time','Feedback'],['DUCK','Time','Feedback'],['PHASER','Rate','Depth'],['CRUSH 1 / 2','Rate: 0–127','Bits: 2–16']],[119,192,199]),
  H('Echo character'),
  P('<b>DELAY</b> is the standard delay. <b>PING PONG</b> alternates echoes left and right; listen through both outputs or headphones. <b>DUB</b> produces strongly filtered stereo echoes that narrow progressively in the feedback loop.'),
- P('<b>POTS</b> produces telephone-style mono echoes on both output channels. Use Time, Feedback and the track’s Delay Send normally. It is one shared delay in MST and TRK. Save Project keeps the selection; double STOP clears its tail.'),
+ P('<b>POTS</b> produces telephone-style mono echoes on both output channels. Use Time, Feedback and the track’s Delay Send normally. It is one shared master delay. Save Project keeps the selection; double STOP clears its tail.'),
  H('DUCK'),
  P('The wet signal ducks while the send input plays and swells back afterward. Hold <b>FUNC first, then TRACK</b>: TIME sets <b>Amount</b> and DELAY SEND sets <b>Release</b>. Try Amount 127 and Release 32–64 on sparse notes. Amount 0 gives standard Delay behavior.'),
  H('Phaser and crushers'),
@@ -360,7 +358,7 @@ page('REFERENCE / SPEAK','Word library','Choose the index with SHAPE, or paramet
 
 page('REFERENCE','Find it quickly','An alphabetical guide to the manual.',('index',None),
  H('A saving reminder'),P('Use Save Project for pattern settings. Global preferences save while stopped. Temporary save/reload is a performance snapshot.'),
- H('About this edition'),P('Supermodel 3.05 • Model:Cycles • English print edition • 4 November 2026.'),
+ H('About this edition'),P('Supermodel 3.06 • Model:Cycles • English print edition • 5 November 2026.'),
  P('Engine acknowledgments include Glycinate (Feral), Fors (inspiration for ELDER and Shadow), Emilie Gillet (MACRO/Braids and scale quantization), 100demons (PUNCH), and durchgemacht and Claude (POTS). POTS uses the MIT-licensed model27 DSP.'),
  P('Control names in this manual follow the machine’s panel and display. Machine-specific chapters apply when that machine is installed.'))
 
@@ -368,7 +366,7 @@ conventions=pages[0]['blocks'][3:]
 pages[0]['blocks']=pages[0]['blocks'][:2]
 pages.insert(1,dict(group='START HERE',title='Buttons & editions',lead='Read gestures consistently and find the chapters that apply to your build.',blocks=conventions+[
  H('Acknowledgments'),P("Glycinate, Fors.Fm, PPPCCC, DavidCaruso, Emilie Gillet, Durchgemacht, 18nelli18, and every member of the Modded-Cycles Discord server who rode with me through this. Y'all rule.")]))
-pages[-1]['blocks']=[pages[-1]['blocks'][0],P('Supermodel 3.05 • Model:Cycles • English print edition • 4 November 2026.')]
+pages[-1]['blocks']=[pages[-1]['blocks'][0],P('Supermodel 3.06 • Model:Cycles • English print edition • 5 November 2026.')]
 at=next(i for i,p in enumerate(pages) if p['title']=='MACRO, ACID & WAVE')
 pages[at]['title']='ACID & WAVE';pages[at]['lead']='Resonant bass synthesis and wavetable motion.'
 pages[at]['blocks']=pages[at]['blocks'][3:]
@@ -395,11 +393,11 @@ for p in pages:
  else:continue
  break
 def cpu_chapter(group,title,lead,*blocks):return dict(group=group,title=title,lead=lead,blocks=list(blocks))
-pages.insert(-1,cpu_chapter('DIAGNOSTICS','CPU monitor','Monitor complete audio-block load while using the instrument.',P(detail),T(['Readout','Meaning'],[['NOW / PEAK','Latest complete block / highest recorded load, in percent.'],['MEAN / SUST','Recorded playing-time average / governor sustained estimate.'],['OVER / CUT','Deadline overruns / forced governor fades.'],['T1-T6','Forced cuts by track;99+ is a capped count, not normal note-offs.'],['Recent Cuts','Latest forced cuts across all tracks, with sustained and block load.']],[130,380]),P('Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.'),P('<b>Global &gt; GOV</b>: <b>Lod</b> (default) selects the quietest eligible voice. <b>Trk</b> selects the lowest-numbered eligible track when a cut is needed. This choice saves globally; eligibility, thresholds and fades stay the same.'),C('Performance status','Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.')))
-# Chapitres3.05 : operations presentes, sans historique des corrections.
+pages.insert(-1,cpu_chapter('DIAGNOSTICS','CPU monitor','Monitor complete audio-block load while using the instrument.',P(detail),T(['Readout','Meaning'],[['NOW / PEAK','Latest complete block / highest recorded load, in percent.'],['MEAN / SUST','Recorded playing-time average / governor sustained estimate.'],['OVER / CUT','Deadline overruns / forced governor fades.'],['T1-T6','Forced cuts by track;99+ is a capped count, not normal note-offs.'],['Recent Cuts','Latest forced cuts across all tracks, with sustained and block load.']],[130,380]),P('Updates four times per second. Screen formatting runs in the UI, outside the audio interrupt. Clearing counters does not reset the sound or governor smoothing. Peak/mean/overrun collection follows the playing-time diagnostic; NOW reads the latest block.'),P('<b>Global &gt; GOV</b>: <b>Lod</b> (default) selects the quietest eligible voice. <b>Trk</b> selects the lowest-numbered eligible track when a cut is needed. <b>INV</b> selects eligible tracks from 6 down to 1. This choice saves globally; eligibility, thresholds and fades stay the same.'),C('Performance status','Long note tails can still be cut on some stock patterns. This release does not claim to resolve voice stealing.')))
+# Chapitres3.06 : operations presentes, sans historique des corrections.
 by_title={p['title']:p for p in pages}
 by_title['Global preferences']['blocks'][0][1][1].append(['JUMP','Off / On. With On, PATTERN then FUNC + TRIG jumps immediately and keeps playback position. Default: Off. Saves globally.'])
-by_title['Global preferences']['blocks'][0][1][1].append(['GOV','Lod (default) / Trk. Voice-cut ordering; saves globally. See CPU monitor.'])
+by_title['Global preferences']['blocks'][0][1][1].append(['GOV','Lod (default) / Trk / INV. Voice-cut ordering; saves globally. See CPU monitor.'])
 for p in pages:
  for i,(kind,value) in enumerate(p['blocks']):
   if kind=='p' and 'For pitch slides, use overlapping' in value:
@@ -465,7 +463,7 @@ def cover(c):
  c.setFillColor(INK);c.setFont('Light',52);c.drawString(48,588,'SUPERMODEL')
  c.setFont('Body',23);c.drawString(51,548,'Make it yours.')
  c.setFillColor(MUTED);c.setFont('Body',13);c.drawString(51,500,'Sounds • sequencing • performance • control')
- c.setFont('Bold',12);c.setFillColor(GREEN);c.drawString(51,469,'RELEASE 3.05')
+ c.setFont('Bold',12);c.setFillColor(GREEN);c.drawString(51,469,'RELEASE 3.06')
  c.setStrokeColor(LINE);c.line(51,442,561,442)
  patterns=[{0,4,8,12},{4,12},{0,2,4,6,8,10,12,14},{3,7,11,15},{0,5,10,13},{1,6,9,14}]
  for track,pattern in enumerate(patterns):
@@ -482,7 +480,7 @@ def chrome(c,doc):
  if doc.page==1:cover(c);c.restoreState();return
  index=doc.page-2
  group=pages[index]['group'] if index<len(pages) else 'SUPERMODEL'
- c.setFillColor(GREEN);c.setFont('Bold',8);c.drawString(51,759,'SUPERMODEL 3.05')
+ c.setFillColor(GREEN);c.setFont('Bold',8);c.drawString(51,759,'SUPERMODEL 3.06')
  c.setFillColor(MUTED);c.setFont('Body',8);c.drawRightString(561,759,group)
  c.setStrokeColor(LINE);c.line(51,749,561,749);c.line(51,38,561,38)
  c.setFont('Body',8);c.drawString(51,24,'MODEL:CYCLES  /  USER MANUAL');c.drawRightString(561,24,str(doc.page))
@@ -541,7 +539,7 @@ def build_flow():
  return flow[:-1]
 
 def markdown():
- lines=['# SUPERMODEL','## User manual · Release 3.05','','Model:Cycles · Full / Lite / Machine Optional','']
+ lines=['# SUPERMODEL','## User manual · Release 3.06','','Model:Cycles · Full / Lite / Machine Optional','']
  for p in pages:
   lines+=['# '+p['title'],'',p['lead'],'']
   for kind,value in p['blocks']:
@@ -553,16 +551,16 @@ def markdown():
  return '\n'.join(lines)
 
 if __name__=='__main__':
- doc=SimpleDocTemplate(str(OUT),pagesize=letter,leftMargin=51,rightMargin=51,topMargin=63,bottomMargin=53,title='Supermodel 3.05 — User Manual',author='Supermodel',subject='Current features and controls for Model:Cycles')
+ doc=SimpleDocTemplate(str(OUT),pagesize=letter,leftMargin=51,rightMargin=51,topMargin=63,bottomMargin=53,title='Supermodel 3.06 — User Manual',author='Supermodel',subject='Current features and controls for Model:Cycles')
  doc.build(build_flow(),onFirstPage=chrome,onLaterPages=chrome)
  r=PdfReader(OUT);expected=len(pages)+1
  print('Pages:',len(r.pages),'expected:',expected)
  for i,p in enumerate(r.pages):print(i+1,' '.join((p.extract_text() or '').split())[:105])
- (W/'Supermodel-3.05-Manual.md').write_text(markdown(),encoding='utf-8',newline='\n')
+ (W/'Supermodel-3.06-Manual.md').write_text(markdown(),encoding='utf-8',newline='\n')
  (W/'layout.json').write_text(json.dumps(dict(expected_pages=expected,actual_pages=len(r.pages),chapters=[dict(page=i+2,title=p['title']) for i,p in enumerate(pages)]),indent=2)+'\n')
  assert len(r.pages)==expected, 'A chapter overflowed its intended page'
  for ch in [dict(page=i+2,title=p['title']) for i,p in enumerate(pages)]:assert ch['title'] in r.pages[ch['page']-1].extract_text(),ch
  import shutil
  for folder in ('flasher','flasher-optional'):
-  shutil.copyfile(OUT,R/'docs'/folder/'user-manual.pdf');shutil.copyfile(W/'Supermodel-3.05-Manual.md',R/'docs'/folder/'user-manual.md')
+  shutil.copyfile(OUT,R/'docs'/folder/'user-manual.pdf');shutil.copyfile(W/'Supermodel-3.06-Manual.md',R/'docs'/folder/'user-manual.md')
  print('PDF:',OUT)

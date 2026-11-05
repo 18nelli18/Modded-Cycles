@@ -1,0 +1,67 @@
+{
+  "release": "3.06",
+  "date": "2026-11-05",
+  "base_editions": {
+    "main_full": {
+      "sha256": "8649105182c20eddbfb1cc059fab418e9771db8abb1003a13c9e9304de142fb5",
+      "release": "3.06",
+      "cold_boot": true,
+      "runtime_and_audio_SRAM_exact_382": true,
+      "only_native_change_from_382": "startup version",
+      "INV": true,
+      "master_FX_per_pattern": true,
+      "FX_menu_row": false,
+      "swap_levels_16bit": true,
+      "swap_context_checks": true,
+      "hardware_tested": false
+    },
+    "main_lite": {
+      "sha256": "d4627def605f867ed297b0f6907c39f9c826b53c48ef9fd58f6f45561d676555",
+      "release": "3.06",
+      "cold_boot": true,
+      "runtime_and_audio_SRAM_exact_382": true,
+      "only_native_change_from_382": "startup version",
+      "INV": true,
+      "master_FX_per_pattern": true,
+      "FX_menu_row": false,
+      "swap_levels_16bit": true,
+      "swap_context_checks": true,
+      "hardware_tested": false
+    },
+    "optional_full": {
+      "sha256": "28e542c29b8edcc52db5675cbca3a9f70d6eae6e69f7fe432f3e8421419ed982",
+      "release": "3.06",
+      "cold_boot": true,
+      "runtime_and_audio_SRAM_exact_382": true,
+      "only_native_change_from_382": "startup version",
+      "INV": true,
+      "master_FX_per_pattern": true,
+      "FX_menu_row": false,
+      "swap_levels_16bit": true,
+      "swap_context_checks": true,
+      "hardware_tested": false
+    },
+    "optional_lite": {
+      "sha256": "587e680427e726967ea25a1a31fa693d68b5f7ea883ed5770029c73743098e6d",
+      "release": "3.06",
+      "cold_boot": true,
+      "runtime_and_audio_SRAM_exact_382": true,
+      "only_native_change_from_382": "startup version",
+      "INV": true,
+      "master_FX_per_pattern": true,
+      "FX_menu_row": false,
+      "swap_levels_16bit": true,
+      "swap_context_checks": true,
+      "hardware_tested": false
+    }
+  },
+  "optional_masks": 9,
+  "machinedrum_masks": 6,
+  "custom_cold_boots": 3,
+  "real_browser_main_editions": true,
+  "pdf_pages": {
+    "manual": 36,
+    "shortcuts": 9
+  },
+  "pdf_rendered_and_reviewed": true
+}

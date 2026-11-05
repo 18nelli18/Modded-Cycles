@@ -9,7 +9,7 @@ let mask=O.ALL,revision=0,os=null,context=null,current=null,pending=null,mdRaw=n
 window.MCFirmwareImages={...base};window.MCFixedMainImageMeta=base.full;
 window.MCFixedMainImageReady=Promise.resolve();window.MCOptionalBusy=false;
 async function load(meta){
- const urls=[new URL(meta.file,document.baseURI).href,new URL('../flasher/'+meta.file,document.baseURI).href,'https://raw.githubusercontent.com/AveyCole/Supermodel/41d126d0d4a65db6a65181d69851cdc5f8a14efe/docs/flasher/'+meta.file];let error;
+ const urls=[new URL(meta.file,document.baseURI).href,new URL('../flasher/'+meta.file,document.baseURI).href,'https://raw.githubusercontent.com/AveyCole/Supermodel/e009d86f127fb943d2fd170796d12556f863d070/docs/flasher/'+meta.file];let error;
  for(const url of urls)try{const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error('Could not load verified base');const raw=new Uint8Array(await r.arrayBuffer());if(B.hex(B.sha256(raw))!==meta.syxSha256)throw Error('Base firmware checksum mismatch');window.MCFlasher.verify(raw);return raw}catch(e){error=e}throw error;
 }
 let sources;function sourceFiles(){if(!sources)sources=Promise.all([load(base.full),load(base.lite)]).catch(e=>{sources=null;throw e});return sources}
@@ -21,7 +21,7 @@ function schedule(){
  const app=window.MCFlasherApp;if(!app||app.state.sending)return;
  const id=++revision,choice=mask,raw=app.state.os?.raw;
  window.MCOptionalFailed=null;
- if(!raw||!app.state.os.stock){status('Load official Cycles OS 1.13 below to build this selection.','Chargez ci-dessous lâ€™OS officiel Cycles 1.13 pour construire ce choix.');return}
+ if(!raw||!app.state.os.stock){status('Load official Cycles OS 1.13 below to build this selection.','Chargez ci-dessous l’OS officiel Cycles 1.13 pour construire ce choix.');return}
  if((choice&M.MD_BITS)&&!mdRaw){current=null;pending=null;window.MCOptionalBusy=false;window.MCOptionalFailed='Load Machinedrum UW OS 1.63 for the selected TRX engines.';app.state.fw=null;app.state.building=false;app.state.fwError=window.MCOptionalFailed;status('Load Machinedrum UW OS 1.63 for the selected TRX engines.','Chargez OS Machinedrum UW 1.63 pour les moteurs TRX choisis.');app.render();return}
  window.MCOptionalBusy=true;app.state.fw=null;app.state.buildKey=null;app.state.building=true;app.render();
  status('Preparing your machine selectionâ€¦','PrÃ©paration de votre sÃ©lectionâ€¦');
@@ -32,7 +32,7 @@ function schedule(){
   window.MCFirmwareImages={...base,[edition]:{...base[edition],release:result.release||base[edition].release,startup_title:result.startup_title||base[edition].startup_title,syxSha256:result.syxSha256,mainOsSha:result.mainOsSha,requiresSyntakt:choice!==0,productName:choice===0?'Supermodel Lite':'Supermodel Machine Optional',downloadName:choice===0?`Supermodel_Lite_${base.lite.release}.syx`:`Supermodel_Optional_${result.release||base.full.release}_${hex}.syx`}};
   window.MCOptionalBusy=false;pending=null;app.state.cache={};app.setEdition(edition);
   const count=machines.filter(([id])=>choice&(1<<(id-6))).length;
-  status(`${count} added machines Â· firmware ready`,`${count} machines ajoutÃ©es Â· firmware prÃªt`);
+  status(`${count} added machines · firmware ready`,`${count} machines ajoutÃ©es · firmware prêt`);
  })().catch(e=>{if(id!==revision)return;current=null;pending=null;window.MCOptionalBusy=false;window.MCOptionalFailed=e.message;app.state.fw=null;app.state.building=false;app.state.fwError=e.message;status(e.message,e.message);app.render()});
 }
 window.MCOptionalSync=st=>{if(st.os?.raw!==os){os=st.os?.raw;context=null;schedule()}};

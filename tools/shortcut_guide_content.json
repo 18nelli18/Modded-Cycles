@@ -1,6 +1,6 @@
 {
-  "release": "3.05",
-  "stamp": "2026-11-04-guide305",
+  "release": "3.06",
+  "stamp": "2026-11-05-guide306",
   "cards": [
     {
       "en": [
@@ -98,12 +98,12 @@
           "en": [
             "Track Swap",
             "Mod Setup > Track > Swap; playback stopped",
-            "Set From and To with DATA, choose Swap, then press DATA. Moves the two tracks in the current pattern, including sounds, sequences, p-locks, volume, filter/LFO settings and per-track FX. Sidechain routing and matching Song mute references follow the contents. Swap the same pair again to reverse; Save Project to retain edits."
+            "Set From and To with DATA, choose Swap, then press DATA. Moves the two tracks in the current pattern, including sounds, sequences, p-locks, volume, filter/LFO settings and per-track FX send amounts. Sidechain routing and matching Song mute references follow the contents. Swap the same pair again to reverse; Save Project to retain edits."
           ],
           "fr": [
             "Track Swap",
             "Mod Setup > Track > Swap ; lecture arretee",
-            "Choisissez From et To avec DATA, puis Swap et appuyez sur DATA. Echange sons, sequences, p-locks, volume, filtres/LFO et FX par piste du pattern courant. Sidechain et mutes Song correspondants suivent le contenu. Refaire le meme echange annule l operation ; Save Project conserve les modifications."
+            "Choisissez From et To avec DATA, puis Swap et appuyez sur DATA. Echange sons, sequences, p-locks, volume, filtres/LFO et envois FX par piste du pattern courant. Sidechain et mutes Song correspondants suivent le contenu. Refaire le meme echange annule l operation ; Save Project conserve les modifications."
           ]
         },
         {
@@ -630,12 +630,12 @@
           "en": [
             "POTS delay",
             "DELAY SEND / TIME / FUNC + TIME",
-            "Telephone-style mono echoes from durchgemacht/model27 (MIT). Native send amount / Time / Feedback. Shared heavy delay in MST and TRK; Save Project preserves its selection. One STOP preserves the tail; double STOP clears it."
+            "Telephone-style mono echoes from durchgemacht/model27 (MIT). Native send amount / Time / Feedback. Shared master delay; Save Project preserves its selection. One STOP preserves the tail; double STOP clears it."
           ],
           "fr": [
             "Delay POTS",
             "DELAY SEND / TIME / FUNC + TIME",
-            "Echos mono de telephone de durchgemacht/model27 (MIT). Envoi natif / Time / Feedback. Delay lourd partage en MST et TRK ; Save Project conserve le choix. Un STOP conserve la queue ; double STOP la coupe."
+            "Echos mono de telephone de durchgemacht/model27 (MIT). Envoi natif / Time / Feedback. Delay master partage ; Save Project conserve le choix. Un STOP conserve la queue ; double STOP la coupe."
           ]
         },
         {
@@ -676,14 +676,14 @@
         },
         {
           "en": [
-            "Per-track FX routing",
-            "Tap SETTINGS + TRACK > Global > FX > MST / TRK",
-            "MST shares effect selection. TRK makes the existing effect gestures follow the selected track; native heavy reverbs and delays remain shared. Release TRACK to apply an effect; BACK cancels. Effect-menu movement takes two encoder events per selection. Save Project preserves pattern choices."
+            "Master FX",
+            "TRACK + REVERB SIZE / DELAY TIME; release TRACK to apply",
+            "Effects are shared across all six tracks. Each pattern keeps its effect choices and settings. Save Project before powering off. BACK cancels an unconfirmed choice."
           ],
           "fr": [
-            "Routage FX par piste",
-            "Appui bref SETTINGS + TRACK > Global > FX > MST / TRK",
-            "MST partage les choix. TRK applique les gestes FX a la piste selectionnee ; reverbs/delays lourds natifs restent partages. Relacher TRACK valide ; BACK annule. Deux evenements encodeur par choix. Save Project conserve les choix du pattern."
+            "FX master",
+            "TRACK + REVERB SIZE / DELAY TIME ; relacher TRACK pour valider",
+            "Effets partages entre les six pistes. Chaque pattern garde ses choix et reglages FX. Sauvegardez le projet avant extinction. BACK annule un choix non valide."
           ]
         },
         {
@@ -1302,12 +1302,12 @@
           "en": [
             "Global / Track / Song",
             "DATA enters; BACK returns",
-            "Global: Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID (when installed), JUMP. Track: SCRM, S.Chn, Human. Song opens the arrangement grid. GOV chooses voice-cut ordering."
+            "Global: Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, ACID (when installed), JUMP. Track: SCRM, S.Chn, Human. Song opens the arrangement grid. GOV chooses voice-cut ordering."
           ],
           "fr": [
             "Global / Track / Song",
             "DATA entre ; BACK revient",
-            "Global : Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, FX, ACID si installe, JUMP. Track : SCRM, S.Chn, Human. Song ouvre la grille d arrangement. GOV choisit l ordre des coupures de voix."
+            "Global : Pad, Mac, USB, Num, Mute, Dly, DX, QntM, Grv, LFOs, ACID si installe, JUMP. Track : SCRM, S.Chn, Human. Song ouvre la grille d arrangement. GOV choisit l ordre des coupures de voix."
           ]
         },
         {
@@ -1528,18 +1528,6 @@
         },
         {
           "en": [
-            "FX mode",
-            "Global > FX > MST / TRK",
-            "MST uses shared effect selection; TRK follows the selected track for light FX choices. Heavy native reverbs and delays stay shared. Use the same TRACK + SIZE/TIME gestures in either mode."
-          ],
-          "fr": [
-            "Mode FX",
-            "Global > FX > MST / TRK",
-            "MST utilise les choix partages ; TRK suit la piste selectionnee pour les FX legers. Reverbs/delays lourds natifs restent partages. Memes gestes TRACK + SIZE/TIME."
-          ]
-        },
-        {
-          "en": [
             "ACID envelope (Full / Machine Optional)",
             "Global > ACID > A / F / AF",
             "One globally saved choice for all ACID tracks. A = amp only; F = filter only (default); AF = both. Gate OFF allows amp decay while held in A/AF; Gate ON sustains until note-off. Save completes while stopped and idle. Lite has no ACID machine."
@@ -1565,13 +1553,13 @@
         {
           "en": [
             "GOV",
-            "Global > GOV > Lod / Trk; default Lod",
-            "Lod retains the quietest eligible voice policy. Trk cuts the lowest-numbered eligible track first when the overload governor needs a cut. Saves globally while stopped; eligibility, thresholds and fades are unchanged."
+            "Global > GOV > Lod / Trk / INV; default Lod",
+            "Lod selects the quietest eligible voice. Trk steals from track 1 toward 6; INV steals from 6 toward 1. Saves globally while stopped. Eligibility, protection rules, thresholds and fades stay unchanged."
           ],
           "fr": [
             "GOV",
-            "Global > GOV > Lod / Trk ; defaut Lod",
-            "Lod garde la voix admissible la plus faible. Trk coupe la piste admissible de plus petit numero quand une coupure est necessaire. Sauvegarde globale a l arret ; admissibilite, seuils et fondus conserves."
+            "Global > GOV > Lod / Trk / INV ; defaut Lod",
+            "Lod choisit la voix admissible la plus faible. Trk coupe de la piste 1 vers 6 ; INV de 6 vers 1. Sauvegarde globale a l arret. Admissibilite, protections, seuils et fondus conserves."
           ]
         },
         {
