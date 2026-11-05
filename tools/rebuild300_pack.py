@@ -119,6 +119,7 @@ def main():
     parser.add_argument('--gov-inv-master380',action='store_true')
     parser.add_argument('--track-swap381',action='store_true')
     parser.add_argument('--hide-master-fx382',action='store_true')
+    parser.add_argument('--fx-live383',action='store_true')
     parser.add_argument('--gov-policy372',action='store_true')
     parser.add_argument('--pattern-latch374',action='store_true')
     parser.add_argument('--latch-notice374',action='store_true')
@@ -357,6 +358,9 @@ def main():
     if args.hide_master_fx382:
         from hide_master_fx382 import apply as hide_fx_apply
         meta['hide_master_fx382']=hide_fx_apply(meta,native,runtime,out/'hide-master-fx382')
+    if args.fx_live383:
+        from fx_live383 import apply as live_fx_apply
+        meta['fx_live383']=live_fx_apply(meta,runtime,out/'fx-live383')
     if args.wizard_pan371:
         from wizard_pan371 import apply as pan_apply
         meta['wizard_pan371']=pan_apply(meta,native,runtime,out/'wizard-pan371')

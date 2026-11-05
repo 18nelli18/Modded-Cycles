@@ -1,5 +1,10 @@
 # Supermodel Machine Optional 3.06
 
+The updated 3.06 bases synchronize FX at the live pattern boundary, preventing
+another pattern's FX from being saved into the outgoing pattern. The version
+stays 3.06; new immutable image hashes and cache stamps identify this fix.
+Reselect intended FX once if wrong choices were already saved.
+
 The 3.06 Optional Full and Lite bases use master FX shared across all six
 tracks, with effect choices and added settings saved per pattern. The FX/MST
 menu row is removed. GOV offers Lod, Trk and INV; INV reverses the track-order

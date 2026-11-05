@@ -1,67 +1,63 @@
 {
   "release": "3.06",
-  "date": "2026-11-05",
-  "base_editions": {
+  "build_revision": "fx-live383",
+  "hardware_tested": false,
+  "editions": {
     "main_full": {
-      "sha256": "8649105182c20eddbfb1cc059fab418e9771db8abb1003a13c9e9304de142fb5",
-      "release": "3.06",
+      "native_and_SRAM_identical_to_original306": true,
       "cold_boot": true,
-      "runtime_and_audio_SRAM_exact_382": true,
-      "only_native_change_from_382": "startup version",
-      "INV": true,
-      "master_FX_per_pattern": true,
-      "FX_menu_row": false,
-      "swap_levels_16bit": true,
-      "swap_context_checks": true,
-      "hardware_tested": false
+      "live_switch_proof": {
+        "sha256": "4a8c0cc71a343e1cbcd5beb5bd8cd100858551396c43db724d30f9c84f7dc8e8",
+        "live_cases": 20,
+        "queued_request_deferred": true,
+        "general_registers_preserved": true,
+        "SR_IPL_CCR_preserved": true,
+        "save_reload_after_live": true,
+        "hardware_tested": false
+      }
     },
     "main_lite": {
-      "sha256": "d4627def605f867ed297b0f6907c39f9c826b53c48ef9fd58f6f45561d676555",
-      "release": "3.06",
+      "native_and_SRAM_identical_to_original306": true,
       "cold_boot": true,
-      "runtime_and_audio_SRAM_exact_382": true,
-      "only_native_change_from_382": "startup version",
-      "INV": true,
-      "master_FX_per_pattern": true,
-      "FX_menu_row": false,
-      "swap_levels_16bit": true,
-      "swap_context_checks": true,
-      "hardware_tested": false
+      "live_switch_proof": {
+        "sha256": "4bd21f2a372f027cc25c781130e88be2146c892126f53deaafec616a55abdf34",
+        "live_cases": 20,
+        "queued_request_deferred": true,
+        "general_registers_preserved": true,
+        "SR_IPL_CCR_preserved": true,
+        "save_reload_after_live": true,
+        "hardware_tested": false
+      }
     },
     "optional_full": {
-      "sha256": "28e542c29b8edcc52db5675cbca3a9f70d6eae6e69f7fe432f3e8421419ed982",
-      "release": "3.06",
+      "native_and_SRAM_identical_to_original306": true,
       "cold_boot": true,
-      "runtime_and_audio_SRAM_exact_382": true,
-      "only_native_change_from_382": "startup version",
-      "INV": true,
-      "master_FX_per_pattern": true,
-      "FX_menu_row": false,
-      "swap_levels_16bit": true,
-      "swap_context_checks": true,
-      "hardware_tested": false
+      "live_switch_proof": {
+        "sha256": "41cf43dafbd54d3b58bce6d4a65f20224aee1bd46f361e1cc57bcc62c861ec93",
+        "live_cases": 20,
+        "queued_request_deferred": true,
+        "general_registers_preserved": true,
+        "SR_IPL_CCR_preserved": true,
+        "save_reload_after_live": true,
+        "hardware_tested": false
+      }
     },
     "optional_lite": {
-      "sha256": "587e680427e726967ea25a1a31fa693d68b5f7ea883ed5770029c73743098e6d",
-      "release": "3.06",
+      "native_and_SRAM_identical_to_original306": true,
       "cold_boot": true,
-      "runtime_and_audio_SRAM_exact_382": true,
-      "only_native_change_from_382": "startup version",
-      "INV": true,
-      "master_FX_per_pattern": true,
-      "FX_menu_row": false,
-      "swap_levels_16bit": true,
-      "swap_context_checks": true,
-      "hardware_tested": false
+      "live_switch_proof": {
+        "sha256": "5d959a06d1e078d245495eb8e9b543ac669cb21b262de865873beb06e9064967",
+        "live_cases": 20,
+        "queued_request_deferred": true,
+        "general_registers_preserved": true,
+        "SR_IPL_CCR_preserved": true,
+        "save_reload_after_live": true,
+        "hardware_tested": false
+      }
     }
   },
   "optional_masks": 9,
   "machinedrum_masks": 6,
-  "custom_cold_boots": 3,
   "real_browser_main_editions": true,
-  "pdf_pages": {
-    "manual": 36,
-    "shortcuts": 9
-  },
-  "pdf_rendered_and_reviewed": true
+  "manuals_unchanged": true
 }

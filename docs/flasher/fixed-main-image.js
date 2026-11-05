@@ -1,4 +1,4 @@
-/* 2026-11-05-main306 : images verifiees par edition, caches et sources independants. */
+/* 2026-11-05-main306-fx-live1 : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
@@ -6,9 +6,9 @@
     "id": "full",
     "productName": "Supermodel",
     "release": "3.06",
-    "file": "Supermodel_Full_3.06_8649105182c2.syx",
-    "syxSha256": "8649105182c20eddbfb1cc059fab418e9771db8abb1003a13c9e9304de142fb5",
-    "mainOsSha": "4982444df7d99024980e71a989709b6228225943baf182d73ff9216f863179c3",
+    "file": "Supermodel_Full_3.06_4a8c0cc71a34.syx",
+    "syxSha256": "4a8c0cc71a343e1cbcd5beb5bd8cd100858551396c43db724d30f9c84f7dc8e8",
+    "mainOsSha": "9d6e04ed0ceb04214de67adcb2674f2fbb5bdcce9a922ddbaa8012121f4f6ae1",
     "requiresSyntakt": true,
     "source_build": 215,
     "new_clear_filter_defaults": true,
@@ -105,15 +105,17 @@
     "fx_menu_row": false,
     "fx_pattern_save_fixed": true,
     "track_swap_levels_16bit": true,
-    "track_swap_context_guard": true
+    "track_swap_context_guard": true,
+    "fx_live_pattern_switch_fixed": true,
+    "build_revision": "fx-live383"
   },
   "lite": {
     "id": "lite",
     "productName": "Supermodel Lite",
     "release": "3.06",
-    "file": "Supermodel_Lite_3.06_d4627def605f.syx",
-    "syxSha256": "d4627def605f867ed297b0f6907c39f9c826b53c48ef9fd58f6f45561d676555",
-    "mainOsSha": "83af9e6431bb8f59bb86b113b3b42bfc3df4757e1526d51263f690350bb20d5d",
+    "file": "Supermodel_Lite_3.06_4bd21f2a372f.syx",
+    "syxSha256": "4bd21f2a372f027cc25c781130e88be2146c892126f53deaafec616a55abdf34",
+    "mainOsSha": "8a8632665539c19359cc9a35f236a82add82c1e724652d8c06a6e006b85e1a76",
     "requiresSyntakt": false,
     "source_build": 216,
     "new_clear_filter_defaults": true,
@@ -204,7 +206,9 @@
     "fx_menu_row": false,
     "fx_pattern_save_fixed": true,
     "track_swap_levels_16bit": true,
-    "track_swap_context_guard": true
+    "track_swap_context_guard": true,
+    "fx_live_pattern_switch_fixed": true,
+    "build_revision": "fx-live383"
   }
 };
  for(const meta of Object.values(catalogue))Object.freeze(meta);
@@ -212,7 +216,7 @@
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Supermodel/e009d86f127fb943d2fd170796d12556f863d070/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Supermodel/b15eeada194572aadfa7c3136ddc784287540892/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});
