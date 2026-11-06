@@ -6,4 +6,4 @@ Copy of the main flasher checklist, with Sample Wizard added and the Model-TG op
 
 Native proofs cover minimal/full startup, preserving Wizard and ChordKeys code, native cache links and all31 CHORD wavetable pointers. Browser proofs cover real checklist selections, excluding Syntakt/MACRO/ACID/WAVE independently, signed containers and per-recipe references. Hardware verification remains pending for this combined integration.
 
-Sampler: TinyGregAudio/Model-TG 70b39dd (MIT); Slice varispeed: roterodamus/Model-TG 0c567d8 (MIT). WAVE and ACID fade fix: Kevin Shallvari. ChordKeys: Nico Heuser. MACRO: Braids/pichenettes; ACID: Open303/Robin Schmidt. Control All Config: durchgemacht. See adjacent license files. Integration and upright wizard hat with five-point stars: A.V. fork.
+Sampler: TinyGregAudio/Model-TG 70b39dd (MIT); Slice varispeed: roterodamus/Model-TG 0c567d8 (MIT). WAVE and ACID fade fix: Kevin Shallvari. ChordKeys: Nico Heuser. MACRO: Braids/pichenettes; ACID: Open303/Robin Schmidt. Control All Config: see adjacent license file. See adjacent license files. Integration and upright wizard hat with five-point stars: A.V. fork.

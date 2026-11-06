@@ -1,63 +1,61 @@
 {
   "release": "3.06",
-  "build_revision": "fx-live383",
+  "build_revision": "delay-remove384",
   "hardware_tested": false,
   "editions": {
     "main_full": {
-      "native_and_SRAM_identical_to_original306": true,
+      "sha256": "f5fafe9d5d8dfcb570b5fc60fc31efdcdeac7c42a5296e7e367dcfb23179a7b6",
       "cold_boot": true,
-      "live_switch_proof": {
-        "sha256": "4a8c0cc71a343e1cbcd5beb5bd8cd100858551396c43db724d30f9c84f7dc8e8",
-        "live_cases": 20,
-        "queued_request_deferred": true,
-        "general_registers_preserved": true,
-        "SR_IPL_CCR_preserved": true,
-        "save_reload_after_live": true,
-        "hardware_tested": false
-      }
+      "native_and_SRAM_unchanged": true,
+      "seven_delays_both_directions": true,
+      "both_overlay_paths": true,
+      "legacy_saved_id12_maps_to_Delay": true,
+      "DSP_and_tables_removed": true,
+      "live_cases": 20,
+      "native_project_save_reload": true
     },
     "main_lite": {
-      "native_and_SRAM_identical_to_original306": true,
+      "sha256": "21f179a7faacdf5cebac872e064731a37c08050c84019da5b634a50d2ddbb069",
       "cold_boot": true,
-      "live_switch_proof": {
-        "sha256": "4bd21f2a372f027cc25c781130e88be2146c892126f53deaafec616a55abdf34",
-        "live_cases": 20,
-        "queued_request_deferred": true,
-        "general_registers_preserved": true,
-        "SR_IPL_CCR_preserved": true,
-        "save_reload_after_live": true,
-        "hardware_tested": false
-      }
+      "native_and_SRAM_unchanged": true,
+      "seven_delays_both_directions": true,
+      "both_overlay_paths": true,
+      "legacy_saved_id12_maps_to_Delay": true,
+      "DSP_and_tables_removed": true,
+      "live_cases": 20,
+      "native_project_save_reload": true
     },
     "optional_full": {
-      "native_and_SRAM_identical_to_original306": true,
+      "sha256": "cc99c23b11765cdc5094c428246b5c5071aa7d7b11c25961d7c11444f3b9497e",
       "cold_boot": true,
-      "live_switch_proof": {
-        "sha256": "41cf43dafbd54d3b58bce6d4a65f20224aee1bd46f361e1cc57bcc62c861ec93",
-        "live_cases": 20,
-        "queued_request_deferred": true,
-        "general_registers_preserved": true,
-        "SR_IPL_CCR_preserved": true,
-        "save_reload_after_live": true,
-        "hardware_tested": false
-      }
+      "native_and_SRAM_unchanged": true,
+      "seven_delays_both_directions": true,
+      "both_overlay_paths": true,
+      "legacy_saved_id12_maps_to_Delay": true,
+      "DSP_and_tables_removed": true,
+      "live_cases": 20,
+      "native_project_save_reload": true
     },
     "optional_lite": {
-      "native_and_SRAM_identical_to_original306": true,
+      "sha256": "bfa080cc6b16ef65b3a64773d51d7f3ccfadc4886744bb75c4654e151b06e0d1",
       "cold_boot": true,
-      "live_switch_proof": {
-        "sha256": "5d959a06d1e078d245495eb8e9b543ac669cb21b262de865873beb06e9064967",
-        "live_cases": 20,
-        "queued_request_deferred": true,
-        "general_registers_preserved": true,
-        "SR_IPL_CCR_preserved": true,
-        "save_reload_after_live": true,
-        "hardware_tested": false
-      }
+      "native_and_SRAM_unchanged": true,
+      "seven_delays_both_directions": true,
+      "both_overlay_paths": true,
+      "legacy_saved_id12_maps_to_Delay": true,
+      "DSP_and_tables_removed": true,
+      "live_cases": 20,
+      "native_project_save_reload": true
     }
   },
   "optional_masks": 9,
   "machinedrum_masks": 6,
   "real_browser_main_editions": true,
-  "manuals_unchanged": true
+  "pdf_pages": {
+    "manual": 36,
+    "shortcuts": 9
+  },
+  "pdf_rendered_and_reviewed": true,
+  "public_author_credits_removed": true,
+  "required_license_notices_preserved": true
 }

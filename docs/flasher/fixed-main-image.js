@@ -1,4 +1,4 @@
-/* 2026-11-05-main306-fx-live1 : images verifiees par edition, caches et sources independants. */
+/* 2026-11-06-main306-delay7 : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
@@ -6,9 +6,9 @@
     "id": "full",
     "productName": "Supermodel",
     "release": "3.06",
-    "file": "Supermodel_Full_3.06_4a8c0cc71a34.syx",
-    "syxSha256": "4a8c0cc71a343e1cbcd5beb5bd8cd100858551396c43db724d30f9c84f7dc8e8",
-    "mainOsSha": "9d6e04ed0ceb04214de67adcb2674f2fbb5bdcce9a922ddbaa8012121f4f6ae1",
+    "file": "Supermodel_Full_3.06_f5fafe9d5d8d.syx",
+    "syxSha256": "f5fafe9d5d8dfcb570b5fc60fc31efdcdeac7c42a5296e7e367dcfb23179a7b6",
+    "mainOsSha": "8dd059274479c7d772778ed96c19408489b79e0c733a61373cf0b560573b6fb0",
     "requiresSyntakt": true,
     "source_build": 215,
     "new_clear_filter_defaults": true,
@@ -42,12 +42,10 @@
       "AF"
     ],
     "acid_envelope_default": "F",
-    "pots_delay": true,
     "delay_selector_order": [
       "PHASER",
       "DUCK",
       "DUB",
-      "POTS",
       "PING PONG",
       "DELAY",
       "CRUSH 1",
@@ -107,15 +105,16 @@
     "track_swap_levels_16bit": true,
     "track_swap_context_guard": true,
     "fx_live_pattern_switch_fixed": true,
-    "build_revision": "fx-live383"
+    "build_revision": "delay-remove384",
+    "telephone_delay_removed": true
   },
   "lite": {
     "id": "lite",
     "productName": "Supermodel Lite",
     "release": "3.06",
-    "file": "Supermodel_Lite_3.06_4bd21f2a372f.syx",
-    "syxSha256": "4bd21f2a372f027cc25c781130e88be2146c892126f53deaafec616a55abdf34",
-    "mainOsSha": "8a8632665539c19359cc9a35f236a82add82c1e724652d8c06a6e006b85e1a76",
+    "file": "Supermodel_Lite_3.06_21f179a7faac.syx",
+    "syxSha256": "21f179a7faacdf5cebac872e064731a37c08050c84019da5b634a50d2ddbb069",
+    "mainOsSha": "e0a114f835602c9d5f74294781502ff9dba4247d799c0ae232421f40292dadbe",
     "requiresSyntakt": false,
     "source_build": 216,
     "new_clear_filter_defaults": true,
@@ -143,12 +142,10 @@
     "double_stop_fx_reset": true,
     "per_track_fx_code_bytes": 43766,
     "acid_envelope_global": false,
-    "pots_delay": true,
     "delay_selector_order": [
       "PHASER",
       "DUCK",
       "DUB",
-      "POTS",
       "PING PONG",
       "DELAY",
       "CRUSH 1",
@@ -208,7 +205,8 @@
     "track_swap_levels_16bit": true,
     "track_swap_context_guard": true,
     "fx_live_pattern_switch_fixed": true,
-    "build_revision": "fx-live383"
+    "build_revision": "delay-remove384",
+    "telephone_delay_removed": true
   }
 };
  for(const meta of Object.values(catalogue))Object.freeze(meta);
@@ -216,7 +214,7 @@
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Supermodel/b15eeada194572aadfa7c3136ddc784287540892/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Supermodel/b1e88171e85d1bb073545445538c6ba15aec81f8/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});

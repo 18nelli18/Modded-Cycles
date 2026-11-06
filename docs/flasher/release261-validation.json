@@ -481,9 +481,9 @@
     ]
   },
   "upstream": {
-    "repository": "durchgemacht/model27",
+    "repository": "model27",
     "revision": "5badf6ad27d956e86d32ff331c480a84ef74db92",
     "license": "MIT",
-    "credit": "durchgemacht and Claude"
+    "credit": "the original contributors"
   }
 }

@@ -10,7 +10,7 @@ Principal3.06. Maintenez le premier bouton pendant le second geste. TRIG : touch
 
 **Performance et sÃ©quenceur:** ArpÃ¨ge, octave 0 sur notes tenues et locks dâ€™harmonie, Sequence Genie, SCRAMBLE, slides, prÃ©Ã©coute de pas, Step Recorder, mute et solo verrouillÃ©s ou quantifiÃ©s. Sidechain dÃ©clenchÃ© par les notes et listes Scramble par pattern.
 
-**Filtres et effets:** Filtre rÃ©sonant et attaque par piste. GATED, HALL, ROOM, PS1, Ring Mod et deux Chorus ; DUCK, DUB, POTS, Ping Pong, Phaser et deux Crushers.
+**Filtres et effets:** Filtre rÃ©sonant et attaque par piste. GATED, HALL, ROOM, PS1, Ring Mod et deux Chorus ; DUCK, DUB, Ping Pong, Phaser et deux Crushers.
 
 **Routage et travail:** MIDI Out avec neuf CC, locks et deux LFO MIDI ; bascule OUT/THRU ; USB stÃ©rÃ©o ou six pistes ; sauvegarde permanente, Mod Setup sauvegardÃ© et diagnostic DX facultatif.
 
@@ -65,7 +65,7 @@ Principal3.06. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Fonction | Commandes | Comportement |
 |---|---|---|
 | Menu reverb | Maintenir TRACK + REVERB SIZE | De haut en bas : GATED, HALL, ROOM, PS1, REVERB, CHORUS 1, CHORUS 2, RING MOD. Gauche monte, droite descend. Son inchange pendant le parcours ; relacher TRACK applique, BACK annule. |
-| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PHASER, DUCK, DUB, POTS, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
+| Menu delay | Maintenir TRACK + DELAY TIME | De haut en bas : PHASER, DUCK, DUB, PING PONG, DELAY, CRUSH 1, CRUSH 2. Depuis DELAY, gauche/haut vers Ping Pong ; droite/bas vers Crush 1 puis Crush 2. Relacher TRACK applique ; BACK annule. |
 | Reverb standard | REVERB SEND / SIZE / FUNC + SIZE | Send par piste / Size, INF au maximum / Tone de -64 Ã  0 Ã  +63. |
 | Reverb GATED | REVERB SEND / SIZE ; FUNC + SIZE ; SETTINGS + SIZE | Gated Send / Gate Time ; Pre-delay ; Tone. Gate Time : environ 40 msâ€“6,7 s aprÃ¨s le signal. Pre-delay : 0â€“568 ms. Essayez Gate Time 16â€“32 et Pre-delay 25â€“40 ms sur une caisse claire. |
 | Reverb HALL | REVERB SEND / SIZE / FUNC + SIZE ou SETTINGS + SIZE | Hall Send par piste / Decay / Tone. Queue stÃ©rÃ©o large, rÃ©flexions plus longues que ROOM ; SIZE au maximum donne une longue queue amortie. |
@@ -77,7 +77,6 @@ Principal3.06. Maintenez le premier bouton pendant le second geste. TRIG : touch
 | Chorus 1 / 2 | REVERB SEND / SIZE / FUNC + SIZE | Chorus Send par piste / Speed / Depth. Speed et Depth 0-127. Remplace la reverb du slot. |
 | Delay standard | DELAY SEND / TIME / FUNC + TIME | Delay Send par piste / Time natif / Feedback natif. |
 | Delay DUB | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Delay Send par piste / Time natif / Feedback. Echos stereo fortement filtres, de plus en plus etroits dans la boucle. Une source centree joue sur les deux canaux des le premier echo, meme sans feedback. |
-| Delay POTS | DELAY SEND / TIME / FUNC + TIME | Echos mono de telephone de durchgemacht/model27 (MIT). Envoi natif / Time / Feedback. Delay master partage ; Save Project conserve le choix. Un STOP conserve la queue ; double STOP la coupe. |
 | Ping Pong | DELAY SEND / TIME / FUNC + TIME ou SETTINGS + TIME | Send par piste / Time / Feedback. Echos stereo alternes gauche/droite ; casque ou deux sorties. |
 | Crusher Rate / Bits | CRUSH 1 ou 2 : TIME / FUNC + TIME | Rate 0-127, environ 750 Hz-48 kHz / Bits 2-16. Valeurs basses plus rugueuses. CRUSH 1 garde le direct propre ; CRUSH 2 melange direct propre/crushed. DELAY SEND affiche Crush Send ; pas d echo dans ces modes. |
 | Reglages et sauvegarde FX | Sauvegarder le projet | Chaque pattern garde ses types FX, commandes ajoutÃ©es et envois supplÃ©mentaires. Sauvegardez le projet pour les retrouver au chargement. Pattern vierge : Delay/Reverb standard et commandes ajoutÃ©es par dÃ©faut. Les FX dâ€™un pattern en attente sâ€™appliquent au dÃ©but de sa lecture. Pas de destination p-lock/LFO pour les commandes ajoutÃ©es ; locks disponibles sur les envois natifs. |

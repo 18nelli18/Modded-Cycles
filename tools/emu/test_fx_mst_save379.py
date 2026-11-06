@@ -85,7 +85,7 @@ def choose(slot, mode):
              m['fx_menu']['reverb_selector_order'])
     # Le menu installe utilise huit delays, POTS compris.
     if slot:
-        order = [11, 10, 9, 12, 5, 0, 1, 2]
+        order = m['fx_menu']['delay_selector_order'] if m.get('remove_delay384') else [11, 10, 9, 12, 5, 0, 1, 2]
     elif m.get('vinyl_removed'):
         order = [10, 11, 8, 7, 0, 1, 2, 9]
     r.w32(s['fx_menu_open'], 1)

@@ -30,7 +30,7 @@ This manual focuses on Supermodel’s controls and workflows. Model:Cycles’ no
 
 ## Acknowledgments
 
-Glycinate, Fors.Fm, PPPCCC, DavidCaruso, Emilie Gillet, Durchgemacht, 18nelli18, and every member of the Modded-Cycles Discord server who rode with me through this. Y'all rule.
+Glycinate, Fors.Fm, PPPCCC, DavidCaruso, Emilie Gillet, 18nelli18, and every member of the Modded-Cycles Discord server who rode with me through this. Y'all rule.
 
 # Your first session
 
@@ -352,11 +352,11 @@ Each pattern has a reverb slot and a delay slot. Track sends set how much signal
 | GATED | PHASER |
 | HALL | DUCK |
 | ROOM | DUB |
-| PS1 | POTS |
-| REVERB | PING PONG |
-| CHORUS 1 | DELAY |
-| CHORUS 2 | CRUSH 1 |
-| RING MOD | CRUSH 2 |
+| PS1 | PING PONG |
+| REVERB | DELAY |
+| CHORUS 1 | CRUSH 1 |
+| CHORUS 2 | CRUSH 2 |
+| RING MOD |  |
 
 ## Master effects
 
@@ -368,7 +368,7 @@ Use Save Project to keep selected types, effect controls and extra sends. Blank 
 
 Track send controls support parameter locks. Effect-specific controls do not all have parameter-lock or LFO destinations; use the track sends when you need per-step effect amounts.
 
-**Tails** — One STOP leaves tails playing. Double STOP clears reverb and delay tails, including PS1 and POTS.
+**Tails** — One STOP leaves tails playing. Double STOP clears reverb and delay tails, including PS1.
 
 # Reverb, chorus & ring modulation
 
@@ -407,7 +407,6 @@ Use DELAY SEND for the track amount; Time and its modifier control the selected 
 | DELAY | Time | Feedback |
 | PING PONG | Time | Feedback |
 | DUB | Time | Feedback |
-| POTS | Time | Feedback |
 | DUCK | Time | Feedback |
 | PHASER | Rate | Depth |
 | CRUSH 1 / 2 | Rate: 0–127 | Bits: 2–16 |
@@ -415,8 +414,6 @@ Use DELAY SEND for the track amount; Time and its modifier control the selected 
 ## Echo character
 
 DELAY is the standard delay. PING PONG alternates echoes left and right; listen through both outputs or headphones. DUB produces strongly filtered stereo echoes that narrow progressively in the feedback loop.
-
-POTS produces telephone-style mono echoes on both output channels. Use Time, Feedback and the track’s Delay Send normally. It is one shared master delay. Save Project keeps the selection; double STOP clears its tail.
 
 ## DUCK
 

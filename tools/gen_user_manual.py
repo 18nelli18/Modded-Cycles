@@ -186,13 +186,13 @@ page('MODULATION','Audio LFOs','Each audio track can use up to four LFOs.',
 page('EFFECTS','Choose & route effects','Each pattern has a reverb slot and a delay slot. Track sends set how much signal reaches them.',
  H('Choose an effect'),
  S('Hold <b>TRACK</b> and turn <b>REVERB SIZE</b> for the reverb slot, or <b>DELAY TIME</b> for the delay slot.','Turn left to move up the list; turn right to move down. Browse while keeping TRACK held.','Release <b>TRACK</b> to apply the highlighted choice. Press <b>BACK</b> to cancel.'),
- T(['Reverb slot','Delay slot'],[[a,b] for a,b in zip(['GATED','HALL','ROOM','PS1','REVERB','CHORUS 1','CHORUS 2','RING MOD'],['PHASER','DUCK','DUB','POTS','PING PONG','DELAY','CRUSH 1','CRUSH 2'])],[255,255]),
+ T(['Reverb slot','Delay slot'],[[a,b] for a,b in zip(['GATED','HALL','ROOM','PS1','REVERB','CHORUS 1','CHORUS 2','RING MOD'],['PHASER','DUCK','DUB','PING PONG','DELAY','CRUSH 1','CRUSH 2',''])],[255,255]),
  H('Master effects'),
  P('Effects are shared across all six tracks. Each pattern keeps its selected effects and settings; use <b>Save Project</b> before powering off. Use each track SEND to set its amount. There is no FX mode selector in Mod Setup.'),
  H('Save the pattern’s effects'),
  P('Use <b>Save Project</b> to keep selected types, effect controls and extra sends. Blank patterns use standard Reverb and Delay. A queued pattern applies its effect choices when it begins playing.'),
  P('Track send controls support parameter locks. Effect-specific controls do not all have parameter-lock or LFO destinations; use the track sends when you need per-step effect amounts.'),
- C('Tails','One STOP leaves tails playing. Double STOP clears reverb and delay tails, including PS1 and POTS.'))
+ C('Tails','One STOP leaves tails playing. Double STOP clears reverb and delay tails, including PS1.'))
 
 page('EFFECTS / REVERB SLOT','Reverb, chorus & ring modulation','Use REVERB SEND for the amount from each track.',
  T(['Effect','SIZE','FUNC + SIZE'],[
@@ -213,10 +213,9 @@ page('EFFECTS / REVERB SLOT','Reverb, chorus & ring modulation','Use REVERB SEND
 
 page('EFFECTS / DELAY SLOT','Delay, phaser & crusher','Use DELAY SEND for the track amount; Time and its modifier control the selected effect.',
  T(['Effect','TIME','FUNC + TIME'],[
- ['DELAY','Time','Feedback'],['PING PONG','Time','Feedback'],['DUB','Time','Feedback'],['POTS','Time','Feedback'],['DUCK','Time','Feedback'],['PHASER','Rate','Depth'],['CRUSH 1 / 2','Rate: 0–127','Bits: 2–16']],[119,192,199]),
+ ['DELAY','Time','Feedback'],['PING PONG','Time','Feedback'],['DUB','Time','Feedback'],['DUCK','Time','Feedback'],['PHASER','Rate','Depth'],['CRUSH 1 / 2','Rate: 0–127','Bits: 2–16']],[119,192,199]),
  H('Echo character'),
  P('<b>DELAY</b> is the standard delay. <b>PING PONG</b> alternates echoes left and right; listen through both outputs or headphones. <b>DUB</b> produces strongly filtered stereo echoes that narrow progressively in the feedback loop.'),
- P('<b>POTS</b> produces telephone-style mono echoes on both output channels. Use Time, Feedback and the track’s Delay Send normally. It is one shared master delay. Save Project keeps the selection; double STOP clears its tail.'),
  H('DUCK'),
  P('The wet signal ducks while the send input plays and swells back afterward. Hold <b>FUNC first, then TRACK</b>: TIME sets <b>Amount</b> and DELAY SEND sets <b>Release</b>. Try Amount 127 and Release 32–64 on sparse notes. Amount 0 gives standard Delay behavior.'),
  H('Phaser and crushers'),
@@ -359,13 +358,13 @@ page('REFERENCE / SPEAK','Word library','Choose the index with SHAPE, or paramet
 page('REFERENCE','Find it quickly','An alphabetical guide to the manual.',('index',None),
  H('A saving reminder'),P('Use Save Project for pattern settings. Global preferences save while stopped. Temporary save/reload is a performance snapshot.'),
  H('About this edition'),P('Supermodel 3.06 • Model:Cycles • English print edition • 5 November 2026.'),
- P('Engine acknowledgments include Glycinate (Feral), Fors (inspiration for ELDER and Shadow), Emilie Gillet (MACRO/Braids and scale quantization), 100demons (PUNCH), and durchgemacht and Claude (POTS). POTS uses the MIT-licensed model27 DSP.'),
+ P('Engine acknowledgments include Glycinate (Feral), Fors (inspiration for ELDER and Shadow), Emilie Gillet (MACRO/Braids and scale quantization), 100demons (PUNCH).'),
  P('Control names in this manual follow the machine’s panel and display. Machine-specific chapters apply when that machine is installed.'))
 
 conventions=pages[0]['blocks'][3:]
 pages[0]['blocks']=pages[0]['blocks'][:2]
 pages.insert(1,dict(group='START HERE',title='Buttons & editions',lead='Read gestures consistently and find the chapters that apply to your build.',blocks=conventions+[
- H('Acknowledgments'),P("Glycinate, Fors.Fm, PPPCCC, DavidCaruso, Emilie Gillet, Durchgemacht, 18nelli18, and every member of the Modded-Cycles Discord server who rode with me through this. Y'all rule.")]))
+ H('Acknowledgments'),P("Glycinate, Fors.Fm, PPPCCC, DavidCaruso, Emilie Gillet, 18nelli18, and every member of the Modded-Cycles Discord server who rode with me through this. Y'all rule.")]))
 pages[-1]['blocks']=[pages[-1]['blocks'][0],P('Supermodel 3.06 • Model:Cycles • English print edition • 5 November 2026.')]
 at=next(i for i,p in enumerate(pages) if p['title']=='MACRO, ACID & WAVE')
 pages[at]['title']='ACID & WAVE';pages[at]['lead']='Resonant bass synthesis and wavetable motion.'
@@ -489,7 +488,7 @@ def chrome(c,doc):
 
 def page_number(title):return next(i+2 for i,p in enumerate(pages) if p['title']==title)
 def link(title):return f'<link href="#page{page_number(title)}" color="#305c4b">{escape(title)}</link>'
-index_items=[('ACID','MACRO, ACID & WAVE'),('Arpeggiator','Notes, scales & page length'),('Attack','Filters & attack'),('Beat repeat','Tracks, mute & repeat'),('CC assignments','CC knobs & MIDI LFOs'),('ChordKeys','Optional controls'),('Control All','Tracks, mute & repeat'),('Delay divisions','Delay, phaser & crusher'),('Diagnostics','Saving, USB & diagnostics'),('Effects routing','Choose & route effects'),('ELDER','ELDER, TINY, Shadow & Feral'),('ESTUS','PUNCH, ESTUS & SY Bits'),('Filters','Filters & attack'),('Global preferences','Global preferences'),('Groove','Groove, Strum & Sidechain'),('Humanize','Generate, Scramble & Humanize'),('LEGACY','Optional controls'),('LFOs, audio','Audio LFOs'),('LFOs, MIDI','CC knobs & MIDI LFOs'),('MACRO / Lo-Fi','MACRO, ACID & WAVE'),('Machines, list','Machine library'),('MIDI input / output','Connect & sequence MIDI'),('Mute and solo','Tracks, mute & repeat'),('Page Len / Warp','Notes, scales & page length'),('POTS','Delay, phaser & crusher'),('PUNCH','PUNCH, ESTUS & SY Bits'),('Resample','Sample Wizard'),('Sample locks','Sample Wizard'),('Saving','Saving, USB & diagnostics'),('Scale Lock','Notes, scales & page length'),('Scramble','Generate, Scramble & Humanize'),('Sequence Genie','Generate, Scramble & Humanize'),('Sidechain','Groove, Strum & Sidechain'),('SPEAK','SPEAK'),('Step Recorder','Notes, scales & page length'),('Strum','Groove, Strum & Sidechain'),('TINY','ELDER, TINY, Shadow & Feral'),('USB audio','Saving, USB & diagnostics'),('Vinyl','Optional controls'),('WAVE','MACRO, ACID & WAVE'),('Word indexes','Word library')]
+index_items=[('ACID','MACRO, ACID & WAVE'),('Arpeggiator','Notes, scales & page length'),('Attack','Filters & attack'),('Beat repeat','Tracks, mute & repeat'),('CC assignments','CC knobs & MIDI LFOs'),('ChordKeys','Optional controls'),('Control All','Tracks, mute & repeat'),('Delay divisions','Delay, phaser & crusher'),('Diagnostics','Saving, USB & diagnostics'),('Effects routing','Choose & route effects'),('ELDER','ELDER, TINY, Shadow & Feral'),('ESTUS','PUNCH, ESTUS & SY Bits'),('Filters','Filters & attack'),('Global preferences','Global preferences'),('Groove','Groove, Strum & Sidechain'),('Humanize','Generate, Scramble & Humanize'),('LEGACY','Optional controls'),('LFOs, audio','Audio LFOs'),('LFOs, MIDI','CC knobs & MIDI LFOs'),('MACRO / Lo-Fi','MACRO, ACID & WAVE'),('Machines, list','Machine library'),('MIDI input / output','Connect & sequence MIDI'),('Mute and solo','Tracks, mute & repeat'),('Page Len / Warp','Notes, scales & page length'),('PUNCH','PUNCH, ESTUS & SY Bits'),('Resample','Sample Wizard'),('Sample locks','Sample Wizard'),('Saving','Saving, USB & diagnostics'),('Scale Lock','Notes, scales & page length'),('Scramble','Generate, Scramble & Humanize'),('Sequence Genie','Generate, Scramble & Humanize'),('Sidechain','Groove, Strum & Sidechain'),('SPEAK','SPEAK'),('Step Recorder','Notes, scales & page length'),('Strum','Groove, Strum & Sidechain'),('TINY','ELDER, TINY, Shadow & Feral'),('USB audio','Saving, USB & diagnostics'),('Vinyl','Optional controls'),('WAVE','MACRO, ACID & WAVE'),('Word indexes','Word library')]
 index_items=[(label,('MACRO' if label.startswith('MACRO') else 'ACID & WAVE') if title=='MACRO, ACID & WAVE' else title) for label,title in index_items]
 
 index_items+= [('Song mode','Build a song'),('Song playback / saving','Play and save a song'),('ACID glide / legato','ACID articulation'),('Direct Pattern Jump','Pattern jumps & trig selection'),('Trig selection','Pattern jumps & trig selection'),('Machinedrum engines','Machinedrum engines')]
