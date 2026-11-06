@@ -1,15 +1,15 @@
 {
   "release": "3.06",
-  "build_revision": "fx-live383",
+  "build_revision": "delay-remove384",
   "editions": {
     "main": {
       "full": {
         "id": "full",
         "productName": "Supermodel",
         "release": "3.06",
-        "file": "Supermodel_Full_3.06_4a8c0cc71a34.syx",
-        "syxSha256": "4a8c0cc71a343e1cbcd5beb5bd8cd100858551396c43db724d30f9c84f7dc8e8",
-        "mainOsSha": "9d6e04ed0ceb04214de67adcb2674f2fbb5bdcce9a922ddbaa8012121f4f6ae1",
+        "file": "Supermodel_Full_3.06_f5fafe9d5d8d.syx",
+        "syxSha256": "f5fafe9d5d8dfcb570b5fc60fc31efdcdeac7c42a5296e7e367dcfb23179a7b6",
+        "mainOsSha": "8dd059274479c7d772778ed96c19408489b79e0c733a61373cf0b560573b6fb0",
         "requiresSyntakt": true,
         "source_build": 215,
         "new_clear_filter_defaults": true,
@@ -43,12 +43,10 @@
           "AF"
         ],
         "acid_envelope_default": "F",
-        "pots_delay": true,
         "delay_selector_order": [
           "PHASER",
           "DUCK",
           "DUB",
-          "POTS",
           "PING PONG",
           "DELAY",
           "CRUSH 1",
@@ -108,15 +106,16 @@
         "track_swap_levels_16bit": true,
         "track_swap_context_guard": true,
         "fx_live_pattern_switch_fixed": true,
-        "build_revision": "fx-live383"
+        "build_revision": "delay-remove384",
+        "telephone_delay_removed": true
       },
       "lite": {
         "id": "lite",
         "productName": "Supermodel Lite",
         "release": "3.06",
-        "file": "Supermodel_Lite_3.06_4bd21f2a372f.syx",
-        "syxSha256": "4bd21f2a372f027cc25c781130e88be2146c892126f53deaafec616a55abdf34",
-        "mainOsSha": "8a8632665539c19359cc9a35f236a82add82c1e724652d8c06a6e006b85e1a76",
+        "file": "Supermodel_Lite_3.06_21f179a7faac.syx",
+        "syxSha256": "21f179a7faacdf5cebac872e064731a37c08050c84019da5b634a50d2ddbb069",
+        "mainOsSha": "e0a114f835602c9d5f74294781502ff9dba4247d799c0ae232421f40292dadbe",
         "requiresSyntakt": false,
         "source_build": 216,
         "new_clear_filter_defaults": true,
@@ -144,12 +143,10 @@
         "double_stop_fx_reset": true,
         "per_track_fx_code_bytes": 43766,
         "acid_envelope_global": false,
-        "pots_delay": true,
         "delay_selector_order": [
           "PHASER",
           "DUCK",
           "DUB",
-          "POTS",
           "PING PONG",
           "DELAY",
           "CRUSH 1",
@@ -209,7 +206,8 @@
         "track_swap_levels_16bit": true,
         "track_swap_context_guard": true,
         "fx_live_pattern_switch_fixed": true,
-        "build_revision": "fx-live383"
+        "build_revision": "delay-remove384",
+        "telephone_delay_removed": true
       }
     },
     "optional": {
@@ -217,9 +215,9 @@
         "id": "full",
         "productName": "Supermodel",
         "release": "3.06",
-        "file": "Supermodel_Optional_Full_3.06_41cf43dafbd5.syx",
-        "syxSha256": "41cf43dafbd54d3b58bce6d4a65f20224aee1bd46f361e1cc57bcc62c861ec93",
-        "mainOsSha": "bf32c1ab418eaaa2910b665cc644085a702d51236b7fadc786832da15332ce3f",
+        "file": "Supermodel_Optional_Full_3.06_cc99c23b1176.syx",
+        "syxSha256": "cc99c23b11765cdc5094c428246b5c5071aa7d7b11c25961d7c11444f3b9497e",
+        "mainOsSha": "8533a075620abe7e3d7570c3267a1f1dae4e1a13ac0b49879b46fe785bc696e9",
         "requiresSyntakt": true,
         "source_build": 215,
         "new_clear_filter_defaults": true,
@@ -253,12 +251,10 @@
           "AF"
         ],
         "acid_envelope_default": "F",
-        "pots_delay": true,
         "delay_selector_order": [
           "PHASER",
           "DUCK",
           "DUB",
-          "POTS",
           "PING PONG",
           "DELAY",
           "CRUSH 1",
@@ -318,15 +314,16 @@
         "track_swap_levels_16bit": true,
         "track_swap_context_guard": true,
         "fx_live_pattern_switch_fixed": true,
-        "build_revision": "fx-live383"
+        "build_revision": "delay-remove384",
+        "telephone_delay_removed": true
       },
       "lite": {
         "id": "lite",
         "productName": "Supermodel Lite",
         "release": "3.06",
-        "file": "Supermodel_Optional_Lite_3.06_5d959a06d1e0.syx",
-        "syxSha256": "5d959a06d1e078d245495eb8e9b543ac669cb21b262de865873beb06e9064967",
-        "mainOsSha": "0eaefc816df71dfb14686cfd1971c9c28c5fc1c649c3fe4d5892a149d5be81ed",
+        "file": "Supermodel_Optional_Lite_3.06_bfa080cc6b16.syx",
+        "syxSha256": "bfa080cc6b16ef65b3a64773d51d7f3ccfadc4886744bb75c4654e151b06e0d1",
+        "mainOsSha": "1b0c583f9861226e3ed8932611667cb028003c77884fed584008c33f944d8f9f",
         "requiresSyntakt": false,
         "source_build": 216,
         "new_clear_filter_defaults": true,
@@ -354,12 +351,10 @@
         "filter_deferred_new_sound_low": true,
         "double_stop_fx_reset": true,
         "acid_envelope_global": false,
-        "pots_delay": true,
         "delay_selector_order": [
           "PHASER",
           "DUCK",
           "DUB",
-          "POTS",
           "PING PONG",
           "DELAY",
           "CRUSH 1",
@@ -419,7 +414,8 @@
         "track_swap_levels_16bit": true,
         "track_swap_context_guard": true,
         "fx_live_pattern_switch_fixed": true,
-        "build_revision": "fx-live383"
+        "build_revision": "delay-remove384",
+        "telephone_delay_removed": true
       }
     }
   }
