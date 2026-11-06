@@ -375,3 +375,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [225 — FX live3.06](225-fx-transitions-live.md) : corruption inter-banques reproduite puis synchronisation atomique au raccord live ; publication demandee sans changer3.06.
 
 - [226 - Retrait du delay telephone](226-retrait-delay-telephone.md) : sept choix, anciens projets compatibles, quatre editions3.06.
+
+- [227 - Wizard pan FUNC](227-wizard-pan-func.md) : pan momentane, Num niveau/pan, quatre editions3.06 ; UI seule.

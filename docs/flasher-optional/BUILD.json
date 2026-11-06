@@ -1,5 +1,5 @@
 {
-  "stamp": "2026-11-06-optional306-delay7",
+  "stamp": "2026-11-06-optional306-wizard-func",
   "status": "experimental",
   "release": "3.06",
   "base_editions": {
@@ -7,9 +7,9 @@
       "id": "full",
       "productName": "Supermodel",
       "release": "3.06",
-      "file": "Supermodel_Optional_Full_3.06_cc99c23b1176.syx",
-      "syxSha256": "cc99c23b11765cdc5094c428246b5c5071aa7d7b11c25961d7c11444f3b9497e",
-      "mainOsSha": "8533a075620abe7e3d7570c3267a1f1dae4e1a13ac0b49879b46fe785bc696e9",
+      "file": "Supermodel_Optional_Full_3.06_dd6c518fd3b9.syx",
+      "syxSha256": "dd6c518fd3b9fcb7c9f60a8c17e6fc06eb6a299cbf380851a99ef0a72e508b3e",
+      "mainOsSha": "0a02d80e28716af150fa8dc7c6ffe24a1a08cc4e4d8cb30df0284f079655686c",
       "requiresSyntakt": true,
       "source_build": 215,
       "new_clear_filter_defaults": true,
@@ -106,16 +106,18 @@
       "track_swap_levels_16bit": true,
       "track_swap_context_guard": true,
       "fx_live_pattern_switch_fixed": true,
-      "build_revision": "delay-remove384",
-      "telephone_delay_removed": true
+      "build_revision": "wizard-func385",
+      "telephone_delay_removed": true,
+      "wizard_pan_hold_func": true,
+      "wizard_numeric_level_and_pan": true
     },
     "lite": {
       "id": "lite",
       "productName": "Supermodel Lite",
       "release": "3.06",
-      "file": "Supermodel_Optional_Lite_3.06_bfa080cc6b16.syx",
-      "syxSha256": "bfa080cc6b16ef65b3a64773d51d7f3ccfadc4886744bb75c4654e151b06e0d1",
-      "mainOsSha": "1b0c583f9861226e3ed8932611667cb028003c77884fed584008c33f944d8f9f",
+      "file": "Supermodel_Optional_Lite_3.06_ee37479ddea3.syx",
+      "syxSha256": "ee37479ddea3e11d529fe02c361aa3965d70edc711dbd12c95f1215caf8ac9e6",
+      "mainOsSha": "19f1abfeeef7ffb36e2956ded0ba3a9d2c35ab83113881e5935a9350e036cdd3",
       "requiresSyntakt": false,
       "source_build": 216,
       "new_clear_filter_defaults": true,
@@ -194,7 +196,7 @@
       "governor_choice": true,
       "governor_default": "Lod",
       "wizard_upper_slice_keyboard": false,
-      "wizard_pan_display": false,
+      "wizard_pan_display": true,
       "silent_commit_fixed": true,
       "control_all_notice_restored": true,
       "track_swap": true,
@@ -206,11 +208,13 @@
       "track_swap_levels_16bit": true,
       "track_swap_context_guard": true,
       "fx_live_pattern_switch_fixed": true,
-      "build_revision": "delay-remove384",
-      "telephone_delay_removed": true
+      "build_revision": "wizard-func385",
+      "telephone_delay_removed": true,
+      "wizard_pan_hold_func": true,
+      "wizard_numeric_level_and_pan": true
     }
   },
-  "recipe_sha256": "adbfe23c9581fbca01b78ad42aca3da2a29280a5afbf801bb5d3472d37cacab4",
+  "recipe_sha256": "0c824e96d7424fee81f4fb3d4b3a5e29d95deab50427178dde827e988f2da3ce",
   "selection_bits": 19,
   "selection_variants": 524288,
   "embedded_unselected_dsp": true,
@@ -228,10 +232,10 @@
     "ChordKeys",
     "Vinyl"
   ],
-  "asset_source_commit": "b1e88171e85d1bb073545445538c6ba15aec81f8",
+  "asset_source_commit": "e154ef78a5abd94ff5d0d24d83bb9d2de4648fad",
   "filter_deferred_new_sound_low": true,
   "double_stop_fx_reset": true,
-  "guide_version": "2026-11-06-guide306-delay7",
+  "guide_version": "2026-11-06-guide306-wizard-func",
   "acid_envelope_global": true,
   "wizard_plock_priority": true,
   "hardware_verified": false,
@@ -248,7 +252,7 @@
   "ctrl_all_native_back_undo": true,
   "machine_selection_default": "Stk",
   "valid_21bit_sysex": true,
-  "delivery_source_commit": "b1e88171e85d1bb073545445538c6ba15aec81f8",
+  "delivery_source_commit": "e154ef78a5abd94ff5d0d24d83bb9d2de4648fad",
   "sidechain_muted_live": true,
   "sidechain_muted_live_hardware_confirmation": "User confirmed on Machine Optional Model:Cycles, 2026-11-01",
   "startup_release_version": "3.06",
@@ -263,6 +267,9 @@
   "track_swap_levels_16bit": true,
   "track_swap_context_guard": true,
   "fx_live_pattern_switch_fixed": true,
-  "build_revision": "delay-remove384",
-  "telephone_delay_removed": true
+  "build_revision": "wizard-func385",
+  "telephone_delay_removed": true,
+  "wizard_pan_hold_func": true,
+  "wizard_numeric_level_and_pan": true,
+  "wizard_volume": "numbers with Num On; segmented bars with Num Off"
 }

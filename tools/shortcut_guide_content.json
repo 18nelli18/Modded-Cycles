@@ -1,6 +1,6 @@
 {
   "release": "3.06",
-  "stamp": "2026-11-06-guide306-delay7",
+  "stamp": "2026-11-06-guide306-wizard-func",
   "cards": [
     {
       "en": [
@@ -1069,13 +1069,13 @@
         {
           "en": [
             "Volume / pan display",
-            "Sample Wizard home screen: click DATA",
-            "Toggle the segment display between track volume and left/right pan. Pan follows the sounding note during playback, including its p-lock. This changes the display only."
+            "Sample Wizard home screen: hold FUNC for pan",
+            "Normally shows track level. Hold FUNC to show pan; release to return to level. Num On shows LVL and PAN as numbers (0–127); Num Off uses bars. Playing pan follows the sounding note and its p-lock. DATA clicks retain their normal action."
           ],
           "fr": [
             "Affichage volume / pan",
-            "Accueil Sample Wizard : clic DATA",
-            "Alterne les barres de volume et panoramique gauche/droite. En lecture le pan suit la note et son p-lock. Affichage seulement."
+            "Accueil Sample Wizard : maintenir FUNC pour le pan",
+            "Affiche normalement le niveau de piste. Maintenir FUNC affiche le pan ; relacher revient au niveau. Num On affiche LVL et PAN en nombres (0–127) ; Num Off utilise les barres. Le pan suit la note et son p-lock en lecture. DATA conserve son action normale."
           ]
         },
         {

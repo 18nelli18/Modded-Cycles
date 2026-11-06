@@ -402,7 +402,7 @@ for p in pages:
   if kind=='p' and 'For pitch slides, use overlapping' in value:
    p['blocks'][i]=P('<b>PUNCH</b> selects the oscillator waveform: Off is saw, On is square. Overlapping note lengths link ordinary notes according to the track glide and legato settings. See ACID articulation for the physical controls.')
   if kind=='p' and 'The home screen shows the sample name' in value:
-   p['blocks'][i]=P('The home screen shows the sample name, waveform, track and duration. Click <b>DATA</b> to switch the segment display between volume and left/right pan. Playing pan follows the sounding note and its p-lock. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.')
+   p['blocks'][i]=P('The home screen shows the sample name, waveform, track and duration. Hold <b>FUNC</b> to show pan while editing it; release FUNC to return to track level. <b>Num On</b> shows LVL and PAN as numbers from 0 to 127; Num Off uses bars. Clicking DATA keeps its normal action. Playing pan follows the sounding note and its p-lock. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.')
 
 def add_after(title,chapter):
  pages.insert(next(i for i,p in enumerate(pages) if p['title']==title)+1,chapter)

@@ -1,4 +1,4 @@
-/* 2026-11-06-main306-delay7 : images verifiees par edition, caches et sources independants. */
+/* 2026-11-06-main306-wizard-func : images verifiees par edition, caches et sources independants. */
 (()=>{
  "use strict";
  const catalogue={
@@ -6,9 +6,9 @@
     "id": "full",
     "productName": "Supermodel",
     "release": "3.06",
-    "file": "Supermodel_Full_3.06_f5fafe9d5d8d.syx",
-    "syxSha256": "f5fafe9d5d8dfcb570b5fc60fc31efdcdeac7c42a5296e7e367dcfb23179a7b6",
-    "mainOsSha": "8dd059274479c7d772778ed96c19408489b79e0c733a61373cf0b560573b6fb0",
+    "file": "Supermodel_Full_3.06_0f4dba3efc20.syx",
+    "syxSha256": "0f4dba3efc20662d609d4de36f4fe48e94a387b215446c63685ec58626eccd47",
+    "mainOsSha": "3ce0a23173c57c81fc96204d0afe340b5fa678decee65ffeeb7e22fa820bd1bd",
     "requiresSyntakt": true,
     "source_build": 215,
     "new_clear_filter_defaults": true,
@@ -105,16 +105,18 @@
     "track_swap_levels_16bit": true,
     "track_swap_context_guard": true,
     "fx_live_pattern_switch_fixed": true,
-    "build_revision": "delay-remove384",
-    "telephone_delay_removed": true
+    "build_revision": "wizard-func385",
+    "telephone_delay_removed": true,
+    "wizard_pan_hold_func": true,
+    "wizard_numeric_level_and_pan": true
   },
   "lite": {
     "id": "lite",
     "productName": "Supermodel Lite",
     "release": "3.06",
-    "file": "Supermodel_Lite_3.06_21f179a7faac.syx",
-    "syxSha256": "21f179a7faacdf5cebac872e064731a37c08050c84019da5b634a50d2ddbb069",
-    "mainOsSha": "e0a114f835602c9d5f74294781502ff9dba4247d799c0ae232421f40292dadbe",
+    "file": "Supermodel_Lite_3.06_23df22bbd07f.syx",
+    "syxSha256": "23df22bbd07fdf257c6d156b7adc25e53f2fb2fc9eead99df2729484e2c5e5c5",
+    "mainOsSha": "ce3f2c730182478950ad2d6ece1ec3612c6b6e48e30259eed5e408318262aa9d",
     "requiresSyntakt": false,
     "source_build": 216,
     "new_clear_filter_defaults": true,
@@ -193,7 +195,7 @@
     "governor_choice": true,
     "governor_default": "Lod",
     "wizard_upper_slice_keyboard": false,
-    "wizard_pan_display": false,
+    "wizard_pan_display": true,
     "silent_commit_fixed": true,
     "control_all_notice_restored": true,
     "track_swap": true,
@@ -205,8 +207,10 @@
     "track_swap_levels_16bit": true,
     "track_swap_context_guard": true,
     "fx_live_pattern_switch_fixed": true,
-    "build_revision": "delay-remove384",
-    "telephone_delay_removed": true
+    "build_revision": "wizard-func385",
+    "telephone_delay_removed": true,
+    "wizard_pan_hold_func": true,
+    "wizard_numeric_level_and_pan": true
   }
 };
  for(const meta of Object.values(catalogue))Object.freeze(meta);
@@ -214,7 +218,7 @@
  const pending=new Map();
  async function load(meta){
   const sources=[new URL(meta.file,window.location.href).href,
-   "https://raw.githubusercontent.com/AveyCole/Supermodel/b1e88171e85d1bb073545445538c6ba15aec81f8/docs/flasher/"+meta.file];
+   "https://raw.githubusercontent.com/AveyCole/Supermodel/e154ef78a5abd94ff5d0d24d83bb9d2de4648fad/docs/flasher/"+meta.file];
   let failure;
   for(const url of sources)try{
    const response=await fetch(url,{cache:"no-store"});

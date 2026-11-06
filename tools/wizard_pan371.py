@@ -1,4 +1,4 @@
-"""Wizard : toggle DATA niveau/pan, uniquement vue accueil et UI."""
+"""Wizard : pan pendant FUNC et valeurs numeriques suivant Num ; UI seule."""
 from pathlib import Path
 import json,hashlib,subprocess,struct,os
 CODE=0x468b8000;BSS=0x468ba800;END=0x468bb000
@@ -7,7 +7,7 @@ def apply(meta,native,runtime,out,debug=False):
  out=Path(out);out.mkdir(parents=True,exist_ok=True);root=Path(__file__).resolve().parents[1]
  m=meta['wizard_display']
  # Reconstruire une revision UI apres verification exacte des anciennes ecritures.
- if m.get('pan_toggle'):
+ if m.get('pan_toggle') or m.get('pan_hold_func'):
   for patch in reversed(meta['wizard_pan371']['patches']):
    at=patch['at'];buf,origin=(runtime,0x46700000) if at>=0x46700000 else (native,0x40000400)
    old,new=bytes.fromhex(patch['old']),bytes.fromhex(patch['new']);offset=at-origin
@@ -22,7 +22,7 @@ def apply(meta,native,runtime,out,debug=False):
  controller=0x40077720;controllerold=bytes(native[controller-nb:controller-nb+6]);assert controllerold[:2]==b'\x4e\xf9'
  tramp='.text\n.globl ws_previous_draw\nws_previous_draw:\n.byte '+','.join(map(str,old))+f'\njmp {hook+len(old):#x}\n.globl ws_previous_key\nws_previous_key:\n.byte '+','.join(map(str,keyold))+f'\njmp {key+len(keyold):#x}\n.globl ws_previous_model_key\nws_previous_model_key:\n.byte '+','.join(map(str,modelold))+f'\njmp {model+8:#x}\n'
  tramp+='\n.globl ws_previous_controller_key\nws_previous_controller_key:\n.byte '+','.join(map(str,controllerold))+'\n'
- (out/'tramp.S').write_text(tramp);aliases=dict(m['aliases'],ws_cpu_open=meta['cpu_monitor']['symbols']['cpu_open'],ws_mod_menu=meta['fx_menu']['symbols']['menu']);ld=out/'display.ld'
+ (out/'tramp.S').write_text(tramp);aliases=dict(m['aliases'],ws_cpu_open=meta['cpu_monitor']['symbols']['cpu_open'],ws_mod_menu=meta['fx_menu']['symbols']['menu'],ws_num_off=0x4018fddf);ld=out/'display.ld'
  ld.write_text(f'SECTIONS {{ .text {CODE:#x} : {{ *(.text.ws_draw) *(.text*) *(.rodata*) }} . = ALIGN(4); .data : {{ *(.data*) }} ws_code_end = .; .bss {BSS:#x} (NOLOAD) : {{ *(.bss*) *(COMMON) }} . = ALIGN(4); ws_end = .; }}\n'+''.join(f'{k} = {v:#x};\n' for k,v in aliases.items()))
  cross='H:/CREATURE-source/retrosyn-integration/build/m68k-toolchain/pkg/bin/m68k-elf-';os.environ['PATH']=str(Path(cross).parent)+os.pathsep+os.environ['PATH']
  def run(tool,*args):return subprocess.check_output([cross+tool+'.exe',*map(str,args)],text=True)
@@ -40,4 +40,5 @@ def apply(meta,native,runtime,out,debug=False):
  write(model,modelold,b'\x4e\xf9'+struct.pack('>I',symbols['ws_model_key'])+b'\x4e\x71',runtime,base)
  write(controller,controllerold,b'\x4e\xf9'+struct.pack('>I',symbols['ws_controller_key']),native,nb)
  meta['wizard_display']=dict(m,aliases=aliases,symbols=symbols,end=symbols['ws_end'],code_end=symbols['ws_code_end'],pan_toggle=True)
+ meta['wizard_display'].update(pan_toggle=False,pan_hold_func=True,numeric_level_and_pan=True)
  return dict(code=CODE,code_bytes=len(raw),symbols=symbols,patches=patches,sha256=hashlib.sha256(raw).hexdigest(),UI_only=True,audio_hooks=False,native_input=model,native_input_argument_count=1,controller_input=controller,pan_source='base parameter22 stopped; live audio frame parameter22 playing',hardware_tested=False)

@@ -1,61 +1,57 @@
 {
   "release": "3.06",
-  "build_revision": "delay-remove384",
+  "build_revision": "wizard-func385",
   "hardware_tested": false,
+  "only_Wizard_UI_bytes_changed": true,
   "editions": {
     "main_full": {
-      "sha256": "f5fafe9d5d8dfcb570b5fc60fc31efdcdeac7c42a5296e7e367dcfb23179a7b6",
-      "cold_boot": true,
-      "native_and_SRAM_unchanged": true,
-      "seven_delays_both_directions": true,
-      "both_overlay_paths": true,
-      "legacy_saved_id12_maps_to_Delay": true,
-      "DSP_and_tables_removed": true,
-      "live_cases": 20,
-      "native_project_save_reload": true
+      "sha256": "0f4dba3efc20662d609d4de36f4fe48e94a387b215446c63685ec58626eccd47",
+      "FUNC_momentary": true,
+      "DATA_delegates": true,
+      "six_tracks": true,
+      "numeric_level_and_pan": true,
+      "Num_off_graphs": true,
+      "live_pan_locks": true,
+      "UI_priority_preserved": true,
+      "hardware_tested": false
     },
     "main_lite": {
-      "sha256": "21f179a7faacdf5cebac872e064731a37c08050c84019da5b634a50d2ddbb069",
-      "cold_boot": true,
-      "native_and_SRAM_unchanged": true,
-      "seven_delays_both_directions": true,
-      "both_overlay_paths": true,
-      "legacy_saved_id12_maps_to_Delay": true,
-      "DSP_and_tables_removed": true,
-      "live_cases": 20,
-      "native_project_save_reload": true
+      "sha256": "23df22bbd07fdf257c6d156b7adc25e53f2fb2fc9eead99df2729484e2c5e5c5",
+      "FUNC_momentary": true,
+      "DATA_delegates": true,
+      "six_tracks": true,
+      "numeric_level_and_pan": true,
+      "Num_off_graphs": true,
+      "live_pan_locks": true,
+      "UI_priority_preserved": true,
+      "hardware_tested": false
     },
     "optional_full": {
-      "sha256": "cc99c23b11765cdc5094c428246b5c5071aa7d7b11c25961d7c11444f3b9497e",
-      "cold_boot": true,
-      "native_and_SRAM_unchanged": true,
-      "seven_delays_both_directions": true,
-      "both_overlay_paths": true,
-      "legacy_saved_id12_maps_to_Delay": true,
-      "DSP_and_tables_removed": true,
-      "live_cases": 20,
-      "native_project_save_reload": true
+      "sha256": "dd6c518fd3b9fcb7c9f60a8c17e6fc06eb6a299cbf380851a99ef0a72e508b3e",
+      "FUNC_momentary": true,
+      "DATA_delegates": true,
+      "six_tracks": true,
+      "numeric_level_and_pan": true,
+      "Num_off_graphs": true,
+      "live_pan_locks": true,
+      "UI_priority_preserved": true,
+      "hardware_tested": false
     },
     "optional_lite": {
-      "sha256": "bfa080cc6b16ef65b3a64773d51d7f3ccfadc4886744bb75c4654e151b06e0d1",
-      "cold_boot": true,
-      "native_and_SRAM_unchanged": true,
-      "seven_delays_both_directions": true,
-      "both_overlay_paths": true,
-      "legacy_saved_id12_maps_to_Delay": true,
-      "DSP_and_tables_removed": true,
-      "live_cases": 20,
-      "native_project_save_reload": true
+      "sha256": "ee37479ddea3e11d529fe02c361aa3965d70edc711dbd12c95f1215caf8ac9e6",
+      "FUNC_momentary": true,
+      "DATA_delegates": true,
+      "six_tracks": true,
+      "numeric_level_and_pan": true,
+      "Num_off_graphs": true,
+      "live_pan_locks": true,
+      "UI_priority_preserved": true,
+      "hardware_tested": false
     }
   },
-  "optional_masks": 9,
-  "machinedrum_masks": 6,
-  "real_browser_main_editions": true,
   "pdf_pages": {
     "manual": 36,
     "shortcuts": 9
   },
-  "pdf_rendered_and_reviewed": true,
-  "public_author_credits_removed": true,
-  "required_license_notices_preserved": true
+  "pdf_rendered_and_reviewed": true
 }

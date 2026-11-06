@@ -625,7 +625,7 @@ On a Sample Wizard track, press SETTINGS + REC to open Resample. Choose recordin
 
 ## Read the display
 
-The home screen shows the sample name, waveform, track and duration. Click DATA to switch the segment display between volume and left/right pan. Playing pan follows the sounding note and its p-lock. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.
+The home screen shows the sample name, waveform, track and duration. Hold FUNC to show pan while editing it; release FUNC to return to track level. Num On shows LVL and PAN as numbers from 0 to 127; Num Off uses bars. Clicking DATA keeps its normal action. Playing pan follows the sounding note and its p-lock. During playback, pitch, start, end and other parameter locks retain priority for the complete sounding note or loop, including empty following steps; CTRL-ALL edits the unlocked base sound.
 
 **Before locking a sample** — Open the sample browser first and highlight the exact sample you want. The lock gesture uses the highlighted browser entry.
 
