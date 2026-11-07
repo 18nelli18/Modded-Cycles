@@ -377,3 +377,5 @@ Générateur de séquence (note 53) : **testé sur la machine par AveyCole le 10
 - [226 - Retrait du delay telephone](226-retrait-delay-telephone.md) : sept choix, anciens projets compatibles, quatre editions3.06.
 
 - [227 - Wizard pan FUNC](227-wizard-pan-func.md) : pan momentane, Num niveau/pan, quatre editions3.06 ; UI seule.
+
+- [228 - Labels delay](228-labels-delay.md) : chaines partagees restaurees, test positif des labels ; quatre editions3.06.

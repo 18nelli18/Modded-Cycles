@@ -9,7 +9,7 @@ for mode in order:
 for at in (0x40070efc,0x40070c4e,0x40070f6e):bind(at,lambda _:0)
 for cursor in range(7):
  for entry,args in [('nv_overlay',(0,0)),('nv_overlay_canvas',(0,))]:
-  rr.w32(ss['fx_menu_open'],1);rr.w32(ss['fx_menu_slot'],1);rr.w32(ss['fx_menu_cursor'],cursor);rr.texts.clear();rr.call(entry,*args);assert not any('POTS' in str(t) for t in rr.texts)
+  rr.w32(ss['fx_menu_open'],1);rr.w32(ss['fx_menu_slot'],1);rr.w32(ss['fx_menu_cursor'],cursor);rr.texts.clear();rr.call(entry,*args);labels=[t[2] for t in rr.texts];assert not any('POTS' in str(t) for t in rr.texts);top=max(0,min(cursor-1,4));expected=[{11:'PHASER',10:'DUCK',9:'DUB',5:'PING PONG',0:'DELAY',1:'CRUSH 1',2:'CRUSH 2'}[v] for v in order[top:top+3]];assert all(v in labels for v in expected),(entry,cursor,labels,expected)
 # Le fichier MFT historique avec ID12 reste valide ; seul son choix delay migre.
 legacy=dict(files);name='/MFX_12345678.cfg';buf=bytearray(legacy[name]);buf[16+37]=buf[16+39]=12;buf[16+48+37]=buf[16+48+39]=12
 import zlib

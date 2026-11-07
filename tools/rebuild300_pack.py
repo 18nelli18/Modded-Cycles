@@ -121,6 +121,7 @@ def main():
     parser.add_argument('--hide-master-fx382',action='store_true')
     parser.add_argument('--fx-live383',action='store_true')
     parser.add_argument('--remove-delay384',action='store_true')
+    parser.add_argument('--delay-labels386',action='store_true')
     parser.add_argument('--gov-policy372',action='store_true')
     parser.add_argument('--pattern-latch374',action='store_true')
     parser.add_argument('--latch-notice374',action='store_true')
@@ -365,6 +366,9 @@ def main():
     if args.remove_delay384:
         from remove_delay384 import apply as remove_delay_apply
         meta['remove_delay384']=remove_delay_apply(meta,runtime,out/'remove-delay384')
+    if args.delay_labels386:
+        from delay_labels386 import apply as delay_labels_apply
+        meta['delay_labels386']=delay_labels_apply(meta,runtime)
     if args.wizard_pan371:
         from wizard_pan371 import apply as pan_apply
         meta['wizard_pan371']=pan_apply(meta,native,runtime,out/'wizard-pan371')

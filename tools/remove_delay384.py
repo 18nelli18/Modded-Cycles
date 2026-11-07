@@ -41,7 +41,7 @@ def apply(meta,runtime,out):
  for old,new in [('mf_fx_encoder','nr_encoder'),('mf_commit','nr_commit'),('nv_overlay','nr_overlay'),('nv_overlay_canvas','nr_canvas'),('runtime','nr_runtime'),('mf_legacy_capture','nr_capture'),('pots_slot_delay','nr_delay')]:patch(sy[old],b'\x4e\xf9'+struct.pack('>I',symbols[new]))
  # Effacer le noyau et ses tables ; les appels de reset encore partages deviennent RTS.
  lo,hi=sy['lg2'],sy['pots_reset']+8;patch(lo,bytes(hi-lo));patch(sy['pots_reset'],b'\x4e\x75')
- lo,hi=sy['RX_C'],sy['pots_del_names'];patch(lo,bytes(hi-lo))
+ lo=sy['RX_C'];hi=min(struct.unpack_from('>13I',runtime,sy['pots_del_names']-BASE));assert lo<hi<sy['pots_del_names'];patch(lo,bytes(hi-lo))
  for pos in range(p['code']-BASE,p['code']-BASE+p['code_bytes']-4):
   if runtime[pos:pos+5]==b'POTS\0':patch(BASE+pos,bytes(5))
  for k in list(p):
