@@ -36,9 +36,11 @@ function prepare(fullRaw,liteRaw,cyclesRaw,recipe){
  if(recipe.clean_layout){
   const full=unpack(fullRaw),lite=unpack(liteRaw),stock=unpack(cyclesRaw),state=C.view(full.main);
   for(const patch of recipe.patches)state.patch(patch);
+  // Le roster recent lit le masque MD quand ce drapeau est actif.
+  state.write(0x4693081c,new Uint8Array(4));
   const cache=new Map();
   return {recipe,build(mask){validateMask(mask);if(mask===0)return {raw:liteRaw.slice(),mainOsSha:hash(lite.main),syxSha256:hash(liteRaw),flashBytes:lite.container.blob.length,mask,edition:'lite'};
-   if(mask===ALL)return {raw:fullRaw.slice(),mainOsSha:hash(full.main),syxSha256:hash(fullRaw),flashBytes:full.container.blob.length,mask,edition:'full'};
+
    if(!cache.has(mask)){const selected=C.view(state.serialize()),value=new Uint8Array(4);put(value,0,mask);selected.write(recipe.mask,value);cache.set(mask,{...C.encode(full,stock,selected,safePack),mask,edition:'full'})}return cache.get(mask);
   }};
  }

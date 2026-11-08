@@ -1,0 +1,46 @@
+{
+  "release": "3.06",
+  "fix": "Optional roster reads checkbox mask rather than inherited MD mask",
+  "source_base": "23329fbbf1ef49a8827a0b6f0d203e84e1bc8252",
+  "native_selector_and_DATA_scroll": [
+    {
+      "mask": 0,
+      "sha": "bec4ce45aca72d10ba263dc2f4e58f9104873fb5a58199e308fe742bbe4d701f"
+    },
+    {
+      "mask": 1,
+      "sha": "4a7ee46b3cacf55f9542fba13c7eaab3a2c36954ffe74053d2cca1c99107ee8d",
+      "native_roster_verified": true
+    },
+    {
+      "mask": 349525,
+      "sha": "4030a1dca890f3eb3fcf75859e757891635bd28a892cf192af90b196e049385f",
+      "native_roster_verified": true
+    },
+    {
+      "mask": 524286,
+      "sha": "52ef28fc92eaaaa13a6f51d630b244945602ced13eda9132d4025a70b0f4df1d",
+      "native_roster_verified": true
+    },
+    {
+      "mask": 524287,
+      "sha": "d2355ea124c1fc9d2630be243731ef9b3751bbf8442e745c6f6a37fd062303aa",
+      "native_roster_verified": true
+    },
+    {
+      "mask": 524289,
+      "sha": "ca1f2757a8a19adcaae642e5acaf287b87ed36b61844f9b70265a4c269de9eec",
+      "native_roster_verified": true
+    }
+  ],
+  "browser": {
+    "all_none_single_selection": true,
+    "TRX_without_MD_blocks_output": true,
+    "selection_locked_during_send": true,
+    "page_errors": []
+  },
+  "valid_MD_build_and_selector": true,
+  "user_report": "that seemed to work",
+  "hardware_confirmation_scope": "reporting user; broader hardware coverage not claimed",
+  "private_CPU_cleanup_included": false
+}
