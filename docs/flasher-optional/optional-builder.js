@@ -41,7 +41,7 @@ function prepare(fullRaw,liteRaw,cyclesRaw,recipe){
   const cache=new Map();
   return {recipe,build(mask){validateMask(mask);if(mask===0)return {raw:liteRaw.slice(),mainOsSha:hash(lite.main),syxSha256:hash(liteRaw),flashBytes:lite.container.blob.length,mask,edition:'lite'};
 
-   if(!cache.has(mask)){const selected=C.view(state.serialize()),value=new Uint8Array(4);put(value,0,mask);selected.write(recipe.mask,value);cache.set(mask,{...C.encode(full,stock,selected,safePack),mask,edition:'full'})}return cache.get(mask);
+   if(!cache.has(mask)){const selected=C.view(state.serialize()),value=new Uint8Array(4);put(value,0,mask);selected.write(recipe.mask,value);selected.write(0x469c423c,value);cache.set(mask,{...C.encode(full,stock,selected,safePack),mask,edition:'full'})}return cache.get(mask);
   }};
  }
  const full=unpack(fullRaw),lite=unpack(liteRaw),stock=unpack(cyclesRaw),end=be(full.main,0x40195ad0-BASE)-BASE;

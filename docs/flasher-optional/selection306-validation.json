@@ -1,7 +1,7 @@
 {
   "release": "3.06",
-  "fix": "Optional roster reads checkbox mask rather than inherited MD mask",
-  "source_base": "23329fbbf1ef49a8827a0b6f0d203e84e1bc8252",
+  "fix": "Synchronize normal encoder MD selector mask and checkbox roster mask",
+  "source_base": "46caa22e7693f9aa4e0b2089db8c1d63ce7ba0fb",
   "native_selector_and_DATA_scroll": [
     {
       "mask": 0,
@@ -9,28 +9,210 @@
     },
     {
       "mask": 1,
-      "sha": "4a7ee46b3cacf55f9542fba13c7eaab3a2c36954ffe74053d2cca1c99107ee8d",
-      "native_roster_verified": true
+      "sha": "6f67940224ec1506abc6153076e6ef9de2526fc2d3929c6dc0ccf449433b92a8",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": true
+    },
+    {
+      "mask": 2,
+      "sha": "3dcaee932f8b8c5a5579c81fcbe9f0eeafbc488c0ca3dbb3b1e79d3df714690e",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 4,
+      "sha": "a04583d311ab8fc838598c1cfa295a320d5765b912a7867c02c641fa27feb4e9",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 8,
+      "sha": "975acb4f14d68d06de62bfab6f177cb1d58720a3a2a126c20561db1c21047641",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 16,
+      "sha": "96fdde3378eb34f286fa951f6f4eea2e01c41a90bca74e2fcc55a0634102db26",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 32,
+      "sha": "81b3ab67e5c46a6399d10096e1642c7f80b442cf21e5113acad171fb5eb0454b",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 64,
+      "sha": "fdb83d84419ffe73ad94af00f23bdbb73be265b776f93f5275235fad2c6aa77c",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 128,
+      "sha": "f5097e4fe4b40e2970c2d6d5cd33420e2f8c019a2d43a95b27c98f27072e35cc",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 256,
+      "sha": "2b29d1e49c1c5c7a7cd92895ba871a6d5f01d6f5cb2aa8ae576cd57429a7ae91",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 512,
+      "sha": "ccb387e0db33fab04ed0764ca16c8adf5ca736056ea53c67fe6f6a4eb1e4fd59",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 1024,
+      "sha": "95ed00094670a23f7f08df73a898af5b81ef3bdaf615591113f7bc92bc1315c7",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 2048,
+      "sha": "d435cda655f8225bb988ef3ffb3910dab46a75eec94c15292dd4dad64c29d6c3",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 4096,
+      "sha": "d42d5edc18b791503726f350ddef9870c987c5ad8b2a5fa6b7063e110231d852",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 8192,
+      "sha": "2f990e891340df6994910f876bb85fbae342d2f0beea3f6107ffd29f7acd775b",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 16384,
+      "sha": "700912d8f63a746d5d68963b8c55759dea8bbeb96f9ac1d573349111d22ad988",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 32768,
+      "sha": "27dbcc13cd8d416ad64efa65665c525a3d070f8a070e9baf49a303fe2daa1b1c",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 65536,
+      "sha": "50869a4a5a4f71f1c0579b1a2aab45165200de3ee17edde59fd276ea7e0df1a5",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 131072,
+      "sha": "da155dc1836937939b6cf1be5094010bf54e553f955d6110adf7d9a1a0ac119a",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
+    },
+    {
+      "mask": 262144,
+      "sha": "7fc33a6931d9aba4143bf8e2333686a49f00ec39bce1569bbaee732c5f41f7ed",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 14,
+      "cold_booted": false
     },
     {
       "mask": 349525,
-      "sha": "4030a1dca890f3eb3fcf75859e757891635bd28a892cf192af90b196e049385f",
-      "native_roster_verified": true
+      "sha": "49414e4339ede1f57889fe2fb11e411ca9b1da6be24f4200dbf00a0d0b4009fe",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 32,
+      "cold_booted": true
     },
     {
       "mask": 524286,
-      "sha": "52ef28fc92eaaaa13a6f51d630b244945602ced13eda9132d4025a70b0f4df1d",
-      "native_roster_verified": true
+      "sha": "66e3f1420e98f36feaeba1066f5b3cd6009dbaeb46f6f93dae431a864ac20054",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 48,
+      "cold_booted": false
     },
     {
       "mask": 524287,
-      "sha": "d2355ea124c1fc9d2630be243731ef9b3751bbf8442e745c6f6a37fd062303aa",
-      "native_roster_verified": true
+      "sha": "af5286f42381837e521187b4a20509476c40f45afa3136bc5ca718b35ac3c3c0",
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 50,
+      "cold_booted": false
     },
     {
       "mask": 524289,
       "sha": "ca1f2757a8a19adcaae642e5acaf287b87ed36b61844f9b70265a4c269de9eec",
-      "native_roster_verified": true
+      "native_roster_verified": true,
+      "physical_STK_encoder_verified": true,
+      "SIL_preview_commit_verified": true,
+      "selector_cases": 16,
+      "cold_booted": false
     }
   ],
   "browser": {
@@ -41,6 +223,18 @@
   },
   "valid_MD_build_and_selector": true,
   "user_report": "that seemed to work",
-  "hardware_confirmation_scope": "reporting user; broader hardware coverage not claimed",
-  "private_CPU_cleanup_included": false
+  "hardware_confirmation_scope": "Earlier flag fix reported improved; follow-up normal encoder fix remains emulation verified, hardware confirmation pending.",
+  "private_CPU_cleanup_included": false,
+  "previous_check_limitation": "Previous proof called mb_step directly and missed physical Stk encoder fallback through md_step.",
+  "old_failure_reproduced": {
+    "selection": "Sample Wizard only",
+    "current_machine": 6,
+    "encoder_delta": 1,
+    "old_result": 7,
+    "correct_result": 6
+  },
+  "native_cold_booted_masks": [
+    1,
+    349525
+  ]
 }
